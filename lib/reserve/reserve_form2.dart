@@ -1096,6 +1096,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
             parameters: {"user_id": jsonDecode(akongP!)['user_id'].toString()})
         .post()
         .then((dataRefNo) async {
+      print("dataRefNo $dataRefNo");
       if (dataRefNo == "No Internet") {
         Navigator.of(context).pop();
         showAlertDialog(context, "Error",
@@ -1134,6 +1135,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                 parameters: postParameters)
             .post()
             .then((returnPost) async {
+          print("gApiSubFolderPostReserveParking $returnPost");
           if (returnPost == "No Internet") {
             Navigator.of(context).pop();
             showAlertDialog(context, "Error",
@@ -1217,15 +1219,16 @@ class _ReserveForm2State extends State<ReserveForm2> {
                               amount: returnPay['applied_amt'].toString(),
                               refno: returnPost["ps_ref_no"].toString(),
                               lat: double.parse(
-                                  returnPost['ps_latitude'].toString()),
+                                  returnPost['pa_latitude'].toString()),
                               long: double.parse(
-                                  returnPost['ps_longitude'].toString()),
+                                  returnPost['pa_longitude'].toString()),
                               canReserved: false,
                               isReserved: false,
                               isVehicleSelected: isVsel,
                               tab: 0,
                               paramsCalc: params,
                               address: "",
+                              isAutoExtend: "",
                             ),
                           );
                         }
@@ -1268,6 +1271,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                           isShowRate: true,
                           reservationId: int.parse(returnPay["reservation_id"]),
                           address: "",
+                          isAutoExtend: "",
                           paramsCalc: params),
 
                       ///

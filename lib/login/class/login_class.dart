@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:luvpark/background_process/android_background.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
@@ -90,9 +88,6 @@ class LoginComponent {
                 return;
               } else {
                 if (objData["items"][0]["msg"] == 'Y') {
-                  //CAncel background
-                  AndroidAlarmManager.cancel(0);
-
                   prefs.remove('loginData');
                   prefs.remove('userData');
                   prefs.remove('geo_connect_id');
@@ -127,8 +122,6 @@ class LoginComponent {
                     BiometricLogin().setPasswordBiometric(pass);
                   }
 
-                  await AndroidAlarmManager.initialize();
-                  print('service');
                   // ignore: use_build_context_synchronously
                   if (myId != null) {
                     if (int.parse(myId.toString()) !=
@@ -141,7 +134,7 @@ class LoginComponent {
                       PaMessageDatabase.instance.deleteAll();
                       ShareLocationDatabase.instance.deleteAll();
                       pref.remove('myId');
-                      pref.clear();
+                      //pref.clear();
                       //  await notificationsPlugin.cancelAll();
                       var mPinParams = {
                         "user_id": items['user_id'].toString(),
@@ -166,9 +159,13 @@ class LoginComponent {
                   // ignore: use_build_context_synchronously
                   // Navigator.of(context).pop();
                   // ignore: use_build_context_synchronously
+                  print("inataya");
+                  int? alarmId = prefs.getInt("alarm_id");
+                  print("alarmId ${alarmId == null}");
                   if (Platform.isAndroid) {
-                    AndroidAlarmManager.cancel(0);
-                    AndroidBackgroundProcess.backgroundExecution();
+                    prefs.setInt("alarm_id", alarmId == null ? 0 : alarmId + 1);
+                    // AndroidBackgroundProcess.isRunBackground(true);
+                    // AndroidBackgroundProcess.backgroundExecution(alarmId! + 1);
                   } else {
                     //IOS Background fetch
                   }

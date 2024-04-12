@@ -485,10 +485,12 @@ Future<void> updateLocation() async {
 }
 
 //GET ACCEPT SHARING
-Future<void> getSharingData(userId, ctr) async {
+Future<void> getSharingData(ctr) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
+  var akongId = prefs.getString('myId');
+  if (akongId == null) return;
   HttpRequest(
-    api: "${ApiKeys.gApiLuvParkGetShareLoc}?user_id=${userId.toString()}",
+    api: "${ApiKeys.gApiLuvParkGetShareLoc}?user_id=${akongId.toString()}",
   ).get().then((notificationData) async {
     //  ShareLocationDatabase.instance.deleteAll();
     if (notificationData == "No Internet") {
@@ -539,7 +541,7 @@ Future<void> getSharingData(userId, ctr) async {
 Future<void> getParkingTrans(int ctr) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var akongId = prefs.getString('myId');
-
+  if (akongId == null) return;
   HttpRequest(
     api:
         "${ApiKeys.gApiSubFolderGetReservations}?user_id=${akongId.toString()}",
@@ -640,6 +642,7 @@ Future<void> getParkingTrans(int ctr) async {
 Future<void> getParkingQueue() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var akongId = prefs.getString('myId');
+  if (akongId == null) return;
   HttpRequest(
     api: "${ApiKeys.gApiLuvParkResQueue}?user_id=${akongId.toString()}",
   ).get().then((queueData) async {
@@ -654,7 +657,8 @@ Future<void> getParkingQueue() async {
 Future<void> getMessNotif() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var akongId = prefs.getString('myId');
-
+  print("message notif $akongId");
+  if (akongId == null) return;
   HttpRequest(
     api: "${ApiKeys.gApiLuvParkMessageNotif}?user_id=$akongId",
   ).get().then((messageData) async {

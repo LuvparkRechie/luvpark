@@ -108,6 +108,7 @@ class _ParkingActivityState extends State<ParkingActivity>
                 "${ApiKeys.gApiSubFolderGetReservations}?user_id=${jsonDecode(akongP!)['user_id'].toString()}")
         .get()
         .then((returnData) async {
+      print("returnData $returnData");
       if (mounted) {
         setState(() {
           isAllowToSync = true;
@@ -716,6 +717,8 @@ class _ParkingActivityState extends State<ParkingActivity>
                                                                                 paramsCalc: parameters,
                                                                                 address: returnData["items"][0]["address"],
                                                                                 ticketId: returnData["items"][0]["ticket_id"],
+                                                                                isAutoExtend: reservedData[index]["is_auto_extend"].toString(),
+                                                                                reservationId: reservedData[index]["reservation_id"],
                                                                               ));
                                                                             }
                                                                           }

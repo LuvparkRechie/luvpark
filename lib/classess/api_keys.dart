@@ -203,4 +203,7 @@ class ApiKeys {
   static const gAPISubFolderFaqAnswer = '/ords/$parkSpaceApi/faqs/ans';
   //POST mobile_no DELETE
   static const gApiLuvPayPostDeleteAccount = '/ords/$luvApi/user/del';
+  //Cancel Auto Extend   parameter: reservation_id
+  static const gApiLuvPayPutCancelAutoExtend =
+      '/ords/$luvApi/ps/stopAutoExtend';
 }

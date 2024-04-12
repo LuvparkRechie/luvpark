@@ -61,7 +61,7 @@ class _PaMessageState extends State<PaMessage> {
         Navigator.pop(context);
       },
       canPop: true,
-      appBarheaderText: "Message",
+      appBarheaderText: "Messages",
       child: Padding(
         padding: const EdgeInsets.only(top: 10.0),
         child: isLoading

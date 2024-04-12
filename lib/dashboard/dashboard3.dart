@@ -872,8 +872,11 @@ class _Dashboard3State extends State<Dashboard3> {
                     animatedIcon: AnimatedIcons.menu_close,
                     children: [
                       SpeedDialChild(
-                        child:
-                            Icon(Icons.gps_fixed, color: AppColor.primaryColor),
+                        child: Image.asset(
+                          "assets/images/current_location.png",
+                          width: 24,
+                          height: 24,
+                        ),
                         label: 'Current Location',
                         onTap: () {
                           if (isClicked) return;

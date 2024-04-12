@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
 import 'package:luvpark/classess/api_keys.dart';
@@ -161,75 +160,74 @@ class _SettingsPageState extends State<SettingsPage> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               GestureDetector(
-                                onTap: () {
-                                  showModalConfirmation(
-                                    context,
-                                    "Confirmation",
-                                    "Are you sure you want to logout?",
-                                    "Cancel",
-                                    () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    () async {
-                                      Navigator.pop(context);
-                                      CustomModal(context: context).loader();
-                                      SharedPreferences pref =
-                                          await SharedPreferences.getInstance();
-                                      int? alarmId = pref.getInt("alarm_id");
+                                  onTap: () {
+                                    showModalConfirmation(
+                                      context,
+                                      "Confirmation",
+                                      "Are you sure you want to logout?",
+                                      "Cancel",
+                                      () {
+                                        Navigator.of(context).pop();
+                                      },
+                                      () async {
+                                        Navigator.pop(context);
+                                        CustomModal(context: context).loader();
+                                        SharedPreferences pref =
+                                            await SharedPreferences
+                                                .getInstance();
+                                        int? alarmId = pref.getInt("alarm_id");
 
-                                      // final service =
-                                      //     FlutterBackgroundService();
+                                        // final service =
+                                        //     FlutterBackgroundService();
 
-                                      await NotificationDatabase.instance
-                                          .readAllNotifications()
-                                          .then((notifData) async {
-                                        if (notifData.isNotEmpty) {
-                                          for (var nData in notifData) {
-                                            NotificationController
-                                                .cancelNotificationsById(
-                                                    nData["reserved_id"]);
+                                        await NotificationDatabase.instance
+                                            .readAllNotifications()
+                                            .then((notifData) async {
+                                          if (notifData.isNotEmpty) {
+                                            for (var nData in notifData) {
+                                              NotificationController
+                                                  .cancelNotificationsById(
+                                                      nData["reserved_id"]);
+                                            }
+                                            // NotificationDatabase.instance
+                                            //     .deleteAll();
+                                            // PaMessageDatabase.instance
+                                            //     .deleteAll();
+                                            // ShareLocationDatabase.instance
+                                            //     .deleteAll();
+                                            // pref.remove('myId');
+                                            // pref.clear();
                                           }
-                                          // NotificationDatabase.instance
-                                          //     .deleteAll();
-                                          // PaMessageDatabase.instance
-                                          //     .deleteAll();
-                                          // ShareLocationDatabase.instance
-                                          //     .deleteAll();
-                                          // pref.remove('myId');
-                                          // pref.clear();
-                                        }
-                                        var logData =
-                                            pref.getString('loginData');
-                                        var mappedLogData = [
-                                          jsonDecode(logData!)
-                                        ];
-                                        mappedLogData[0]["is_active"] = "N";
-                                        pref.setString("loginData",
-                                            jsonEncode(mappedLogData[0]!));
-                                        AwesomeNotifications().cancel(0);
-                                        AwesomeNotifications().dismiss(0);
+                                          var logData =
+                                              pref.getString('loginData');
+                                          var mappedLogData = [
+                                            jsonDecode(logData!)
+                                          ];
+                                          mappedLogData[0]["is_active"] = "N";
+                                          pref.setString("loginData",
+                                              jsonEncode(mappedLogData[0]!));
+                                          AwesomeNotifications().cancel(0);
+                                          AwesomeNotifications().dismiss(0);
 
-                                        ForegroundNotifTask
-                                            .stopForegroundTask();
-                                        // AndroidBackgroundProcess
-                                        //     .isRunBackground(false);
-                                        // AndroidBackgroundProcess
-                                        //     .initilizeBackgroundService();
+                                          ForegroundNotifTask
+                                              .stopForegroundTask();
+                                          // AndroidBackgroundProcess
+                                          //     .isRunBackground(false);
+                                          // AndroidBackgroundProcess
+                                          //     .backgroundExecution(alarmId!);
 
-                                        BiometricLogin().clearPassword();
-                                        Timer(const Duration(seconds: 1), () {
-                                          Navigator.of(context).pop(context);
-                                          Variables.pageTrans(
-                                              const LoginScreen(index: 1));
+                                          BiometricLogin().clearPassword();
+                                          Timer(const Duration(seconds: 1), () {
+                                            Navigator.of(context).pop(context);
+                                            Variables.pageTrans(
+                                                const LoginScreen(index: 1));
+                                          });
                                         });
-                                      });
-                                    },
-                                  );
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: Transform.rotate(
-                                    angle: 3.12, // 90 degrees in radians
+                                      },
+                                    );
+                                  },
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
                                     child: Image.asset(
                                       "assets/images/Logout.png", // Provide the path to your image asset
                                       width:
@@ -239,9 +237,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       color: Colors
                                           .red, // Optionally, you can set a color for the image
                                     ),
-                                  ),
-                                ),
-                              ),
+                                  )),
                             ],
                           ),
                         ],
@@ -433,22 +429,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                   Divider(color: Colors.grey),
                                   listColumn(
-                                      Image.asset(
-                                        'assets/images/password.png',
-                                        color: AppColor.primaryColor,
-                                        width: 1000,
-                                        height: 1000,
-                                      ),
+                                      Image.asset('assets/images/password.png'),
                                       "Change Password", () {
                                     Variables.pageTrans(
                                         const ChangePasswordScreen());
                                   }),
                                   listColumn(
                                       Image.asset(
-                                        'assets/images/myvehicles.png',
-                                        height: 26,
-                                        width: 26,
-                                      ),
+                                          'assets/images/myvehicles.png'),
                                       "My Vehicles", () {
                                     Variables.pageTrans(const MyVehicles());
                                   }),
@@ -480,7 +468,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   Divider(color: Colors.grey),
                                   listColumn(
                                       Image.asset(
-                                          'assets/images/active-sharing.png'),
+                                          'assets/images/share-location.png'),
                                       "Active sharing", () async {
                                     CustomModal(context: context).loader();
                                     String id = await Variables.getUserId();

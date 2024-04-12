@@ -15,8 +15,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/class/get_user_bal.dart';
+import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
+import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
@@ -46,6 +48,7 @@ class ReserveReceipt extends StatefulWidget {
       refno;
   final bool isReserved;
   final String? dtOut, dateIn;
+  final String isAutoExtend;
   final String address;
   final double lat, long;
   final bool canReserved;
@@ -74,6 +77,7 @@ class ReserveReceipt extends StatefulWidget {
     required this.paramsCalc,
     required this.tab,
     required this.address,
+    required this.isAutoExtend,
     this.isShowRate = false,
     this.reservationId = 0,
     this.ticketId = 0,
@@ -437,7 +441,9 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                       }
                     });
                   }),
-            if (widget.isReserved && int.parse(widget.tab.toString()) == 1)
+            if (widget.isReserved &&
+                int.parse(widget.tab.toString()) == 1 &&
+                widget.isAutoExtend == "N")
               CustomButton(
                 label: "Extend Parking",
                 onTap: () async {
@@ -487,6 +493,74 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                     } else {
                       showAlertDialog(context, "Attention",
                           "You don't have enough balance to proceed", () {
+                        Navigator.of(context).pop();
+                      });
+                    }
+                  });
+                },
+              ),
+            if (widget.isReserved &&
+                int.parse(widget.tab.toString()) == 1 &&
+                widget.isAutoExtend == "Y")
+              // ElevatedButton.icon(
+              //     onPressed: () {},
+              //     style: ElevatedButton.styleFrom(
+              //         backgroundColor: Colors.white,
+              //         shape: const StadiumBorder(
+              //           side: BorderSide(width: 1, color: Colors.blue),
+              //         )),
+              //     icon: Icon(Icons.cancel, color: AppColor.primaryColor),
+              //     label: CustomDisplayText(
+              //       label: 'Cancel auto extend'.toUpperCase(),
+              //       fontSize: 12,
+              //       color: AppColor.primaryColor,
+              //       fontWeight: FontWeight.bold,
+              //       maxLines: 2,
+              //       alignment: TextAlign.center,
+              //     )),
+              CustomButton(
+                label: "Cancel Auto Extend",
+                onTap: () async {
+                  FocusManager.instance.primaryFocus!.unfocus();
+                  print("widget.reservationId ${widget.reservationId}");
+
+                  // ignore: use_build_context_synchronously
+                  CustomModal(context: context).loader();
+                  // ignore: use_build_context_synchronously
+                  HttpRequest(
+                          api: ApiKeys.gApiLuvPayPutCancelAutoExtend,
+                          parameters: {"reservation_id": widget.reservationId})
+                      .put()
+                      .then((objData) {
+                    print("objData gApiLuvPayPutCancelAutoExtend $objData");
+                    if (objData == "No Internet") {
+                      Navigator.pop(context);
+                      showAlertDialog(context, "Error",
+                          "Please check your internet connection and try again.",
+                          () {
+                        Navigator.pop(context);
+                      });
+                      return;
+                    }
+                    if (objData == null) {
+                      Navigator.pop(context);
+                      showAlertDialog(context, "Error",
+                          "Error while connecting to server, Please try again.",
+                          () {
+                        Navigator.of(context).pop();
+                      });
+                    }
+                    if (objData["success"] == "Y") {
+                      Navigator.pop(context);
+                      showAlertDialog(context, "Success",
+                          "Auto extend successfully cancelled.", () async {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).pop();
+                      });
+                    } else {
+                      Navigator.pop(context);
+
+                      showAlertDialog(context, "LuvPark", objData["msg"], () {
                         Navigator.of(context).pop();
                       });
                     }

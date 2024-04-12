@@ -1,135 +1,156 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:ui';
 
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:device_info_plus/device_info_plus.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AndroidBackgroundProcess {
-  // ignore: avoid_init_to_null
-  static StreamSubscription<int>? timerSubscription;
-  static int counter = 0;
-  static Future<void> isRunBackground(bool isRunBP) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setBool("is_running", isRunBP);
-  }
+@pragma('vm:entry-point')
+Future<bool> onIosBackground(ServiceInstance service) async {
+  WidgetsFlutterBinding.ensureInitialized();
+  DartPluginRegistrant.ensureInitialized();
+  NotificationController.startListeningNotificationEvents();
 
-  // @pragma('vm:entry-point')
-  // static initilizeBackgroundService() async {
-  //   int counter = 0;
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   var akongId = prefs.getString('myId');
-  //   bool? isRunBP = prefs.getBool("is_running");
+  SharedPreferences preferences = await SharedPreferences.getInstance();
+  await preferences.reload();
+  final log = preferences.getStringList('log') ?? <String>[];
+  log.add(DateTime.now().toIso8601String());
+  await preferences.setStringList('log', log);
 
-  //   timerBp = Timer.periodic(Duration(seconds: 5), (timer) async {
-  //     counter++;
-
-  //     print("sulod sa ti ");
-  //     // if (akongId != null) {
-  //     //   await getParkingTrans(counter);
-  //     //   await getSharingData(akongId, counter);
-  //     //   await updateShareLocation(akongId);
-  //     //   await getMessNotif();
-  //     // }
-  //   });
-  //   if (isRunBP!) {
-  //     print("timerBp active ${timerBp!.isActive}");
-  //   } else {
-  //     timerBp!.cancel();
-  //     print("else isRunBP ${timerBp!}");
-  //     return;
-  //   }
-  // }
-
-  static backgroundExecution() {
-    const int helloAlarmID = 0;
-    print("sulod sa take me to background");
-    AndroidAlarmManager.cancel(0);
-    AndroidAlarmManager.periodic(
-      const Duration(seconds: 1),
-      helloAlarmID,
-      initilizeBackgroundService,
-      startAt: DateTime.now(),
-      exact: true,
-      wakeup: true,
-    );
-  }
-
-  @pragma('vm:entry-point')
-  static void initilizeBackgroundService() async {
-    Stream<int> timerStream = Stream.periodic(Duration(seconds: 3), (x) => x);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var akongId = prefs.getString('myId');
-
-    if (timerSubscription != null) {
-      timerSubscription!.cancel();
-      timerSubscription = null;
-      AndroidAlarmManager.cancel(0);
-
-      backgroundExecution();
-      print("is active Stopped");
-      return;
-    }
-    if (akongId != null) {
-      timerSubscription = timerStream.listen((event) async {
-        await getParkingTrans(counter);
-        await getSharingData(akongId, counter);
-        await updateLocation();
-        //   await getParkingQueue();
-        await getMessNotif();
-      });
-    }
-  }
+  return true;
 }
 
-// class AndroidBackgroundProcess {
-//   static late Timer? timerBp; // Declare timerBp as a static variable
-//   static Future<void> isRunBackground(isRunBP) async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     prefs.setBool("is_running", isRunBP);
-//   }
+@pragma('vm:entry-point')
+void onStart(ServiceInstance service) async {
+  DartPluginRegistrant.ensureInitialized();
+  int counter = 0;
+  service.on('stopService').listen((event) {
+    service.stopSelf();
+  });
 
-//   // @pragma('vm:entry-point')
-//   static void initilizeBackgroundService() async {
-//     int counter = 0;
+  // bring to foreground
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
+    /// you can see this log in logcat
+    print('FLUTTER BACKGROUND SERVICE: ${DateTime.now()}');
+    FlutterBackgroundService().invoke("setAsBackground");
+    await getParkingTrans(counter);
+    await getSharingData(counter);
+    await updateLocation();
+    //   await getParkingQueue();
+    await getMessNotif();
+    // NotificationController.createNewNotification(
+    //     0, 0, "title", "body", "payload");
+    print(' afdsafadfasdf fasdfas');
+    // test using external plugin
+    final deviceInfo = DeviceInfoPlugin();
+    String? device;
+    if (Platform.isAndroid) {
+      final androidInfo = await deviceInfo.androidInfo;
+      device = androidInfo.model;
+    }
 
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     var akongId = prefs.getString('myId');
-//     bool? isRunBP = prefs.getBool("is_running");
+    if (Platform.isIOS) {
+      final iosInfo = await deviceInfo.iosInfo;
+      device = iosInfo.model;
+    }
 
-//     if (isRunBP!) {
-//       timerBp = Timer.periodic(Duration(seconds: 5), (timer) async {
-//         counter++;
+    service.invoke(
+      'update',
+      {
+        "current_date": DateTime.now().toIso8601String(),
+        "device": device,
+      },
+    );
+  });
+}
 
-//         print("if timerBp $timerBp");
-//         if (akongId != null) {
-//           await getParkingTrans(counter);
-//           await getSharingData(akongId, counter);
-//           await updateShareLocation(akongId);
-//           //   await getParkingQueue();
-//           await getMessNotif();
-//         }
-//       });
-//       timerBp!.tick;
-//     } else {
-//       print("else timerBp $timerBp");
-//       //   print("is active timer ${timerBp!.isActive}");
-//       print("else isRunBP $isRunBP");
-//     }
-//   }
+class AndroidBackgroundProcess {
+  // // ignore: avoid_init_to_null
+  // static StreamSubscription<int>? timerSubscription;
+  // static int counter = 0;
 
-//   static Future<void> backgroundExecution() async {
-//     await AndroidAlarmManager.initialize();
-//     const int helloAlarmID = 0;
-//     print("sulod sa take me to background");
-//     await AndroidAlarmManager.periodic(
-//       const Duration(seconds: 5),
-//       helloAlarmID,
-//       initilizeBackgroundService,
-//       startAt: DateTime.now(),
-//     );
-//   }
+  // static Future<void> isRunBackground(bool isRunBP) async {
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   prefs.setBool("is_running", isRunBP);
+  // }
 
-//   static Future<void> cancelBackgroundExec() async {
-//     AndroidAlarmManager.cancel(0);
-//   }
-// }
+  // static backgroundExecution(int alarmId) async {
+  //   ServiceInstance? service;
+  //   final services = FlutterBackgroundService();
+  //   if (await services.isRunning()) {
+  //     service!.on('stopService').listen((event) {
+  //       service.stopSelf();
+  //     });
+  //   }
+
+  //   if (timerSubscription != null) {
+  //     AndroidBackgroundProcess.timerSubscription!.cancel();
+  //   }
+  //   print('sulod sa background execution');
+  //   FlutterBackgroundService().invoke("setAsBackground");
+  //   AndroidAlarmManager.cancel(alarmId);
+  //   AndroidAlarmManager.periodic(
+  //     const Duration(seconds: 1),
+  //     alarmId,
+  //     initilizeBackgroundService,
+  //     startAt: DateTime.now(),
+  //     exact: true,
+  //     wakeup: true,
+  //   );
+  // }
+
+  static void initilizeBackgroundService() async {
+    final service = FlutterBackgroundService();
+    print('sulod sa initializebackgroundservice');
+    await service.configure(
+      androidConfiguration: AndroidConfiguration(
+        // this will be executed when app is in foreground or background in separated isolate
+        onStart: onStart,
+
+        // auto start service
+        autoStart: true,
+        isForegroundMode: false,
+        autoStartOnBoot: true,
+        notificationChannelId: 'alerts',
+        // initialNotificationTitle: 'AWESOME SERVICE',
+        // initialNotificationContent: 'Initializing',
+        // foregroundServiceNotificationId: 888,
+      ),
+      iosConfiguration: IosConfiguration(
+        // auto start service
+        autoStart: true,
+
+        // this will be executed when app is in foreground in separated isolate
+        onForeground: onStart,
+
+        // you have to enable background fetch capability on xcode project
+        onBackground: onIosBackground,
+      ),
+    );
+    // Stream<int> timerStream = Stream.periodic(Duration(seconds: 3), (x) => x);
+    // SharedPreferences prefs = await SharedPreferences.getInstance();
+    // var akongId = prefs.getString('myId');
+    // print("initilizeBackgroundService $akongId >> $timerSubscription");
+    // if (timerSubscription != null) {
+    //   timerSubscription!.cancel();
+    //   timerSubscription = null;
+    //   timerStream.skip(1);
+
+    //   print("is active Stopped");
+    //   return;
+    // }
+
+    // if (akongId != null) {
+    //   timerSubscription = timerStream.listen((event) async {
+    //     await getParkingTrans(counter);
+    //     await getSharingData(counter);
+    //     await updateLocation();
+    //     //   await getParkingQueue();
+    //     await getMessNotif();
+    //   });
+    // }
+  }
+}

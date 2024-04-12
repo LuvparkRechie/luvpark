@@ -58,7 +58,8 @@ void main() async {
     //IOS Background fetch
   }
   ForegroundNotifTask.initForegroundTask();
-  // await initializeService();
+  //AndroidBackgroundProcess.backgroundExecution(0);
+  AndroidBackgroundProcess.initilizeBackgroundService();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
@@ -70,6 +71,9 @@ void main() async {
     );
   });
 }
+
+// to ensure this is executed
+// run app from xcode, then from xcode menu, select Simulate Background Fetch
 
 // navigation_provider.dart
 class NavigationProvider with ChangeNotifier {
@@ -193,14 +197,6 @@ class _SplashScreenState extends State<SplashScreen> {
     NotificationController.startListeningNotificationEvents();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onBoarding();
-      AndroidBackgroundProcess.isRunBackground(true);
-      AndroidBackgroundProcess.backgroundExecution();
-      // ForegroundNotifTask.initForegroundTask();
-      // You can get the previous ReceivePort without restarting the service.
-      // if (await FlutterForegroundTask.isRunningService) {
-      //   final newReceivePort = FlutterForegroundTask.receivePort;
-      //   ForegroundNotifTask.registerReceivePort(newReceivePort);
-      // }
     });
   }
 
