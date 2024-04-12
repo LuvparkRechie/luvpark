@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
-import 'package:luvpark/background_process/android_background.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
@@ -176,6 +175,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       CustomModal(context: context).loader();
                                       SharedPreferences pref =
                                           await SharedPreferences.getInstance();
+                                      int? alarmId = pref.getInt("alarm_id");
 
                                       // final service =
                                       //     FlutterBackgroundService();
@@ -211,10 +211,10 @@ class _SettingsPageState extends State<SettingsPage> {
 
                                         ForegroundNotifTask
                                             .stopForegroundTask();
-                                        AndroidBackgroundProcess
-                                            .isRunBackground(false);
-                                        AndroidBackgroundProcess
-                                            .initilizeBackgroundService();
+                                        // AndroidBackgroundProcess
+                                        //     .isRunBackground(false);
+                                        // AndroidBackgroundProcess
+                                        //     .backgroundExecution(alarmId!);
 
                                         BiometricLogin().clearPassword();
                                         Timer(const Duration(seconds: 1), () {
