@@ -888,8 +888,11 @@ class _Dashboard3State extends State<Dashboard3> {
                         },
                       ),
                       SpeedDialChild(
-                        child: Icon(Icons.list_alt_outlined,
-                            color: AppColor.primaryColor),
+                        child: Image.asset(
+                          "assets/images/parking_areas.png",
+                          width: 24,
+                          height: 24,
+                        ),
                         label: "Parking Areas",
                         onTap: () {
                           Variables.pageTrans(
@@ -910,8 +913,11 @@ class _Dashboard3State extends State<Dashboard3> {
                       ),
                       SpeedDialChild(
                         label: 'Share Location',
-                        child: Icon(Icons.navigation_outlined,
-                            color: AppColor.primaryColor),
+                        child: Image.asset(
+                          "assets/images/share-location.png",
+                          width: 24,
+                          height: 24,
+                        ),
                         onTap: () async {
                           Variables.customBottomSheet(
                               context,

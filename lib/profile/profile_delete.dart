@@ -89,8 +89,8 @@ class _ProfileDeleteState extends State<ProfileDelete> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => WebviewPage(
-                          urlDirect: "https://luvpark.ph/deleteaccount/",
-                          label: "Delete Account ",
+                          urlDirect: "https://luvpark.ph/account-deletion/",
+                          label: "Account Deletion ",
                           isBuyToken: false,
                         ),
                       ),

@@ -214,7 +214,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         // AndroidBackgroundProcess
                                         //     .isRunBackground(false);
                                         // AndroidBackgroundProcess
-                                        //     .backgroundExecution(alarmId!);
+                                        //     .initilizeBackgroundService();
 
                                         BiometricLogin().clearPassword();
                                         Timer(const Duration(seconds: 1), () {
@@ -230,8 +230,15 @@ class _SettingsPageState extends State<SettingsPage> {
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: Transform.rotate(
                                     angle: 3.12, // 90 degrees in radians
-                                    child:
-                                        Icon(Iconsax.logout, color: Colors.red),
+                                    child: Image.asset(
+                                      "assets/images/Logout.png", // Provide the path to your image asset
+                                      width:
+                                          24, // Set width according to your requirements
+                                      height:
+                                          24, // Set height according to your requirements
+                                      color: Colors
+                                          .red, // Optionally, you can set a color for the image
+                                    ),
                                   ),
                                 ),
                               ),
@@ -426,14 +433,22 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
                                   Divider(color: Colors.grey),
                                   listColumn(
-                                      Image.asset('assets/images/password.png'),
+                                      Image.asset(
+                                        'assets/images/password.png',
+                                        color: AppColor.primaryColor,
+                                        width: 1000,
+                                        height: 1000,
+                                      ),
                                       "Change Password", () {
                                     Variables.pageTrans(
                                         const ChangePasswordScreen());
                                   }),
                                   listColumn(
                                       Image.asset(
-                                          'assets/images/transport.png'),
+                                        'assets/images/myvehicles.png',
+                                        height: 26,
+                                        width: 26,
+                                      ),
                                       "My Vehicles", () {
                                     Variables.pageTrans(const MyVehicles());
                                   }),
@@ -465,7 +480,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   Divider(color: Colors.grey),
                                   listColumn(
                                       Image.asset(
-                                          'assets/images/share-location.png'),
+                                          'assets/images/active-sharing.png'),
                                       "Active sharing", () async {
                                     CustomModal(context: context).loader();
                                     String id = await Variables.getUserId();
@@ -528,7 +543,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     });
                                   }),
                                   listColumn(
-                                      Image.asset('assets/images/chat.png'),
+                                      Image.asset('assets/images/Messages.png'),
                                       "Messages", () async {
                                     Variables.pageTrans(const PaMessage());
                                   }),
@@ -568,12 +583,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
 
                                   listColumn(
-                                      Image.asset('assets/images/faq.png'),
+                                      Image.asset('assets/images/FAQs.png'),
                                       "FAQ", () async {
                                     Variables.pageTrans(const FaqsLuvPark());
                                   }),
                                   listColumn(
-                                      Image.asset('assets/images/contract.png'),
+                                      Image.asset(
+                                          'assets/images/terms-of-use.png'),
                                       "Terms of use", () async {
                                     Variables.pageTrans(const WebviewPage(
                                       urlDirect:
@@ -584,7 +600,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   }),
                                   listColumn(
                                       Image.asset(
-                                          'assets/images/compliant.png'),
+                                          'assets/images/privacy-policy.png'),
                                       "Privacy Policy", () async {
                                     Variables.pageTrans(const WebviewPage(
                                       urlDirect:
@@ -594,7 +610,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     ));
                                   }),
                                   listColumn(
-                                      Image.asset('assets/images/about.png'),
+                                      Image.asset(
+                                          'assets/images/about-luvpark.png'),
                                       "About luvpark", () {
                                     Variables.pageTrans(const AboutLuvPark());
                                   }),

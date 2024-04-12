@@ -784,7 +784,7 @@ class _MyWalletState extends State<MyWallet>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        actionButton("load", "Load", () {
+                        actionButton("load_wallet", "Load", () {
                           if (jsonDecode(akongP!)['first_name'].toString() ==
                               'null') {
                             showAlertDialog(context, "Attention",
@@ -821,7 +821,7 @@ class _MyWalletState extends State<MyWallet>
                         Container(
                           width: 10,
                         ),
-                        actionButton("qr_pay", "QR Pay", () {
+                        actionButton("QR-CODE", "QR Pay", () {
                           Variables.pageTrans(const QRType(
                             index: 0,
                           ));
@@ -829,7 +829,7 @@ class _MyWalletState extends State<MyWallet>
                         Container(
                           width: 10,
                         ),
-                        actionButton("qr_pay", "Receive", () {
+                        actionButton("Receive", "Receive", () {
                           Variables.pageTrans(const QRType(
                             index: 1,
                           ));
