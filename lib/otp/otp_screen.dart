@@ -268,7 +268,6 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                       AndroidSmsAutofillMethod.smsUserConsentApi,
                   listenForMultipleSmsOnAndroid: true,
                   defaultPinTheme: defaultPinTheme,
-
                   hapticFeedbackType: HapticFeedbackType.lightImpact,
                   onCompleted: (pin) {
                     if (pin.length == 6) {

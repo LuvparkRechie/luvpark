@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
@@ -27,7 +27,9 @@ import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/pa_message/pa_message.dart';
 import 'package:luvpark/profile/profile_details.dart';
 import 'package:luvpark/settings/more_security_screen.dart';
+import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
+import 'package:luvpark/sqlite/share_location_table.dart';
 import 'package:luvpark/vehicle_registration/my_vehicles.dart';
 import 'package:luvpark/webview/webview.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -170,33 +172,30 @@ class _SettingsPageState extends State<SettingsPage> {
                                         Navigator.of(context).pop();
                                       },
                                       () async {
-                                        Navigator.pop(context);
-                                        CustomModal(context: context).loader();
                                         SharedPreferences pref =
                                             await SharedPreferences
                                                 .getInstance();
-                                        int? alarmId = pref.getInt("alarm_id");
-
-                                        // final service =
-                                        //     FlutterBackgroundService();
+                                        final service =
+                                            FlutterBackgroundService();
+                                        Navigator.pop(context);
+                                        CustomModal(context: context).loader();
 
                                         await NotificationDatabase.instance
                                             .readAllNotifications()
                                             .then((notifData) async {
+                                          print("notifData $notifData");
                                           if (notifData.isNotEmpty) {
                                             for (var nData in notifData) {
                                               NotificationController
                                                   .cancelNotificationsById(
                                                       nData["reserved_id"]);
                                             }
-                                            // NotificationDatabase.instance
-                                            //     .deleteAll();
-                                            // PaMessageDatabase.instance
-                                            //     .deleteAll();
-                                            // ShareLocationDatabase.instance
-                                            //     .deleteAll();
-                                            // pref.remove('myId');
-                                            // pref.clear();
+                                          }
+
+                                          if (mounted) {
+                                            setState(() {
+                                              service.invoke("stopService");
+                                            });
                                           }
                                           var logData =
                                               pref.getString('loginData');
@@ -206,16 +205,17 @@ class _SettingsPageState extends State<SettingsPage> {
                                           mappedLogData[0]["is_active"] = "N";
                                           pref.setString("loginData",
                                               jsonEncode(mappedLogData[0]!));
-                                          AwesomeNotifications().cancel(0);
-                                          AwesomeNotifications().dismiss(0);
-
+                                          pref.remove('myId');
+                                          NotificationDatabase.instance
+                                              .deleteAll();
+                                          PaMessageDatabase.instance
+                                              .deleteAll();
+                                          ShareLocationDatabase.instance
+                                              .deleteAll();
+                                          NotificationController
+                                              .cancelNotifications();
                                           ForegroundNotifTask
                                               .stopForegroundTask();
-                                          // AndroidBackgroundProcess
-                                          //     .isRunBackground(false);
-                                          // AndroidBackgroundProcess
-                                          //     .backgroundExecution(alarmId!);
-
                                           BiometricLogin().clearPassword();
                                           Timer(const Duration(seconds: 1), () {
                                             Navigator.of(context).pop(context);

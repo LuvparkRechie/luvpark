@@ -22,7 +22,7 @@ class Functions {
     var myData = prefs.getString(
       'userData',
     );
-    print("myData $myData");
+
     String subApi =
         "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
@@ -188,7 +188,7 @@ class Functions {
                       "success": true,
                       "can_checkIn": estimatedMinute <= distanceCanChkIn,
                       "message":
-                          "Early check in is not allowed if you are more than ${returnData["items"][0]["user_chk_in_within"].toString()} minutes away from the selected parking area.",
+                          "Early check-in is not allowed if you are more than ${returnData["items"][0]["user_chk_in_within"].toString()} minutes away from the selected parking area.",
                     });
                   } else {
                     cb({"success": false});
@@ -214,7 +214,7 @@ class Functions {
                       "success": true,
                       "can_checkIn": estimatedDistance <= distanceCanChkIn,
                       "message":
-                          "Early check in is not allowed if you are more than ${returnData["items"][0]["user_chk_in_within"].toString()} meters away from the selected parking area.",
+                          "Early check-in is not allowed if you are more than ${returnData["items"][0]["user_chk_in_within"].toString()} meters away from the selected parking area.",
                     });
                   } else {
                     cb({"success": false});
@@ -244,11 +244,10 @@ class Functions {
   static Future<void> getVerifyAccount(context, mobileNo, Function cb) async {
     CustomModal(context: context).loader();
     var params = "${ApiKeys.gApiSubFolderVerifyNumber}?mobile_no=$mobileNo";
-    print("get verify cccout $params");
+
     HttpRequest(
       api: params,
     ).get().then((returnData) async {
-      print("returnData $returnData");
       if (returnData == "No Internet") {
         Navigator.pop(context);
         cb(false);
@@ -308,7 +307,6 @@ class Functions {
   //Invite Friend
 
   static Future<void> inviteFriend(context, friendId, isPendingInvite) async {
-    print("friendId $friendId");
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? geoShareId = prefs.getString('geo_share_id');
@@ -319,14 +317,12 @@ class Functions {
         "to_user_id": friendId,
         'geo_share_id': geoShareId,
       };
-      print("inviteFriend $parameters");
+
       HttpRequest(
               api: ApiKeys.gApiLuvParkPostAddUserMapSharing,
               parameters: parameters)
           .post()
           .then((returnPost) async {
-        print("inviteFriend $returnPost");
-
         if (returnPost == "No Internet") {
           Navigator.pop(context);
           showAlertDialog(context, "Error",
@@ -368,7 +364,7 @@ class Functions {
       String? geoConId = prefs.getString("geo_connect_id");
 
       var endParam = {"geo_connect_id": geoConId};
-      print("endParam $endParam");
+
       HttpRequest(api: ApiKeys.gApiLuvParkPutEndSharing, parameters: endParam)
           .put()
           .then((returnData) async {

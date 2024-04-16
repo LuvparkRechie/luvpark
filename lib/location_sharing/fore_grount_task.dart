@@ -156,11 +156,8 @@ class ForegroundNotifTask {
     closeReceivePort();
     _receivePort = newReceivePort;
     _receivePort?.listen((data) async {
-      print("_receivePort data $data");
-      print("_receivePort _context $_context");
       if (data is int) {
       } else if (data is String) {
-        print("data newReceivePort $data");
         if (data == 'onNotificationPressed') {
           Navigator.of(_context!).pushNamed('/sharing_location');
         }
@@ -221,7 +218,6 @@ class MyTaskHandler extends TaskHandler {
   // Called when the notification button on the Android platform is pressed.
   @override
   void onNotificationButtonPressed(String id) {
-    print("onNotificationButtonPressed id $id");
     if (id == "viewSharing") {
       _sendPort?.send('viewSharing');
     }
@@ -236,7 +232,6 @@ class MyTaskHandler extends TaskHandler {
   // this function to be called.
   @override
   void onNotificationPressed() {
-    print("go click ang body sa notif");
     FlutterForegroundTask.launchApp("/sharing_location");
     _sendPort?.send('onNotificationPressed');
   }

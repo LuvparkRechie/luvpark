@@ -181,9 +181,8 @@ class _Dashboard3State extends State<Dashboard3> {
       DashboardComponent.getPositionLatLong().then((position) {
         String subApi =
             "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
-        print("dashboard get subApi $subApi");
+
         HttpRequest(api: subApi).get().then((returnBalance) async {
-          print("dashboard get userBalance $returnBalance");
           if (mounted) {
             setState(() {
               isClicked = false;
@@ -460,7 +459,6 @@ class _Dashboard3State extends State<Dashboard3> {
             double.parse(startLocation!.longitude.toString()),
             ddRadius.toString())
         .then((suggestions) {
-      print("suggestions $suggestions");
       setState(() {
         this.suggestions = suggestions;
         searchData = suggestions.length;
@@ -1572,7 +1570,6 @@ class _Dashboard3State extends State<Dashboard3> {
 
                         CustomModal(context: context).loader();
                         Functions.getUserBalance((dataBalance) async {
-                          print("dataBalance $dataBalance");
                           if (dataBalance != "null" ||
                               dataBalance != "No Internet") {
                             Functions.computeDistanceResorChckIN(
@@ -1583,7 +1580,7 @@ class _Dashboard3State extends State<Dashboard3> {
                               if (success["success"]) {
                                 var dataItemParam = [];
                                 dataItemParam.add(data);
-                                print("uss ${success["can_checkIn"]}");
+
                                 setState(() {
                                   isBooked = false;
                                   isLoadingPage = false;

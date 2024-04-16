@@ -708,7 +708,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                   showModalConfirmation(
                                                       context,
                                                       "Enable Auto Extend",
-                                                      "Your parking duration will be automatically extended using your available balance if it is enabled.\n\nWould you like to proceed?",
+                                                      "Your parking duration will be automatically extended using your available balance if it is enabled.\n\Would you like to enable it?",
                                                       "Cancel", () {
                                                     Navigator.of(context).pop();
                                                     setState(() {

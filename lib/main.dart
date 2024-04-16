@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -52,11 +51,7 @@ void main() async {
   //Request permission for background task battery optimization
   ForegroundNotifTask.requestPermissionForAndroid();
   await Geolocator.requestPermission();
-  if (Platform.isAndroid) {
-    await AndroidAlarmManager.initialize();
-  } else {
-    //IOS Background fetch
-  }
+
   ForegroundNotifTask.initForegroundTask();
   //AndroidBackgroundProcess.backgroundExecution(0);
   AndroidBackgroundProcess.initilizeBackgroundService();
@@ -75,7 +70,7 @@ void main() async {
 // to ensure this is executed
 // run app from xcode, then from xcode menu, select Simulate Background Fetch
 
-// navigation_provider.dart
+// navigation_provider.dart`
 class NavigationProvider with ChangeNotifier {
   final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 }

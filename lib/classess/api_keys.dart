@@ -140,7 +140,9 @@ class ApiKeys {
   //LUVPARK REGISTRATION vehicle
   static const gApiLuvParkPostGetVehicleReg = '/ords/$luvApi/mfav/vehicles';
   //LUVPARK Get Brand vehicle
-  static const gApiLuvParkPostGetVehicleBrand = '/ords/$luvApi/ps/vb';
+  //static const gApiLuvParkPostGetVehicleBrand = '/ords/$luvApi/ps/vb';
+  static const gApiLuvParkPostGetVehicleBrand =
+      '/ords/$parkSpaceApi/base/vehiclebrands';
   //Track location to reserve
   static const gApiLuvParkGetResLoc = '/ords/$parkSpaceApi/park/chkpsr';
   //Change Pass

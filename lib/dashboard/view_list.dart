@@ -44,7 +44,7 @@ class _ViewListState extends State<ViewList> {
   @override
   Widget build(BuildContext context) {
     return CustomParent1Widget(
-      appBarheaderText: "Parking Nearby",
+      appBarheaderText: "Parking Areas",
       canPop: true,
       hasPadding: false,
       appBarIconClick: () {

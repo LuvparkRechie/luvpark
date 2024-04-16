@@ -5,8 +5,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/http_request.dart';
+import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -59,6 +61,7 @@ class _PaMessageState extends State<PaMessage> {
     return CustomParent1Widget(
       appBarIconClick: () {
         Navigator.pop(context);
+        Variables.pageTrans(MainLandingScreen());
       },
       canPop: true,
       appBarheaderText: "Messages",

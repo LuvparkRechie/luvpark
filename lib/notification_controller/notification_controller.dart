@@ -452,7 +452,6 @@ class NotificationController {
 Future<void> updateLocation() async {
   bool isRunning = await FlutterForegroundTask.isRunningService;
 
-  print("isRunning foreground task $isRunning");
   if (isRunning) {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var geoConId = prefs.getString('geo_connect_id');
@@ -464,7 +463,6 @@ Future<void> updateLocation() async {
         "latitude": position.latitude,
         "longitude": position.longitude
       };
-      print("jsonParam $jsonParam");
 
       HttpRequest(
               api: ApiKeys.gApiLuvParkPutUpdateUsersLoc, parameters: jsonParam)
@@ -541,11 +539,13 @@ Future<void> getSharingData(ctr) async {
 Future<void> getParkingTrans(int ctr) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var akongId = prefs.getString('myId');
+
   if (akongId == null) return;
   HttpRequest(
     api:
         "${ApiKeys.gApiSubFolderGetReservations}?user_id=${akongId.toString()}",
   ).get().then((notificationData) async {
+    //print("notificationData $notificationData");
     if (notificationData == "No Internet") {
       return;
     }
@@ -657,7 +657,6 @@ Future<void> getParkingQueue() async {
 Future<void> getMessNotif() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var akongId = prefs.getString('myId');
-  print("message notif $akongId");
   if (akongId == null) return;
   HttpRequest(
     api: "${ApiKeys.gApiLuvParkMessageNotif}?user_id=$akongId",

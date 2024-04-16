@@ -401,7 +401,7 @@ class _ReserveReceiptState extends State<ReserveReceipt>
             ),
             if (widget.isReserved && int.parse(widget.tab.toString()) == 0)
               CustomButton(
-                  label: "Check In",
+                  label: "Check-in",
                   onTap: () async {
                     CustomModal(context: context).loader();
                     Functions.getUserBalance((data) async {

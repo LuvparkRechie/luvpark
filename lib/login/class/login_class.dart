@@ -1,7 +1,8 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_background_service/flutter_background_service.dart';
+import 'package:luvpark/background_process/android_background.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
@@ -16,6 +17,7 @@ import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
 
 class LoginComponent {
   void loginFunc(pass, mobile, context, Function cb) async {
@@ -88,11 +90,11 @@ class LoginComponent {
                 return;
               } else {
                 if (objData["items"][0]["msg"] == 'Y') {
+                  final service = FlutterBackgroundService();
                   prefs.remove('loginData');
                   prefs.remove('userData');
                   prefs.remove('geo_connect_id');
                   var items = objData["items"][0];
-
                   Variables.timerSec = int.parse(items["timeout"].toString());
                   var logData = prefs.getString(
                     'loginData',
@@ -100,8 +102,11 @@ class LoginComponent {
                   var myId = prefs.getString(
                     'myId',
                   );
-
                   prefs.setBool('isLoggedIn', true);
+
+                  service.invoke("stopService");
+                  tz.initializeTimeZones();
+
                   if (logData == null) {
                     Map<String, dynamic> parameters = {
                       "mobile_no": mobile,
@@ -134,8 +139,7 @@ class LoginComponent {
                       PaMessageDatabase.instance.deleteAll();
                       ShareLocationDatabase.instance.deleteAll();
                       pref.remove('myId');
-                      //pref.clear();
-                      //  await notificationsPlugin.cancelAll();
+                      pref.clear();
                       var mPinParams = {
                         "user_id": items['user_id'].toString(),
                         "is_on": "N"
@@ -155,20 +159,11 @@ class LoginComponent {
                       'myProfilePic', jsonEncode(items["image_base64"]));
 
                   cb([true, "Success"]);
-
-                  // ignore: use_build_context_synchronously
-                  // Navigator.of(context).pop();
-                  // ignore: use_build_context_synchronously
-                  print("inataya");
-                  int? alarmId = prefs.getInt("alarm_id");
-                  print("alarmId ${alarmId == null}");
-                  if (Platform.isAndroid) {
-                    prefs.setInt("alarm_id", alarmId == null ? 0 : alarmId + 1);
-                    // AndroidBackgroundProcess.isRunBackground(true);
-                    // AndroidBackgroundProcess.backgroundExecution(alarmId! + 1);
-                  } else {
-                    //IOS Background fetch
+                  if (await service.isRunning()) {
+                    service.invoke("stopService");
                   }
+                  service.startService();
+                  AndroidBackgroundProcess.initilizeBackgroundService();
 
                   Variables.pageTrans(const MainLandingScreen());
                 } else {

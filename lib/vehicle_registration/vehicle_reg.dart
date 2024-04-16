@@ -162,10 +162,12 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
 
   void getVehicleBrand(vehicleId) {
     CustomModal(context: context).loader();
+    print("vehicleId $vehicleId");
     String apiParam =
         "${ApiKeys.gApiLuvParkPostGetVehicleBrand}?vehicle_type_id=$vehicleId";
-
+    print("apiParam $apiParam");
     HttpRequest(api: apiParam).get().then((returnBrandData) async {
+      print("returnBrandData $returnBrandData");
       if (returnBrandData == "No Internet") {
         setState(() {
           isLoadingBrand = false;

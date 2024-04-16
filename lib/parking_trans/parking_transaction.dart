@@ -108,7 +108,6 @@ class _ParkingActivityState extends State<ParkingActivity>
                 "${ApiKeys.gApiSubFolderGetReservations}?user_id=${jsonDecode(akongP!)['user_id'].toString()}")
         .get()
         .then((returnData) async {
-      print("returnData $returnData");
       if (mounted) {
         setState(() {
           isAllowToSync = true;
