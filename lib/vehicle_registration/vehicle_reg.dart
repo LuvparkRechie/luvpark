@@ -15,6 +15,8 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
 import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
+import 'package:luvpark/sqlite/vehicle_brands_model.dart';
+import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 enum AppState {
@@ -51,6 +53,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
   bool isLoading = true;
   bool isReadOnly = false;
   bool isLoadingBrand = false;
+  bool hasInternet = true;
   final ImagePicker _picker = ImagePicker();
   String? orImageBase64;
   String? crImageBase64;
@@ -101,6 +104,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
         .then((returnData) async {
       if (returnData == "No Internet") {
         setState(() {
+          hasInternet = false;
           isLoading = false;
         });
         Navigator.of(context).pop();
@@ -117,6 +121,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
         Navigator.of(context).pop();
         setState(() {
           isLoading = false;
+          hasInternet = true;
         });
         showAlertDialog(context, "Error",
             "Error while connecting to server, Please try again.", () {
@@ -137,16 +142,17 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
         }
         setState(() {
           isLoading = false;
+          hasInternet = true;
         });
 
         Navigator.of(context).pop();
-        if (widget.plateNo.isNotEmpty) {
-          getVehicleBrand(vehicleTypeValue);
-        }
+        // if (widget.plateNo.isNotEmpty) {
+        getVehicleBrand();
+        //}
       } else {
         Navigator.of(context).pop();
         setState(() {
-          isLoading = false;
+          isLoading = true;
         });
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
@@ -160,18 +166,16 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
     });
   }
 
-  void getVehicleBrand(vehicleId) {
+  void getVehicleBrand() {
     CustomModal(context: context).loader();
-    print("vehicleId $vehicleId");
-    String apiParam =
-        "${ApiKeys.gApiLuvParkPostGetVehicleBrand}?vehicle_type_id=$vehicleId";
-    print("apiParam $apiParam");
+
+    String apiParam = "${ApiKeys.gApiLuvParkGetVehicleBrand}";
     HttpRequest(api: apiParam).get().then((returnBrandData) async {
-      print("returnBrandData $returnBrandData");
       if (returnBrandData == "No Internet") {
         setState(() {
           isLoadingBrand = false;
           vehicleBrandData = [];
+          hasInternet = false;
         });
         Navigator.of(context).pop();
         showAlertDialog(context, "Error",
@@ -184,6 +188,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
         Navigator.of(context).pop();
         setState(() {
           isLoadingBrand = false;
+          hasInternet = true;
           vehicleBrandData = [];
         });
         showAlertDialog(context, "Error",
@@ -193,14 +198,22 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
       }
 
       if (returnBrandData["items"].length > 0) {
-        for (var items in returnBrandData["items"]) {
-          vehicleBrandData.add({
-            "vehicle_brand_id": items["vehicle_brand_id"],
-            "vehicle_brand_name": items["vehicle_brand_name"]
-          });
+        VehicleBrandsTable.instance.deleteAll();
+        for (var dataRow in returnBrandData["items"]) {
+          var vbData = {
+            VHBrandsDataFields.vhTypeId:
+                int.parse(dataRow["vehicle_type_id"].toString()),
+            VHBrandsDataFields.vhBrandId:
+                int.parse(dataRow["vehicle_brand_id"].toString()),
+            VHBrandsDataFields.vhBrandName:
+                dataRow["vehicle_brand_name"].toString(),
+          };
+          await VehicleBrandsTable.instance.insertUpdate(vbData);
         }
+
         setState(() {
           isLoadingBrand = false;
+          hasInternet = true;
         });
 
         Navigator.of(context).pop();
@@ -209,12 +222,30 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
         setState(() {
           isLoadingBrand = false;
           vehicleBrandData = [];
+          hasInternet = true;
         });
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
           Navigator.of(context).pop();
         });
         return;
+      }
+    });
+  }
+
+  void getFilteredBrand(vtId) async {
+    print("maeMaevtId $vtId");
+    await VehicleBrandsTable.instance.readAllVHBrands().then((maeMae) {
+      print("maeMae $maeMae");
+
+      if (maeMae.isNotEmpty) {
+        vehicleBrandData = maeMae.where((e) {
+          print("eeee ${e["vehicle_type_id"].toString()}");
+          return int.parse(e["vehicle_type_id"].toString()) ==
+              int.parse(vtId.toString());
+        }).toList();
+
+        setState(() {});
       }
     });
   }
@@ -358,7 +389,9 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                           int.parse(vehicleTypeValue.toString());
                     }).toList()[0];
                     _updateMaskFormatter(dataList["format"]);
-                    getVehicleBrand(vehicleTypeValue);
+                    //  getVehicleBrand(vehicleTypeValue);
+                    print("vehicleTypeValue $vehicleTypeValue");
+                    getFilteredBrand(vehicleTypeValue);
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -562,6 +595,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                         "vor_image_base64": orImageBase64,
                         "vcr_image_base64": crImageBase64,
                       };
+                      print("parameter $parameter");
 
                       HttpRequest(
                               api: ApiKeys.gApiLuvParkPostGetVehicleReg,

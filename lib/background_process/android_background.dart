@@ -49,7 +49,7 @@ void onStart(ServiceInstance service) async {
   // bring to foreground
   Timer.periodic(const Duration(seconds: 5), (timer) async {
     var akongId = prefs.getString('myId');
-    print("akongId $akongId");
+
     // FlutterBackgroundService().invoke("setAsBackground");
     if (akongId == null) return;
     await getParkingTrans(counter);

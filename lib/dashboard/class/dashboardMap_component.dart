@@ -243,12 +243,11 @@ class DashboardComponent {
     });
   }
 
-  static void getAvailableVehicle(context, userId, Function cb) {
+  static void getAvailableVehicle(context, userId, Function cb) async {
     String api = "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId";
     CustomModal(context: context).loader();
-    print("api $api");
+
     HttpRequest(api: api).get().then((myVehicles) async {
-      print("myVehicles $myVehicles");
       if (myVehicles == "No Internet") {
         Navigator.of(context).pop();
         showAlertDialog(context, "Error",

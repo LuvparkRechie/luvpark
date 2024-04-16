@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_listtile.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -46,7 +47,8 @@ class _VehicleListModalState extends State<VehicleListModal> {
     );
 
     DashboardComponent.getAvailableVehicle(
-        myContext, jsonDecode(akongP!)['user_id'].toString(), (cbVehicle) {
+        myContext, jsonDecode(akongP!)['user_id'].toString(),
+        (cbVehicle) async {
       if (cbVehicle == "No Internet") {
         setState(() {
           hasInternet = false;
@@ -60,19 +62,37 @@ class _VehicleListModalState extends State<VehicleListModal> {
         });
         Navigator.of(context).pop();
       } else {
+        myVehicles = [];
+        List subData = [];
+
         setState(() {
           if (int.parse(widget.vehicleTypeId.toString()) == 0) {
-            myVehicles = List<Map<String, dynamic>>.from(cbVehicle);
+            subData = List<Map<String, dynamic>>.from(cbVehicle);
           } else {
-            myVehicles = List<Map<String, dynamic>>.from(cbVehicle)
+            subData = List<Map<String, dynamic>>.from(cbVehicle)
                 .where((element) =>
                     element["vehicle_type_id"] ==
                     int.parse(widget.vehicleTypeId.toString()))
                 .toList();
           }
-          hasInternet = true;
-          isLoadingPage = false;
         });
+        for (var row in subData) {
+          String brandName = await Functions.getBrandName(
+              row["vehicle_type_id"], row["vehicle_brand_id"]);
+
+          myVehicles.add({
+            "vehicle_type_id": row["vehicle_type_id"],
+            "vehicle_brand_id": row["vehicle_brand_id"],
+            "vehicle_brand_name": brandName,
+            "vehicle_plate_no": row["vehicle_plate_no"],
+          });
+        }
+        if (mounted) {
+          setState(() {
+            hasInternet = true;
+            isLoadingPage = false;
+          });
+        }
       }
     });
   }

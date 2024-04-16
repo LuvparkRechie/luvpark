@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -25,7 +26,7 @@ class MyVehicles extends StatefulWidget {
 
 class _MyVehiclesState extends State<MyVehicles> {
   BuildContext? myContext;
-  List<Map<String, dynamic>> myVehicles = [];
+  List myVehicles = [];
   bool isLoadingPage = true;
   bool hasInternet = true;
   bool isClicked = false;
@@ -43,15 +44,27 @@ class _MyVehiclesState extends State<MyVehicles> {
     );
 
     DashboardComponent.getAvailableVehicle(
-        myContext, jsonDecode(akongP!)['user_id'].toString(), (cbVehicle) {
+        myContext, jsonDecode(akongP!)['user_id'].toString(),
+        (cbVehicle) async {
       if (cbVehicle == "No Internet") {
         setState(() {
           hasInternet = false;
           isLoadingPage = false;
         });
       } else {
+        myVehicles = [];
+        for (var row in cbVehicle) {
+          String brandName = await Functions.getBrandName(
+              row["vehicle_type_id"], row["vehicle_brand_id"]);
+
+          myVehicles.add({
+            "vehicle_type_id": row["vehicle_type_id"],
+            "vehicle_brand_id": row["vehicle_brand_id"],
+            "vehicle_brand_name": brandName,
+            "vehicle_plate_no": row["vehicle_plate_no"],
+          });
+        }
         setState(() {
-          myVehicles = List<Map<String, dynamic>>.from(cbVehicle);
           isLoadingPage = false;
           hasInternet = true;
         });
@@ -83,7 +96,10 @@ class _MyVehiclesState extends State<MyVehicles> {
           height: 50,
           child: FloatingActionButton(
             backgroundColor: AppColor.primaryColor,
-            onPressed: () {
+            onPressed: () async {
+              // VehicleBrandsTable.instance.readAllVHBrands().then((value) {
+              //   print("animala ${value.length}");
+              // });
               Variables.pageTrans(
                 VehicleRegDialog(
                   userId: jsonDecode(akongP!)['user_id'].toString(),

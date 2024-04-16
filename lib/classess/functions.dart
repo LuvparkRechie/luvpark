@@ -8,6 +8,7 @@ import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
+import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 BuildContext? ctxt;
@@ -418,5 +419,63 @@ class Functions {
         }
       });
     });
+  }
+
+  static Future<void> getVehicleBrands(context) async {
+    List vbData = [];
+
+    HttpRequest(
+      api: ApiKeys.gApiLuvParkGetVehicleBrand,
+    ).get().then((returnPost) async {
+      print("vehicle brand $returnPost");
+      if (returnPost == "No Internet") {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          Navigator.pop(context);
+        });
+        return;
+      }
+      if (returnPost == null) {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+      } else {
+        Navigator.pop(context);
+        if (returnPost["items"].isNotEmpty) {
+          vbData = returnPost["items"];
+          await saveDataToPreferences(vbData);
+        } else {
+          Navigator.of(context).pop();
+          showAlertDialog(context, "Error", returnPost["msg"], () {
+            Navigator.of(context).pop();
+          });
+        }
+      }
+    });
+  }
+
+  static Future<void> saveDataToPreferences(data) async {
+    print("insert json data1  $data");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String jsonData = jsonEncode(data);
+    print("insert json data $jsonData");
+    await prefs.setString('vehicle_brands', jsonData);
+  }
+
+  static Future<void> getPrefData(Function cb) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var data = prefs.getString("vehicle_brands");
+    String jsonData = jsonDecode(data!);
+    cb(jsonData);
+  }
+
+  static Future<String> getBrandName(int vtId, int vbId) async {
+    final String? brandName =
+        await VehicleBrandsTable.instance.readVehicleBrandsByVbId(vtId, vbId);
+
+    return brandName!;
   }
 }
