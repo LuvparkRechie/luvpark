@@ -71,13 +71,27 @@ showModalConfirmation(BuildContext context, String title, String msg,
     },
   );
   Widget continueButton = TextButton(
-    child: CustomDisplayText(
-      label: "Yes",
-      color: AppColor.primaryColor,
-      fontSize: 16,
-      fontWeight: FontWeight.bold,
-      height: 0,
-      letterSpacing: -0.28,
+    child: Container(
+      decoration: BoxDecoration(
+        color: AppColor.primaryColor,
+        borderRadius: BorderRadius.all(
+          Radius.circular(
+            10,
+          ),
+        ),
+      ),
+      height: 35,
+      width: 100,
+      child: Center(
+        child: CustomDisplayText(
+          label: "Yes",
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          height: 0,
+          letterSpacing: -0.28,
+        ),
+      ),
     ),
     onPressed: () {
       pressOk();
@@ -114,26 +128,35 @@ showModalConfirmation(BuildContext context, String title, String msg,
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomDisplayText(
-                              label: title,
-                              fontWeight: FontWeight.w600,
-                              color: const Color(0xFF353536),
-                              fontSize: 18,
-                              height: 0,
-                              letterSpacing: -0.36,
+                            Center(
+                              child: CustomDisplayText(
+                                label: title.toUpperCase(),
+                                fontWeight: FontWeight.w900,
+                                color: const Color(0xFF353536),
+                                fontSize: 17,
+                                height: 0,
+                                letterSpacing: -0.36,
+                              ),
+                            ),
+                            Divider(
+                              color: Colors.grey,
                             ),
                             Container(
-                              height: 7,
+                              height: 10,
                             ),
                             CustomDisplayText(
                               label: msg,
-                              fontSize: 14,
+                              fontSize: 13,
+                              alignment: TextAlign.center,
                               fontWeight: FontWeight.w500,
                               height: 0,
                               letterSpacing: -0.28,
                             ),
                             Container(
-                              height: 21,
+                              height: 10,
+                            ),
+                            Divider(
+                              color: Colors.grey,
                             ),
                             Row(
                               children: [

@@ -113,26 +113,29 @@ class _BookingNoticeState extends State<BookingNotice> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
+                                Container(
+                                  width: 10,
+                                ),
                                 Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Image(
-                                      height: 50,
-                                      width: 50,
-                                      image: AssetImage(
-                                          "assets/images/information_icon.png"),
-                                    ),
+                                    // const Image(
+                                    //   height: 40,
+                                    //   width: 40,
+                                    //   image: AssetImage(
+                                    //       "assets/images/information_icon.png"),
+                                    // ),
                                     Container(
                                       width: 10,
                                     ),
-                                    Expanded(
-                                      child: CustomDisplayText(
-                                        label: noticeData[0]["msg_title"]
-                                            .toString(),
-                                        color: AppColor.textMainColor,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                        maxLines: 1,
-                                      ),
+                                    CustomDisplayText(
+                                      label: noticeData[0]["msg_title"]
+                                          .toString()
+                                          .toUpperCase(),
+                                      color: AppColor.textMainColor,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w900,
+                                      maxLines: 1,
                                     ),
                                   ],
                                 ),
@@ -140,38 +143,52 @@ class _BookingNoticeState extends State<BookingNotice> {
                                 CustomDisplayText(
                                   label: noticeData[0]["msg"],
                                   fontWeight: FontWeight.w500,
-                                  color: Colors.black,
-                                  fontSize: 14,
+                                  color: const Color.fromRGBO(0, 0, 0, 1),
+                                  fontSize: 12,
+                                  alignment: TextAlign.center,
                                 ),
                                 Container(
-                                  height: 40,
+                                  height: 10,
                                 ),
+                                Divider(),
                                 Row(
                                   children: [
                                     Expanded(
                                       child: InkWell(
-                                          onTap: () {
-                                            FocusScope.of(context)
-                                                .requestFocus(FocusNode());
+                                        onTap: () {
+                                          FocusScope.of(context)
+                                              .requestFocus(FocusNode());
+                                          Navigator.pop(context);
+                                          if (Navigator.canPop(context)) {
                                             Navigator.pop(context);
-                                            if (Navigator.canPop(context)) {
-                                              Navigator.pop(context);
-                                            }
-                                          },
-                                          child: Center(
-                                            child: CustomDisplayText(
+                                          }
+                                        },
+                                        child: Center(
+                                          // child: CustomDisplayText(
+                                          //   label: "Cancel",
+                                          //   fontWeight: FontWeight.w600,
+                                          //   color: Colors.black,
+                                          //   fontSize: 14,
+                                          // ),
+                                          child: CustomButton(
+                                              btnHeight: 10,
                                               label: "Cancel",
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.primaryColor,
-                                              fontSize: 14,
-                                            ),
-                                          )),
+                                              textColor: Colors.black,
+                                              color: Colors.transparent,
+                                              onTap: () async {
+                                                FocusScope.of(context)
+                                                    .requestFocus(FocusNode());
+                                                Navigator.pop(context);
+                                              }),
+                                        ),
+                                      ),
                                     ),
                                     Container(
                                       width: 10,
                                     ),
                                     Expanded(
                                       child: CustomButton(
+                                          btnHeight: 10,
                                           label: "Proceed",
                                           onTap: () async {
                                             FocusScope.of(context)
@@ -181,9 +198,9 @@ class _BookingNoticeState extends State<BookingNotice> {
                                     ),
                                   ],
                                 ),
-                                Container(
-                                  height: 10,
-                                ),
+                                // Container(
+                                //   height: 10,
+                                // ),
                               ],
                             ),
                           ),
