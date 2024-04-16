@@ -10,7 +10,9 @@ import 'package:geolocator/geolocator.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:luvpark/background_process/android_background.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
+import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
@@ -26,6 +28,8 @@ import 'package:luvpark/pa_message/pa_message.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
+import 'package:luvpark/sqlite/vehicle_brands_model.dart';
+import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 // ignore: depend_on_referenced_packages
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -192,6 +196,7 @@ class _SplashScreenState extends State<SplashScreen> {
     NotificationController.startListeningNotificationEvents();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onBoarding();
+      getVehicleBrand();
     });
   }
 
@@ -199,6 +204,34 @@ class _SplashScreenState extends State<SplashScreen> {
   void dispose() {
     // Cancel the stream subscription when the widget is disposed
     super.dispose();
+  }
+
+  void getVehicleBrand() {
+    String apiParam = "${ApiKeys.gApiLuvParkGetVehicleBrand}";
+    HttpRequest(api: apiParam).get().then((returnBrandData) async {
+      print("getVehicleBrand  $returnBrandData");
+      if (returnBrandData == "No Internet") {
+        return;
+      }
+      if (returnBrandData == null) {}
+
+      if (returnBrandData["items"].length > 0) {
+        VehicleBrandsTable.instance.deleteAll();
+        for (var dataRow in returnBrandData["items"]) {
+          var vbData = {
+            VHBrandsDataFields.vhTypeId:
+                int.parse(dataRow["vehicle_type_id"].toString()),
+            VHBrandsDataFields.vhBrandId:
+                int.parse(dataRow["vehicle_brand_id"].toString()),
+            VHBrandsDataFields.vhBrandName:
+                dataRow["vehicle_brand_name"].toString(),
+          };
+          await VehicleBrandsTable.instance.insertUpdate(vbData);
+        }
+      } else {
+        return;
+      }
+    });
   }
 
   void onBoarding() async {

@@ -15,7 +15,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
 import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
-import 'package:luvpark/sqlite/vehicle_brands_model.dart';
 import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
@@ -147,7 +146,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
 
         Navigator.of(context).pop();
         // if (widget.plateNo.isNotEmpty) {
-        getVehicleBrand();
+        //  getVehicleBrand();
         //}
       } else {
         Navigator.of(context).pop();
@@ -166,72 +165,72 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
     });
   }
 
-  void getVehicleBrand() {
-    CustomModal(context: context).loader();
+  // void getVehicleBrand() {
+  //   CustomModal(context: context).loader();
 
-    String apiParam = "${ApiKeys.gApiLuvParkGetVehicleBrand}";
-    HttpRequest(api: apiParam).get().then((returnBrandData) async {
-      if (returnBrandData == "No Internet") {
-        setState(() {
-          isLoadingBrand = false;
-          vehicleBrandData = [];
-          hasInternet = false;
-        });
-        Navigator.of(context).pop();
-        showAlertDialog(context, "Error",
-            "Please check your internet connection and try again.", () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-      if (returnBrandData == null) {
-        Navigator.of(context).pop();
-        setState(() {
-          isLoadingBrand = false;
-          hasInternet = true;
-          vehicleBrandData = [];
-        });
-        showAlertDialog(context, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Navigator.of(context).pop();
-        });
-      }
+  //   String apiParam = "${ApiKeys.gApiLuvParkGetVehicleBrand}";
+  //   HttpRequest(api: apiParam).get().then((returnBrandData) async {
+  //     if (returnBrandData == "No Internet") {
+  //       setState(() {
+  //         isLoadingBrand = false;
+  //         vehicleBrandData = [];
+  //         hasInternet = false;
+  //       });
+  //       Navigator.of(context).pop();
+  //       showAlertDialog(context, "Error",
+  //           "Please check your internet connection and try again.", () {
+  //         Navigator.of(context).pop();
+  //       });
+  //       return;
+  //     }
+  //     if (returnBrandData == null) {
+  //       Navigator.of(context).pop();
+  //       setState(() {
+  //         isLoadingBrand = false;
+  //         hasInternet = true;
+  //         vehicleBrandData = [];
+  //       });
+  //       showAlertDialog(context, "Error",
+  //           "Error while connecting to server, Please try again.", () {
+  //         Navigator.of(context).pop();
+  //       });
+  //     }
 
-      if (returnBrandData["items"].length > 0) {
-        VehicleBrandsTable.instance.deleteAll();
-        for (var dataRow in returnBrandData["items"]) {
-          var vbData = {
-            VHBrandsDataFields.vhTypeId:
-                int.parse(dataRow["vehicle_type_id"].toString()),
-            VHBrandsDataFields.vhBrandId:
-                int.parse(dataRow["vehicle_brand_id"].toString()),
-            VHBrandsDataFields.vhBrandName:
-                dataRow["vehicle_brand_name"].toString(),
-          };
-          await VehicleBrandsTable.instance.insertUpdate(vbData);
-        }
+  //     if (returnBrandData["items"].length > 0) {
+  //       VehicleBrandsTable.instance.deleteAll();
+  //       for (var dataRow in returnBrandData["items"]) {
+  //         var vbData = {
+  //           VHBrandsDataFields.vhTypeId:
+  //               int.parse(dataRow["vehicle_type_id"].toString()),
+  //           VHBrandsDataFields.vhBrandId:
+  //               int.parse(dataRow["vehicle_brand_id"].toString()),
+  //           VHBrandsDataFields.vhBrandName:
+  //               dataRow["vehicle_brand_name"].toString(),
+  //         };
+  //         await VehicleBrandsTable.instance.insertUpdate(vbData);
+  //       }
 
-        setState(() {
-          isLoadingBrand = false;
-          hasInternet = true;
-        });
+  //       setState(() {
+  //         isLoadingBrand = false;
+  //         hasInternet = true;
+  //       });
 
-        Navigator.of(context).pop();
-      } else {
-        Navigator.of(context).pop();
-        setState(() {
-          isLoadingBrand = false;
-          vehicleBrandData = [];
-          hasInternet = true;
-        });
-        showAlertDialog(context, "Error",
-            "Please check your internet connection and try again.", () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-    });
-  }
+  //       Navigator.of(context).pop();
+  //     } else {
+  //       Navigator.of(context).pop();
+  //       setState(() {
+  //         isLoadingBrand = false;
+  //         vehicleBrandData = [];
+  //         hasInternet = true;
+  //       });
+  //       showAlertDialog(context, "Error",
+  //           "Please check your internet connection and try again.", () {
+  //         Navigator.of(context).pop();
+  //       });
+  //       return;
+  //     }
+  //   });
+  // }
 
   void getFilteredBrand(vtId) async {
     print("maeMaevtId $vtId");
