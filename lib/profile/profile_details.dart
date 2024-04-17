@@ -1299,6 +1299,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        info("Referral Code", "09x21eR"),
                         info("Gender", gender),
                         info("Civil Status", civilStatus),
                         info("Birthday", bday),
@@ -1335,13 +1336,39 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              LabelText(text: label),
-              CustomDisplayText(
-                label: value,
-                fontSize: 14,
-                fontWeight: FontWeight.w500,
-                color: Colors.black54,
-                maxLines: 1,
+              Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      LabelText(text: label),
+                      Row(
+                        children: [
+                          CustomDisplayText(
+                            label: value,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black54,
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                  if (label == "Referral Code")
+                    Positioned(
+                      right: 0,
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: IconButton(
+                          icon: Icon(Icons.content_copy),
+                          onPressed: () {},
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ],
           ),

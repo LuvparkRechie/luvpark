@@ -46,6 +46,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
   var dataPI = [];
   List secSubData = [];
   //page1param
+  TextEditingController referralcode = TextEditingController();
   TextEditingController mobile = TextEditingController();
   TextEditingController password = TextEditingController();
   TextEditingController email = TextEditingController();
@@ -228,7 +229,12 @@ class _RegistrationPageState extends State<RegistrationPage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30.0),
+                const SizedBox(height: 10.0),
+                LabelText(text: "Referral Code"),
+                CustomTextField(
+                  labelText: 'Enter Referral Code',
+                  controller: referralcode,
+                ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Row(
@@ -278,11 +284,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                   text: "Agree with ",
                                   style: Platform.isAndroid
                                       ? GoogleFonts.dmSans(
-                                          color: AppColor.primaryColor,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.normal,
                                           fontSize: 14)
                                       : TextStyle(
-                                          color: AppColor.primaryColor,
+                                          color: Colors.black,
                                           fontWeight: FontWeight.normal,
                                           fontSize: 14,
                                           fontFamily: "SFProTextReg",
@@ -292,11 +298,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                       text: "Terms & Conditions",
                                       style: Platform.isAndroid
                                           ? GoogleFonts.dmSans(
-                                              color: AppColor.mainColor,
+                                              color: AppColor.primaryColor,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14)
                                           : TextStyle(
-                                              color: AppColor.mainColor,
+                                              color: AppColor.primaryColor,
                                               fontWeight: FontWeight.w600,
                                               fontSize: 14,
                                               fontFamily: "SFProTextReg",
