@@ -56,46 +56,59 @@ showAlertGetVehicleDialog(BuildContext context, String title, String msg,
 showModalConfirmation(BuildContext context, String title, String msg,
     String buttonName, Function pressCancel, Function pressOk) {
   // set up the buttons
-  Widget cancelButton = TextButton(
-    child: CustomDisplayText(
-      label: "No",
-      color: const Color(0xFF353536),
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      height: 0,
-      letterSpacing: -0.28,
-      maxLines: 1,
-    ),
-    onPressed: () {
-      pressCancel();
-    },
-  );
-  Widget continueButton = TextButton(
-    child: Container(
-      decoration: BoxDecoration(
-        color: AppColor.primaryColor,
-        borderRadius: BorderRadius.all(
-          Radius.circular(
-            10,
+  Widget cancelButton = SizedBox(
+    height: 35,
+    width: 100,
+    child: TextButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(Colors.transparent),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            side: BorderSide(color: Colors.grey.shade300),
           ),
         ),
       ),
-      height: 35,
-      width: 100,
-      child: Center(
-        child: CustomDisplayText(
-          label: "Yes",
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          height: 0,
-          letterSpacing: -0.28,
+      child: CustomDisplayText(
+        label: "No",
+        color: const Color(0xFF353536),
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        height: 0,
+        letterSpacing: -0.28,
+        maxLines: 1,
+      ),
+      onPressed: () {
+        pressCancel();
+      },
+    ),
+  );
+
+  Widget continueButton = SizedBox(
+    height: 35,
+    width: 100,
+    child: TextButton(
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(AppColor.primaryColor),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            // No border needed for primary button
+          ),
         ),
       ),
+      child: CustomDisplayText(
+        label: "Yes",
+        color: Colors.white,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        height: 0,
+        letterSpacing: -0.28,
+      ),
+      onPressed: () {
+        pressOk();
+      },
     ),
-    onPressed: () {
-      pressOk();
-    },
   );
 
   // show the dialog
@@ -144,13 +157,15 @@ showModalConfirmation(BuildContext context, String title, String msg,
                             Container(
                               height: 10,
                             ),
-                            CustomDisplayText(
-                              label: msg,
-                              fontSize: 13,
-                              alignment: TextAlign.center,
-                              fontWeight: FontWeight.w500,
-                              height: 0,
-                              letterSpacing: -0.28,
+                            Center(
+                              child: CustomDisplayText(
+                                label: msg,
+                                fontSize: 13,
+                                alignment: TextAlign.center,
+                                fontWeight: FontWeight.w500,
+                                height: 0,
+                                letterSpacing: -0.28,
+                              ),
                             ),
                             Container(
                               height: 10,
@@ -161,6 +176,9 @@ showModalConfirmation(BuildContext context, String title, String msg,
                             Row(
                               children: [
                                 Expanded(child: cancelButton),
+                                SizedBox(
+                                  width: 30,
+                                ),
                                 Expanded(child: continueButton),
                               ],
                             )

@@ -110,12 +110,15 @@ class _RateUsState extends State<RateUs> {
                     Align(
                       alignment: Alignment.center,
                       child: CustomDisplayText(
-                        label: "Rate Us",
+                        label: "How's your Experience?".toUpperCase(),
                         color: AppColor.textMainColor,
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w900,
                         maxLines: 1,
                       ),
+                    ),
+                    Divider(
+                      color: Colors.grey,
                     ),
                     Container(
                       height: 10,
@@ -127,17 +130,19 @@ class _RateUsState extends State<RateUs> {
                       color: Colors.black,
                       fontSize: 14,
                     ),
-                    const SizedBox(height: 10),
-                    CustomDisplayText(
-                      label: "Rating($myRate/5)",
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black54,
-                      fontSize: 14,
+                    const SizedBox(height: 20),
+                    Center(
+                      child: CustomDisplayText(
+                        label: "Rating ($myRate/5)",
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black54,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     Center(
                       child: RatingBar.builder(
-                        initialRating: 1,
+                        initialRating: 3,
                         itemCount: 5,
                         minRating: 1,
                         itemPadding: const EdgeInsets.only(right: 3),
@@ -155,14 +160,21 @@ class _RateUsState extends State<RateUs> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    CustomDisplayText(
-                      label: "Comments and Suggestions",
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black54,
-                      fontSize: 14,
+                    Center(
+                      child: CustomDisplayText(
+                        label: "Comments and Suggestions",
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black54,
+                        fontSize: 14,
+                      ),
                     ),
                     const SizedBox(height: 10),
                     TextFormField(
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 14,
+                        fontFamily: "SFProTextReg",
+                      ),
                       minLines: 4,
                       maxLines: null,
                       controller: commentController,
@@ -170,11 +182,16 @@ class _RateUsState extends State<RateUs> {
                       decoration: const InputDecoration(
                         alignLabelWithHint: true,
                         border: OutlineInputBorder(),
-                        hintText: 'Leave a comment...',
+                        hintText: 'Tell us more...',
+                        hintStyle: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 14,
+                          fontFamily: "SFProTextReg",
+                        ),
                       ),
                     ),
                     Container(
-                      height: 40,
+                      height: 20,
                     ),
                     Row(
                       children: [
@@ -202,7 +219,10 @@ class _RateUsState extends State<RateUs> {
                         ),
                         Expanded(
                           child: CustomButton(
-                              label: "Post", onTap: postRatingComments),
+                            label: "Post",
+                            onTap: postRatingComments,
+                            btnHeight: 10,
+                          ),
                         ),
                       ],
                     ),
