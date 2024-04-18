@@ -5,9 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/Registration/class/registration_class.dart';
-import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -230,11 +228,11 @@ class _RegistrationPageState extends State<RegistrationPage> {
                   ),
                 ),
                 const SizedBox(height: 10.0),
-                LabelText(text: "Referral Code"),
-                CustomTextField(
-                  labelText: 'Enter Referral Code',
-                  controller: referralcode,
-                ),
+                // LabelText(text: "Referral Code"),
+                // CustomTextField(
+                //   labelText: 'Enter Referral Code',
+                //   controller: referralcode,
+                // ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
                   child: Row(

@@ -1299,7 +1299,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        info("Referral Code", "09x21eR"),
+                        // info("Referral Code", "09x21eR"),
                         info("Gender", gender),
                         info("Civil Status", civilStatus),
                         info("Birthday", bday),

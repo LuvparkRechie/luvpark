@@ -209,7 +209,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void getVehicleBrand() {
     String apiParam = "${ApiKeys.gApiLuvParkGetVehicleBrand}";
     HttpRequest(api: apiParam).get().then((returnBrandData) async {
-      print("getVehicleBrand  $returnBrandData");
       if (returnBrandData == "No Internet") {
         return;
       }
