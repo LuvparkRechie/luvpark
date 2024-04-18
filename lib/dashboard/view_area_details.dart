@@ -51,6 +51,7 @@ class _ViewDetailsState extends State<ViewDetails> {
   @override
   void initState() {
     super.initState();
+    print("areaData ${widget.areaData}");
     digitPairs =
         Variables.splitNumberIntoPairs(widget.areaData[0]["end_time"], 2);
 
@@ -564,74 +565,96 @@ class _ViewDetailsState extends State<ViewDetails> {
                                 onTap: () {},
                               ),
                             )
-                          : CustomButton(
-                              label:
-                                  widget.areaData[0]["is_allow_reserve"] == "N"
-                                      ? "Queue"
-                                      : "Book",
-                              onTap: () async {
-                                if (isLoadingBtn) return;
-                                CustomModal(context: context).loader();
-                                SharedPreferences pref =
-                                    await SharedPreferences.getInstance();
+                          : widget.areaData[0]["is_allow_reserve"] == "N"
+                              ? CustomButton(
+                                  color: AppColor.primaryColor.withOpacity(.6),
+                                  textColor: Colors.white,
+                                  label: "Book",
+                                  onTap: () {
+                                    showAlertDialog(context, "LuvPark",
+                                        "This area is not available at the moment.",
+                                        () {
+                                      Navigator.of(context).pop();
+                                    });
+                                  })
+                              : CustomButton(
+                                  label: "Book",
+                                  onTap: () async {
+                                    if (isLoadingBtn) return;
+                                    CustomModal(context: context).loader();
+                                    SharedPreferences pref =
+                                        await SharedPreferences.getInstance();
 
-                                if (widget.areaData[0]["vehicle_types_list"]
-                                    .toString()
-                                    .contains("|")) {
-                                  pref.setString(
-                                      'availableVehicle',
-                                      jsonEncode(widget.areaData[0]
-                                              ["vehicle_types_list"]
-                                          .toString()
-                                          .toLowerCase()));
-                                } else {
-                                  pref.setString(
-                                      'availableVehicle',
-                                      jsonEncode(widget.areaData[0]
-                                              ["vehicle_types_list"]
-                                          .toString()
-                                          .toLowerCase()));
-                                }
-                                if (mounted) {
-                                  setState(() {
-                                    isLoadingBtn = true;
-                                  });
-                                }
-                                Functions.getUserBalance((dataBalance) async {
-                                  if (dataBalance != "null" ||
-                                      dataBalance != "No Internet") {
-                                    Functions.computeDistanceResorChckIN(
-                                        context,
-                                        LatLng(
-                                            widget.areaData[0]["pa_latitude"],
-                                            widget.areaData[0]["pa_longitude"]),
-                                        (success) {
-                                      print("success $success");
-                                      if (success["success"]) {
-                                        var dataItemParam = [];
-                                        dataItemParam.add(widget.areaData[0]);
-                                        print("uss ${success["can_checkIn"]}");
-                                        setState(() {
-                                          isLoadingBtn = false;
+                                    if (widget.areaData[0]["vehicle_types_list"]
+                                        .toString()
+                                        .contains("|")) {
+                                      pref.setString(
+                                          'availableVehicle',
+                                          jsonEncode(widget.areaData[0]
+                                                  ["vehicle_types_list"]
+                                              .toString()
+                                              .toLowerCase()));
+                                    } else {
+                                      pref.setString(
+                                          'availableVehicle',
+                                          jsonEncode(widget.areaData[0]
+                                                  ["vehicle_types_list"]
+                                              .toString()
+                                              .toLowerCase()));
+                                    }
+                                    if (mounted) {
+                                      setState(() {
+                                        isLoadingBtn = true;
+                                      });
+                                    }
+                                    Functions.getUserBalance(
+                                        (dataBalance) async {
+                                      if (dataBalance != "null" ||
+                                          dataBalance != "No Internet") {
+                                        Functions.computeDistanceResorChckIN(
+                                            context,
+                                            LatLng(
+                                                widget.areaData[0]
+                                                    ["pa_latitude"],
+                                                widget.areaData[0]
+                                                    ["pa_longitude"]),
+                                            (success) {
+                                          print("success $success");
+                                          if (success["success"]) {
+                                            var dataItemParam = [];
+                                            dataItemParam
+                                                .add(widget.areaData[0]);
+                                            print(
+                                                "uss ${success["can_checkIn"]}");
+                                            setState(() {
+                                              isLoadingBtn = false;
+                                            });
+
+                                            Navigator.pop(context);
+                                            Variables.pageTrans(ReserveForm2(
+                                              queueChkIn: [
+                                                {
+                                                  "is_chkIn":
+                                                      success["can_checkIn"],
+                                                  "is_queue": widget.areaData[0]
+                                                          [
+                                                          "is_allow_reserve"] ==
+                                                      "N"
+                                                }
+                                              ],
+                                              areaData: dataItemParam,
+                                              isCheckIn: success["can_checkIn"],
+                                              pId: widget.areaData[0]
+                                                  ["park_area_id"],
+                                              userBal: dataBalance.toString(),
+                                            ));
+                                          } else {
+                                            setState(() {
+                                              isLoadingBtn = false;
+                                            });
+                                            Navigator.pop(context);
+                                          }
                                         });
-
-                                        Navigator.pop(context);
-                                        Variables.pageTrans(ReserveForm2(
-                                          queueChkIn: [
-                                            {
-                                              "is_chkIn":
-                                                  success["can_checkIn"],
-                                              "is_queue": widget.areaData[0]
-                                                      ["is_allow_reserve"] ==
-                                                  "N"
-                                            }
-                                          ],
-                                          areaData: dataItemParam,
-                                          isCheckIn: success["can_checkIn"],
-                                          pId: widget.areaData[0]
-                                              ["park_area_id"],
-                                          userBal: dataBalance.toString(),
-                                        ));
                                       } else {
                                         setState(() {
                                           isLoadingBtn = false;
@@ -639,15 +662,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                         Navigator.pop(context);
                                       }
                                     });
-                                  } else {
-                                    setState(() {
-                                      isLoadingBtn = false;
-                                    });
-                                    Navigator.pop(context);
-                                  }
-                                });
-                              },
-                            ),
+                                  },
+                                ),
                     ),
                   ],
                 ),
