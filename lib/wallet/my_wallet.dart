@@ -784,7 +784,7 @@ class _MyWalletState extends State<MyWallet>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        actionButton("load", "Load", () {
+                        actionButton("load_wallet", "Load", () {
                           if (jsonDecode(akongP!)['first_name'].toString() ==
                               'null') {
                             showAlertDialog(context, "Attention",

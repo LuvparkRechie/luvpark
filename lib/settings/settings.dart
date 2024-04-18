@@ -229,13 +229,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 8.0),
                                     child: Image.asset(
-                                      "assets/images/Logout.png", // Provide the path to your image asset
-                                      width:
-                                          24, // Set width according to your requirements
-                                      height:
-                                          24, // Set height according to your requirements
-                                      color: Colors
-                                          .red, // Optionally, you can set a color for the image
+                                      "assets/images/logout.png",
+                                      width: 24,
+                                      height: 24,
+                                      color: Colors.red,
                                     ),
                                   )),
                             ],
@@ -571,7 +568,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   ),
 
                                   listColumn(
-                                      Image.asset('assets/images/FAQs.png'),
+                                      Image.asset('assets/images/faqs123.png'),
                                       "FAQ", () async {
                                     Variables.pageTrans(const FaqsLuvPark());
                                   }),

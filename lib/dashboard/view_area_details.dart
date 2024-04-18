@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,7 @@ import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewDetails extends StatefulWidget {
   final List areaData;
@@ -258,7 +260,46 @@ class _ViewDetailsState extends State<ViewDetails> {
                       ),
                     ),
                   ),
-                ))
+                )),
+            Positioned(
+                bottom: 20,
+                right: 10,
+                child: InkWell(
+                  onTap: () async {
+                    String mapUrl = "";
+                    String dest =
+                        "${widget.areaData[0]["pa_latitude"]},${widget.areaData[0]["pa_longitude"]}";
+                    if (Platform.isIOS) {
+                      mapUrl = 'https://maps.apple.com/?daddr=$dest';
+                    } else {
+                      mapUrl =
+                          'https://www.google.com/maps/search/?api=1&query=${widget.areaData[0]["pa_latitude"]},${widget.areaData[0]["pa_longitude"]}';
+                    }
+                    if (await canLaunchUrl(Uri.parse(mapUrl))) {
+                      await launchUrl(Uri.parse(mapUrl),
+                          mode: LaunchMode.externalApplication);
+                    } else {
+                      throw 'Something went wrong while opening map. Pleaase report problem';
+                    }
+                  },
+                  child: Container(
+                    width: 30,
+                    height: 30,
+                    decoration: ShapeDecoration(
+                      color: AppColor.primaryColor,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                          12,
+                        ),
+                      ),
+                    ),
+                    child: Icon(
+                      Icons.directions,
+                      size: 20,
+                      color: AppColor.bodyColor,
+                    ),
+                  ),
+                )),
           ],
         )),
         Container(

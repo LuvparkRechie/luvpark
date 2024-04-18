@@ -1,19 +1,15 @@
-import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
-import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
-import 'package:luvpark/reserve/reserve_form2.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ViewList extends StatefulWidget {
   final List nearestData;
@@ -161,14 +157,30 @@ class _ViewListState extends State<ViewList> {
                                     ),
                                     InkWell(
                                       onTap: () async {
-                                        Variables.pageTrans(
-                                            ViewDetails(areaData: [data]));
+                                        String mapUrl = "";
+                                        String dest =
+                                            "${data["pa_latitude"]},${data["pa_longitude"]}";
+                                        if (Platform.isIOS) {
+                                          mapUrl =
+                                              'https://maps.apple.com/?daddr=$dest';
+                                        } else {
+                                          mapUrl =
+                                              'https://www.google.com/maps/search/?api=1&query=${data["pa_latitude"]},${data["pa_longitude"]}';
+                                        }
+                                        if (await canLaunchUrl(
+                                            Uri.parse(mapUrl))) {
+                                          await launchUrl(Uri.parse(mapUrl),
+                                              mode: LaunchMode
+                                                  .externalApplication);
+                                        } else {
+                                          throw 'Something went wrong while opening map. Pleaase report problem';
+                                        }
                                       },
                                       child: Container(
                                         width: 30,
                                         height: 30,
                                         decoration: ShapeDecoration(
-                                          color: const Color(0x160078FF),
+                                          color: AppColor.primaryColor,
                                           shape: RoundedRectangleBorder(
                                             borderRadius: BorderRadius.circular(
                                               12,
@@ -176,12 +188,12 @@ class _ViewListState extends State<ViewList> {
                                           ),
                                         ),
                                         child: Icon(
-                                          Icons.location_pin,
+                                          Icons.directions,
                                           size: 20,
-                                          color: AppColor.primaryColor,
+                                          color: AppColor.bodyColor,
                                         ),
                                       ),
-                                    )
+                                    ),
                                   ],
                                 ),
                                 Container(
@@ -236,79 +248,12 @@ class _ViewListState extends State<ViewList> {
                   width: 10,
                 ),
                 Expanded(
-                    child: CustomButton(
-                        label:
-                            data["is_allow_reserve"] == "N" ? "Queue" : "Book",
-                        onTap: () async {
-                          if (isLoadingBtn) return;
-
-                          SharedPreferences pref =
-                              await SharedPreferences.getInstance();
-
-                          if (data["vehicle_types_list"]
-                              .toString()
-                              .contains("|")) {
-                            pref.setString(
-                                'availableVehicle',
-                                jsonEncode(data["vehicle_types_list"]
-                                    .toString()
-                                    .toLowerCase()));
-                          } else {
-                            pref.setString(
-                                'availableVehicle',
-                                jsonEncode(data["vehicle_types_list"]
-                                    .toString()
-                                    .toLowerCase()));
-                          }
-                          if (mounted) {
-                            setState(() {
-                              isLoadingBtn = true;
-                            });
-                          }
-                          CustomModal(context: context).loader();
-                          Functions.getUserBalance((dataBalance) async {
-                            if (dataBalance != "null" ||
-                                dataBalance != "No Internet") {
-                              Functions.computeDistanceResorChckIN(
-                                  context,
-                                  LatLng(data["pa_latitude"],
-                                      data["pa_longitude"]), (success) {
-                                if (success["success"]) {
-                                  var dataItemParam = [];
-                                  dataItemParam.add(data);
-
-                                  setState(() {
-                                    isLoadingBtn = false;
-                                  });
-                                  Navigator.pop(context);
-                                  Variables.pageTrans(ReserveForm2(
-                                    areaData: dataItemParam,
-                                    queueChkIn: [
-                                      {
-                                        "is_chkIn": success["can_checkIn"],
-                                        "is_queue":
-                                            data["is_allow_reserve"] == "N"
-                                      }
-                                    ],
-                                    isCheckIn: success["can_checkIn"],
-                                    pId: data["park_area_id"],
-                                    userBal: dataBalance.toString(),
-                                  ));
-                                } else {
-                                  setState(() {
-                                    isLoadingBtn = false;
-                                  });
-                                  Navigator.pop(context);
-                                }
-                              });
-                            } else {
-                              setState(() {
-                                isLoadingBtn = false;
-                              });
-                              Navigator.pop(context);
-                            }
-                          });
-                        }))
+                  child: CustomButton(
+                      label: "View Info",
+                      onTap: () async {
+                        Variables.pageTrans(ViewDetails(areaData: [data]));
+                      }),
+                )
               ],
             ),
 
