@@ -12,13 +12,19 @@ class ApiKeys {
   //Get luv ReferenceNo
   static const gApiSubFolderGetRefNo = '/ords/$luvApi/base/refno/';
   static const gApiSubFolderPutChangeQR = '/ords/$luvApi/base/newqr/'; //put
+  //terms & conditions
   static const gApiSubFolderPolicy = '/ords/$luvApi/base/policy';
+  //Privacy policy
   static const gApiSubFolderPrivacyPolicy = '/ords/$luvApi/base/privacypolicy/';
-  static const gApiSubFolderPostReg = '/ords/$luvApi/base/reg/'; //post
 
+  // static const gApiSubFolderPostReg = '/ords/$luvApi/base/reg/'; //post
+//Change password
   static const gApiSubFolderChangePass = '/ords/$luvApi/auth/chgpwd/';
+  //reset pasword random question
   static const gApiSubFolderGetDropdownSeq = '/ords/$luvApi/auth/resetpwd/';
+  //sercurity question registration
   static const gApiSubFolderGetDD = '/ords/$luvApi/base/reg/';
+  //get account balance
   static const gApiSubFolderGetBalance = '/ords/$luvApi/acct/balance';
 //get notification
   static const gApiSubFolderGetNotification =
@@ -27,6 +33,7 @@ class ApiKeys {
 //send otp forgot pass
   static const gApiSubFolderPutForgotPass =
       '/ords/$luvApi/auth/resetpwd-reqotp/';
+//Request Otp
   static const gApiSubFolderPutOTP = '/ords/$luvApi/base/reg/'; //put
 
 //verify mobile no
@@ -46,38 +53,39 @@ class ApiKeys {
 // const gApiSubFolderGetPaymentTrans = '/ords/$luvApi/tnx/out/';
 //Ge ilisan ug ords/$luvApi/tnx/logs/
   static const gApiSubFolderGetTransactionLogs = '/ords/$luvApi/tnx/logs/';
-//Reserved api
+//Reservation history
   static const gApiSubFolderGetReservationHistory =
       '/ords/$luvApi/tnx/reslist/';
+//GEt REservation
   static const gApiSubFolderGetReservations = '/ords/$luvApi/ps/reservations';
 
 //Login API
+//Get user data
   static const gApiSubFolderLogin = '/ords/$luvApi/auth/login/';
+//wala gi gamit
   static const gApiSubFolderGetIdleTime = '/ords/$luvApi/base/userpref/';
+//Post Login
   static const gApiSubFolderPostLogin = '/ords/$luvApi/auth/login/'; //post
 
 //$parkSpaceApi api
-  static const gApiSubFolderGetCities =
-      '/ords/$parkSpaceApi/base/client_cities';
-  static const gApiSubFolderGetArea = '/ords/$parkSpaceApi/park/vacant_areas';
-  static const gApiSubFolderGetSpaces =
-      '/ords/$parkSpaceApi/park/vacant_spaces'; //display marker on map
+  //get vehicles
   static const gApiSubFolderGetVehicleType =
       '/ords/$parkSpaceApi/base/vehicletypes';
-  static const gApiSubFolderGetParkingTime = '/ords/$parkSpaceApi/park/sched/';
-  static const gApiSubFolderGetParkingTypes =
-      '/ords/$parkSpaceApi/base/parkingtypes';
 
-//get neareast space
+//get neareast space data sa mapa
   static const gApiSubFolderGetNearestSpace =
       '/ords/$parkSpaceApi/park/nearest';
+  //get parking type filter dropdown dashboard
+  static const gApiSubFolderGetParkingTypes =
+      '/ords/$parkSpaceApi/base/parkingtypes';
+//get parking type filter dropdown radius
   static const gApiSubFolderGetDDNearest =
       '/ords/$parkSpaceApi/park/dd_nearest';
 
 //get Direction view payment details
   static const gApiSubFolderGetDirection = '/ords/$parkSpaceApi/park/res/';
 
-// Get Address
+// Get Address registration
   static const gApiSubFolderGetRegion = 'ords/$luvApi/base/region/';
   static const gApiSubFolderGetProvince = 'ords/$luvApi/base/prov/';
   static const gApiSubFolderGetCity = 'ords/$luvApi/base/city/';
@@ -87,24 +95,21 @@ class ApiKeys {
   static const gApiSubFolderPutExtendPay = '/ords/$luvApi/ps/payext'; //put
   static const gApiSubFolderPutExtend = '/ords/$parkSpaceApi/park/extend'; //put
 
-//Reserve API
+//Reserve API with auto extend parameter
   static const gApiSubFolderPostReserveParking =
       '/ords/$parkSpaceApi/park/reserve'; //post
+//Reservation pay
   static const gApiSubFolderPostReservePay = '/ords/$luvApi/ps/payres'; //post
 
-//Get User Info
+//Get User Info connect with union bank
   static const gApiSubFolderGetUserInfo = '/ords/$luvApi/base/userinfo';
-
-//Payment Bills
-  static const gApiSubFolderGetBillers = '/ords/$luvApi/bs/billers';
-  static const gApiSubFolderGetBillersForm = '/ords/$luvApi/bs/templ/';
-
 //UB CONNECT API
   static const gApiSubFolderPostUbTrans = '/ords/$luvApi/topup/ub/'; //post
 
-//Check login Lock unlock
+//Check account Lock or unlock
   static const gApiSubFolderGetLoginAttemptRecord =
       '/ords/$luvApi/auth/chklogin/';
+//15 minuntes account activation
   static const gApiSubFolderPutClearLockTimer =
       'ords/$luvApi/auth/unlock/'; //put
 
@@ -113,16 +118,13 @@ class ApiKeys {
   static const gApiSubFolderGetBankParam = '/ords/$luvApi/3pa/dtl/';
   static const gApiSubFolderGetTopUp = '/ords/$luvApi/topup/TPA';
 
-//Share luv
+//Share or transfer token
   static const gApiSubFolderPutShareLuv = '/ords/$luvApi/acct/st';
+// Share token get otp
   static const gApiSubFolderPostReqOtpShare = '/ords/$luvApi/auth/get-otp/';
 
 //Update profile
   static const gApiSubFolderPutUpdateProf = '/ords/$luvApi/base/userinfo';
-
-//Withdraw
-  static const gApiSubFolderGetWithdrawBanks = '/ords/$luvApi/base/banks';
-  static const gApiSubFolderPostWithdraw = '/ords/$luvApi/acct/ft';
 
 //$parkSpaceApi API
   static const gApiSubFolderGetRates = '/ords/$parkSpaceApi/park/rates/';
@@ -175,14 +177,18 @@ class ApiKeys {
   //Sharing Location API's
   static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';
   //GETSHARE
+  ///Get pending  user in map share
   static const gApiLuvParkGetShareLoc = '/ords/$luvApi/geo/gpsShare';
+  //Invite friend
   static const gApiLuvParkPutShareLoc = '/ords/$luvApi/geo/gpsShare';
 
   static const gApiLuvParkPutAcceptShareLoc = '/ords/$luvApi/geo/acceptShare';
+  //End Share Location
   static const gApiLuvParkPutCloseShareLoc = '/ords/$luvApi/geo/closeShare';
+  //Get active sharing
   static const gApiLuvParkGetActiveShareLoc = '/ords/$luvApi/geo/activeShare';
 
-  //INVITE FRIENDS IN CURRENT SHARING
+  // Invite map
   static const gApiLuvParkPostAddUserMapSharing = '/ords/$luvApi/geo/addUser';
   //NOTIFY/INVITE FRIENDS for the second time
   // static const gApiLuvParkPostAddUserMapSharing = '/ords/$luvApi/geo/gpsShare';
@@ -199,12 +205,16 @@ class ApiKeys {
 
   //GET MESSAGE NOTIF
   static const gApiLuvParkMessageNotif = '/ords/$luvApi/push/messages';
+
   static const gApiLuvParkPutUpdMessageNotif = '/ords/$luvApi/push/updMessages';
   //FAQ APIS
   static const gAPISubFolderFaqList = '/ords/$parkSpaceApi/faqs/list';
+  //Faqs answer
   static const gAPISubFolderFaqAnswer = '/ords/$parkSpaceApi/faqs/ans';
+
   //POST mobile_no DELETE
   static const gApiLuvPayPostDeleteAccount = '/ords/$luvApi/user/del';
+
   //Cancel Auto Extend   parameter: reservation_id
   static const gApiLuvPayPutCancelAutoExtend =
       '/ords/$luvApi/ps/stopAutoExtend';
