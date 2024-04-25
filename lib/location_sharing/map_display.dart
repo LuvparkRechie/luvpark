@@ -3,10 +3,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
+import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -19,7 +19,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
-import 'package:luvpark/location_sharing/fore_grount_task.dart';
 import 'package:luvpark/verify_user/verify_user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -64,7 +63,6 @@ class MapSharingScreenState extends State<MapSharingScreen> {
     if (timers != null) {
       timers!.cancel();
     }
-    // ForegroundNotifTask.closeReceivePort();
     super.dispose();
   }
 
@@ -167,7 +165,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
   }
 
   Future<void> fetchDataPeriodically() async {
-    timers = Timer.periodic(Duration(seconds: 3), (timer) async {
+    timers = Timer.periodic(Duration(seconds: 5), (timer) async {
       await fetchData();
       await getUserLocation();
       await fetchPendingInviteData();
@@ -175,25 +173,23 @@ class MapSharingScreenState extends State<MapSharingScreen> {
   }
 
   Future<void> ambot() async {
-    ForegroundNotifTask.startForegroundTask(context);
+    ForegroundNotif.startLocator();
   }
 
   @override
   Widget build(BuildContext context) {
-    return WithForegroundTask(
-      child: PopScope(
-        canPop: iyahangLocation == null ? true : false,
-        child: MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: const TextScaler.linear(1)),
-          child: CustomParentWidget(
-            appbarColor: AppColor.primaryColor,
-            child: Container(
-              color: AppColor.bodyColor,
-              width: Variables.screenSize.width,
-              height: Variables.screenSize.height,
-              child: mapDisplay(),
-            ),
+    return PopScope(
+      canPop: iyahangLocation == null ? true : false,
+      child: MediaQuery(
+        data: MediaQuery.of(context)
+            .copyWith(textScaler: const TextScaler.linear(1)),
+        child: CustomParentWidget(
+          appbarColor: AppColor.primaryColor,
+          child: Container(
+            color: AppColor.bodyColor,
+            width: Variables.screenSize.width,
+            height: Variables.screenSize.height,
+            child: mapDisplay(),
           ),
         ),
       ),
@@ -272,7 +268,6 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                       timers!.cancel();
                                     });
                                     Navigator.of(context).pop();
-                                    ambot();
                                     Variables.pageTrans(MainLandingScreen());
                                   },
                                 );
@@ -435,8 +430,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                           "Live sharing successfully ended.",
                                           () async {
                                         Navigator.of(context).pop();
-                                        ForegroundNotifTask
-                                            .stopForegroundTask();
+                                        ForegroundNotif.onStop();
                                         Navigator.of(context).pushNamed('/');
                                       });
                                     }

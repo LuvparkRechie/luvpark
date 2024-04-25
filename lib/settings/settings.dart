@@ -3,30 +3,23 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
+import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
-import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
-import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
-import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/faq/faq.dart';
-import 'package:luvpark/location_sharing/fore_grount_task.dart';
 import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/pa_message/pa_message.dart';
 import 'package:luvpark/profile/profile_details.dart';
-import 'package:luvpark/settings/more_security_screen.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -214,8 +207,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                               .deleteAll();
                                           NotificationController
                                               .cancelNotifications();
-                                          ForegroundNotifTask
-                                              .stopForegroundTask();
+                                          ForegroundNotif.onStop();
                                           BiometricLogin().clearPassword();
                                           Timer(const Duration(seconds: 1), () {
                                             Navigator.of(context).pop(context);
@@ -505,7 +497,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                               .length;
 
                                           if (existDataLength > 0) {
-                                            FlutterForegroundTask.stopService();
+                                            ForegroundNotif.onStop();
                                             Variables.pageTrans(
                                                 const MapSharingScreen());
                                           } else {
@@ -838,178 +830,6 @@ class _SettingsPageState extends State<SettingsPage> {
           ],
         ),
       ),
-    );
-  }
-}
-
-class UsersSecurityVerification extends StatefulWidget {
-  final Function callback;
-  const UsersSecurityVerification({super.key, required this.callback});
-
-  @override
-  State<UsersSecurityVerification> createState() =>
-      _UsersSecurityVerificationState();
-}
-
-class _UsersSecurityVerificationState extends State<UsersSecurityVerification> {
-  TextEditingController password = TextEditingController();
-  bool? passwordVisibility = true;
-  bool isVerified = false;
-  bool isShowKeyboard = false;
-  //variables
-  // ignore: prefer_typing_uninitialized_variables
-  var akongP;
-  // ignore: prefer_typing_uninitialized_variables
-  var myProfilePic;
-  List usersLogin = [];
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getPreferences();
-    });
-  }
-
-  void getPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var getLoginData = prefs.getString(
-      'loginData',
-    );
-
-    setState(() {
-      usersLogin = [jsonDecode(getLoginData!)];
-    });
-  }
-
-  void userVerification() async {
-    var postParam = {
-      "mobile_no": usersLogin[0]["mobile_no"],
-      "pwd": password.text,
-    };
-    CustomModal(context: context).loader();
-
-    HttpRequest(api: ApiKeys.gApiSubFolderPostLogin, parameters: postParam)
-        .post()
-        .then((returnPost) {
-      if (returnPost == "No Internet") {
-        setState(() {
-          isVerified = false;
-        });
-
-        Navigator.pop(context);
-        showAlertDialog(context, "Error",
-            "Please check your internet connection and try again.", () {
-          Navigator.pop(context);
-        });
-        return;
-      }
-
-      if (returnPost == null) {
-        setState(() {
-          isVerified = false;
-        });
-
-        Navigator.pop(context);
-        showAlertDialog(context, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Navigator.of(context).pop();
-        });
-      } else {
-        if (returnPost["success"] == "N") {
-          setState(() {
-            isVerified = false;
-          });
-          Navigator.pop(context);
-          showAlertDialog(context, "Error", "Invalid Password", () {
-            Navigator.pop(context);
-          });
-          return;
-        }
-        if (returnPost["success"] == 'Y') {
-          Navigator.pop(context);
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-          Variables.pageTrans(MoreSecurityOptions(callback: widget.callback));
-        }
-      }
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    isShowKeyboard = MediaQuery.of(context).viewInsets.bottom == 0;
-    double keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-
-    return Wrap(
-      children: [
-        Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(15),
-            ),
-          ),
-          width: MediaQuery.of(context).size.width,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: CustomDisplayText(
-                    label: "Cancel",
-                    fontWeight: FontWeight.w600,
-                    color: AppColor.primaryColor,
-                  ),
-                ),
-                Container(
-                  height: 20,
-                ),
-                const HeaderLabel(
-                    title: "User Verification",
-                    subTitle:
-                        "To enhance security and verify your identity, we kindly request that you input your password to confirm it's you and prevent unauthorized access by potential hackers."),
-                LabelText(text: "Password"),
-                CustomTextField(
-                  labelText: "Password",
-                  controller: password,
-                  isObscure: passwordVisibility! ? true : false,
-                  suffixIcon: passwordVisibility!
-                      ? Icons.visibility
-                      : Icons.visibility_off,
-                  onIconTap: () {
-                    setState(() {
-                      passwordVisibility = !passwordVisibility!;
-                    });
-                  },
-                  onChange: (value) async {},
-                ),
-                Container(
-                  height: 10,
-                ),
-                CustomButton(
-                    label: "Confirm",
-                    onTap: () {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      userVerification();
-                    }),
-                Container(
-                  height: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.fastEaseInToSlowEaseOut,
-          height: keyboardHeight,
-        )
-      ],
     );
   }
 }

@@ -468,7 +468,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                     }
                   } else {
                     //REGISTER CONFIRMATION
-
+                    //ACCOUNT ACTIVATION
                     if (widget.otp == int.parse(inputPin)) {
                       var otpData = {
                         "mobile_no": widget.mobileNo,
@@ -535,14 +535,6 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                   label: "Cancel",
                   onTap: () {
                     Navigator.pop(context);
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (_) => const LoginScreen(
-                    //       isLogout: false,
-                    //     ),
-                    //   ),
-                    // );
                   }),
             ],
           ),

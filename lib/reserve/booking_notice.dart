@@ -144,7 +144,7 @@ class _BookingNoticeState extends State<BookingNotice> {
                                   label: noticeData[0]["msg"],
                                   fontWeight: FontWeight.w500,
                                   color: const Color.fromRGBO(0, 0, 0, 1),
-                                  fontSize: 12,
+                                  fontSize: 14,
                                   alignment: TextAlign.center,
                                 ),
                                 Container(

@@ -890,7 +890,8 @@ class _MyWalletState extends State<MyWallet>
                                       padding: EdgeInsets.all(20),
                                       decoration: BoxDecoration(
                                         color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
+                                        borderRadius: BorderRadius.vertical(
+                                            top: Radius.circular(20)),
                                       ),
                                       child: Stack(
                                         children: [

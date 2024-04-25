@@ -478,4 +478,41 @@ class Functions {
 
     return brandName!;
   }
+
+  static void getVehicleData(context, areaId, Function cb) {
+      HttpRequest(
+            api: "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=$areaId")
+        .get()
+        .then((returnData) async {
+      if (returnData == "No Internet") {
+        Navigator.of(context).pop();
+        cb({"msg": "Error", "data": []});
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+      if (returnData == null) {
+        Navigator.of(context).pop();
+        cb({"msg": "Error", "data": []});
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+      }
+
+      if (returnData["items"].length > 0) {
+        Navigator.of(context).pop();
+        cb({"msg": "Success", "data": returnData["items"]});
+      } else {
+        Navigator.of(context).pop();
+        cb({"msg": "Success", "data": returnData["items"]});
+        showAlertDialog(context, "Error", "No data found.", () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+    });
+  }
 }

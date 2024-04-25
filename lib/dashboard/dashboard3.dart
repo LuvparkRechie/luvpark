@@ -228,7 +228,7 @@ class _Dashboard3State extends State<Dashboard3> {
             });
           }
 
-          DashboardComponent.getNearest(ctxt, "S", ddRadius,
+          DashboardComponent.getNearest(ctxt, "", ddRadius,
               startLocation!.latitude, startLocation!.longitude, (nearestData) {
             if (nearestData == "No Internet") {
               setState(() {
@@ -757,7 +757,7 @@ class _Dashboard3State extends State<Dashboard3> {
                                           }
                                           DashboardComponent.getNearest(
                                               ctxt,
-                                              "S",
+                                              "",
                                               ddRadius.toString(),
                                               data[0]["lat"].toString(),
                                               data[0]["long"].toString(),
@@ -877,6 +877,7 @@ class _Dashboard3State extends State<Dashboard3> {
                         ),
                         label: 'Current Location',
                         onTap: () {
+                         
                           if (isClicked) return;
                           setState(() {
                             isClicked = true;
@@ -1124,7 +1125,7 @@ class _Dashboard3State extends State<Dashboard3> {
                                                     DashboardComponent
                                                         .getNearest(
                                                             ctxt,
-                                                            "S",
+                                                            "",
                                                             ddRadius.toString(),
                                                             data[0]["lat"]
                                                                 .toString(),

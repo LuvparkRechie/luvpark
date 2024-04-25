@@ -10,9 +10,10 @@ import 'package:luvpark/classess/variables.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
-  final bool? isReadOnly;
+  final bool? isReadOnly, isFilled;
   final Widget? prefix;
   final bool isObscure;
+  final Color? filledColor;
 
   final TextEditingController controller;
   final ValueChanged<String>? onChange;
@@ -37,6 +38,8 @@ class CustomTextField extends StatefulWidget {
       this.suffixIcon,
       this.onIconTap,
       this.maxLength,
+      this.filledColor,
+      this.isFilled,
       this.keyboardType = TextInputType.text,
       this.onTap});
 
@@ -63,7 +66,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           keyboardType: widget.keyboardType!,
           focusNode: focusNode,
           decoration: InputDecoration(
-            // filled: true,
+            filled: widget.isFilled != null && widget.isFilled!
+                ? widget.isFilled!
+                : null,
             suffixIcon: widget.suffixIcon != null
                 ? InkWell(
                     onTap: () {
@@ -72,7 +77,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     child: Icon(widget.suffixIcon!),
                   )
                 : null,
-            //   fillColor: Colors.white,
+            fillColor: widget.isFilled != null && widget.isFilled!
+                ? Colors.white
+                : null,
             // constraints: const BoxConstraints.tightFor(height: 60),
             prefixIcon: widget.prefixIcon != null
                 ? InkWell(

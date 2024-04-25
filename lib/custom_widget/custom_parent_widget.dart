@@ -247,3 +247,134 @@ class AppbarWidget extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(0);
 }
+
+class CustomParentWidgetV2 extends StatefulWidget {
+  final Widget? floatingButton;
+  final String appBarHeaderText;
+  final Function? appBarIconClick;
+  final TabBar? appBarTabBar;
+  final Widget child;
+  final bool? hasPadding;
+  final Color? bodyColor;
+  final bool? canPop;
+
+  const CustomParentWidgetV2({
+    Key? key,
+    required this.child,
+    required this.appBarHeaderText,
+    this.appBarIconClick,
+    this.hasPadding = true,
+    this.floatingButton,
+    this.bodyColor,
+    this.canPop = false,
+    this.appBarTabBar,
+  }) : super(key: key);
+
+  @override
+  State<CustomParentWidgetV2> createState() => _CustomParentWidgetV2State();
+}
+
+class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
+  @override
+  Widget build(BuildContext context) {
+    return Sizer(builder: (context, orientation, deviceType) {
+      return MediaQuery(
+        data: MediaQuery.of(context).copyWith(
+            textScaler:
+                TextScaler.linear(1)), // modified TextScaler to textScaleFactor
+        child: PopScope(
+            canPop: widget.canPop!,
+            child: widget.floatingButton == null
+                ? Scaffold(
+                    appBar: PreferredSize(
+                      preferredSize: const Size.fromHeight(kToolbarHeight),
+                      child: _buildAppBar(),
+                    ),
+                    body: _buildChild(),
+                  )
+                : Scaffold(
+                    floatingActionButton: widget.floatingButton!,
+                    appBar: PreferredSize(
+                      preferredSize: const Size.fromHeight(kToolbarHeight),
+                      child: _buildAppBar(),
+                    ),
+                    body: _buildChild(),
+                  )),
+      );
+    });
+  }
+
+  Widget _buildChild() {
+    return PopScope(
+      canPop: widget.canPop!,
+      child: SafeArea(
+        child: Container(
+          color: widget.bodyColor ?? AppColor.bodyColor,
+          height: MediaQuery.of(context).size.height,
+          width: MediaQuery.of(context).size.width,
+          child: !widget.hasPadding!
+              ? widget.child
+              : Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                  child: widget.child,
+                ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAppBar() {
+    return AppBar(
+      elevation: 0,
+      backgroundColor: AppColor.bodyColor,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: AppColor.primaryColor,
+        statusBarBrightness:
+            Platform.isIOS ? Brightness.light : Brightness.light,
+        statusBarIconBrightness:
+            Platform.isIOS ? Brightness.light : Brightness.light,
+      ),
+      leading: widget.appBarIconClick == null
+          ? const SizedBox(
+              width: 0,
+              height: 0,
+            )
+          : GestureDetector(
+              onTap: () {
+                widget.appBarIconClick!();
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: const Icon(
+                  Icons.arrow_back_ios_new,
+                  weight: 1,
+                  color: Colors.black,
+                  size: 17,
+                ),
+              ),
+            ),
+      title: Row(
+        // Wrap the title with a Row widget
+        children: [
+          Expanded(
+            child: AutoSizeText(
+              widget.appBarHeaderText,
+              style: GoogleFonts.lato(
+                color: Colors.black,
+                fontSize: 16.0,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w600,
+                height: 1.0,
+              ),
+            ),
+          ),
+          // You can add additional widgets here if needed
+        ],
+      ),
+      centerTitle: false, // Set to false since the title is now within a Row
+      bottom: widget.appBarTabBar ?? widget.appBarTabBar,
+    );
+  }
+}

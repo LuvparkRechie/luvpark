@@ -327,9 +327,8 @@ class DashboardComponent {
 
   static Future<Position> getPositionLatLong() async {
     Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.best,
+      desiredAccuracy: LocationAccuracy.high,
     );
-
     return position;
   }
 

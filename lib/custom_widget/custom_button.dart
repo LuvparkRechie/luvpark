@@ -55,11 +55,13 @@ class CustomButtonCancel extends StatefulWidget {
   final String label;
   final Color? color;
   final Color? textColor;
+  final Color? borderColor;
   final Function onTap;
   const CustomButtonCancel(
       {super.key,
       required this.label,
       required this.onTap,
+      this.borderColor,
       this.color,
       this.textColor});
 
@@ -78,7 +80,9 @@ class _CustomButtonCancelState extends State<CustomButtonCancel> {
         decoration: BoxDecoration(
             color: widget.color!,
             borderRadius: BorderRadius.circular(7),
-            border: Border.all(color: widget.color!)),
+            border: widget.borderColor == null
+                ? null
+                : Border.all(color: widget.borderColor!)),
         clipBehavior: Clip.antiAlias,
         child: Center(
           child: Padding(

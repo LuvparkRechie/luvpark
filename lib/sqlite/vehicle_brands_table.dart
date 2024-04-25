@@ -48,38 +48,6 @@ class VehicleBrandsTable {
     final insertValues = "${json[VHBrandsDataFields.vhBrandId]},"
         "${json[VHBrandsDataFields.vhTypeId]},"
         "'${json[VHBrandsDataFields.vhBrandName]}'";
-
-    final existingData = await VehicleBrandsTable.instance
-        .readVehicleBrandsById(json[VHBrandsDataFields.vhBrandId]);
-
-    // if (existingData != null) {
-    //   await db!.transaction((txn) async {
-    //     var batch = txn.batch();
-    //     batch.rawUpdate('''
-    //       UPDATE ${Variables.vhBrands}
-    //       SET ${VHBrandsDataFields.vhBrandId} = ?,
-    //           ${VHBrandsDataFields.vhTypeId} = ?,
-    //           ${VHBrandsDataFields.vhBrandName} = ?
-    //       WHERE ${VHBrandsDataFields.vhBrandId} = ?
-    //       ''', [
-    //       json[VHBrandsDataFields.vhBrandId],
-    //       json[VHBrandsDataFields.vhTypeId],
-    //       json[VHBrandsDataFields.vhBrandName],
-    //       json[VHBrandsDataFields.vhBrandId],
-    //     ]);
-
-    //     await batch.commit(noResult: true);
-    //   });
-    // } else {
-    //   await db!.transaction((txn) async {
-    //     var batch = txn.batch();
-
-    //     batch.rawInsert(
-    //         'INSERT INTO ${Variables.vhBrands} ($columns) VALUES ($insertValues)');
-
-    //     await batch.commit(noResult: true);
-    //   });
-    // }
     await db!.transaction((txn) async {
       var batch = txn.batch();
 
@@ -118,6 +86,8 @@ class VehicleBrandsTable {
       (record) =>
           record[VHBrandsDataFields.vhTypeId] == vtId &&
           record[VHBrandsDataFields.vhBrandId] == vbId,
+      orElse: () =>
+          {}, // Provide a default value or handle the case where no matching element is found
     );
 
     String? brandName;

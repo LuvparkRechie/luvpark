@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -22,8 +21,8 @@ import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/reserve/booking_notice.dart';
-import 'package:luvpark/reserve/list_of_time.dart';
 import 'package:luvpark/reserve/receipt.dart';
+import 'package:luvpark/reserve/time_list.dart';
 import 'package:luvpark/reserve/vehicle_list_modal.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -66,6 +65,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
   bool isLoadingPage = true;
   bool isSubmit = false;
   bool isSelectedVehicle = false;
+  bool isHide = true;
   List vehicleTypeData = [];
   String? vehicleTypeValue;
   List<dynamic> data = [];
@@ -93,6 +93,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
   String totalAmount = "0.0";
   bool isLoadingBtn = false;
   bool allowAutoExtend = false;
+  String inputTimeLabel = 'Input Time Duration'; // Define initial label
   var myData;
   @override
   void initState() {
@@ -141,8 +142,8 @@ class _ReserveForm2State extends State<ReserveForm2> {
   @override
   Widget build(BuildContext context) {
     myContext = context;
-    return CustomParent1Widget(
-      appBarheaderText: "Booking",
+    return CustomParentWidgetV2(
+      appBarHeaderText: "Back",
       hasPadding: false,
       canPop: true,
       appBarIconClick: () {
@@ -168,27 +169,104 @@ class _ReserveForm2State extends State<ReserveForm2> {
                     Expanded(
                       child: Padding(
                         padding:
-                            const EdgeInsets.only(top: 20, left: 20, right: 20),
+                            const EdgeInsets.only(top: 20, left: 15, right: 15),
                         child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              LabelText(text: "Parking Info"),
+                              LabelText(text: "You are parking at"),
                               Container(height: 10),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(7),
-                                  color: Colors.white,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 10),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
+                              Row(
+                                children: [
+                                  Expanded(
+                                      flex: 3,
+                                      child: Container(
+                                        height: 72,
+                                        decoration: BoxDecoration(
+                                          //1F313F
+                                          color: Color(0xff1F313F),
+                                          borderRadius: BorderRadius.only(
+                                            topLeft: Radius.circular(7),
+                                            bottomLeft: Radius.circular(7),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 15,
+                                            vertical: 10,
+                                          ),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              isLoadingPage
+                                                  ? Shimmer.fromColors(
+                                                      baseColor:
+                                                          Colors.grey.shade300,
+                                                      highlightColor:
+                                                          const Color(
+                                                              0xFFe6faff),
+                                                      child: const SizedBox(
+                                                        width: 30,
+                                                        height: 10,
+                                                      ))
+                                                  : CustomDisplayText(
+                                                      label: widget.areaData[0]
+                                                          ["park_area_name"],
+                                                      fontSize: 14,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      maxLines: 1,
+                                                    ),
+                                              isLoadingPage
+                                                  ? Shimmer.fromColors(
+                                                      baseColor:
+                                                          Colors.grey.shade300,
+                                                      highlightColor:
+                                                          const Color(
+                                                              0xFFe6faff),
+                                                      child: const SizedBox(
+                                                        width: 30,
+                                                        height: 10,
+                                                      ),
+                                                    )
+                                                  : CustomDisplayText(
+                                                      label: widget.areaData[0]
+                                                          ["address"],
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      maxLines: 2,
+                                                    )
+                                            ],
+                                          ),
+                                        ),
+                                      )),
+                                  Expanded(
+                                    flex: 1,
+                                    child: Container(
+                                      height: 72,
+                                      decoration: BoxDecoration(
+                                        color: Color(0xff243a4b),
+                                        borderRadius: BorderRadius.only(
+                                          topRight: Radius.circular(7),
+                                          bottomRight: Radius.circular(7),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 15,
+                                          vertical: 10,
+                                        ),
                                         child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              CrossAxisAlignment.center,
                                           children: [
                                             isLoadingPage
                                                 ? Shimmer.fromColors(
@@ -199,129 +277,59 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                     child: const SizedBox(
                                                       width: 30,
                                                       height: 10,
-                                                    ))
-                                                : CustomDisplayText(
-                                                    label: widget.areaData[0]
-                                                        ["park_area_name"],
-                                                    fontSize: 16,
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.bold,
-                                                    maxLines: 1,
-                                                  ),
-                                            Container(height: 5),
-                                            isLoadingPage
-                                                ? Shimmer.fromColors(
-                                                    baseColor:
-                                                        Colors.grey.shade300,
-                                                    highlightColor:
-                                                        const Color(0xFFe6faff),
-                                                    child: const SizedBox(
-                                                      width: 30,
-                                                      height: 10,
-                                                    ))
-                                                : CustomDisplayText(
-                                                    label: widget.areaData[0]
-                                                        ["address"],
-                                                    color:
-                                                        const Color(0xFF8D8D8D),
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    maxLines: 2,
+                                                    ),
                                                   )
+                                                : CustomDisplayText(
+                                                    label: distanceData.isEmpty
+                                                        ? ""
+                                                        : distanceData[0]
+                                                                ["distance"]
+                                                            .toString(),
+                                                    color: Colors.white,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.bold,
+                                                    letterSpacing: -0.41,
+                                                  ),
                                           ],
                                         ),
                                       ),
-                                      Container(width: 20),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          isLoadingPage
-                                              ? Shimmer.fromColors(
-                                                  baseColor:
-                                                      Colors.grey.shade300,
-                                                  highlightColor:
-                                                      const Color(0xFFe6faff),
-                                                  child: const SizedBox(
-                                                    width: 30,
-                                                    height: 10,
-                                                  ))
-                                              : CustomDisplayText(
-                                                  label: distanceData.isEmpty
-                                                      ? ""
-                                                      : distanceData[0]
-                                                              ["distance"]
-                                                          .toString(),
-                                                  color:
-                                                      const Color(0xFF131313),
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  height: 0.09,
-                                                  letterSpacing: -0.41,
-                                                ),
-                                          Container(height: 15),
-                                          isLoadingPage
-                                              ? Shimmer.fromColors(
-                                                  baseColor:
-                                                      Colors.grey.shade300,
-                                                  highlightColor:
-                                                      const Color(0xFFe6faff),
-                                                  child: const SizedBox(
-                                                    width: 30,
-                                                    height: 10,
-                                                  ))
-                                              : Center(
-                                                  child: CustomDisplayText(
-                                                    label: distanceData.isEmpty
-                                                        ? ""
-                                                        : "${distanceData[0]["time"]}",
-                                                    height: 0.11,
-                                                    letterSpacing: -0.41,
-                                                    color:
-                                                        const Color(0xFF8D8D8D),
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    maxLines: 2,
-                                                  ),
-                                                ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ),
+                                    ),
+                                  )
+                                ],
                               ),
                               Container(height: 20),
-                              LabelText(text: "Park for (Duration)"),
+                              LabelText(text: "How long do you want to park?"),
                               Container(height: 10),
                               InkWell(
                                 onTap: () async {
-                                  showDialog(
+                                  showModalBottomSheet(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(20),
+                                        topRight: Radius.circular(20),
+                                      ),
+                                    ),
                                     context: context,
-                                    barrierDismissible: true,
+                                    isScrollControlled: true,
                                     builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        backgroundColor: Colors.white,
-                                        surfaceTintColor: Colors.white,
-                                        content: FadeIn(
-                                            duration:
-                                                const Duration(seconds: 1),
-                                            child: MyWidget(
-                                                numbersList: numbersList,
-                                                onTap: (dataHours) async {
-                                                  setState(() {
-                                                    hoursLabel =
-                                                        "$dataHours ${dataHours > 1 ? "Hours" : "Hour"}";
-                                                    numberOfhours = dataHours;
-                                                    isLoadingBtn = true;
-                                                  });
-                                                  _timeComputation();
-                                                  if (callBackData.isNotEmpty) {
-                                                    routeToComputation();
-                                                  }
-                                                  setState(() {
-                                                    isLoadingBtn = false;
-                                                  });
-                                                })),
+                                      return TimeList(
+                                        numbersList: numbersList,
+                                        onTap: (dataHours) async {
+                                          setState(() {
+                                            inputTimeLabel =
+                                                "$dataHours ${dataHours > 1 ? "Hours" : "Hour"}";
+                                            numberOfhours = dataHours;
+                                            isLoadingBtn = true;
+                                            isHide = false;
+                                          });
+                                          _timeComputation();
+                                          if (callBackData.isNotEmpty) {
+                                            routeToComputation();
+                                          }
+                                          setState(() {
+                                            isLoadingBtn = false;
+                                          });
+                                        },
                                       );
                                     },
                                   );
@@ -330,7 +338,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   width: Variables.screenSize.width,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(7),
-                                    color: AppColor.primaryColor,
+                                    color: AppColor.bodyColor,
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -339,48 +347,110 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        RichText(
-                                          text: TextSpan(
-                                            children: <InlineSpan>[
-                                              WidgetSpan(
-                                                alignment:
-                                                    PlaceholderAlignment.middle,
-                                                child: CustomDisplayText(
-                                                  label: hoursLabel,
-                                                  color: Colors.white,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  letterSpacing: -0.41,
-                                                ),
+                                        inputTimeLabel == 'Input Time Duration'
+                                            ? Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: <InlineSpan>[
+                                                        WidgetSpan(
+                                                          alignment:
+                                                              PlaceholderAlignment
+                                                                  .middle,
+                                                          child:
+                                                              CustomDisplayText(
+                                                            label:
+                                                                inputTimeLabel,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            letterSpacing:
+                                                                -0.41,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: <InlineSpan>[
+                                                        const WidgetSpan(
+                                                          alignment:
+                                                              PlaceholderAlignment
+                                                                  .middle,
+                                                          child: Icon(
+                                                            Icons
+                                                                .keyboard_arrow_down,
+                                                            color: Color(
+                                                                0xFF0078FF),
+                                                            size: 25,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              )
+                                            : Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: <InlineSpan>[
+                                                        WidgetSpan(
+                                                          alignment:
+                                                              PlaceholderAlignment
+                                                                  .middle,
+                                                          child:
+                                                              CustomDisplayText(
+                                                            label:
+                                                                inputTimeLabel,
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            letterSpacing:
+                                                                -0.41,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  RichText(
+                                                    text: TextSpan(
+                                                      children: <InlineSpan>[
+                                                        const WidgetSpan(
+                                                          alignment:
+                                                              PlaceholderAlignment
+                                                                  .middle,
+                                                          child: Icon(
+                                                            Icons
+                                                                .keyboard_arrow_down,
+                                                            color: Color(
+                                                                0xFF0078FF),
+                                                            size: 25,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              const WidgetSpan(
-                                                alignment:
-                                                    PlaceholderAlignment.middle,
-                                                child: Icon(
-                                                  Icons
-                                                      .arrow_drop_down_outlined,
-                                                  color: Colors.white,
-                                                  size: 25,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(height: 10),
-                                        const Divider(),
                                         Row(
                                           children: [
-                                            const Icon(
-                                              CupertinoIcons.clock_fill,
-                                              color: Colors.white,
-                                              size: 20,
-                                            ),
-                                            Container(width: 10),
                                             Expanded(
                                                 child: CustomDisplayText(
                                               label:
                                                   "Start Booking: ${startTime.text} - ${endTime.text}",
-                                              color: Colors.white,
+                                              color: inputTimeLabel ==
+                                                      'Input Time Duration'
+                                                  ? Colors.white
+                                                  : Colors.grey,
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               letterSpacing: -0.41,
@@ -392,189 +462,210 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   ),
                                 ),
                               ),
-                              Container(height: 20),
-                              LabelText(text: "Personal Details"),
-                              Container(height: 10),
-                              Container(
-                                width: Variables.screenSize.width,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(7),
-                                  color: Colors.white,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 20),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomDisplayText(
-                                        label:
-                                            "+${jsonDecode(myData!)['mobile_no'].toString()}",
-                                        color: const Color(0xFF131313),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        letterSpacing: -0.41,
+                              if (!isHide)
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(height: 20),
+                                    LabelText(text: "Vehicle Details"),
+                                    Container(height: 10),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(7),
+                                        color: Colors.white,
                                       ),
-                                      Container(height: 5),
-                                      CustomDisplayText(
-                                          label: jsonDecode(
-                                                      myData!)['first_name'] ==
-                                                  null
-                                              ? "Not specified"
-                                              : "${jsonDecode(myData!)['first_name'].toString()} ${jsonDecode(myData!)['middle_name'] == null ? "" : jsonDecode(myData!)['middle_name'].toString()[0]} ${jsonDecode(myData!)['last_name'].toString()}",
-                                          color: const Color(0x7F131313),
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          letterSpacing: -0.41),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Container(height: 20),
-                              LabelText(text: "Select Vehicle"),
-                              Container(height: 10),
-                              Container(
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(7),
-                                  color: Colors.white,
-                                ),
-                                child: InkWell(
-                                  onTap: () {
-                                    if (vehicleTypeData.isEmpty) {
-                                      showAlertDialog(context, "LuvPark",
-                                          "No vehicle data.", () {
-                                        Navigator.of(context).pop();
-                                      });
-                                      return;
-                                    }
-                                    showModalBottomSheet(
-                                        context: context,
-                                        builder: (context) {
-                                          return FadeIn(
-                                              duration:
-                                                  const Duration(seconds: 1),
-                                              child: VehicleListModal(
-                                                  areaData: widget.areaData,
-                                                  vehicleTypeId:
-                                                      vehicleTypeValue!,
-                                                  onTap: (cbData) {
-                                                    setState(() {
-                                                      isLoadingBtn = true;
-                                                    });
-                                                    Variables
-                                                        .hasInternetConnection(
-                                                            (hasNet) {
-                                                      if (hasNet) {
+                                      child: InkWell(
+                                        onTap: () {
+                                          if (vehicleTypeData.isEmpty) {
+                                            showAlertDialog(context, "LuvPark",
+                                                "No vehicle data.", () {
+                                              Navigator.of(context).pop();
+                                            });
+                                            return;
+                                          }
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback((_) {
+                                            CustomModal(context: context)
+                                                .loader();
+                                            Functions.getVehicleData(
+                                                context,
+                                                widget.areaData[0]
+                                                    ["park_area_id"],
+                                                (objData) {
+                                              print(" $objData");
+                                              if (objData["msg"] == "Success") {
+                                                Variables.customBottomSheet(
+                                                  context,
+                                                  VehicleOption(
+                                                      vehicleData:
+                                                          objData["data"],
+                                                      vehicleTypeId:
+                                                          vehicleTypeValue!,
+                                                      onTap: (cbData) {
+                                                        print("cbData $cbData");
                                                         setState(() {
-                                                          callBackData = cbData;
-                                                          vehicleText =
-                                                              callBackData[0][
-                                                                  "vehicle_plate_no"];
+                                                          isLoadingBtn = true;
                                                         });
-                                                        routeToComputation();
-                                                      } else {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        showAlertDialog(
-                                                            myContext!,
-                                                            "Error",
-                                                            "Please check your internet connection and try again.",
-                                                            () {
-                                                          Navigator.of(
-                                                                  myContext!)
-                                                              .pop();
-                                                          setState(() {
-                                                            callBackData = [];
-                                                            vehicleText =
-                                                                "Tap to add vehicle";
-                                                          });
+                                                        Variables
+                                                            .hasInternetConnection(
+                                                                (hasNet) {
+                                                          if (hasNet) {
+                                                            setState(() {
+                                                              callBackData =
+                                                                  cbData;
+                                                              vehicleText =
+                                                                  callBackData[
+                                                                          0][
+                                                                      "vehicle_plate_no"];
+                                                            });
+                                                            routeToComputation();
+                                                          } else {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            showAlertDialog(
+                                                                myContext!,
+                                                                "Error",
+                                                                "Please check your internet connection and try again.",
+                                                                () {
+                                                              Navigator.of(
+                                                                      myContext!)
+                                                                  .pop();
+                                                              setState(() {
+                                                                callBackData =
+                                                                    [];
+                                                                vehicleText =
+                                                                    "Tap to add vehicle";
+                                                              });
+                                                            });
+                                                          }
                                                         });
-                                                      }
-                                                    });
-                                                  }));
-                                        });
-                                  },
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 20),
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                                      }),
+                                                );
+                                              }
+                                            });
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 20),
+                                          child: Row(
                                             children: [
-                                              CustomDisplayText(
-                                                label: vehicleText,
-                                                color: callBackData.isNotEmpty
-                                                    ? Colors.black
-                                                    : AppColor.primaryColor,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: -0.41,
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    CustomDisplayText(
+                                                      label: vehicleText,
+                                                      color: callBackData
+                                                              .isNotEmpty
+                                                          ? Colors.black
+                                                          : Colors.black,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: -0.41,
+                                                    ),
+                                                    callBackData.isEmpty
+                                                        ? Container()
+                                                        : Container(height: 5),
+                                                    callBackData.isEmpty
+                                                        ? Container()
+                                                        : CustomDisplayText(
+                                                            label: callBackData[
+                                                                    0][
+                                                                "vehicle_brand_name"],
+                                                            color: const Color(
+                                                                0x7F131313),
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            letterSpacing:
+                                                                -0.41),
+                                                  ],
+                                                ),
                                               ),
-                                              callBackData.isEmpty
-                                                  ? Container()
-                                                  : Container(height: 5),
-                                              callBackData.isEmpty
-                                                  ? Container()
-                                                  : CustomDisplayText(
-                                                      label: callBackData[0][
-                                                          "vehicle_brand_name"],
-                                                      color: const Color(
-                                                          0x7F131313),
-                                                      fontSize: 14,
+                                              callBackData.isNotEmpty
+                                                  ? CustomDisplayText(
+                                                      label: "Change",
                                                       fontWeight:
                                                           FontWeight.w500,
-                                                      letterSpacing: -0.41),
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                      fontSize: 14)
+                                                  : Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              5.0),
+                                                      child: Icon(
+                                                        Icons.add,
+                                                        color: AppColor
+                                                            .primaryColor,
+                                                        size: 20,
+                                                      ),
+                                                    ),
                                             ],
                                           ),
                                         ),
-                                        callBackData.isNotEmpty
-                                            ? CustomDisplayText(
-                                                label: "Change",
+                                      ),
+                                    ),
+                                    Container(height: 20),
+                                    LabelText(text: "Personal Details"),
+                                    Container(height: 10),
+                                    Container(
+                                      width: Variables.screenSize.width,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(7),
+                                        color: Colors.white,
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 20, vertical: 20),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            CustomDisplayText(
+                                              label:
+                                                  "+${jsonDecode(myData!)['mobile_no'].toString()}",
+                                              color: const Color(0xFF131313),
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              letterSpacing: -0.41,
+                                            ),
+                                            Container(height: 5),
+                                            CustomDisplayText(
+                                                label: jsonDecode(myData!)[
+                                                            'first_name'] ==
+                                                        null
+                                                    ? "Not specified"
+                                                    : "${jsonDecode(myData!)['first_name'].toString()} ${jsonDecode(myData!)['middle_name'] == null ? "" : jsonDecode(myData!)['middle_name'].toString()[0]} ${jsonDecode(myData!)['last_name'].toString()}",
+                                                color: const Color(0x7F131313),
+                                                fontSize: 14,
                                                 fontWeight: FontWeight.w500,
-                                                color: AppColor.primaryColor,
-                                                fontSize: 14)
-                                            : Container(
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(
-                                                      color: AppColor
-                                                          .primaryColor),
-                                                  borderRadius:
-                                                      BorderRadius.circular(7),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(5.0),
-                                                  child: Icon(
-                                                    Icons.add,
-                                                    color:
-                                                        AppColor.primaryColor,
-                                                    size: 20,
-                                                  ),
-                                                ),
-                                              ),
+                                                letterSpacing: -0.41),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Container(height: 10),
+                                    Row(
+                                      children: [
+                                        Checkbox(
+                                            value: allowAutoExtend,
+                                            onChanged: (value) {
+                                              setState(() {
+                                                allowAutoExtend =
+                                                    !allowAutoExtend;
+                                              });
+                                            }),
+                                        LabelText(text: "Auto Extend")
                                       ],
                                     ),
-                                  ),
+                                    Container(height: 5),
+                                  ],
                                 ),
-                              ),
-                              Container(height: 10),
-                              Row(
-                                children: [
-                                  Checkbox(
-                                      value: allowAutoExtend,
-                                      onChanged: (value) {
-                                        setState(() {
-                                          allowAutoExtend = !allowAutoExtend;
-                                        });
-                                      }),
-                                  LabelText(text: "Auto Extend")
-                                ],
-                              ),
-                              Container(height: 5),
                             ],
                           ),
                         ),

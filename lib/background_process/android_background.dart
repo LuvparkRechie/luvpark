@@ -47,18 +47,16 @@ void onStart(ServiceInstance service) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
 
   // bring to foreground
+  FlutterBackgroundService().invoke("setAsBackground");
+
+  print("background service ");
   Timer.periodic(const Duration(seconds: 5), (timer) async {
     var akongId = prefs.getString('myId');
-
-    // FlutterBackgroundService().invoke("setAsBackground");
+    print("background akongId $akongId ");
     if (akongId == null) return;
     await getParkingTrans(counter);
     await getSharingData(counter);
-    await updateLocation();
     await getMessNotif();
-    // NotificationController.createNewNotification(
-    //     0, 0, "title", "body", "payload");
-
     final deviceInfo = DeviceInfoPlugin();
     String? device;
     if (Platform.isAndroid) {
@@ -82,32 +80,6 @@ void onStart(ServiceInstance service) async {
 }
 
 class AndroidBackgroundProcess {
-  // // static Future<void> setForegroundProcess(bool isForeground) async {
-  // //   final service = FlutterBackgroundService();
-
-  // //   service.invoke("stopService");
-
-  // //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  // //   prefs.setBool("is_foregroundTask", isForeground);
-  // //   print("isForeground $isForeground");
-  // //   if (isForeground) {
-  // //     service.invoke("setAsForeground");
-  // //   } else {
-  // //     service.invoke("setAsBackground");
-  // //   }
-
-  // //   print("service111 ${service.isRunning()}");
-  // //   service.startService();
-
-  // //   print("service2222 ${service.isRunning()}");
-  // // }
-
-  // static Future<bool> getForegroundProcess() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   bool? isForeground = prefs.getBool("is_foregroundTask");
-  //   return isForeground == null ? false : isForeground;
-  // }
-
   static void initilizeBackgroundService() async {
     final service = FlutterBackgroundService();
     print('sulod sa initializebackgroundservice');

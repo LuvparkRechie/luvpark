@@ -165,7 +165,7 @@ class ApiKeys {
   static const gApiLuvParkPutLPChkIn = '/ords/$luvApi/ps/check_in';
   //Compute Distance
   static const gApiLuvParkGetComputeDistance = '/ords/$parkSpaceApi/conf/psrc/';
-//Compute Distance
+//Verify User
   static const gApiLuvParkGetAcctStat = '/ords/$luvApi/user/verify';
   //Rate Us
   static const gApiLuvParkPostRating = '/ords/$luvApi/user/uxr';
@@ -173,6 +173,7 @@ class ApiKeys {
   //dd vehicle types
   static const gApiLuvParkDDVehicleTypes =
       '/ords/$parkSpaceApi/park/dd_vehicletypes';
+  static const gApiLuvParkDDVehicleTypes2 = '/ords/$parkSpaceApi/dd/zvt';
 
   //Sharing Location API's
   static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';

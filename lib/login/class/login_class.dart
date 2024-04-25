@@ -58,9 +58,8 @@ class LoginComponent {
         if (returnPost["success"] == 'Y') {
           var getApi =
               "${ApiKeys.gApiSubFolderLogin}?mobile_no=$mobile&auth_key=${returnPost["auth_key"].toString()}";
-          print(" logi getApi $getApi");
+
           HttpRequest(api: getApi).get().then((objData) async {
-            print(" logi objData $objData");
             if (objData == "No Internet") {
               //   Navigator.pop(context);
               showAlertDialog(context, "Error",

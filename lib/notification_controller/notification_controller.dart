@@ -4,7 +4,7 @@ import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_foreground_task/flutter_foreground_task.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -449,37 +449,36 @@ class NotificationController {
   }
 }
 
-Future<void> updateLocation() async {
-  bool isRunning = await FlutterForegroundTask.isRunningService;
+Future<void> updateLocation(LatLng position) async {
+  // bool isRunning = await FlutterForegroundTask.isRunningService;
 
-  if (isRunning) {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    var geoConId = prefs.getString('geo_connect_id');
+  // if (isRunning) {
 
-    if (geoConId == null) return;
-    DashboardComponent.getPositionLatLong().then((position) {
-      var jsonParam = {
-        "geo_connect_id": geoConId,
-        "latitude": position.latitude,
-        "longitude": position.longitude
-      };
+  // }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  var geoConId = prefs.getString('geo_connect_id');
+  print("geoConId $geoConId");
+  if (geoConId == null) return;
+  print("position $position");
+  var jsonParam = {
+    "geo_connect_id": geoConId,
+    "latitude": position.latitude,
+    "longitude": position.longitude
+  };
 
-      HttpRequest(
-              api: ApiKeys.gApiLuvParkPutUpdateUsersLoc, parameters: jsonParam)
-          .put()
-          .then((returnData) async {
-        if (returnData == "No Internet") {
-          return;
-        }
-        if (returnData == null) {
-          return;
-        }
-        if (returnData["success"] == "Y") {
-          return;
-        }
-      });
-    });
-  }
+  HttpRequest(api: ApiKeys.gApiLuvParkPutUpdateUsersLoc, parameters: jsonParam)
+      .put()
+      .then((returnData) async {
+    if (returnData == "No Internet") {
+      return;
+    }
+    if (returnData == null) {
+      return;
+    }
+    if (returnData["success"] == "Y") {
+      return;
+    }
+  });
 }
 
 //GET ACCEPT SHARING
@@ -570,7 +569,6 @@ Future<void> getParkingTrans(int ctr) async {
               NotificationDataFields.isActive: dataRow["is_active"].toString(),
               NotificationDataFields.dtIn: dataRow["dt_in"].toString(),
             };
-
             if (dataRow["is_active"] == "Y" && dataRow["status"] == "U") {
               ctr++;
               print("Insert Process");

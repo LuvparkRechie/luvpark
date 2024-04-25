@@ -15,7 +15,6 @@ import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/http_request/http_request_model.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:pinput/pinput.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sizer/sizer.dart';
 
 // ignore: must_be_immutable
@@ -382,8 +381,6 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen>
                       CustomButton(
                           label: "Confirm",
                           onTap: () async {
-                            SharedPreferences prefs =
-                                await SharedPreferences.getInstance();
                             if (pinController.text.isEmpty) return;
                             // ignore: use_build_context_synchronously
                             CustomModal(context: context).loader();
@@ -392,8 +389,6 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen>
                               "reg_type": "VERIFY",
                               "otp": int.parse(pinController.text)
                             };
-
-                            print("put otp $otpData");
 
                             HttpRequest(
                                     api: ApiKeys.gApiSubFolderPutOTP,

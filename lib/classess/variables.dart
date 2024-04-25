@@ -380,11 +380,23 @@ class Variables {
 
   static customBottomSheet(BuildContext context, Widget child) {
     showModalBottomSheet(
-      enableDrag: true,
       context: context,
       builder: (BuildContext context) {
         return child;
       },
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(20),
+        ),
+      ),
+      isScrollControlled: true,
+      enableDrag: true,
+      isDismissible: true,
+      // Custom animation for smooth transition
+      transitionAnimationController: AnimationController(
+        vsync: Navigator.of(context),
+        duration: Duration(milliseconds: 400),
+      ),
     );
   }
 

@@ -46,13 +46,16 @@ class _MyVehiclesState extends State<MyVehicles> {
     DashboardComponent.getAvailableVehicle(
         myContext, jsonDecode(akongP!)['user_id'].toString(),
         (cbVehicle) async {
+      print("cbVehicle $cbVehicle");
       if (cbVehicle == "No Internet") {
         setState(() {
           hasInternet = false;
           isLoadingPage = false;
         });
       } else {
-        myVehicles = [];
+        setState(() {
+          myVehicles = [];
+        });
         for (var row in cbVehicle) {
           String brandName = await Functions.getBrandName(
               row["vehicle_type_id"], row["vehicle_brand_id"]);

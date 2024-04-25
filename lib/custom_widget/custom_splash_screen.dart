@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:lottie/lottie.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 
 class CustomSplashScreen extends StatelessWidget {
@@ -60,12 +59,9 @@ class CustomSplashScreen extends StatelessWidget {
                             height: 20,
                           ),
                           SizedBox(
-                            height: 120,
-                            width: 120,
-                            child: Lottie.asset(
-                              'assets/lottie/loader.json',
-                            ),
-                          ),
+                              height: 30,
+                              width: 30,
+                              child: CircularProgressIndicator()),
                           Container(
                             height: 20,
                           ),

@@ -9,6 +9,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:luvpark/background_process/android_background.dart';
+import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -19,7 +20,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
-import 'package:luvpark/location_sharing/fore_grount_task.dart';
 import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
@@ -46,19 +46,18 @@ void main() async {
 
   final packageInfo = await PackageInfo.fromPlatform();
   Variables.version = packageInfo.version;
-  NotificationController.initializeLocalNotifications();
-  NotificationController.initializeIsolateReceivePort();
+
   final status = await Permission.notification.status;
   if (status.isDenied) {
     await Permission.notification.request();
   }
-  //Request permission for background task battery optimization
-  ForegroundNotifTask.requestPermissionForAndroid();
   await Geolocator.requestPermission();
 
-  ForegroundNotifTask.initForegroundTask();
+  NotificationController.initializeLocalNotifications();
+  NotificationController.initializeIsolateReceivePort();
   //AndroidBackgroundProcess.backgroundExecution(0);
   AndroidBackgroundProcess.initilizeBackgroundService();
+  ForegroundNotif.initializeForeground();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {

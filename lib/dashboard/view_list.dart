@@ -249,7 +249,7 @@ class _ViewListState extends State<ViewList> {
                 ),
                 Expanded(
                   child: CustomButton(
-                      label: "View Info",
+                      label: "Check Parking Zone",
                       onTap: () async {
                         Variables.pageTrans(ViewDetails(areaData: [data]));
                       }),
