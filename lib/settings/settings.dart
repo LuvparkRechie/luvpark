@@ -221,7 +221,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 8.0),
                                     child: Image.asset(
-                                      "assets/images/Logout.png",
+                                      "assets/images/logout.png",
                                       width: 24,
                                       height: 24,
                                       color: Colors.red,
