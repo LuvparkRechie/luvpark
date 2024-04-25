@@ -8,10 +8,8 @@ import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
-import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,37 +54,21 @@ class _VehicleOptionState extends State<VehicleOption> {
     var akongP = prefs.getString(
       'userData',
     );
-    CustomModal(context: context).loader();
+
     print("akongP $akongP");
 
     DashboardComponent.getAvailableVehicle(
         context, jsonDecode(akongP!)['user_id'].toString(), (cbVehicle) async {
       print("cbVehicle $cbVehicle");
       if (cbVehicle == "No Internet") {
-        Navigator.of(context).pop();
         setState(() {
           hasInternet = false;
           isLoadingPage = false;
         });
-        showAlertDialog(context, "Error",
-            "Please check your internet connection and try again.", () {
-          Navigator.of(context).pop();
-        });
         return;
       }
-      if (cbVehicle == null) {
-        Navigator.of(context).pop();
-        setState(() {
-          hasInternet = true;
-          isLoadingPage = false;
-        });
-        showAlertDialog(context, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Navigator.of(context).pop();
-        });
-      } else {}
+
       if (cbVehicle.length > 0) {
-        Navigator.of(context).pop();
         for (var row in cbVehicle) {
           String brandName = await Functions.getBrandName(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
@@ -104,13 +86,6 @@ class _VehicleOptionState extends State<VehicleOption> {
             isLoadingPage = false;
           });
         }
-      } else {
-        Navigator.of(context).pop();
-
-        showAlertDialog(context, "Error", "No data found.", () {
-          Navigator.of(context).pop();
-        });
-        return;
       }
     });
   }
