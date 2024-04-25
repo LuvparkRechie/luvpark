@@ -1,8 +1,10 @@
 import 'dart:io';
 
+import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/Registration/class/registration_class.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -229,9 +231,42 @@ class _RegistrationPageState extends State<RegistrationPage> {
                 ),
                 const SizedBox(height: 10.0),
                 // LabelText(text: "Referral Code"),
-                // CustomTextField(
-                //   labelText: 'Enter Referral Code',
-                //   controller: referralcode,
+                // Stack(
+                //   alignment: Alignment.centerRight,
+                //   children: [
+                //     CustomTextField(
+                //       labelText: 'Enter Referral Code',
+                //       controller: referralcode,
+                //     ),
+                //     InkWell(
+                //       onTap: () {
+                //         FlutterClipboard.paste().then((value) {
+                //           setState(() {
+                //             if (value.isNotEmpty) {
+                //               referralcode.text = value;
+                //             } else {
+                //               ScaffoldMessenger.of(context).showSnackBar(
+                //                 SnackBar(
+                //                   content: Text('Clipboard is empty'),
+                //                 ),
+                //               );
+                //             }
+                //           });
+                //         }).catchError((error) {});
+                //       },
+                //       child: Padding(
+                //         padding: const EdgeInsets.only(
+                //           right: 10,
+                //           bottom: 8,
+                //         ),
+                //         child: FaIcon(
+                //           FontAwesomeIcons.paste,
+                //           size: 20,
+                //           color: Colors.grey.shade700,
+                //         ),
+                //       ),
+                //     )
+                //   ],
                 // ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10.0),
