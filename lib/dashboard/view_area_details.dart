@@ -51,7 +51,7 @@ class _ViewDetailsState extends State<ViewDetails> {
   @override
   void initState() {
     super.initState();
-    print("areaData ${widget.areaData}");
+
     digitPairs =
         Variables.splitNumberIntoPairs(widget.areaData[0]["end_time"], 2);
 
@@ -141,6 +141,47 @@ class _ViewDetailsState extends State<ViewDetails> {
         ),
       );
     }
+  }
+
+  void getAmenities(rateData) async {
+    print("sulod sa tab2");
+    Future.delayed(Duration(seconds: 1));
+
+    CustomModal(context: context).loader();
+    HttpRequest(
+      api:
+          '${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=${widget.areaData[0]["park_area_id"]}',
+    ).get().then((amenitiesData) async {
+      if (amenitiesData == "No Internet") {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+      if (amenitiesData == null) {
+        Navigator.of(context).pop();
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+      if (amenitiesData["items"].isNotEmpty) {
+        Navigator.of(context).pop();
+        Variables.pageTrans(ViewRates(
+          data: rateData,
+          amenData: amenitiesData["items"],
+        ));
+      } else {
+        Navigator.of(context).pop();
+        showAlertDialog(context, "LuvPark", amenitiesData["msg"], () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+    });
   }
 
   @override
@@ -504,11 +545,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                           }
 
                           if (returnData["items"].length > 0) {
-                            Navigator.of(context).pop();
-
-                            Variables.pageTrans(ViewRates(
-                                data: returnData["items"],
-                                areaid: widget.areaData[0]["park_area_id"]));
+                            getAmenities(returnData["items"]);
                           } else {
                             Navigator.of(context).pop();
                             showAlertDialog(
@@ -620,7 +657,6 @@ class _ViewDetailsState extends State<ViewDetails> {
                                                 widget.areaData[0]
                                                     ["pa_longitude"]),
                                             (success) {
-                                          print("success $success");
                                           if (success["success"]) {
                                             var dataItemParam = [];
                                             dataItemParam

@@ -4,23 +4,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/http_request.dart';
-import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:sizer/sizer.dart';
 
 class ViewRates extends StatefulWidget {
   final List data;
-  final int areaid;
+  final List amenData;
 
   const ViewRates({
     Key? key,
     required this.data,
-    required this.areaid,
+    required this.amenData,
   }) : super(key: key);
 
   @override
@@ -32,7 +28,6 @@ class _ViewRatesState extends State<ViewRates>
   late TabController _tabController;
   bool isLoading = false;
   bool hasInternet = true;
-  List<String> amenities = [];
 
   Map<String, IconData> amenityIcons = {
     "WITH CCTV": FontAwesomeIcons.camera,
@@ -55,48 +50,6 @@ class _ViewRatesState extends State<ViewRates>
     super.dispose();
   }
 
-  void getAmenities() async {
-    CustomModal(context: context).loader();
-    HttpRequest(
-      api: '${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=${widget.areaid}',
-    ).get().then((returnData) async {
-      print("inataya");
-      if (returnData == "No Internet") {
-        Navigator.pop(context);
-        showAlertDialog(context, "Error",
-            "Please check your internet connection and try again.", () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-      if (returnData == null) {
-        Navigator.of(context).pop();
-        showAlertDialog(context, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-      if (returnData["items"].isNotEmpty) {
-        Navigator.of(context).pop();
-        List<String> amenityDescriptions = [];
-        for (var item in returnData["items"]) {
-          amenityDescriptions.add(item["parking_amenity_desc"]);
-        }
-        setState(() {
-          amenities = amenityDescriptions;
-        });
-        return;
-      } else {
-        Navigator.of(context).pop();
-        showAlertDialog(context, "LuvPark", returnData["msg"], () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Sizer(
@@ -116,11 +69,11 @@ class _ViewRatesState extends State<ViewRates>
                   controller: _tabController,
                   indicatorColor: AppColor.primaryColor,
                   labelColor: Colors.black,
-                  onTap: (index) {
-                    if (index == 1) {
-                      getAmenities();
-                    }
-                  },
+                  // onTap: (index) {
+                  //   if (index == 1) {
+                  //     getAmenities();
+                  //   }
+                  // },
                   tabs: [
                     Tab(text: 'Vehicle Rates'),
                     Tab(text: 'Amenities'),
@@ -130,7 +83,6 @@ class _ViewRatesState extends State<ViewRates>
                   child: TabBarView(
                     controller: _tabController,
                     children: [
-                      // First Tab: Vehicle Rates
                       isLoading
                           ? Center(child: CircularProgressIndicator())
                           : ListView.builder(
@@ -329,50 +281,7 @@ class _ViewRatesState extends State<ViewRates>
                                 );
                               }),
                             ),
-                      amenities.isEmpty
-                          ? Center(
-                              child: CustomDisplayText(
-                                label: 'No Amenities Available',
-                                color: Colors.black,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: amenities.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                        color: Colors.grey.shade200,
-                                      ),
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: [
-                                          amenitiesDetails(
-                                            amenities[index],
-                                            amenityIcons.containsKey(
-                                                    amenities[index])
-                                                ? Icon(amenityIcons[
-                                                    amenities[index]])
-                                                : Icon(
-                                                    FontAwesomeIcons
-                                                        .squareParking,
-                                                  ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            )
+                      Tab2(amenData: widget.amenData)
                     ],
                   ),
                 ),
@@ -415,6 +324,80 @@ class _ViewRatesState extends State<ViewRates>
         ],
       ),
     );
+  }
+}
+
+class Tab2 extends StatefulWidget {
+  final List amenData;
+  const Tab2({super.key, required this.amenData});
+
+  @override
+  State<Tab2> createState() => _Tab2State();
+}
+
+class _Tab2State extends State<Tab2> {
+  bool isLoading = false;
+  bool hasInternet = true;
+
+  Map<String, IconData> amenityIcons = {
+    "WITH CCTV": FontAwesomeIcons.camera,
+    "CONCRETE FLOOR": FontAwesomeIcons.road,
+    "WITH SECURITY": FontAwesomeIcons.personMilitaryPointing,
+    "COVERED / SHADED": FontAwesomeIcons.warehouse,
+    "GRASS AREA": FontAwesomeIcons.leaf,
+    "ASPHALT FLOOR": FontAwesomeIcons.road
+  };
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return widget.amenData.isEmpty
+        ? Center(
+            child: CustomDisplayText(
+              label: 'No Amenities Available',
+              color: Colors.black,
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          )
+        : ListView.builder(
+            itemCount: widget.amenData.length,
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Colors.grey.shade200,
+                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        amenitiesDetails(
+                          widget.amenData[index]["parking_amenity_desc"],
+                          amenityIcons.containsKey(widget.amenData[index]
+                                  ["parking_amenity_desc"])
+                              ? Icon(amenityIcons[widget.amenData[index]
+                                  ["parking_amenity_desc"]])
+                              : Icon(
+                                  FontAwesomeIcons.squareParking,
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
   }
 
   Widget amenitiesDetails(String label, Widget icon) {
