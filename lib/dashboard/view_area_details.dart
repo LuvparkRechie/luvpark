@@ -144,10 +144,6 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   void getAmenities(rateData) async {
-    print("sulod sa tab2");
-    Future.delayed(Duration(seconds: 1));
-
-    CustomModal(context: context).loader();
     HttpRequest(
       api:
           '${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=${widget.areaData[0]["park_area_id"]}',
