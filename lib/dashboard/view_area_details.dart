@@ -506,8 +506,9 @@ class _ViewDetailsState extends State<ViewDetails> {
                           if (returnData["items"].length > 0) {
                             Navigator.of(context).pop();
 
-                            Variables.pageTrans(
-                                ViewRates(data: returnData["items"]));
+                            Variables.pageTrans(ViewRates(
+                                data: returnData["items"],
+                                areaid: widget.areaData[0]["park_area_id"]));
                           } else {
                             Navigator.of(context).pop();
                             showAlertDialog(

@@ -219,4 +219,7 @@ class ApiKeys {
   //Cancel Auto Extend   parameter: reservation_id
   static const gApiLuvPayPutCancelAutoExtend =
       '/ords/$luvApi/ps/stopAutoExtend';
+
+  //GET amenities
+  static const gApiSubFolderGetAmenities = '/ords/$parkSpaceApi/park/amenities';
 }
