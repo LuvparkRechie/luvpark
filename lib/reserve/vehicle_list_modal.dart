@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -34,7 +35,7 @@ class _VehicleOptionState extends State<VehicleOption> {
   TextEditingController textController = TextEditingController();
   TextEditingController plateNumber = TextEditingController();
   TextEditingController vehicleType = TextEditingController();
-
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
   String? dropdownValue;
 
   @override
@@ -57,108 +58,155 @@ class _VehicleOptionState extends State<VehicleOption> {
             ),
             child: Padding(
               padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(height: 10),
-                  InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Icon(Icons.arrow_back_ios_new_outlined),
-                  ),
-                  Container(height: 20),
-                  CustomDisplayText(
-                    label: "What's your plate number?",
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  CustomTextField(
-                    labelText: "Plate number",
-                    controller: plateNumber,
-                  ),
-                  CustomDisplayText(
-                    label: "Choose vehicle type?",
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  Container(height: 10),
-                  DropdownButtonFormField(
-                    dropdownColor: Colors.white,
-                    decoration: InputDecoration(
-                      constraints: const BoxConstraints.tightFor(height: 50),
-                      contentPadding: const EdgeInsets.all(10),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColor.primaryColor),
-                      ),
-                      hintText: "Vehicle Type",
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(color: AppColor.primaryColor),
-                      ),
-                      enabledBorder: const OutlineInputBorder(
-                        borderSide: BorderSide(
-                            color: Color.fromARGB(255, 223, 223, 223)),
-                      ),
-                    ),
-                    value: dropdownValue,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownValue = newValue!;
-                      });
-                    },
-                    isExpanded: true,
-                    items: widget.vehicleData.map((item) {
-                      return DropdownMenuItem(
-                          value: item['value'].toString(),
-                          child: AutoSizeText(
-                            item['text'],
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 15,
-                              letterSpacing: 1,
-                              fontWeight: FontWeight.normal,
-                            ),
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 2,
-                          ));
-                    }).toList(),
-                  ),
-                  Container(height: 10),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: FloatingActionButton(
-                      elevation: 1,
-                      backgroundColor: AppColor.primaryColor,
-                      child: Icon(
-                        Icons.check,
-                        color: Colors.white,
-                      ),
-                      onPressed: () {
-                        List callBackData = [
-                          {
-                            'vehicle_type_id': dropdownValue!.toString(),
-                            'vehicle_brand_id': 0,
-                            'vehicle_brand_name': "",
-                            'vehicle_plate_no': plateNumber.text
-                          }
-                        ];
-
+              child: Form(
+                key: formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 10),
+                    InkWell(
+                      onTap: () {
                         Navigator.of(context).pop();
-                        widget.onTap(callBackData);
+                      },
+                      child: Icon(Icons.arrow_back_ios_new_outlined),
+                    ),
+                    Container(height: 20),
+                    CustomDisplayText(
+                      label: "What's your plate number?",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    CustomTextField(
+                      labelText: "Plate No.",
+                      controller: plateNumber,
+                      fontsize: 15,
+                      fontweight: FontWeight.w400,
+                      onChange: (value) {
+                        if (value.isNotEmpty) {
+                          plateNumber.value = TextEditingValue(
+                              text: Variables.capitalizeAllWord(value),
+                              selection: plateNumber.selection);
+                        }
                       },
                     ),
-                  ),
-                  Container(height: 30),
-                  CustomButtonCancel(
-                      borderColor: Colors.black,
-                      textColor: Colors.black,
-                      color: AppColor.bodyColor,
-                      label: "Select from my vehicle",
-                      onTap: () {
-                        Variables.customBottomSheet(
-                            context, VehicleList(ontap: widget.onTap));
-                      })
-                ],
+                    CustomDisplayText(
+                      label: "Choose vehicle type?",
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    Container(height: 10),
+                    DropdownButtonFormField(
+                      dropdownColor: Colors.white,
+                      decoration: InputDecoration(
+                        constraints: const BoxConstraints.tightFor(height: 50),
+                        contentPadding: const EdgeInsets.only(
+                            left: 16, top: 15, bottom: 15, right: 16),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.primaryColor),
+                        ),
+                        hintText: "Vehicle Type",
+                        hintStyle: Platform.isAndroid
+                            ? GoogleFonts.dmSans(
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFF9C9C9C),
+                                fontSize: 15,
+                              )
+                            : TextStyle(
+                                fontWeight: FontWeight.w400,
+                                color: const Color(0xFF9C9C9C),
+                                fontSize: 15,
+                                fontFamily: "SFProTextReg",
+                              ),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(color: AppColor.primaryColor),
+                        ),
+                        enabledBorder: const OutlineInputBorder(
+                          borderSide: BorderSide(
+                              color: Color.fromARGB(255, 223, 223, 223)),
+                        ),
+                      ),
+                      value: dropdownValue,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          dropdownValue = newValue!;
+                        });
+                      },
+                      isExpanded: true,
+                      items: widget.vehicleData.map(
+                        (item) {
+                          return DropdownMenuItem(
+                              value: item['value'].toString(),
+                              child: AutoSizeText(
+                                item['text'],
+                                style: Platform.isAndroid
+                                    ? GoogleFonts.dmSans(
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                      )
+                                    : TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                        fontSize: 14,
+                                        fontFamily: "SFProTextReg",
+                                      ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 2,
+                              ));
+                        },
+                      ).toList(),
+                    ),
+                    Container(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: SizedBox(
+                        width: 47,
+                        height: 47,
+                        child: FloatingActionButton(
+                          elevation: 1,
+                          backgroundColor: AppColor.primaryColor,
+                          child: Icon(
+                            Icons.check,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            String vtName = widget.vehicleData
+                                .where((element) {
+                                  return element["value"] ==
+                                      int.parse(dropdownValue!.toString());
+                                })
+                                .toList()[0]["text"]
+                                .toString();
+
+                            if (formKey.currentState!.validate()) {
+                              List callBackData = [
+                                {
+                                  'vehicle_type_id': dropdownValue!.toString(),
+                                  'vehicle_brand_id': 0,
+                                  'vehicle_brand_name': vtName,
+                                  'vehicle_plate_no': plateNumber.text
+                                }
+                              ];
+
+                              Navigator.of(context).pop();
+                              widget.onTap(callBackData);
+                            }
+                          },
+                        ),
+                      ),
+                    ),
+                    Container(height: 30),
+                    CustomButtonCancel(
+                        borderColor: Colors.black,
+                        textColor: Colors.black,
+                        color: AppColor.bodyColor,
+                        label: "My Vehicle",
+                        onTap: () {
+                          Variables.customBottomSheet(
+                              context, VehicleList(ontap: widget.onTap));
+                        })
+                  ],
+                ),
               ),
             ),
           ),
@@ -278,7 +326,7 @@ class _VehicleListState extends State<VehicleList> {
                   refresh();
                 })
               : Container(
-                  height: MediaQuery.of(context).size.height * .50,
+                  height: MediaQuery.of(context).size.height * .30,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(7),
                     color: Colors.white,
@@ -293,46 +341,70 @@ class _VehicleListState extends State<VehicleList> {
                           onTap: () {
                             Navigator.of(context).pop();
                           },
-                          child: Icon(Icons.arrow_back_ios_new_outlined),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_outlined,
+                            size: 20,
+                          ),
                         ),
-                        Container(height: 20),
+                        Container(height: 10),
                         Expanded(
                             child: Scrollbar(
-                          child: ListView.builder(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              itemCount: myVehicles.length,
-                              itemBuilder: ((context, index) {
-                                return ListTile(
-                                  title: CustomDisplayText(
-                                    label: myVehicles[index]
-                                        ["vehicle_plate_no"],
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                          child: ListView.separated(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            itemCount: myVehicles.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                title: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    CustomDisplayText(
+                                      label: myVehicles[index]
+                                          ["vehicle_plate_no"],
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 14,
+                                    ),
+                                  ],
+                                ),
+                                subtitle: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    CustomDisplayText(
+                                      label: myVehicles[index]
+                                          ["vehicle_brand_name"],
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.textSubColor,
+                                      fontSize: 12,
+                                    ),
+                                  ],
+                                ),
+                                leading: Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Icon(
+                                    int.parse(myVehicles[index]
+                                                    ["vehicle_type_id"]
+                                                .toString()) ==
+                                            1
+                                        ? Icons.motorcycle_outlined
+                                        : Icons.time_to_leave,
                                   ),
-                                  subtitle: CustomDisplayText(
-                                    label: myVehicles[index]
-                                        ["vehicle_brand_name"],
-                                    fontWeight: FontWeight.normal,
-                                    color: AppColor.textSubColor,
-                                    fontSize: 12,
-                                  ),
-                                  leading: Icon(int.parse(myVehicles[index]
-                                                  ["vehicle_type_id"]
-                                              .toString()) ==
-                                          1
-                                      ? Icons.motorcycle_outlined
-                                      : Icons.time_to_leave),
-                                  trailing: Icon(Icons.keyboard_arrow_right),
-                                  onTap: () {
+                                ),
+                                trailing: Icon(Icons.keyboard_arrow_right),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  widget.ontap([myVehicles[index]]);
+                                  if (Navigator.canPop(context)) {
                                     Navigator.of(context).pop();
-                                    widget.ontap([myVehicles[index]]);
-                                    if (Navigator.canPop(context)) {
-                                      Navigator.of(context).pop();
-                                    }
-                                  },
-                                );
-                              })),
+                                  }
+                                },
+                              );
+                            },
+                            separatorBuilder:
+                                (BuildContext context, int index) {
+                              return Divider(
+                                color: Colors.grey,
+                              );
+                            },
+                          ),
                         )),
                         Container(height: 10),
                       ],

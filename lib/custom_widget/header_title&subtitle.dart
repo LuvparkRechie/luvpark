@@ -49,9 +49,9 @@ class LabelText extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomDisplayText(
       label: text,
-      fontWeight: FontWeight.bold,
+      fontWeight: FontWeight.w700,
       color: Colors.black,
-      fontSize: 14,
+      fontSize: 16,
     );
   }
 }

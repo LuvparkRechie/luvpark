@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
@@ -93,7 +94,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
   String totalAmount = "0.0";
   bool isLoadingBtn = false;
   bool allowAutoExtend = false;
-  String inputTimeLabel = 'Input Time Duration'; // Define initial label
+  String inputTimeLabel = 'Input a Duration'; // Define initial label
   var myData;
   @override
   void initState() {
@@ -149,7 +150,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
       appBarIconClick: () {
         Navigator.pop(context);
       },
-      bodyColor: Colors.grey.shade100,
+      bodyColor: Color(0xFFFBFBFB),
       child: isLoadingPage
           ? const Center(
               child: SizedBox(
@@ -168,20 +169,23 @@ class _ReserveForm2State extends State<ReserveForm2> {
                   children: [
                     Expanded(
                       child: Padding(
-                        padding:
-                            const EdgeInsets.only(top: 20, left: 15, right: 15),
+                        padding: const EdgeInsets.only(
+                          top: 23,
+                          left: 15,
+                          right: 15,
+                        ),
                         child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               LabelText(text: "You are parking at"),
-                              Container(height: 10),
+                              Container(height: 8),
                               Row(
                                 children: [
                                   Expanded(
                                       flex: 3,
                                       child: Container(
-                                        height: 72,
+                                        height: 71,
                                         decoration: BoxDecoration(
                                           //1F313F
                                           color: Color(0xff1F313F),
@@ -193,7 +197,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(
                                             horizontal: 15,
-                                            vertical: 10,
                                           ),
                                           child: Column(
                                             mainAxisAlignment:
@@ -212,14 +215,20 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                         width: 30,
                                                         height: 10,
                                                       ))
-                                                  : CustomDisplayText(
-                                                      label: widget.areaData[0]
-                                                          ["park_area_name"],
-                                                      fontSize: 14,
-                                                      color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      maxLines: 1,
+                                                  : Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
+                                                      child: CustomDisplayText(
+                                                        label: widget
+                                                                .areaData[0]
+                                                            ["park_area_name"],
+                                                        fontSize: 16,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        maxLines: 1,
+                                                      ),
                                                     ),
                                               isLoadingPage
                                                   ? Shimmer.fromColors(
@@ -233,15 +242,35 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                         height: 10,
                                                       ),
                                                     )
-                                                  : CustomDisplayText(
-                                                      label: widget.areaData[0]
-                                                          ["address"],
-                                                      color: Colors.white,
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      maxLines: 2,
-                                                    )
+                                                  : Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              left: 8.0),
+                                                      child: CustomDisplayText(
+                                                        label:
+                                                            widget.areaData[0]
+                                                                ["address"],
+                                                        fontSize: 12,
+                                                        color: Colors.white,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        maxLines: 2,
+                                                      ),
+                                                      // CustomDisplayText(
+                                                      //   label:
+                                                      //       widget.areaData[0]
+                                                      //           ["address"],
+                                                      //   style: TextStyle(
+                                                      //     color: Colors.white,
+                                                      //     fontWeight:
+                                                      //         FontWeight.w500,
+                                                      //   ),
+                                                      //   minFontSize: 12,
+                                                      //   maxFontSize:
+                                                      //       double.infinity,
+                                                      //   maxLines: 2,
+                                                      // ),
+                                                    ),
                                             ],
                                           ),
                                         ),
@@ -249,7 +278,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   Expanded(
                                     flex: 1,
                                     child: Container(
-                                      height: 72,
+                                      height: 71,
                                       decoration: BoxDecoration(
                                         color: Color(0xff243a4b),
                                         borderRadius: BorderRadius.only(
@@ -297,7 +326,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   )
                                 ],
                               ),
-                              Container(height: 20),
+                              Container(height: 42),
                               LabelText(text: "How long do you want to park?"),
                               Container(height: 10),
                               InkWell(
@@ -338,7 +367,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   width: Variables.screenSize.width,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(7),
-                                    color: AppColor.bodyColor,
+                                    color: Color(0xFFFFFFFF),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -347,7 +376,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        inputTimeLabel == 'Input Time Duration'
+                                        inputTimeLabel == 'Input a Duration'
                                             ? Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
@@ -363,10 +392,11 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                               CustomDisplayText(
                                                             label:
                                                                 inputTimeLabel,
-                                                            color: Colors.black,
+                                                            color: AppColor
+                                                                .primaryColor,
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                                FontWeight.w500,
                                                             letterSpacing:
                                                                 -0.41,
                                                           ),
@@ -381,12 +411,17 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                           alignment:
                                                               PlaceholderAlignment
                                                                   .middle,
-                                                          child: Icon(
-                                                            Icons
-                                                                .keyboard_arrow_down,
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            size: 25,
+                                                          child: Padding(
+                                                            padding:
+                                                                EdgeInsets.only(
+                                                                    left: 3),
+                                                            child: FaIcon(
+                                                              FontAwesomeIcons
+                                                                  .chevronDown,
+                                                              color: Color(
+                                                                  0xFF0078FF),
+                                                              size: 15,
+                                                            ),
                                                           ),
                                                         ),
                                                       ],
@@ -394,32 +429,61 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                   ),
                                                 ],
                                               )
-                                            : Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                            : Stack(
+                                                alignment:
+                                                    Alignment.centerRight,
                                                 children: [
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: <InlineSpan>[
-                                                        WidgetSpan(
-                                                          alignment:
-                                                              PlaceholderAlignment
-                                                                  .middle,
-                                                          child:
-                                                              CustomDisplayText(
+                                                  Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          RichText(
+                                                            text: TextSpan(
+                                                              children: <InlineSpan>[
+                                                                WidgetSpan(
+                                                                  alignment:
+                                                                      PlaceholderAlignment
+                                                                          .middle,
+                                                                  child:
+                                                                      CustomDisplayText(
+                                                                    label:
+                                                                        inputTimeLabel,
+                                                                    color: Colors
+                                                                        .black,
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    letterSpacing:
+                                                                        -0.41,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                              child:
+                                                                  CustomDisplayText(
                                                             label:
-                                                                inputTimeLabel,
-                                                            color: Colors.black,
+                                                                "Start Booking: ${startTime.text} - ${endTime.text}",
+                                                            color: inputTimeLabel ==
+                                                                    'Input a Duration'
+                                                                ? Colors.white
+                                                                : Colors.grey,
                                                             fontSize: 14,
                                                             fontWeight:
-                                                                FontWeight.w600,
+                                                                FontWeight.w500,
                                                             letterSpacing:
                                                                 -0.41,
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                                          )),
+                                                        ],
+                                                      )
+                                                    ],
                                                   ),
                                                   RichText(
                                                     text: TextSpan(
@@ -428,12 +492,12 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                           alignment:
                                                               PlaceholderAlignment
                                                                   .middle,
-                                                          child: Icon(
-                                                            Icons
-                                                                .keyboard_arrow_down,
+                                                          child: FaIcon(
+                                                            FontAwesomeIcons
+                                                                .chevronDown,
                                                             color: Color(
                                                                 0xFF0078FF),
-                                                            size: 25,
+                                                            size: 15,
                                                           ),
                                                         ),
                                                       ],
@@ -441,22 +505,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                   ),
                                                 ],
                                               ),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                                child: CustomDisplayText(
-                                              label:
-                                                  "Start Booking: ${startTime.text} - ${endTime.text}",
-                                              color: inputTimeLabel ==
-                                                      'Input Time Duration'
-                                                  ? Colors.white
-                                                  : Colors.grey,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              letterSpacing: -0.41,
-                                            )),
-                                          ],
-                                        )
                                       ],
                                     ),
                                   ),
@@ -466,7 +514,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(height: 20),
+                                    Container(height: 27),
                                     LabelText(text: "Vehicle Details"),
                                     Container(height: 10),
                                     Container(
@@ -547,8 +595,11 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                           });
                                         },
                                         child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20, vertical: 20),
+                                          padding: const EdgeInsets.only(
+                                              left: 20,
+                                              top: 24,
+                                              bottom: 24,
+                                              right: 15),
                                           child: Row(
                                             children: [
                                               Expanded(
@@ -556,63 +607,64 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
                                                   children: [
-                                                    CustomDisplayText(
-                                                      label: vehicleText,
-                                                      color: callBackData
-                                                              .isNotEmpty
-                                                          ? Colors.black
-                                                          : Colors.black,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      letterSpacing: -0.41,
-                                                    ),
-                                                    callBackData.isEmpty
-                                                        ? Container()
-                                                        : Container(height: 5),
                                                     callBackData.isEmpty
                                                         ? Container()
                                                         : CustomDisplayText(
                                                             label: callBackData[
                                                                     0][
                                                                 "vehicle_brand_name"],
-                                                            color: const Color(
-                                                                0x7F131313),
-                                                            fontSize: 14,
+                                                            color: Colors.black,
+                                                            fontSize: 16,
                                                             fontWeight:
-                                                                FontWeight.w500,
+                                                                FontWeight.bold,
                                                             letterSpacing:
                                                                 -0.41),
+                                                    CustomDisplayText(
+                                                      label: vehicleText,
+                                                      color: callBackData
+                                                              .isNotEmpty
+                                                          ? AppColor
+                                                              .primaryColor
+                                                          : AppColor
+                                                              .primaryColor,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      letterSpacing: -0.41,
+                                                    ),
                                                   ],
                                                 ),
                                               ),
                                               callBackData.isNotEmpty
-                                                  ? CustomDisplayText(
-                                                      label: "Change",
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                                  // ? CustomDisplayText(
+                                                  //     label: "Change",
+                                                  //     fontWeight:
+                                                  //         FontWeight.w500,
+                                                  //     color:
+                                                  //         AppColor.primaryColor,
+                                                  //     fontSize: 14)
+                                                  ? Icon(
+                                                      Icons
+                                                          .check_circle_outline_outlined,
                                                       color:
                                                           AppColor.primaryColor,
-                                                      fontSize: 14)
-                                                  : Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              5.0),
-                                                      child: Icon(
-                                                        Icons.add,
-                                                        color: AppColor
-                                                            .primaryColor,
-                                                        size: 20,
-                                                      ),
+                                                      size: 20,
+                                                      weight: 5,
+                                                    )
+                                                  : Icon(
+                                                      Icons.add,
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                      size: 20,
                                                     ),
                                             ],
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Container(height: 20),
+                                    Container(height: 24),
                                     LabelText(text: "Personal Details"),
-                                    Container(height: 10),
+                                    Container(height: 8),
                                     Container(
                                       width: Variables.screenSize.width,
                                       decoration: BoxDecoration(
@@ -627,24 +679,24 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                               CrossAxisAlignment.start,
                                           children: [
                                             CustomDisplayText(
-                                              label:
-                                                  "+${jsonDecode(myData!)['mobile_no'].toString()}",
-                                              color: const Color(0xFF131313),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.bold,
-                                              letterSpacing: -0.41,
-                                            ),
-                                            Container(height: 5),
-                                            CustomDisplayText(
                                                 label: jsonDecode(myData!)[
                                                             'first_name'] ==
                                                         null
                                                     ? "Not specified"
                                                     : "${jsonDecode(myData!)['first_name'].toString()} ${jsonDecode(myData!)['middle_name'] == null ? "" : jsonDecode(myData!)['middle_name'].toString()[0]} ${jsonDecode(myData!)['last_name'].toString()}",
-                                                color: const Color(0x7F131313),
-                                                fontSize: 14,
+                                                color: Colors.black,
+                                                fontSize: 16,
                                                 fontWeight: FontWeight.w500,
                                                 letterSpacing: -0.41),
+                                            CustomDisplayText(
+                                              label:
+                                                  "+${jsonDecode(myData!)['mobile_no'].toString()}",
+                                              color: const Color(0xFF131313)
+                                                  .withOpacity(0.5),
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              letterSpacing: -0.41,
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -689,7 +741,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   child: CustomDisplayText(
                                     label: "Total",
                                     color: Color(0xFF131313),
-                                    fontSize: 20,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w700,
                                     height: 0.06,
                                     letterSpacing: -0.41,
@@ -698,7 +750,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                 CustomDisplayText(
                                   label: toCurrencyString(totalAmount),
                                   color: const Color(0xFF131313),
-                                  fontSize: 20,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   height: 0.06,
                                   letterSpacing: -0.41,
@@ -745,8 +797,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                             ? "Confirm Queue"
                                             : "Confirm Booking",
                                         color: callBackData.isEmpty
-                                            ? AppColor.primaryColor
-                                                .withOpacity(.6)
+                                            ? Color(0xFF6C7075).withOpacity(.6)
                                             : AppColor.primaryColor,
                                         textColor: Colors.white,
                                         onTap: callBackData.isEmpty
@@ -983,6 +1034,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
             } else {
               setState(() {
                 distanceData = estimatedData;
+                print(estimatedData);
               });
               refresh();
             }

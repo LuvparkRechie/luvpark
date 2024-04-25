@@ -24,11 +24,15 @@ class CustomTextField extends StatefulWidget {
   final Icon? prefixIcon;
   final IconData? suffixIcon;
   final int? maxLength;
+  final double? fontsize;
+  final FontWeight? fontweight;
 
   const CustomTextField(
       {super.key,
       required this.labelText,
       required this.controller,
+      this.fontweight,
+      this.fontsize = 14,
       this.onChange,
       this.prefixIcon,
       this.isObscure = false,
@@ -98,18 +102,18 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
             hintStyle: Platform.isAndroid
                 ? GoogleFonts.dmSans(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: widget.fontweight,
                     color: const Color(0xFF9C9C9C),
-                    fontSize: 14,
+                    fontSize: widget.fontsize,
                   )
                 : TextStyle(
-                    fontWeight: FontWeight.w500,
+                    fontWeight: widget.fontweight,
                     color: const Color(0xFF9C9C9C),
-                    fontSize: 14,
+                    fontSize: widget.fontsize,
                     fontFamily: "SFProTextReg",
                   ),
 
-            contentPadding: const EdgeInsets.all(15),
+            contentPadding: const EdgeInsets.all(17),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
                 width: 1,

@@ -326,15 +326,15 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
   Widget _buildAppBar() {
     return AppBar(
       elevation: 0,
-      backgroundColor: AppColor.bodyColor,
+      backgroundColor: Color(0xFFFFFFFF),
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: Colors.white,
         systemNavigationBarIconBrightness: Brightness.light,
         systemNavigationBarColor: AppColor.primaryColor,
         statusBarBrightness:
-            Platform.isIOS ? Brightness.light : Brightness.light,
+            Platform.isIOS ? Brightness.light : Brightness.dark,
         statusBarIconBrightness:
-            Platform.isIOS ? Brightness.light : Brightness.light,
+            Platform.isIOS ? Brightness.light : Brightness.dark,
       ),
       leading: widget.appBarIconClick == null
           ? const SizedBox(
@@ -345,18 +345,14 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
               onTap: () {
                 widget.appBarIconClick!();
               },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: const Icon(
-                  Icons.arrow_back_ios_new,
-                  weight: 1,
-                  color: Colors.black,
-                  size: 17,
-                ),
+              child: const Icon(
+                Icons.arrow_back_ios_new,
+                weight: 1,
+                color: Colors.black,
+                size: 16,
               ),
             ),
       title: Row(
-        // Wrap the title with a Row widget
         children: [
           Expanded(
             child: AutoSizeText(
@@ -370,11 +366,11 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
               ),
             ),
           ),
-          // You can add additional widgets here if needed
         ],
       ),
-      centerTitle: false, // Set to false since the title is now within a Row
+      centerTitle: false,
       bottom: widget.appBarTabBar ?? widget.appBarTabBar,
+      titleSpacing: -4,
     );
   }
 }
