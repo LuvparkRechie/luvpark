@@ -395,8 +395,6 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen>
                                     parameters: otpData)
                                 .put()
                                 .then((returnData) async {
-                              print("put returnData $returnData");
-
                               if (returnData == "No Internet") {
                                 Navigator.of(context).pop();
                                 showAlertDialog(context, "Error",

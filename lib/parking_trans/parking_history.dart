@@ -52,7 +52,6 @@ class _ParkingHistoryState extends State<ParkingHistory> {
         "${ApiKeys.gApiSubFolderGetReservationHistory}?user_id=${jsonDecode(akongP!)['user_id'].toString()}";
 
     HttpRequest(api: subApi).get().then((parkHistory) async {
-      print("parkHistory $parkHistory");
       if (parkHistory == "No Internet") {
         setState(() {
           parkingHistoryData = [];

@@ -126,8 +126,6 @@ class _WebviewPageState extends State<WebviewPage> {
       ..setNavigationDelegate(
         NavigationDelegate(
           onPageFinished: (url) {
-            print("isRefresh $isRefresh");
-
             if (mounted) {
               setState(() {
                 isLoading = false;

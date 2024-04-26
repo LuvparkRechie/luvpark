@@ -52,6 +52,8 @@ class _TimeListState extends State<TimeList> {
               controller: inputType,
               keyboardType: TextInputType.number,
               onChange: (value) {
+                inputType.text = value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+
                 if (value.isNotEmpty &&
                     int.parse(value) > int.parse(widget.maxHours.toString())) {
                   showAlertDialog(context, "LuvPark",

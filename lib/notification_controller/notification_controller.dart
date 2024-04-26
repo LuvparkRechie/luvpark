@@ -317,8 +317,6 @@ class NotificationController {
 
   static Future<void> scheduleNewNotification(int id, String title, String body,
       String? dateSched, String payLoad) async {
-    print("dateSched $dateSched");
-
     try {
       tz.initializeTimeZones();
       // Check if timezone database is initialized, if not initialize it
@@ -333,7 +331,7 @@ class NotificationController {
       if (!isAllowed) {
         return;
       }
-      print("scheduled time $scheduledTime");
+
       await myNotifyScheduleInHours(
         id: id,
         title: title,
@@ -342,9 +340,7 @@ class NotificationController {
         repeatNotif: false,
         payLoad: payLoad,
       );
-    } catch (e) {
-      print("error schedule $e");
-    }
+    } catch (e) {}
   }
 
   static Future<void> resetBadgeCounter() async {
@@ -374,8 +370,6 @@ class NotificationController {
       );
     }
 
-    print("receivedAction $receivedAction");
-
     switch (receivedAction.buttonKeyPressed) {
       case "DECLINE":
         declineSharing(receivedAction.id!, context);
@@ -387,10 +381,8 @@ class NotificationController {
           context,
           (isSuccess) {
             if (isSuccess) {
-              print("isSuccess $isSuccess");
               AwesomeNotifications().dismiss(receivedAction.id!);
               if (MyApp.scaffoldKey.currentContext != null) {
-                print("sulod sa if");
                 Navigator.of(MyApp.scaffoldKey.currentContext!).pop();
               }
 
@@ -457,9 +449,7 @@ Future<void> updateLocation(LatLng position) async {
   // }
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var geoConId = prefs.getString('geo_connect_id');
-  print("geoConId $geoConId");
   if (geoConId == null) return;
-  print("position $position");
   var jsonParam = {
     "geo_connect_id": geoConId,
     "latitude": position.latitude,
@@ -544,7 +534,6 @@ Future<void> getParkingTrans(int ctr) async {
     api:
         "${ApiKeys.gApiSubFolderGetReservations}?user_id=${akongId.toString()}",
   ).get().then((notificationData) async {
-    //print("notificationData $notificationData");
     if (notificationData == "No Internet") {
       return;
     }

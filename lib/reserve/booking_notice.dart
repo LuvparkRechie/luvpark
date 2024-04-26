@@ -32,9 +32,8 @@ class _BookingNoticeState extends State<BookingNotice> {
       isLoading = true;
     });
     String subApi = "${ApiKeys.gApiLuvParkGetNotice}?msg_code=PREBOOKMSG";
-    print("subApi $subApi");
+
     HttpRequest(api: subApi).get().then((retDataNotice) async {
-      print("retDataNotice $retDataNotice");
       if (retDataNotice == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {

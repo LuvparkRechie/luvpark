@@ -233,13 +233,9 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
   // }
 
   void getFilteredBrand(vtId) async {
-    print("maeMaevtId $vtId");
     await VehicleBrandsTable.instance.readAllVHBrands().then((maeMae) {
-      print("maeMae $maeMae");
-
       if (maeMae.isNotEmpty) {
         vehicleBrandData = maeMae.where((e) {
-          print("eeee ${e["vehicle_type_id"].toString()}");
           return int.parse(e["vehicle_type_id"].toString()) ==
               int.parse(vtId.toString());
         }).toList();
@@ -388,8 +384,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                           int.parse(vehicleTypeValue.toString());
                     }).toList()[0];
                     _updateMaskFormatter(dataList["format"]);
-                    //  getVehicleBrand(vehicleTypeValue);
-                    print("vehicleTypeValue $vehicleTypeValue");
+
                     getFilteredBrand(vehicleTypeValue);
                   },
                   validator: (value) {
@@ -594,7 +589,6 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                         "vor_image_base64": orImageBase64,
                         "vcr_image_base64": crImageBase64,
                       };
-                      print("parameter $parameter");
 
                       HttpRequest(
                               api: ApiKeys.gApiLuvParkPostGetVehicleReg,

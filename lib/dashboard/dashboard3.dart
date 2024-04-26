@@ -23,7 +23,6 @@ import 'package:luvpark/dashboard/filter_map.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
-import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:luvpark/verify_user/verify_user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -152,18 +151,6 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   Future<void> getUsersData() async {
-    LocationPermission permission;
-
-    permission = await Geolocator.checkPermission();
-    permission = await Geolocator.requestPermission();
-    if (permission != LocationPermission.denied &&
-        permission != LocationPermission.deniedForever) {
-    } else {
-      Variables.pageTrans(const PermissionHandlerScreen(
-        isLogin: true,
-        index: 1,
-      ));
-    }
     final prefs = await SharedPreferences.getInstance();
     var myData = prefs.getString(
       'userData',
@@ -877,7 +864,6 @@ class _Dashboard3State extends State<Dashboard3> {
                         ),
                         label: 'Current Location',
                         onTap: () {
-                         
                           if (isClicked) return;
                           setState(() {
                             isClicked = true;

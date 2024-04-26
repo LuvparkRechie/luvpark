@@ -502,27 +502,10 @@ class _ReserveReceiptState extends State<ReserveReceipt>
             if (widget.isReserved &&
                 int.parse(widget.tab.toString()) == 1 &&
                 widget.isAutoExtend == "Y")
-              // ElevatedButton.icon(
-              //     onPressed: () {},
-              //     style: ElevatedButton.styleFrom(
-              //         backgroundColor: Colors.white,
-              //         shape: const StadiumBorder(
-              //           side: BorderSide(width: 1, color: Colors.blue),
-              //         )),
-              //     icon: Icon(Icons.cancel, color: AppColor.primaryColor),
-              //     label: CustomDisplayText(
-              //       label: 'Cancel auto extend'.toUpperCase(),
-              //       fontSize: 12,
-              //       color: AppColor.primaryColor,
-              //       fontWeight: FontWeight.bold,
-              //       maxLines: 2,
-              //       alignment: TextAlign.center,
-              //     )),
               CustomButton(
                 label: "Cancel Auto Extend",
                 onTap: () async {
                   FocusManager.instance.primaryFocus!.unfocus();
-                  print("widget.reservationId ${widget.reservationId}");
 
                   // ignore: use_build_context_synchronously
                   CustomModal(context: context).loader();
@@ -532,7 +515,6 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                           parameters: {"reservation_id": widget.reservationId})
                       .put()
                       .then((objData) {
-                    print("objData gApiLuvPayPutCancelAutoExtend $objData");
                     if (objData == "No Internet") {
                       Navigator.pop(context);
                       showAlertDialog(context, "Error",

@@ -87,8 +87,6 @@ class _RegistrationFormState extends State<UpdateProfile> {
       'userData',
     );
 
-    print("anima  ${jsonDecode(akongP)["first_name"] == null}");
-
     regionId.text = jsonDecode(akongP!)["region_id"].toString();
     provinceId.text = jsonDecode(akongP)["province_id"].toString();
     cityId.text = jsonDecode(akongP)["city_id"].toString();
@@ -150,8 +148,6 @@ class _RegistrationFormState extends State<UpdateProfile> {
         .post()
         .then(
       (retvalue) {
-        print("paramInfo $paramInfo");
-        print("retvalue $retvalue");
         if (retvalue == "No Internet") {
           Navigator.pop(context);
           showAlertDialog(context, "Error",
@@ -188,11 +184,10 @@ class _RegistrationFormState extends State<UpdateProfile> {
 
   void submitInfo(param) {
     CustomModal(context: context).loader();
-    print("submit param $param");
+
     HttpRequest(api: ApiKeys.gApiSubFolderPutUpdateProf, parameters: param)
         .put()
         .then((res) async {
-      print("submit infor $res");
       if (res == "No Internet") {
         Navigator.pop(context);
         showAlertDialog(context, "Error",

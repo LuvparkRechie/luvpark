@@ -44,9 +44,8 @@ class _MyVehiclesState extends State<MyVehicles> {
     );
 
     DashboardComponent.getAvailableVehicle(
-        myContext, jsonDecode(akongP!)['user_id'].toString(),
+        myContext, "", jsonDecode(akongP!)['user_id'].toString(),
         (cbVehicle) async {
-      print("cbVehicle $cbVehicle");
       if (cbVehicle == "No Internet") {
         setState(() {
           hasInternet = false;
@@ -100,9 +99,6 @@ class _MyVehiclesState extends State<MyVehicles> {
           child: FloatingActionButton(
             backgroundColor: AppColor.primaryColor,
             onPressed: () async {
-              // VehicleBrandsTable.instance.readAllVHBrands().then((value) {
-              //   print("animala ${value.length}");
-              // });
               Variables.pageTrans(
                 VehicleRegDialog(
                   userId: jsonDecode(akongP!)['user_id'].toString(),

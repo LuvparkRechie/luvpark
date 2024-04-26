@@ -16,11 +16,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class VehicleOption extends StatefulWidget {
   final List vehicleData;
+  final String vhTypesId;
   final Function onTap;
   final String? vehicleTypeId;
   const VehicleOption({
     required this.onTap,
     required this.vehicleData,
+    required this.vhTypesId,
     this.vehicleTypeId,
     super.key,
   });
@@ -55,11 +57,9 @@ class _VehicleOptionState extends State<VehicleOption> {
       'userData',
     );
 
-    print("akongP $akongP");
-
     DashboardComponent.getAvailableVehicle(
-        context, jsonDecode(akongP!)['user_id'].toString(), (cbVehicle) async {
-      print("cbVehicle $cbVehicle");
+        context, widget.vhTypesId, jsonDecode(akongP!)['user_id'].toString(),
+        (cbVehicle) async {
       if (cbVehicle == "No Internet") {
         setState(() {
           hasInternet = false;

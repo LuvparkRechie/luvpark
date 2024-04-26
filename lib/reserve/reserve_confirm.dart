@@ -408,7 +408,6 @@ class _PayParkingConfirmationState extends State<PayParkingConfirmation> {
       'userData',
     );
 
-    print("extend param ${widget.paramExtend![0]}");
     HttpRequest(
             api: ApiKeys.gApiSubFolderPutExtend,
             parameters: widget.paramExtend![0])

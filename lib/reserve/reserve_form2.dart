@@ -544,17 +544,20 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                 widget.areaData[0]
                                                     ["park_area_id"],
                                                 (objData) {
-                                              print(" $objData");
                                               if (objData["msg"] == "Success") {
+                                                print(
+                                                    "area data ${widget.areaData}");
                                                 Variables.customBottomSheet(
                                                   context,
                                                   VehicleOption(
+                                                      vhTypesId: widget
+                                                              .areaData[0][
+                                                          "vehicle_types_id_list"],
                                                       vehicleData:
                                                           objData["data"],
                                                       vehicleTypeId:
                                                           vehicleTypeValue!,
                                                       onTap: (cbData) {
-                                                        print("cbData $cbData");
                                                         setState(() {
                                                           isLoadingBtn = true;
                                                         });
@@ -1243,7 +1246,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
             parameters: {"user_id": jsonDecode(akongP!)['user_id'].toString()})
         .post()
         .then((dataRefNo) async {
-      print("dataRefNo $dataRefNo");
       if (dataRefNo == "No Internet") {
         Navigator.of(context).pop();
         showAlertDialog(context, "Error",
@@ -1282,7 +1284,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                 parameters: postParameters)
             .post()
             .then((returnPost) async {
-          print("gApiSubFolderPostReserveParking $returnPost");
           if (returnPost == "No Internet") {
             Navigator.of(context).pop();
             showAlertDialog(context, "Error",
@@ -1385,7 +1386,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                   } else {
                     Navigator.of(context).pop();
                     Navigator.pop(context);
-                    print("success returnpost $returnPost");
+
                     Variables.pageTrans(
                       ReserveReceipt(
                           spaceName: returnPost['park_space_name'],

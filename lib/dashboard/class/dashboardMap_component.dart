@@ -22,10 +22,10 @@ class DashboardComponent {
       context, String parkType, radius, lat, long, Function callBack) async {
     var params =
         "${ApiKeys.gApiSubFolderGetNearestSpace}?latitude=${lat.toString()}&longitude=${long.toString()}&parking_type_code=$parkType&radius=${radius.toString()}&no_hrs=1&vehicle_type_id=";
-    print("params $params");
+
     try {
       var returnData = await HttpRequest(api: params).get();
-      print("returnData $returnData");
+
       if (returnData == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
@@ -121,7 +121,6 @@ class DashboardComponent {
 
   Future<List<String>> fetchSuggestions(
       String query, double lat, double long, String radius) async {
-    print("no query $query");
     final url =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=$query&location=$lat,$long&radius=${double.parse(radius.toString())}&key=${Variables.mapApiKey}';
 
@@ -145,7 +144,6 @@ class DashboardComponent {
           return []; // Handle empty predictions list
         }
       } else {
-        print("API request failed with status code: ${response.statusCode}");
         return []; // Handle non-200 status codes
       }
     } catch (e) {
@@ -243,10 +241,10 @@ class DashboardComponent {
     });
   }
 
-  static void getAvailableVehicle(context, userId, Function cb) async {
-    String api = "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId";
+  static void getAvailableVehicle(context, vtypes, userId, Function cb) async {
+    String api =
+        "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=$vtypes";
     CustomModal(context: context).loader();
-
     HttpRequest(api: api).get().then((myVehicles) async {
       if (myVehicles == "No Internet") {
         Navigator.of(context).pop();

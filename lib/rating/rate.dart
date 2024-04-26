@@ -21,7 +21,7 @@ class RateUs extends StatefulWidget {
 }
 
 class _RateUsState extends State<RateUs> {
-  int myRate = 1;
+  int myRate = 3;
   TextEditingController commentController = TextEditingController();
 
   @override

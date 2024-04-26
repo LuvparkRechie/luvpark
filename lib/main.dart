@@ -8,12 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
-import 'package:luvpark/background_process/android_background.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
-import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
@@ -28,8 +25,6 @@ import 'package:luvpark/pa_message/pa_message.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
-import 'package:luvpark/sqlite/vehicle_brands_model.dart';
-import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 // ignore: depend_on_referenced_packages
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -38,11 +33,26 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:upgrader/upgrader.dart';
 
+@pragma('vm:entry-point')
+Future<void> backgroundFunc() async {
+  int counter = 0;
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  Timer.periodic(const Duration(seconds: 5), (timer) async {
+    var akongId = prefs.getString('myId');
+    if (akongId == null) return;
+    await getParkingTrans(counter);
+    await getSharingData(counter);
+
+    await getMessNotif();
+  });
+}
+
 void main() async {
   tz.initializeTimeZones();
   DartPingIOS.register();
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
+  backgroundFunc();
 
   final packageInfo = await PackageInfo.fromPlatform();
   Variables.version = packageInfo.version;
@@ -56,7 +66,7 @@ void main() async {
   NotificationController.initializeLocalNotifications();
   NotificationController.initializeIsolateReceivePort();
   //AndroidBackgroundProcess.backgroundExecution(0);
-  AndroidBackgroundProcess.initilizeBackgroundService();
+  // AndroidBackgroundProcess.initilizeBackgroundService();
   ForegroundNotif.initializeForeground();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -69,9 +79,6 @@ void main() async {
     );
   });
 }
-
-// to ensure this is executed
-// run app from xcode, then from xcode menu, select Simulate Background Fetch
 
 // navigation_provider.dart`
 class NavigationProvider with ChangeNotifier {
@@ -195,7 +202,6 @@ class _SplashScreenState extends State<SplashScreen> {
     NotificationController.startListeningNotificationEvents();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onBoarding();
-      getVehicleBrand();
     });
   }
 
@@ -203,33 +209,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void dispose() {
     // Cancel the stream subscription when the widget is disposed
     super.dispose();
-  }
-
-  void getVehicleBrand() {
-    String apiParam = "${ApiKeys.gApiLuvParkGetVehicleBrand}";
-    HttpRequest(api: apiParam).get().then((returnBrandData) async {
-      if (returnBrandData == "No Internet") {
-        return;
-      }
-      if (returnBrandData == null) {}
-
-      if (returnBrandData["items"].length > 0) {
-        VehicleBrandsTable.instance.deleteAll();
-        for (var dataRow in returnBrandData["items"]) {
-          var vbData = {
-            VHBrandsDataFields.vhTypeId:
-                int.parse(dataRow["vehicle_type_id"].toString()),
-            VHBrandsDataFields.vhBrandId:
-                int.parse(dataRow["vehicle_brand_id"].toString()),
-            VHBrandsDataFields.vhBrandName:
-                dataRow["vehicle_brand_name"].toString(),
-          };
-          await VehicleBrandsTable.instance.insertUpdate(vbData);
-        }
-      } else {
-        return;
-      }
-    });
   }
 
   void onBoarding() async {

@@ -21,6 +21,8 @@ import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/forget_pass/forget_pass1.dart';
 import 'package:luvpark/forget_pass/forgot_passVerified.dart';
 import 'package:luvpark/login/class/login_class.dart';
+import 'package:luvpark/sqlite/vehicle_brands_model.dart';
+import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 
 class LoginScreen extends StatefulWidget {
   final int index;
@@ -196,6 +198,79 @@ class _LoginScreenState extends State<LoginScreen> {
                     label: "Login",
                     onTap: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
+                      yowo() {
+                        // ignore: use_build_context_synchronously
+                        LoginComponent().getAccountStatus(
+                            context,
+                            "63${mobileNumber.text.replaceAll(" ", "")}",
+                            password.text, (items) {
+                          if (items == "No Internet") {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              isLoading = false;
+                              isLogin = false;
+                            });
+                            return;
+                          }
+                          if (items.length == 0) {
+                            Navigator.of(context).pop();
+                            showAlertDialog(
+                                context, "Error", "Invalid Account.", () {
+                              setState(() {
+                                isLoading = false;
+                                isLogin = false;
+                              });
+                              Navigator.of(context).pop();
+                            });
+                            return;
+                          } else {
+                            if (items[0]["is_active"] == "N") {
+                              Navigator.of(context).pop();
+                              showModalConfirmation(
+                                  context,
+                                  "Inactive Account",
+                                  "Your account is currently inactive. Would you like to activate it now?",
+                                  "Not now", () {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  isLoading = false;
+                                  isLogin = false;
+                                });
+                              }, () async {
+                                //Activate account
+                                setState(() {
+                                  isLoading = false;
+                                  isLogin = false;
+                                });
+                                Navigator.pop(context);
+                                Variables.pageTrans(
+                                  ActivateAccountScreen(
+                                      mobileNo:
+                                          "63${mobileNumber.text.replaceAll(" ", "")}",
+                                      password: password.text),
+                                );
+                              });
+                            } else {
+                              LoginComponent().loginFunc(
+                                  password.text,
+                                  "63${mobileNumber.text.toString().replaceAll(" ", "")}",
+                                  context, (callBack) {
+                                Navigator.of(context).pop();
+                                setState(() {
+                                  isLoading = false;
+                                  isLogin = false;
+                                  if (callBack[1] == "No Internet") {
+                                    isInternetConnected = false;
+                                  } else {
+                                    isInternetConnected = true;
+                                  }
+                                });
+                              });
+                            }
+                          }
+                        });
+                      }
+
                       setState(() {
                         isLogin = false;
                       });
@@ -225,75 +300,57 @@ class _LoginScreenState extends State<LoginScreen> {
                               isLoading = true;
                             });
                           }
-                          // ignore: use_build_context_synchronously
-                          LoginComponent().getAccountStatus(
-                              context,
-                              "63${mobileNumber.text.replaceAll(" ", "")}",
-                              password.text, (items) {
-                            print("get account status $items");
-                            if (items == "No Internet") {
+
+                          String apiParam =
+                              "${ApiKeys.gApiLuvParkGetVehicleBrand}";
+                          HttpRequest(api: apiParam)
+                              .get()
+                              .then((returnBrandData) async {
+                            if (returnBrandData == "No Internet") {
                               Navigator.of(context).pop();
                               setState(() {
                                 isLoading = false;
                                 isLogin = false;
                               });
-                              return;
-                            }
-                            if (items.length == 0) {
-                              Navigator.of(context).pop();
-                              showAlertDialog(
-                                  context, "Error", "Invalid Account.", () {
-                                setState(() {
-                                  isLoading = false;
-                                  isLogin = false;
-                                });
+                              showAlertDialog(context, "Error",
+                                  "Please check your internet connection and try again.",
+                                  () {
                                 Navigator.of(context).pop();
                               });
                               return;
-                            } else {
-                              if (items[0]["is_active"] == "N") {
+                            }
+                            if (returnBrandData == null) {
+                              Navigator.of(context).pop();
+                              setState(() {
+                                isLoading = false;
+                                isLogin = false;
+                              });
+                              showAlertDialog(context, "Error",
+                                  "Error while connecting to server, Please try again.",
+                                  () {
                                 Navigator.of(context).pop();
-                                showModalConfirmation(
-                                    context,
-                                    "Inactive Account",
-                                    "Your account is currently inactive. Would you like to activate it now?",
-                                    "Not now", () {
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    isLoading = false;
-                                    isLogin = false;
-                                  });
-                                }, () async {
-                                  //Activate account
-                                  setState(() {
-                                    isLoading = false;
-                                    isLogin = false;
-                                  });
-                                  Navigator.pop(context);
-                                  Variables.pageTrans(
-                                    ActivateAccountScreen(
-                                        mobileNo:
-                                            "63${mobileNumber.text.replaceAll(" ", "")}",
-                                        password: password.text),
-                                  );
-                                });
-                              } else {
-                                LoginComponent().loginFunc(
-                                    password.text,
-                                    "63${mobileNumber.text.toString().replaceAll(" ", "")}",
-                                    context, (callBack) {
-                                  Navigator.of(context).pop();
-                                  setState(() {
-                                    isLoading = false;
-                                    isLogin = false;
-                                    if (callBack[1] == "No Internet") {
-                                      isInternetConnected = false;
-                                    } else {
-                                      isInternetConnected = true;
-                                    }
-                                  });
-                                });
+                              });
+                            }
+
+                            if (returnBrandData["items"].length > 0) {
+                              VehicleBrandsTable.instance.deleteAll();
+                              for (var dataRow in returnBrandData["items"]) {
+                                var vbData = {
+                                  VHBrandsDataFields.vhTypeId: int.parse(
+                                      dataRow["vehicle_type_id"].toString()),
+                                  VHBrandsDataFields.vhBrandId: int.parse(
+                                      dataRow["vehicle_brand_id"].toString()),
+                                  VHBrandsDataFields.vhBrandName:
+                                      dataRow["vehicle_brand_name"].toString(),
+                                };
+                                await VehicleBrandsTable.instance
+                                    .insertUpdate(vbData);
                               }
+                              yowo();
+                              return;
+                            } else {
+                              yowo();
+                              return;
                             }
                           });
                         }

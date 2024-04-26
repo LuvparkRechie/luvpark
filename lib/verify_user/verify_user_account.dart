@@ -115,14 +115,9 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
                                 ? widget.mobileNoParam
                                 : "63${mobileNumber.text.toString().replaceAll(" ", "")}",
                             (data) async {
-                          print("Data ${data["data"]}");
                           if (data["data"]["is_valid"] == "Y") {
-                            print("widget.isInvite ${widget.isInvite}");
                             if (widget.isInvite)
-                              //1 on 1
                               addFriend(data["data"]["user_id"]);
-
-                            //MULTIPLE
                             else
                               Functions.inviteFriend(
                                   context, data["data"]["user_id"], false);
@@ -145,12 +140,10 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
         'longitude': position.longitude,
         'latitude': position.latitude,
       };
-      print("parameters $parameters");
+
       HttpRequest(api: ApiKeys.gApiLuvParkPutShareLoc, parameters: parameters)
           .post()
           .then((returnPost) async {
-        print("returnPost add friend $returnPost");
-
         SharedPreferences prefs = await SharedPreferences.getInstance();
 
         if (returnPost == "No Internet") {

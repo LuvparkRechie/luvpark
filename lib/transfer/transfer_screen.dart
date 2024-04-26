@@ -131,9 +131,7 @@ class _TransferOptionsState extends State<TransferOptions> {
 
     try {
       canCheckBiometrics = await auth.canCheckBiometrics;
-    } catch (e) {
-      debugPrint("$e");
-    }
+    } catch (e) {}
 
     bool authenticated = false;
 
@@ -146,9 +144,7 @@ class _TransferOptionsState extends State<TransferOptions> {
           biometricOnly: true,
         ),
       );
-    } catch (e) {
-      debugPrint("$e");
-    }
+    } catch (e) {}
     if (authenticated) {
       transferFunc();
     } else {}

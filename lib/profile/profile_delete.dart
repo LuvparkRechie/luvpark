@@ -39,7 +39,6 @@ class _ProfileDeleteState extends State<ProfileDelete> {
         var userData = prefs.getString('userData');
 
         if (userData == null) {
-          print("Error: No user data found in SharedPreferences.");
           // Handle error
           return;
         }

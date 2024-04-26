@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
+// import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
@@ -76,50 +76,6 @@ class _SettingsPageState extends State<SettingsPage> {
     setState(() {
       loading = false;
     });
-    // HttpRequest(
-    //         api:
-    //             "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=${jsonDecode(akongP!)["mobile_no"]}")
-    //     .get()
-    //     .then((objData) {
-    //   if (objData == "No Internet") {
-    //     setState(() {
-    //       hasInternetPage = false;
-    //       loading = false;
-    //     });
-    //     Navigator.of(context).pop();
-    //     showAlertDialog(context, "Error",
-    //         "Please check your internet connection and try again.", () {
-    //       Navigator.of(context).pop();
-    //     });
-    //     return;
-    //   }
-    //   if (objData == null) {
-    //     setState(() {
-    //       hasInternetPage = true;
-    //       loading = false;
-    //     });
-    //     Navigator.of(context).pop();
-    //     showAlertDialog(context, "Error",
-    //         "Error while connecting to server, Please try again.", () {
-    //       Navigator.of(context).pop();
-    //     });
-
-    //     return;
-    //   } else {
-    //     Navigator.of(context).pop();
-
-    //     setState(() {
-    //       if (objData["items"][0]["is_mpin"] == null) {
-    //         isActiveMpin = null;
-    //         isAllowMPIN = false;
-    //       } else {
-    //         isActiveMpin = objData["items"][0]["is_mpin"] == "Y" ? true : false;
-    //         isAllowMPIN = true;
-    //       }
-    //       hasInternetPage = true;
-    //     });
-    //   }
-    // });
   }
 
   @override
@@ -168,15 +124,14 @@ class _SettingsPageState extends State<SettingsPage> {
                                         SharedPreferences pref =
                                             await SharedPreferences
                                                 .getInstance();
-                                        final service =
-                                            FlutterBackgroundService();
+                                        // final service =
+                                        //     FlutterBackgroundService();
                                         Navigator.pop(context);
                                         CustomModal(context: context).loader();
 
                                         await NotificationDatabase.instance
                                             .readAllNotifications()
                                             .then((notifData) async {
-                                          print("notifData $notifData");
                                           if (notifData.isNotEmpty) {
                                             for (var nData in notifData) {
                                               NotificationController
@@ -185,11 +140,11 @@ class _SettingsPageState extends State<SettingsPage> {
                                             }
                                           }
 
-                                          if (mounted) {
-                                            setState(() {
-                                              service.invoke("stopService");
-                                            });
-                                          }
+                                          // if (mounted) {
+                                          //   setState(() {
+                                          //     service.invoke("stopService");
+                                          //   });
+                                          // }
                                           var logData =
                                               pref.getString('loginData');
                                           var mappedLogData = [
@@ -397,7 +352,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             Container(
                               height: 20,
                             ),
-
                           Container(
                             clipBehavior: Clip.antiAlias,
                             decoration: ShapeDecoration(
@@ -463,12 +417,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                     String id = await Variables.getUserId();
                                     SharedPreferences prefs =
                                         await SharedPreferences.getInstance();
-
-                                    print("id $id");
-
                                     await Functions.getSharedData(id,
                                         (sharedData) async {
-                                      // print("Fetching data... $sharedData");
                                       Navigator.pop(context);
 
                                       if (sharedData["data"].isEmpty &&
@@ -558,7 +508,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                   Divider(
                                     color: Colors.grey,
                                   ),
-
                                   listColumn(
                                       Image.asset('assets/images/faqs123.png'),
                                       "FAQ", () async {
@@ -592,181 +541,13 @@ class _SettingsPageState extends State<SettingsPage> {
                                       "About luvpark", () {
                                     Variables.pageTrans(const AboutLuvPark());
                                   }),
-
-                                  // listColumn(Icons.policy_outlined, "Help",
-                                  //     () async {
-                                  //   // Variables.pageTrans(
-                                  //   //     const CustomerSupport());
-                                  //   CustomModal(context: context).loader();
-                                  //   try {
-                                  //     dynamic conversationObject = {
-                                  //       'appId':
-                                  //           '2792f6be0648bd34f5480da60d7aec7d8'
-                                  //     };
-                                  //     dynamic result =
-                                  //         await KommunicateFlutterPlugin
-                                  //             .buildConversation(
-                                  //                 conversationObject);
-
-                                  //     print("Conversation builder success : " +
-                                  //         result.toString());
-                                  //     Navigator.of(context).pop();
-                                  //   } on Exception catch (e) {
-                                  //     print(
-                                  //         "Conversation builder error occurred : " +
-                                  //             e.toString());
-                                  //     Navigator.of(context).pop();
-                                  //   }
-                                  // }),
                                 ],
                               ),
                             ),
                           ),
-
-                          // const Divider(),
-                          // if (isAllowMPIN && isActiveMpin! && !loading)
-                          //   listColumn(
-                          //       CupertinoIcons.checkmark_shield, "Change MPIN", () {
-                          //     Variables.pageTrans(UpdateMpin(
-                          //       headerLabel: "Update MPIN",
-                          //       callback: getAccountStatus,
-                          //     ));
-                          //   }),
-                          // if (isAllowMPIN && isActiveMpin! && !loading)
-                          //   const Divider(),
-
-                          // listColumn(Icons.security, "Security Preferences",
-                          //     () async {
-                          //   showModalBottomSheet(
-                          //     context: context,
-                          //     isDismissible: false,
-                          //     enableDrag: false,
-                          //     isScrollControlled: true,
-                          //     // This makes the sheet full screen
-                          //     shape: const RoundedRectangleBorder(
-                          //       borderRadius: BorderRadius.vertical(
-                          //         top: Radius.circular(
-                          //             15.0), // Adjust the radius as needed
-                          //       ),
-                          //     ),
-                          //     builder: (BuildContext context) {
-                          //       return UsersSecurityVerification(
-                          //           callback: getAccountStatus);
-                          //     },
-                          //   );
-                          // }),
-                          // const Divider(),
-                          // listColumn(Icons.timer_outlined, "User Inactivity", () {
-                          //   Variables.pageTrans(const IdleScreen());
-                          // }),
-
-                          // listColumn(Icons.policy_outlined, "Privacy Policy",
-                          //     () async {
-                          //   Navigator.push(
-                          //     context,
-                          //     MaterialPageRoute(
-                          //       builder: ((context) =>
-                          //           const TermsConditions(title: "Privacy Policy")),
-                          //     ),
-                          //   );
-                          // }),
-                          // const Divider(),
-
                           Container(
                             height: 20,
                           ),
-                          // InkWell(
-                          //   onTap: () {
-                          //     showModalConfirmation(
-                          //         context,
-                          //         "Confirmation",
-                          //         "Are you sure you want to logout?",
-                          //         "Cancel", () {
-                          //       Navigator.of(context).pop();
-                          //     }, () async {
-                          //       Navigator.pop(context);
-                          //       CustomModal(context: context).loader();
-                          //       SharedPreferences pref =
-                          //           await SharedPreferences.getInstance();
-
-                          //       final service = FlutterBackgroundService();
-
-                          //       await NotificationDatabase.instance
-                          //           .readAllNotifications()
-                          //           .then((notifData) async {
-                          //         if (notifData.isNotEmpty) {
-                          //           for (var nData in notifData) {
-                          //             NotificationController
-                          //                 .cancelNotificationsById(
-                          //                     nData["reserved_id"]);
-                          //           }
-                          //           NotificationDatabase.instance.deleteAll();
-                          //         }
-                          //         var logData = pref.getString(
-                          //           'loginData',
-                          //         );
-                          //         var mappedLogData = [jsonDecode(logData!)];
-                          //         mappedLogData[0]["is_active"] = "N";
-                          //         pref.setString("loginData",
-                          //             jsonEncode(mappedLogData[0]!));
-                          //         service.invoke("stopService");
-                          //         pref.remove('myId');
-                          //         BiometricLogin().clearPassword();
-                          //         Timer(const Duration(seconds: 1), () {
-                          //           Navigator.of(context).pop(context);
-                          //           Variables.pageTrans(
-                          //             const LoginScreen(index: 1),
-                          //           );
-                          //         });
-                          //       });
-                          //     });
-                          //   },
-                          //   child: Container(
-                          //     clipBehavior: Clip.antiAlias,
-                          //     decoration: ShapeDecoration(
-                          //       color: const Color(0xFFf8f8fb),
-                          //       shape: RoundedRectangleBorder(
-                          //         borderRadius: BorderRadius.circular(11),
-                          //       ),
-                          //     ),
-                          //     child: Padding(
-                          //       padding: const EdgeInsets.symmetric(
-                          //           horizontal: 10, vertical: 8),
-                          //       child: Padding(
-                          //         padding:
-                          //             const EdgeInsets.symmetric(vertical: 10),
-                          //         child: Row(
-                          //           mainAxisAlignment:
-                          //               MainAxisAlignment.spaceBetween,
-                          //           children: [
-                          //             Expanded(
-                          //               child: Row(
-                          //                 children: [
-                          //                   const Icon(
-                          //                     Icons.logout_outlined,
-                          //                     color: Colors.red,
-                          //                   ),
-                          //                   Container(
-                          //                     width: 20,
-                          //                   ),
-                          //                   const CustomDisplayText(
-                          //                     label: "Logout",
-                          //                     fontSize: 14,
-                          //                     fontWeight: FontWeight.bold,
-                          //                   ),
-                          //                 ],
-                          //               ),
-                          //             ),
-                          //             const Icon(
-                          //               Icons.keyboard_arrow_right,
-                          //               color: Colors.black54,
-                          //             ),
-                          //           ],
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                           CustomDisplayText(
                             label: 'V${Variables.version}',
                             color: const Color(0xFF9C9C9C),
@@ -774,7 +555,6 @@ class _SettingsPageState extends State<SettingsPage> {
                             fontWeight: FontWeight.w600,
                             height: 0,
                           ),
-
                           Container(
                             height: 20,
                           ),

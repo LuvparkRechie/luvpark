@@ -14,11 +14,10 @@ class SubmitData {
     };
 
     CustomModal(context: context).loader();
-    print("param $param");
+
     HttpRequest(api: ApiKeys.gApiLuvParkPostReg, parameters: param)
         .post()
         .then((returnPost) async {
-      print("returnPost $returnPost");
       if (returnPost == "No Internet") {
         Navigator.pop(context);
         showAlertDialog(context, "Error",

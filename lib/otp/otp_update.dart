@@ -342,8 +342,6 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                 CustomButton(
                   label: "Confirm",
                   onTap: () {
-                    print("inputPin $inputPin");
-                    print("widget.otp ${widget.otp}");
                     if (inputPin.isEmpty) return;
                     if ((int.parse(inputPin.toString()) !=
                             int.parse(widget.otp.toString())) ||

@@ -73,8 +73,10 @@ class ApiKeys {
       '/ords/$parkSpaceApi/base/vehicletypes';
 
 //get neareast space data sa mapa
-  static const gApiSubFolderGetNearestSpace =
-      '/ords/$parkSpaceApi/park/nearest';
+  // static const gApiSubFolderGetNearestSpace =
+  //     '/ords/$parkSpaceApi/park/nearest';
+  static const gApiSubFolderGetNearestSpace = '/ords/$parkSpaceApi/ps/nearest';
+
   //get parking type filter dropdown dashboard
   static const gApiSubFolderGetParkingTypes =
       '/ords/$parkSpaceApi/base/parkingtypes';
@@ -140,7 +142,7 @@ class ApiKeys {
   //LUVPARK REGISTRATION
   static const gApiLuvParkPostReg = '/ords/$luvApi/user/reg/';
   //LUVPARK REGISTRATION vehicle
-  static const gApiLuvParkPostGetVehicleReg = '/ords/$luvApi/mfav/vehicles';
+  static const gApiLuvParkPostGetVehicleReg = '/ords/$luvApi/fav/veh';
   //LUVPARK Get Brand vehicle
   //static const gApiLuvParkPostGetVehicleBrand = '/ords/$luvApi/ps/vb';
   static const gApiLuvParkGetVehicleBrand =

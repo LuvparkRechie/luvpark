@@ -108,8 +108,6 @@ class VehicleBrandsTable {
       (record) => record[VHBrandsDataFields.vhTypeId] == vtId,
     );
 
-    print("matchingRecord $matchingRecord");
-
     return matchingRecord;
   }
 

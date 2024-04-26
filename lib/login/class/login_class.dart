@@ -1,8 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:luvpark/background_process/android_background.dart';
+// import 'package:flutter_background_service/flutter_background_service.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
 //import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
@@ -31,7 +30,6 @@ class LoginComponent {
     HttpRequest(api: ApiKeys.gApiSubFolderPostLogin, parameters: postParam)
         .post()
         .then((returnPost) {
-      print(" logi returnPost $returnPost");
       if (returnPost == "No Internet") {
         showAlertDialog(context, "Error",
             "please check your internet connection and try again.", () {
@@ -89,7 +87,7 @@ class LoginComponent {
                 return;
               } else {
                 if (objData["items"][0]["msg"] == 'Y') {
-                  final service = FlutterBackgroundService();
+                  //    final service = FlutterBackgroundService();
                   prefs.remove('loginData');
                   prefs.remove('userData');
                   prefs.remove('geo_connect_id');
@@ -103,7 +101,7 @@ class LoginComponent {
                   );
                   prefs.setBool('isLoggedIn', true);
 
-                  service.invoke("stopService");
+                  //   service.invoke("stopService");
                   tz.initializeTimeZones();
 
                   if (logData == null) {
@@ -158,11 +156,11 @@ class LoginComponent {
                       'myProfilePic', jsonEncode(items["image_base64"]));
 
                   cb([true, "Success"]);
-                  if (await service.isRunning()) {
-                    service.invoke("stopService");
-                  }
-                  service.startService();
-                  AndroidBackgroundProcess.initilizeBackgroundService();
+                  // if (await service.isRunning()) {
+                  //   service.invoke("stopService");
+                  // }
+                  // service.startService();
+                  // AndroidBackgroundProcess.initilizeBackgroundService();
 
                   Variables.pageTrans(const MainLandingScreen());
                 } else {

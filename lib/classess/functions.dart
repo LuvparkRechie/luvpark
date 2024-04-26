@@ -427,7 +427,6 @@ class Functions {
     HttpRequest(
       api: ApiKeys.gApiLuvParkGetVehicleBrand,
     ).get().then((returnPost) async {
-      print("vehicle brand $returnPost");
       if (returnPost == "No Internet") {
         Navigator.pop(context);
         showAlertDialog(context, "Error",
@@ -458,10 +457,8 @@ class Functions {
   }
 
   static Future<void> saveDataToPreferences(data) async {
-    print("insert json data1  $data");
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String jsonData = jsonEncode(data);
-    print("insert json data $jsonData");
     await prefs.setString('vehicle_brands', jsonData);
   }
 
@@ -480,7 +477,7 @@ class Functions {
   }
 
   static void getVehicleData(context, areaId, Function cb) {
-      HttpRequest(
+    HttpRequest(
             api: "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=$areaId")
         .get()
         .then((returnData) async {

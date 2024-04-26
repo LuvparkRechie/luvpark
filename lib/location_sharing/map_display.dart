@@ -504,7 +504,6 @@ class MapSharingScreenState extends State<MapSharingScreen> {
   }
 
   void _onVerticalDragUpdate(DragUpdateDetails details) {
-    print("onver afasfha");
     setState(() {
       _panelHeight -= details.primaryDelta!; // Adjusted to subtract delta
       if (_panelHeight > _panelHeightOpen) {
