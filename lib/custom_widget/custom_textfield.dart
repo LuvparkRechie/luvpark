@@ -26,6 +26,7 @@ class CustomTextField extends StatefulWidget {
   final int? maxLength;
   final double? fontsize;
   final FontWeight? fontweight;
+  final TextAlign? textAlign;
 
   const CustomTextField(
       {super.key,
@@ -42,6 +43,7 @@ class CustomTextField extends StatefulWidget {
       this.suffixIcon,
       this.onIconTap,
       this.maxLength,
+      this.textAlign,
       this.filledColor,
       this.isFilled,
       this.keyboardType = TextInputType.text,
@@ -68,6 +70,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
           textInputAction: TextInputAction.done,
           readOnly: widget.isReadOnly!,
           keyboardType: widget.keyboardType!,
+          textAlign:
+              widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
             filled: widget.isFilled != null && widget.isFilled!

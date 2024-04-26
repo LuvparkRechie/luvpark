@@ -343,6 +343,9 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                     builder: (BuildContext context) {
                                       return TimeList(
                                         numbersList: numbersList,
+                                        maxHours: widget.areaData[0]
+                                                ["res_max_hours"]
+                                            .toString(),
                                         onTap: (dataHours) async {
                                           setState(() {
                                             inputTimeLabel =
@@ -364,6 +367,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   );
                                 },
                                 child: Container(
+                                  height: 71,
                                   width: Variables.screenSize.width,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(7),
@@ -371,7 +375,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 20, vertical: 15),
+                                        horizontal: 20),
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -391,10 +395,10 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                           child:
                                                               CustomDisplayText(
                                                             label:
-                                                                inputTimeLabel,
+                                                                "$inputTimeLabel ",
                                                             color: AppColor
                                                                 .primaryColor,
-                                                            fontSize: 14,
+                                                            fontSize: 16,
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             letterSpacing:
@@ -794,8 +798,8 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   Expanded(
                                     child: CustomButton(
                                         label: widget.queueChkIn[0]["is_queue"]
-                                            ? "Confirm Queue"
-                                            : "Confirm Booking",
+                                            ? "Confirm this Queue"
+                                            : "Confirm this booking",
                                         color: callBackData.isEmpty
                                             ? Color(0xFF6C7075).withOpacity(.6)
                                             : AppColor.primaryColor,
