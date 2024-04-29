@@ -150,7 +150,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
       appBarIconClick: () {
         Navigator.pop(context);
       },
-      bodyColor: Color(0xFFFBFBFB),
+      bodyColor: Color.fromARGB(255, 249, 248, 248),
       child: isLoadingPage
           ? const Center(
               child: SizedBox(
@@ -187,11 +187,24 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                       child: Container(
                                         height: 71,
                                         decoration: BoxDecoration(
-                                          //1F313F
                                           color: Color(0xff1F313F),
                                           borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(7),
                                             bottomLeft: Radius.circular(7),
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.2),
+                                              spreadRadius: 1,
+                                              blurRadius: 4,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                          border: Border.all(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            width: 1,
                                           ),
                                         ),
                                         child: Padding(
@@ -285,6 +298,19 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                           topRight: Radius.circular(7),
                                           bottomRight: Radius.circular(7),
                                         ),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            spreadRadius: 1,
+                                            blurRadius: 4,
+                                            offset: Offset(2, 2),
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                          color: Colors.black.withOpacity(0.2),
+                                          width: 1,
+                                        ),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
@@ -372,6 +398,18 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(7),
                                     color: Color(0xFFFFFFFF),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 1,
+                                        blurRadius: 4,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
+                                    border: Border.all(
+                                      color: Colors.black.withOpacity(0.2),
+                                      width: 1,
+                                    ),
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
@@ -522,9 +560,23 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                     LabelText(text: "Vehicle Details"),
                                     Container(height: 10),
                                     Container(
+                                      height: 71,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(7),
                                         color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 4,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                          color: Colors.black.withOpacity(0.2),
+                                          width: 1,
+                                        ),
                                       ),
                                       child: InkWell(
                                         onTap: () {
@@ -601,18 +653,19 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                             });
                                           });
                                         },
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              left: 20,
-                                              top: 24,
-                                              bottom: 24,
-                                              right: 15),
-                                          child: Row(
-                                            children: [
-                                              Expanded(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: Padding(
+                                                padding: const EdgeInsets.only(
+                                                  left: 20,
+                                                  right: 20,
+                                                ),
                                                 child: Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
                                                   children: [
                                                     callBackData.isEmpty
                                                         ? Container()
@@ -642,30 +695,33 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                   ],
                                                 ),
                                               ),
-                                              callBackData.isNotEmpty
-                                                  // ? CustomDisplayText(
-                                                  //     label: "Change",
-                                                  //     fontWeight:
-                                                  //         FontWeight.w500,
-                                                  //     color:
-                                                  //         AppColor.primaryColor,
-                                                  //     fontSize: 14)
-                                                  ? Icon(
+                                            ),
+                                            callBackData.isNotEmpty
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 15),
+                                                    child: Icon(
                                                       Icons
                                                           .check_circle_outline_outlined,
                                                       color:
                                                           AppColor.primaryColor,
                                                       size: 20,
                                                       weight: 5,
-                                                    )
-                                                  : Icon(
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.only(
+                                                            right: 15),
+                                                    child: Icon(
                                                       Icons.add,
                                                       color:
                                                           AppColor.primaryColor,
                                                       size: 20,
                                                     ),
-                                            ],
-                                          ),
+                                                  ),
+                                          ],
                                         ),
                                       ),
                                     ),
@@ -673,15 +729,33 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                     LabelText(text: "Personal Details"),
                                     Container(height: 8),
                                     Container(
+                                      height: 71,
                                       width: Variables.screenSize.width,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(7),
                                         color: Colors.white,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            spreadRadius: 1,
+                                            blurRadius: 4,
+                                            offset: Offset(0, 2),
+                                          ),
+                                        ],
+                                        border: Border.all(
+                                          color: Colors.black.withOpacity(0.2),
+                                          width: 1,
+                                        ),
                                       ),
                                       child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 20, vertical: 20),
+                                        padding: const EdgeInsets.only(
+                                          left: 20.0,
+                                          right: 20,
+                                        ),
                                         child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
