@@ -20,6 +20,7 @@ import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/dashboard/filter_map.dart';
+import 'package:luvpark/dashboard/filter_map_v2.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
@@ -41,6 +42,8 @@ class _Dashboard3State extends State<Dashboard3> {
   TextEditingController hoursController = TextEditingController();
   TextEditingController searchController = TextEditingController();
 
+  List pTypeData = [];
+  List radiusData = [];
   bool onViewPopup = false;
   late GoogleMapController mapController;
   bool isShowKeyboard = false;
@@ -133,7 +136,8 @@ class _Dashboard3State extends State<Dashboard3> {
       barrierLabel: MaterialLocalizations.of(context).dialogLabel,
       barrierColor: Colors.black.withOpacity(0.5),
       pageBuilder: (context, _, __) {
-        return VerticalModal(callBack: cb);
+        // return VerticalModal(callBack: cb);
+        return FilterMap();
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
@@ -141,7 +145,7 @@ class _Dashboard3State extends State<Dashboard3> {
             parent: animation,
             curve: Curves.easeOut,
           ).drive(Tween<Offset>(
-            begin: const Offset(0, -1.0),
+            begin: const Offset(0, 1.0),
             end: Offset.zero,
           )),
           child: child,
