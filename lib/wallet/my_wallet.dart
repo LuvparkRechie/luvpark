@@ -515,8 +515,11 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:luvpark/buy_token/buy_token.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -548,8 +551,10 @@ class _MyWalletState extends State<MyWallet>
   bool hasInternetBal = true;
   bool loadingBal = true;
   double userBal = 0.0;
+  double ptsBal = 0.0;
   String fromDate = "";
   String toDate = "";
+  final CarouselController _carouselController = CarouselController();
 
   //History Trans param
   bool hasInternetHist = true;
@@ -706,6 +711,8 @@ class _MyWalletState extends State<MyWallet>
         setState(() {
           userBal =
               double.parse(returnBalance["items"][0]["amount_bal"].toString());
+          ptsBal =
+              double.parse(returnBalance["items"][0]["points_bal"].toString());
           hasInternetBal = true;
           loadingBal = false;
         });
@@ -751,36 +758,98 @@ class _MyWalletState extends State<MyWallet>
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    loadingBal
-                        ? Shimmer.fromColors(
-                            baseColor: Colors.grey.shade300,
-                            highlightColor: const Color(0xFFe6faff),
-                            child: const SizedBox(
-                              width: 30,
-                              height: 10,
-                            ))
-                        : CustomDisplayText(
-                            label: !hasInternetBal
-                                ? "Internet Error"
-                                : toCurrencyString(userBal.toString().trim()),
-                            fontWeight: FontWeight.w700,
-                            height: 0,
-                            letterSpacing: -0.64,
-                            fontSize: 32,
-                            maxLines: 4,
-                          ),
-                    CustomDisplayText(
-                      label: "Your wallet balance",
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      height: 0,
-                      letterSpacing: -0.28,
+                    Stack(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                _carouselController.previousPage();
+                              },
+                              child: FaIcon(FontAwesomeIcons.angleLeft),
+                            ),
+                            Container(width: 10),
+                            Expanded(
+                              child: CarouselSlider(
+                                items: [
+                                  loadingBal
+                                      ? Shimmer.fromColors(
+                                          baseColor: Colors.grey.shade300,
+                                          highlightColor:
+                                              const Color(0xFFe6faff),
+                                          child: const SizedBox(
+                                            width: 30,
+                                            height: 10,
+                                          ),
+                                        )
+                                      : Column(
+                                          children: [
+                                            CustomDisplayText(
+                                              label: !hasInternetBal
+                                                  ? "Internet Error"
+                                                  : toCurrencyString(userBal
+                                                      .toString()
+                                                      .trim()),
+                                              fontWeight: FontWeight.w700,
+                                              height: 0,
+                                              letterSpacing: -0.64,
+                                              fontSize: 32,
+                                              maxLines: 4,
+                                            ),
+                                            CustomDisplayText(
+                                              label: "Wallet Balance",
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              height: 0,
+                                              letterSpacing: -0.28,
+                                            ),
+                                          ],
+                                        ),
+                                  Column(
+                                    children: [
+                                      CustomDisplayText(
+                                        label: !hasInternetBal
+                                            ? "Internet Error"
+                                            : toCurrencyString(
+                                                ptsBal.toString().trim()),
+                                        fontWeight: FontWeight.w700,
+                                        height: 0,
+                                        letterSpacing: -0.64,
+                                        fontSize: 32,
+                                        maxLines: 4,
+                                      ),
+                                      CustomDisplayText(
+                                        label: "Reward Points",
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        height: 0,
+                                        letterSpacing: -0.28,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                options: CarouselOptions(
+                                  autoPlay: false,
+                                  aspectRatio: 8 / 2,
+                                ),
+                                carouselController: _carouselController,
+                              ),
+                            ),
+                            Container(width: 10),
+                            InkWell(
+                              onTap: () {
+                                _carouselController.nextPage();
+                              },
+                              child: FaIcon(FontAwesomeIcons.angleRight),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Container(
-                      height: 20,
-                    ),
+                    Container(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
