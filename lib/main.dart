@@ -22,6 +22,7 @@ import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/pa_message/pa_message.dart';
+import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -61,12 +62,10 @@ void main() async {
   if (status.isDenied) {
     await Permission.notification.request();
   }
-  await Geolocator.requestPermission();
 
   NotificationController.initializeLocalNotifications();
   NotificationController.initializeIsolateReceivePort();
-  //AndroidBackgroundProcess.backgroundExecution(0);
-  // AndroidBackgroundProcess.initilizeBackgroundService();
+
   ForegroundNotif.initializeForeground();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -217,8 +216,16 @@ class _SplashScreenState extends State<SplashScreen> {
     var logData = prefs.getString(
       'loginData',
     );
+    final statusReq = await Geolocator.checkPermission();
 
-    if (logData == null) {
+    print("on board settongs $statusReq");
+    if (statusReq == LocationPermission.denied) {
+      // ignore: use_build_context_synchronously
+      Variables.pageTrans(PermissionHandlerScreen(
+        isLogin: true,
+        index: 1,
+      ));
+    } else if (logData == null) {
       Timer(const Duration(seconds: 1), () {
         Navigator.push(
             context,

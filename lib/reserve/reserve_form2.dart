@@ -591,7 +591,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                               .addPostFrameCallback((_) {
                                             CustomModal(context: context)
                                                 .loader();
-                                            Functions.getVehicleData(
+                                            Functions.getVehicleTypesData(
                                                 context,
                                                 widget.areaData[0]
                                                     ["park_area_id"],

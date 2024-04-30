@@ -201,7 +201,7 @@ class NotificationController {
           showAlertDialog(
             MyApp.navigatorKey.currentState!.context,
             "Error",
-            "Invalid OTP code. Please try again.. Please try again.",
+            returnData["msg"],
             () {
               ShareLocationDatabase.instance.deleteAll();
               Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
@@ -380,6 +380,7 @@ class NotificationController {
           receivedAction.payload!["geo_share_id"]!,
           context,
           (isSuccess) {
+            print("isSuccess click $isSuccess");
             if (isSuccess) {
               AwesomeNotifications().dismiss(receivedAction.id!);
               if (MyApp.scaffoldKey.currentContext != null) {
@@ -406,8 +407,8 @@ class NotificationController {
         }
         redirect();
         break;
-      default:
-        redirect();
+      // default:
+      //   redirect();
     }
   }
 

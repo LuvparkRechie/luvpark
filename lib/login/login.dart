@@ -6,7 +6,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/activate_account/activate_account.dart';
 import 'package:luvpark/classess/api_keys.dart';
-import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -198,6 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     label: "Login",
                     onTap: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
+
                       yowo() {
                         // ignore: use_build_context_synchronously
                         LoginComponent().getAccountStatus(
@@ -275,85 +275,69 @@ class _LoginScreenState extends State<LoginScreen> {
                         isLogin = false;
                       });
                       if (isLogin) return;
-
-                      BiometricLogin().clearPassword();
                       if (formKey.currentState!.validate()) {
                         setState(() {
                           isLogin = true;
                         });
                         CustomModal(context: context).loader();
-                        LocationPermission permission =
-                            await Geolocator.checkPermission();
-
-                        if (permission == LocationPermission.denied ||
-                            permission == LocationPermission.deniedForever) {
-                          // ignore: use_build_context_synchronously
-                          Navigator.of(context).pop();
+                        if (mounted) {
                           setState(() {
-                            isLogin = false;
+                            isLoading = true;
                           });
-                          // ignore: use_build_context_synchronously
-                          DashboardComponent.locatePosition(context, true);
-                        } else {
-                          if (mounted) {
+                        }
+
+                        String apiParam =
+                            "${ApiKeys.gApiLuvParkGetVehicleBrand}";
+                        HttpRequest(api: apiParam)
+                            .get()
+                            .then((returnBrandData) async {
+                          if (returnBrandData == "No Internet") {
+                            Navigator.of(context).pop();
                             setState(() {
-                              isLoading = true;
+                              isLoading = false;
+                              isLogin = false;
+                            });
+                            showAlertDialog(context, "Error",
+                                "Please check your internet connection and try again.",
+                                () {
+                              Navigator.of(context).pop();
+                            });
+                            return;
+                          }
+                          if (returnBrandData == null) {
+                            Navigator.of(context).pop();
+                            setState(() {
+                              isLoading = false;
+                              isLogin = false;
+                            });
+                            showAlertDialog(context, "Error",
+                                "Error while connecting to server, Please try again.",
+                                () {
+                              Navigator.of(context).pop();
                             });
                           }
 
-                          String apiParam =
-                              "${ApiKeys.gApiLuvParkGetVehicleBrand}";
-                          HttpRequest(api: apiParam)
-                              .get()
-                              .then((returnBrandData) async {
-                            if (returnBrandData == "No Internet") {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                isLoading = false;
-                                isLogin = false;
-                              });
-                              showAlertDialog(context, "Error",
-                                  "Please check your internet connection and try again.",
-                                  () {
-                                Navigator.of(context).pop();
-                              });
-                              return;
+                          if (returnBrandData["items"].length > 0) {
+                            VehicleBrandsTable.instance.deleteAll();
+                            for (var dataRow in returnBrandData["items"]) {
+                              var vbData = {
+                                VHBrandsDataFields.vhTypeId: int.parse(
+                                    dataRow["vehicle_type_id"].toString()),
+                                VHBrandsDataFields.vhBrandId: int.parse(
+                                    dataRow["vehicle_brand_id"].toString()),
+                                VHBrandsDataFields.vhBrandName:
+                                    dataRow["vehicle_brand_name"].toString(),
+                              };
+                              await VehicleBrandsTable.instance
+                                  .insertUpdate(vbData);
                             }
-                            if (returnBrandData == null) {
-                              Navigator.of(context).pop();
-                              setState(() {
-                                isLoading = false;
-                                isLogin = false;
-                              });
-                              showAlertDialog(context, "Error",
-                                  "Error while connecting to server, Please try again.",
-                                  () {
-                                Navigator.of(context).pop();
-                              });
-                            }
-
-                            if (returnBrandData["items"].length > 0) {
-                              VehicleBrandsTable.instance.deleteAll();
-                              for (var dataRow in returnBrandData["items"]) {
-                                var vbData = {
-                                  VHBrandsDataFields.vhTypeId: int.parse(
-                                      dataRow["vehicle_type_id"].toString()),
-                                  VHBrandsDataFields.vhBrandId: int.parse(
-                                      dataRow["vehicle_brand_id"].toString()),
-                                  VHBrandsDataFields.vhBrandName:
-                                      dataRow["vehicle_brand_name"].toString(),
-                                };
-                                await VehicleBrandsTable.instance
-                                    .insertUpdate(vbData);
-                              }
-                              yowo();
-                              return;
-                            } else {
-                              yowo();
-                              return;
-                            }
-                          });
-                        }
+                            yowo();
+                            return;
+                          } else {
+                            yowo();
+                            return;
+                          }
+                        });
                       }
                     }),
                 Container(

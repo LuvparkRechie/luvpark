@@ -19,7 +19,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
-import 'package:luvpark/dashboard/filter_map.dart';
 import 'package:luvpark/dashboard/filter_map_v2.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
@@ -129,6 +128,7 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   void showFilter(Function cb) {
+    print("cb $cb");
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -137,7 +137,9 @@ class _Dashboard3State extends State<Dashboard3> {
       barrierColor: Colors.black.withOpacity(0.5),
       pageBuilder: (context, _, __) {
         // return VerticalModal(callBack: cb);
-        return FilterMap();
+        return FilterMap(callBack: (dataCallBack) {
+          getFilteredData(dataCallBack);
+        });
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
@@ -219,8 +221,14 @@ class _Dashboard3State extends State<Dashboard3> {
             });
           }
 
-          DashboardComponent.getNearest(ctxt, "", ddRadius,
-              startLocation!.latitude, startLocation!.longitude, (nearestData) {
+          DashboardComponent.getNearest(
+              ctxt,
+              "",
+              ddRadius,
+              startLocation!.latitude,
+              startLocation!.longitude,
+              '',
+              '', (nearestData) {
             if (nearestData == "No Internet") {
               setState(() {
                 hasInternetBal = false;
@@ -421,14 +429,22 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   void getFilteredData(data) {
+    print("data filter $data");
     if (mounted) {
       setState(() {
         isLoadingPage = true;
         isLoadingMap = true;
       });
     }
-    DashboardComponent.getNearest(ctxt, data["pType"], data["radius"],
-        startLocation!.latitude, startLocation!.longitude, (nearestData) {
+    DashboardComponent.getNearest(
+        ctxt,
+        data["p_type"],
+        //data["radius"],
+        1000,
+        startLocation!.latitude,
+        startLocation!.longitude,
+        data["vh_type"],
+        data["amen"], (nearestData) {
       if (nearestData == "No Internet") {
         setState(() {
           hasInternetBal = false;
@@ -438,7 +454,10 @@ class _Dashboard3State extends State<Dashboard3> {
         ddRadius = data["radius"];
       });
       displayMapData(
-          nearestData, startLocation!.latitude, startLocation!.longitude);
+        nearestData,
+        startLocation!.latitude,
+        startLocation!.longitude,
+      );
     });
   }
 
@@ -752,7 +771,8 @@ class _Dashboard3State extends State<Dashboard3> {
                                               ddRadius.toString(),
                                               data[0]["lat"].toString(),
                                               data[0]["long"].toString(),
-                                              (nearestData) {
+                                              "",
+                                              "", (nearestData) {
                                             if (mounted) {
                                               setState(() {
                                                 onSearchAdd = true;
@@ -1121,7 +1141,8 @@ class _Dashboard3State extends State<Dashboard3> {
                                                                 .toString(),
                                                             data[0]["long"]
                                                                 .toString(),
-                                                            (nearestData) {
+                                                            "",
+                                                            "", (nearestData) {
                                                       if (mounted) {
                                                         setState(() {
                                                           onSearchAdd = true;
@@ -1239,6 +1260,21 @@ class _Dashboard3State extends State<Dashboard3> {
             ),
           ),
         ),
+        Visibility(
+          visible: false,
+          child: AnimatedContainer(
+            duration: Duration(milliseconds: 200),
+            width: Variables.screenSize.width,
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [],
+              ),
+            ),
+          ),
+        ),
       ],
     );
   }
@@ -1293,7 +1329,7 @@ class _Dashboard3State extends State<Dashboard3> {
             child: InkWell(
               onTap: () {
                 showFilter((data) {
-                  getFilteredData(data);
+                  print("show filter $data");
                 });
               },
               child: const Icon(

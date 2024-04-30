@@ -18,13 +18,15 @@ import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/permission/permission_handler.dart';
 
 class DashboardComponent {
-  static getNearest(
-      context, String parkType, radius, lat, long, Function callBack) async {
+  static getNearest(context, String parkType, radius, lat, long, vhId, amenity,
+      Function callBack) async {
     var params =
-        "${ApiKeys.gApiSubFolderGetNearestSpace}?latitude=${lat.toString()}&longitude=${long.toString()}&parking_type_code=$parkType&radius=${radius.toString()}&no_hrs=1&vehicle_type_id=";
-
+        "parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity";
+    print("params nearest $params");
     try {
-      var returnData = await HttpRequest(api: params).get();
+      var returnData = await HttpRequest(
+              api: "${ApiKeys.gApiSubFolderGetNearestSpace}?$params")
+          .get();
 
       if (returnData == "No Internet") {
         showAlertDialog(context, "Error",
