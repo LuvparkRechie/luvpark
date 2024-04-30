@@ -175,7 +175,7 @@ class ApiKeys {
   //dd vehicle types
   static const gApiLuvParkDDVehicleTypes =
       '/ords/$parkSpaceApi/park/dd_vehicletypes';
-  static const gApiLuvParkDDVehicleTypes2 = '/ords/$parkSpaceApi/dd/zvt';
+  static const gApiLuvParkDDVehicleTypes2 = '/ords/$parkSpaceApi/rf/zvt';
 
   //Sharing Location API's
   static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';
@@ -222,6 +222,9 @@ class ApiKeys {
   static const gApiLuvPayPutCancelAutoExtend =
       '/ords/$luvApi/ps/stopAutoExtend';
 
-  //GET amenities
-  static const gApiSubFolderGetAmenities = '/ords/$parkSpaceApi/park/amenities';
+  //GET amenities by park_area
+  static const gApiSubFolderGetAmenities = '/ords/$parkSpaceApi/ps/amenities';
+  //Get all amenities
+  static const gApiSubFolderGetAllAmenities =
+      '/ords/$parkSpaceApi/rf/amenities';
 }

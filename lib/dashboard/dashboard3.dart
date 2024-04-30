@@ -48,6 +48,9 @@ class _Dashboard3State extends State<Dashboard3> {
   bool isShowKeyboard = false;
   LatLng? startLocation;
   String locationAddress = "";
+  String pTypeCode = "";
+  String amenities = "";
+  String vtypeId = "";
   String myAddress = "";
   List filteredArea = [];
   List subMapData = [];
@@ -127,8 +130,7 @@ class _Dashboard3State extends State<Dashboard3> {
     // locationSubscription!.cancel();
   }
 
-  void showFilter(Function cb) {
-    print("cb $cb");
+  void showFilter() {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -223,12 +225,12 @@ class _Dashboard3State extends State<Dashboard3> {
 
           DashboardComponent.getNearest(
               ctxt,
-              "",
+              pTypeCode,
               ddRadius,
               startLocation!.latitude,
               startLocation!.longitude,
-              '',
-              '', (nearestData) {
+              vtypeId,
+              amenities, (nearestData) {
             if (nearestData == "No Internet") {
               setState(() {
                 hasInternetBal = false;
@@ -439,19 +441,22 @@ class _Dashboard3State extends State<Dashboard3> {
     DashboardComponent.getNearest(
         ctxt,
         data["p_type"],
-        //data["radius"],
-        1000,
+        data["radius"],
         startLocation!.latitude,
         startLocation!.longitude,
         data["vh_type"],
         data["amen"], (nearestData) {
+      print("nearestData $nearestData");
       if (nearestData == "No Internet") {
         setState(() {
           hasInternetBal = false;
         });
       }
       setState(() {
-        ddRadius = data["radius"];
+        ddRadius = data["radius"].toString();
+        pTypeCode = data["p_type"];
+        amenities = data["amen"];
+        vtypeId = data["vh_type"];
       });
       displayMapData(
         nearestData,
@@ -765,14 +770,15 @@ class _Dashboard3State extends State<Dashboard3> {
                                             mapController.hideMarkerInfoWindow(
                                                 marker.markerId);
                                           }
+
                                           DashboardComponent.getNearest(
                                               ctxt,
-                                              "",
+                                              pTypeCode,
                                               ddRadius.toString(),
                                               data[0]["lat"].toString(),
                                               data[0]["long"].toString(),
-                                              "",
-                                              "", (nearestData) {
+                                              vtypeId,
+                                              amenities, (nearestData) {
                                             if (mounted) {
                                               setState(() {
                                                 onSearchAdd = true;
@@ -1132,17 +1138,19 @@ class _Dashboard3State extends State<Dashboard3> {
                                                           .hideMarkerInfoWindow(
                                                               marker.markerId);
                                                     }
+
                                                     DashboardComponent
                                                         .getNearest(
                                                             ctxt,
-                                                            "",
+                                                            pTypeCode,
                                                             ddRadius.toString(),
                                                             data[0]["lat"]
                                                                 .toString(),
                                                             data[0]["long"]
                                                                 .toString(),
-                                                            "",
-                                                            "", (nearestData) {
+                                                            vtypeId,
+                                                            amenities,
+                                                            (nearestData) {
                                                       if (mounted) {
                                                         setState(() {
                                                           onSearchAdd = true;
@@ -1328,9 +1336,7 @@ class _Dashboard3State extends State<Dashboard3> {
             padding: const EdgeInsets.only(left: 10.0, right: 10),
             child: InkWell(
               onTap: () {
-                showFilter((data) {
-                  print("show filter $data");
-                });
+                showFilter();
               },
               child: const Icon(
                 Icons.tune_outlined,

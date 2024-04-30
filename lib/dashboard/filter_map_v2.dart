@@ -1,4 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -21,15 +23,18 @@ class _FilterMapState extends State<FilterMap> {
   List vehicleTypes = [];
   List pTypeData = [];
   List amenitiess = [];
-
+  List radiusData = [];
+  List<String> selectedFilters = [];
+  List<String> selectedFiltersAmen = [];
   bool hasNetVhTypes = true;
   bool hasNetAmen = true;
+  bool hasNetRadius = true;
+  bool loadingRadius = true;
   bool loadingTypes = true;
   bool loadingAmen = true;
   bool loadingPTypes = true;
   String? selectedVehicleType;
-  List<String> selectedFilters = [];
-  List<String> selectedFiltersAmen = [];
+  String? ddRadius;
 
   @override
   void initState() {
@@ -38,6 +43,7 @@ class _FilterMapState extends State<FilterMap> {
       getVhTypeData();
       pTypeDropdown();
       getAmenities();
+      radiusDropdown();
     });
   }
 
@@ -60,7 +66,6 @@ class _FilterMapState extends State<FilterMap> {
   void getAmenities() {
     CustomModal(context: context).loader();
     Functions.getAmenities(context, "", (cb) {
-      print("amenities ${cb["data"]}");
       if (cb == "No Internet") {
         setState(() {
           hasNetAmen = false;
@@ -69,8 +74,10 @@ class _FilterMapState extends State<FilterMap> {
 
       if (cb["data"].isNotEmpty) {
         for (int i = 0; i < cb["data"].length; i++) {
-          amenitiess.add(
-              {"text": cb["data"][i]["text"], "value": cb["data"][i]["value"]});
+          amenitiess.add({
+            "text": cb["data"][i]["parking_amenity_desc"],
+            "value": cb["data"][i]["parking_amenity_code"]
+          });
         }
       }
 
@@ -105,6 +112,24 @@ class _FilterMapState extends State<FilterMap> {
     });
   }
 
+  void radiusDropdown() async {
+    DashboardComponent.getRadius(context, (dataRadius) {
+      if (dataRadius == "No Internet" || dataRadius == "Error") {
+        setState(() {
+          hasNetRadius = false;
+          loadingRadius = false;
+          radiusData = [];
+        });
+        return;
+      }
+      setState(() {
+        hasNetRadius = true;
+        loadingRadius = false;
+        radiusData = dataRadius;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomParentWidgetV2(
@@ -121,13 +146,14 @@ class _FilterMapState extends State<FilterMap> {
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
-                    SizedBox(height: 10),
-                    buildRadioOptions('Vehicle Type'),
+                    buildRadius(),
                     SizedBox(height: 20),
-                    buildFilterChips('Amenities', amenitiess),
+                    buildRadioOptions('Vehicle Type'),
                     SizedBox(height: 20),
                     buildFilterChips('Parking Type', pTypeData),
                     SizedBox(height: 20.0),
+                    buildFilterChips('Amenities', amenitiess),
+                    SizedBox(height: 10),
                   ],
                 ),
               ),
@@ -142,10 +168,14 @@ class _FilterMapState extends State<FilterMap> {
                     onTap: () {
                       String filterVtype = selectedFilters.join('|');
                       String filterAmen = selectedFiltersAmen.join('|');
+
                       widget.callBack({
-                        "vh_type": selectedVehicleType,
+                        "vh_type": selectedVehicleType == null
+                            ? ""
+                            : selectedVehicleType,
                         "amen": filterAmen.toString(),
-                        "p_type": filterVtype.toString()
+                        "p_type": filterVtype.toString(),
+                        "radius": ddRadius == null ? 10000 : ddRadius
                       });
                       Navigator.of(context).pop();
                     },
@@ -194,8 +224,7 @@ class _FilterMapState extends State<FilterMap> {
                   children: [
                     for (int i = 0; i < vehicleTypes.length; i++)
                       Container(
-                        height: 40, // Provide explicit height constraint
-
+                        height: 40,
                         child: RadioListTile<String>(
                           title:
                               CustomDisplayText(label: vehicleTypes[i]["text"]),
@@ -208,6 +237,19 @@ class _FilterMapState extends State<FilterMap> {
                           },
                         ),
                       ),
+                    Container(
+                      height: 40,
+                      child: RadioListTile<String>(
+                        title: CustomDisplayText(label: "None"),
+                        value: "",
+                        groupValue: selectedVehicleType,
+                        onChanged: (String? value) {
+                          setState(() {
+                            selectedVehicleType = value;
+                          });
+                        },
+                      ),
+                    ),
                   ],
                 ),
           SizedBox(height: 10.0),
@@ -293,5 +335,74 @@ class _FilterMapState extends State<FilterMap> {
         ),
       ),
     );
+  }
+
+  Widget buildRadius() {
+    return Container(
+        width: Variables.screenSize.width,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: Offset(0, 2),
+            ),
+          ],
+          borderRadius: BorderRadius.all(
+            Radius.circular(
+              20,
+            ),
+          ),
+          border: Border.all(
+            color: Colors.grey.withOpacity(0.5),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              LabelText(text: "Radius"),
+              SizedBox(height: 8.0),
+              DropdownButtonFormField(
+                dropdownColor: Colors.white,
+                decoration: InputDecoration(
+                    fillColor: Colors.grey.shade100,
+                    filled: true,
+                    hintText: "",
+                    hintStyle: GoogleFonts.varela(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade500,
+                      fontSize: 15,
+                    ),
+                    contentPadding: const EdgeInsets.all(10),
+                    border: InputBorder.none),
+                value: ddRadius,
+                onChanged: (String? newValue) async {
+                  ddRadius = newValue!;
+                },
+                isExpanded: true,
+                menuMaxHeight: 400,
+                items: radiusData.map((item) {
+                  return DropdownMenuItem(
+                      value: item['value'].toString(),
+                      child: AutoSizeText(
+                        item['text'],
+                        style: GoogleFonts.varela(
+                          color: Colors.black,
+                          fontWeight: FontWeight.normal,
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxFontSize: 15,
+                        maxLines: 2,
+                      ));
+                }).toList(),
+              ),
+              SizedBox(height: 10.0),
+            ],
+          ),
+        ));
   }
 }

@@ -555,9 +555,7 @@ class Functions {
   }
 
   static void getAmenities(context, areaId, Function cb) {
-    print(
-        "ApiKeys.gApiLuvParkDDVehicleTypes2 ${ApiKeys.gApiSubFolderGetAmenities}");
-    HttpRequest(api: ApiKeys.gApiLuvParkDDVehicleTypes)
+    HttpRequest(api: ApiKeys.gApiSubFolderGetAllAmenities)
         .get()
         .then((returnData) async {
       if (returnData == "No Internet") {
