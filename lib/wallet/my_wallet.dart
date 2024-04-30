@@ -516,6 +516,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
@@ -570,7 +571,7 @@ class _MyWalletState extends State<MyWallet>
   @override
   void initState() {
     _tabController = TabController(
-      length: 2, // Number of tabs
+      length: 2,
       vsync: this,
     );
 
@@ -760,96 +761,161 @@ class _MyWalletState extends State<MyWallet>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Stack(
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 10,
+                        right: 10,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomDisplayText(
+                            label: 'Cash',
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
+                          CustomDisplayText(
+                            label: 'Reward Points',
+                            color: Colors.black,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 15,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                _carouselController.previousPage();
-                              },
-                              child: FaIcon(FontAwesomeIcons.angleLeft),
+                        Expanded(
+                          child: Container(
+                            height: 61,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF01b9c5),
+                                  const Color(0xFF3863c2),
+                                  const Color(0xFF0078FF),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                stops: [0.0, 0.5, 1.0],
+                                tileMode: TileMode.clamp,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
-                            Container(width: 10),
-                            Expanded(
-                              child: CarouselSlider(
-                                items: [
-                                  loadingBal
-                                      ? Shimmer.fromColors(
-                                          baseColor: Colors.grey.shade300,
-                                          highlightColor:
-                                              const Color(0xFFe6faff),
-                                          child: const SizedBox(
-                                            width: 30,
-                                            height: 10,
-                                          ),
-                                        )
-                                      : Column(
-                                          children: [
-                                            CustomDisplayText(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                loadingBal
+                                    ? Shimmer.fromColors(
+                                        baseColor: Colors.grey.shade300,
+                                        highlightColor: const Color(0xFFe6faff),
+                                        child: const SizedBox(
+                                          width: 30,
+                                          height: 10,
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              left: 10,
+                                              right: 10,
+                                            ),
+                                            child: CustomDisplayTextkanit(
+                                              color: Colors.white,
                                               label: !hasInternetBal
                                                   ? "Internet Error"
                                                   : toCurrencyString(userBal
                                                       .toString()
                                                       .trim()),
-                                              fontWeight: FontWeight.w700,
-                                              height: 0,
-                                              letterSpacing: -0.64,
-                                              fontSize: 32,
-                                              maxLines: 4,
-                                            ),
-                                            CustomDisplayText(
-                                              label: "Wallet Balance",
-                                              fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               height: 0,
-                                              letterSpacing: -0.28,
+                                              fontSize: 30,
+                                              maxLines: 1,
                                             ),
-                                          ],
-                                        ),
-                                  Column(
-                                    children: [
-                                      CustomDisplayText(
-                                        label: !hasInternetBal
-                                            ? "Internet Error"
-                                            : toCurrencyString(
-                                                ptsBal.toString().trim()),
-                                        fontWeight: FontWeight.w700,
-                                        height: 0,
-                                        letterSpacing: -0.64,
-                                        fontSize: 32,
-                                        maxLines: 4,
+                                          ),
+                                        ],
                                       ),
-                                      CustomDisplayText(
-                                        label: "Reward Points",
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        height: 0,
-                                        letterSpacing: -0.28,
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                                options: CarouselOptions(
-                                  autoPlay: false,
-                                  aspectRatio: 8 / 2,
-                                ),
-                                carouselController: _carouselController,
+                              ],
+                            ),
+                          ),
+                        ),
+                        Container(width: 10),
+                        Expanded(
+                          child: Container(
+                            height: 61,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                topRight: Radius.circular(15),
+                                bottomLeft: Radius.circular(15),
                               ),
+                              gradient: LinearGradient(
+                                colors: [
+                                  const Color(0xFF0078FF), // primaryColor
+                                  const Color(0xFF3863c2), // secondaryColor
+                                  const Color(0xFF01b9c5), // mainColor
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                                stops: [0.0, 0.5, 1.0],
+                                tileMode: TileMode.clamp,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                             ),
-                            Container(width: 10),
-                            InkWell(
-                              onTap: () {
-                                _carouselController.nextPage();
-                              },
-                              child: FaIcon(FontAwesomeIcons.angleRight),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                loadingBal
+                                    ? Shimmer.fromColors(
+                                        baseColor: Colors.grey.shade300,
+                                        highlightColor: const Color(0xFFe6faff),
+                                        child: const SizedBox(
+                                          width: 30,
+                                          height: 10,
+                                        ),
+                                      )
+                                    : Column(
+                                        children: [
+                                          CustomDisplayTextkanit(
+                                            color: Colors.white,
+                                            label: !hasInternetBal
+                                                ? "Internet Error"
+                                                : toCurrencyString(
+                                                    ptsBal.toString().trim()),
+                                            fontWeight: FontWeight.w500,
+                                            height: 0,
+                                            fontSize: 30,
+                                            maxLines: 1,
+                                          ),
+                                        ],
+                                      ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
-                    Container(height: 10),
+                    Container(height: 20),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
