@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
@@ -9,6 +8,7 @@ import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
+import 'package:rive/rive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class RateUs extends StatefulWidget {
@@ -21,12 +21,21 @@ class RateUs extends StatefulWidget {
 }
 
 class _RateUsState extends State<RateUs> {
-  int myRate = 3;
+  double myRate = 3.0;
   TextEditingController commentController = TextEditingController();
+  StateMachineController? _controller;
 
-  @override
-  void initState() {
-    super.initState();
+  void _onRiveInit(Artboard artboard) {
+    _controller = StateMachineController.fromArtboard(
+      artboard,
+      'State Machine 1',
+      onStateChange: (stateMachineName, stateName) {
+        setState(() {
+          myRate = double.tryParse(stateName) ?? myRate;
+        });
+      },
+    );
+    artboard.addController(_controller!);
   }
 
   void postRatingComments() async {
@@ -35,15 +44,15 @@ class _RateUsState extends State<RateUs> {
       'userData',
     );
     var myData = jsonDecode(objInfoData!);
-    // ignore: use_build_context_synchronously
     CustomModal(context: context).loader();
 
     Map<String, dynamic> param = {
       'user_id': myData["user_id"],
       'reservation_id': widget.reservationId!,
-      'rating': myRate,
+      'rating': myRate.round(),
       'comments': commentController.text,
     };
+    print('hello: $param');
     HttpRequest(api: ApiKeys.gApiLuvParkPostRating, parameters: param)
         .post()
         .then((returnData) async {
@@ -133,7 +142,7 @@ class _RateUsState extends State<RateUs> {
                     const SizedBox(height: 20),
                     Center(
                       child: CustomDisplayText(
-                        label: "Rating ($myRate/5)",
+                        label: "Rating (${myRate.round()}/5)",
                         fontWeight: FontWeight.w800,
                         color: Colors.black54,
                         fontSize: 14,
@@ -141,22 +150,13 @@ class _RateUsState extends State<RateUs> {
                     ),
                     const SizedBox(height: 10),
                     Center(
-                      child: RatingBar.builder(
-                        initialRating: 3,
-                        itemCount: 5,
-                        minRating: 1,
-                        itemPadding: const EdgeInsets.only(right: 3),
-                        itemBuilder: (context, index) {
-                          return const Icon(
-                            Icons.star,
-                            color: Colors.amber,
-                          );
-                        },
-                        onRatingUpdate: (rating) {
-                          setState(() {
-                            myRate = rating.round();
-                          });
-                        },
+                      child: Container(
+                        height: 60,
+                        width: 500,
+                        child: RiveAnimation.asset(
+                          'assets/rating_animation.riv',
+                          onInit: _onRiveInit,
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
