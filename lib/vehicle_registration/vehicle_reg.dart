@@ -591,10 +591,11 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                       };
 
                       HttpRequest(
-                              api: ApiKeys.gApiLuvParkPostGetVehicleReg,
+                              api: ApiKeys.gApiLuvParkAddVehicle,
                               parameters: parameter)
-                          .post()
+                          .post2()
                           .then((returnPost) async {
+                        FocusManager.instance.primaryFocus!.unfocus();
                         if (returnPost == "No Internet") {
                           Navigator.of(context).pop();
                           showAlertDialog(context, "Error",
@@ -615,9 +616,8 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                         } else {
                           if (returnPost["success"] == 'Y') {
                             Navigator.of(context).pop();
-                            showAlertDialog(context, "Success",
-                                "Your vehicle with plate number \n${plateNo.text} has been successfully registered.",
-                                () {
+                            showAlertDialog(
+                                context, "Success", returnPost["msg"], () {
                               Navigator.of(context).pop();
                               if (Navigator.canPop(context)) {
                                 Navigator.of(context).pop();

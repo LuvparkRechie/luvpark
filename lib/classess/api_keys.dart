@@ -152,8 +152,12 @@ class ApiKeys {
   //Change Pass
   static const gApiLuvParkPostForgetPassNotVerified =
       '/ords/$luvApi/auth/rpsf/';
+
+  //Add vehicle
+  static const gApiLuvParkAddVehicle = '/ords/$luvApi/fav/addVehicle';
   //Delete vehicle
-  static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/mfav/vehicles';
+  static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/fav/delVehicle';
+
   //Get Parkspace app notice
   static const gApiLuvParkGetNotice = '/ords/$parkSpaceApi/notify/pbm/';
   //Reserve payment key

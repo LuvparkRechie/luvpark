@@ -9,6 +9,7 @@ import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/header_title&subtitle.dart';
+import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 
 class FilterMap extends StatefulWidget {
@@ -41,62 +42,41 @@ class _FilterMapState extends State<FilterMap> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getVhTypeData();
-      pTypeDropdown();
-      getAmenities();
-      radiusDropdown();
     });
   }
 
   void getVhTypeData() {
     CustomModal(context: context).loader();
     Functions.getVehicleAllTypesData(context, "", (cb) {
-      if (cb == "No Internet") {
+      if (cb["msg"] == "No Internet") {
         setState(() {
           hasNetVhTypes = false;
         });
       }
-      setState(() {
-        vehicleTypes = cb["data"];
-        loadingTypes = false;
-        hasNetVhTypes = true;
-      });
-    });
-  }
-
-  void getAmenities() {
-    CustomModal(context: context).loader();
-    Functions.getAmenities(context, "", (cb) {
-      if (cb == "No Internet") {
-        setState(() {
-          hasNetAmen = false;
-        });
-      }
-
-      if (cb["data"].isNotEmpty) {
-        for (int i = 0; i < cb["data"].length; i++) {
-          amenitiess.add({
-            "text": cb["data"][i]["parking_amenity_desc"],
-            "value": cb["data"][i]["parking_amenity_code"]
+      if (cb["msg"] == "Success") {
+        if (mounted) {
+          setState(() {
+            vehicleTypes = cb["data"];
+            loadingTypes = false;
+            hasNetVhTypes = true;
           });
+          pTypeDropdown();
         }
       }
-
-      setState(() {
-        loadingAmen = false;
-        hasNetAmen = true;
-      });
     });
   }
 
   void pTypeDropdown() {
     DashboardComponent.getParkingType(context, (dataPtype) {
       if (dataPtype == "No Internet" || dataPtype == "Error") {
+        Navigator.of(context).pop();
         setState(() {
           loadingPTypes = true;
           pTypeData = [];
         });
         return;
       }
+
       if (dataPtype.isNotEmpty) {
         for (int i = 0; i < dataPtype.length; i++) {
           pTypeData.add({
@@ -108,20 +88,68 @@ class _FilterMapState extends State<FilterMap> {
       setState(() {
         loadingPTypes = true;
       });
-      print("pTypeData $pTypeData");
+      getAmenities();
+    });
+  }
+
+  void getAmenities() {
+    Functions.getAmenities(context, "", (cb) {
+      if (cb["msg"] == "No Internet") {
+        setState(() {
+          hasNetAmen = false;
+          loadingAmen = false;
+        });
+      }
+      if (cb["msg"] == "Success") {
+        if (cb["data"].isNotEmpty) {
+          for (int i = 0; i < cb["data"].length; i++) {
+            amenitiess.add({
+              "text": cb["data"][i]["parking_amenity_desc"],
+              "value": cb["data"][i]["parking_amenity_code"]
+            });
+          }
+        }
+
+        setState(() {
+          loadingAmen = false;
+          hasNetAmen = true;
+        });
+
+        radiusDropdown();
+      }
     });
   }
 
   void radiusDropdown() async {
     DashboardComponent.getRadius(context, (dataRadius) {
-      if (dataRadius == "No Internet" || dataRadius == "Error") {
+      if (dataRadius == "No Internet") {
+        Navigator.of(context).pop();
         setState(() {
           hasNetRadius = false;
           loadingRadius = false;
           radiusData = [];
         });
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          Navigator.of(context).pop();
+        });
         return;
       }
+      if (dataRadius == "Error") {
+        Navigator.of(context).pop();
+        setState(() {
+          hasNetRadius = false;
+          loadingRadius = false;
+          radiusData = [];
+        });
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+
+        return;
+      }
+      Navigator.of(context).pop();
       setState(() {
         hasNetRadius = true;
         loadingRadius = false;

@@ -155,6 +155,7 @@ class _ViewListState extends State<ViewList> {
                                         ),
                                       ),
                                     ),
+                                    Container(width: 5),
                                     InkWell(
                                       onTap: () async {
                                         String mapUrl = "";

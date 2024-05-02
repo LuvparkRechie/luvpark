@@ -99,7 +99,8 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
                   ),
                   const SizedBox(height: 10),
                   CustomDisplayText(
-                    label: "Used map to get direction of the parking zone.",
+                    label:
+                        "Using the map to get the direction to the parking zone.",
                     fontSize: 15,
                     color: Colors.black54,
                   ),

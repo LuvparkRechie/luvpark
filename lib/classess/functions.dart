@@ -524,7 +524,7 @@ class Functions {
         .then((returnData) async {
       if (returnData == "No Internet") {
         Navigator.of(context).pop();
-        cb({"msg": "Error", "data": []});
+        cb({"msg": "No Internet", "data": []});
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
           Navigator.of(context).pop();
@@ -541,7 +541,6 @@ class Functions {
       }
 
       if (returnData["items"].length > 0) {
-        Navigator.of(context).pop();
         cb({"msg": "Success", "data": returnData["items"]});
       } else {
         Navigator.of(context).pop();
@@ -577,7 +576,6 @@ class Functions {
       }
 
       if (returnData["items"].length > 0) {
-        Navigator.of(context).pop();
         cb({"msg": "Success", "data": returnData["items"]});
       } else {
         Navigator.of(context).pop();
