@@ -524,4 +524,11 @@ class Variables {
     // Format the date with month abbreviation, day, year, and time
     return DateFormat('MMM dd, yyyy').format(dateTime);
   }
+
+  static bool withinOneHourRange(DateTime targetDateTime) {
+    DateTime currentDateTime = DateTime.now();
+    DateTime oneHourAgo = currentDateTime.subtract(Duration(hours: 1));
+    return targetDateTime.isAfter(oneHourAgo) &&
+        targetDateTime.isBefore(currentDateTime);
+  }
 }

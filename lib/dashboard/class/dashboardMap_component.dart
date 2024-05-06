@@ -9,13 +9,11 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart' as gmp;
 import 'package:http/http.dart' as http;
-import 'package:luvpark/Registration/registration.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
-import 'package:luvpark/permission/permission_handler.dart';
 
 class DashboardComponent {
   static getNearest(context, String parkType, radius, lat, long, vhId, amenity,
@@ -302,27 +300,6 @@ class DashboardComponent {
 
     // Handle errors or no results found
     return 'Barangay information not available';
-  }
-
-  static void locatePosition(context, bool isReg) async {
-    LocationPermission permission;
-
-    permission = await Geolocator.checkPermission();
-    permission = await Geolocator.requestPermission();
-
-    if (permission != LocationPermission.denied &&
-        permission != LocationPermission.deniedForever) {
-      if (!isReg) {
-        Variables.pageTrans(const RegistrationPage());
-      } else {
-        //  Navigator.pop(context);
-      }
-    } else {
-      Variables.pageTrans(PermissionHandlerScreen(
-        isLogin: isReg,
-        index: 1,
-      ));
-    }
   }
 
   static Future<Position> getPositionLatLong() async {

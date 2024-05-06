@@ -937,11 +937,21 @@ class _Dashboard3State extends State<Dashboard3> {
                           height: 24,
                         ),
                         onTap: () async {
-                          Variables.customBottomSheet(
-                              context,
-                              VerifyUserAcct(
-                                isInvite: true,
-                              ));
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          String? geoShareId = prefs.getString('geo_share_id');
+                          if (geoShareId == null) {
+                            Variables.customBottomSheet(
+                                context,
+                                VerifyUserAcct(
+                                  isInvite: true,
+                                ));
+                          } else {
+                            showAlertDialog(context, "LuvPark",
+                                "You still have active sharing.", () {
+                              Navigator.of(context).pop();
+                            });
+                          }
                         },
                       ),
                     ]),

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:luvpark/Registration/registration.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -15,8 +16,6 @@ import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/custom_widget/snackbar_dialog.dart';
-import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
@@ -38,7 +37,7 @@ import 'package:upgrader/upgrader.dart';
 Future<void> backgroundFunc() async {
   int counter = 0;
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  Timer.periodic(const Duration(seconds: 5), (timer) async {
+  Timer.periodic(const Duration(seconds: 10), (timer) async {
     var akongId = prefs.getString('myId');
     if (akongId == null) return;
     await getParkingTrans(counter);
@@ -216,16 +215,8 @@ class _SplashScreenState extends State<SplashScreen> {
     var logData = prefs.getString(
       'loginData',
     );
-    final statusReq = await Geolocator.checkPermission();
 
-    print("on board settongs $statusReq");
-    if (statusReq == LocationPermission.denied) {
-      // ignore: use_build_context_synchronously
-      Variables.pageTrans(PermissionHandlerScreen(
-        isLogin: true,
-        index: 1,
-      ));
-    } else if (logData == null) {
+    if (logData == null) {
       Timer(const Duration(seconds: 1), () {
         Navigator.push(
             context,
@@ -340,6 +331,22 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
     await prefs.clear(); // This clears all data in SharedPreferences.
   }
 
+  void siAdongMuragBuang(Widget widget) async {
+    final statusReq = await Geolocator.checkPermission();
+    print("on board settongs $statusReq");
+    if (statusReq == LocationPermission.denied) {
+      // ignore: use_build_context_synchronously
+      Variables.pageTrans(PermissionHandlerScreen(
+        isLogin: true,
+        index: 1,
+        widget: widget,
+      ));
+    }
+    if (statusReq == LocationPermission.whileInUse) {
+      Variables.pageTrans(widget);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
@@ -362,7 +369,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
                     title: "Find",
                     subTitle:
                         "Looking for parking? Our app helps you find available parking spaces in real-time."
-                        " Simply enter your destination, and we'll show you the nearest options.",
+                        " Simply enter your destination, and we'll show you the nearest spot based on your current location.",
                     icon: "step1",
                   ),
                   CustomSlider(
@@ -375,8 +382,20 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
                   CustomSlider(
                     title: "Park",
                     subTitle:
-                        "Get the best prices at convenient locations throughout  our network of garages of parking.",
+                        "Luvpark seamlessly integrates with Google Maps, enabling you to easily obtain directions and distance from your current location to your chosen parking spot, ensuring a smooth driving experience.",
                     icon: "step3",
+                  ),
+                  CustomSlider(
+                    title: "Find my Vehicle",
+                    subTitle:
+                        "Need help finding where you parked your vehicle? Worry no more – Luvpark has you covered. Our app can pinpoint your parked car from your current location by utilizing your active parking transaction.",
+                    icon: "step4",
+                  ),
+                  CustomSlider(
+                    title: "Share Location",
+                    subTitle:
+                        " Discover the convenience of our Share Location Feature, seamlessly integrated with Google Maps, empowering you to effortlessly share your current location with colleague, friend or family member.",
+                    icon: "step5",
                   ),
                 ],
               ),
@@ -385,7 +404,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  3,
+                  5,
                   (index) => buildDot(index, context),
                 ),
               ),
@@ -397,19 +416,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               color: AppColor.primaryColor,
               label: "Create Account",
               onTap: () async {
-                bool serviceEnabled;
-                serviceEnabled = await Geolocator.isLocationServiceEnabled();
-                if (!serviceEnabled) {
-                  // ignore: use_build_context_synchronously
-                  showAlertDialog(context, "Attention",
-                      "To continue, turn on device location, which uses Google's location service.",
-                      () {
-                    Navigator.of(context).pop();
-                  });
-                } else {
-                  // ignore: use_build_context_synchronously
-                  DashboardComponent.locatePosition(context, false);
-                }
+                siAdongMuragBuang(RegistrationPage());
               },
             ),
             const SizedBox(height: 16.0),
@@ -419,7 +426,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               label: "Login",
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
-                Variables.pageTrans(const LoginScreen(
+                siAdongMuragBuang(LoginScreen(
                   index: 0,
                 ));
               },

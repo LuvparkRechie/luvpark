@@ -936,7 +936,7 @@ class _MyWalletState extends State<MyWallet>
                         Container(
                           width: 10,
                         ),
-                        actionButton("share", "Share", () {
+                        actionButton("send_money", "Share", () {
                           if (jsonDecode(akongP!)['first_name'].toString() ==
                               'null') {
                             showAlertDialog(context, "Attention",

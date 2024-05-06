@@ -9,6 +9,7 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/classess/api_keys.dart';
+import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -127,6 +128,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
           ? NoInternetConnected(onTap: refresh)
           : Column(
               children: [
+                Container(),
                 Expanded(
                   child: isLoading
                       ? ListView.builder(
@@ -271,114 +273,119 @@ class _ParkingHistoryState extends State<ParkingHistory> {
           });
         },
         child: Container(
-          constraints: const BoxConstraints(
-            minHeight: 68.0,
-          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
+            border: Border(
+              left: BorderSide(color: AppColor.primaryColor, width: 4),
+            ),
           ),
-          child: Padding(
-            padding: const EdgeInsets.only(
-                bottom: 10.0, left: 10, right: 10, top: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: CustomDisplayText(
-                        label: data["reservation_ref_no"].toString(),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  bottom: 10.0, left: 10, right: 10, top: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomDisplayText(
+                          label: data["reservation_ref_no"].toString(),
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          maxLines: 1,
+                        ),
+
+                        //  AutoSizeText(
+                        //   "Parking Completed",
+                        //   style: CustomTextStyle(
+                        //       fontSize: 14,
+                        //       color: AppColor.mainColor,
+                        //       fontWeight: FontWeight.bold),
+                        //   maxLines: 1,
+                        // ),
+                      ),
+                      CustomDisplayText(
+                        label: toCurrencyString(data["amount"].toString()),
                         fontSize: 14,
                         color: Colors.black,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.bold,
                         maxLines: 1,
                       ),
-
-                      //  AutoSizeText(
-                      //   "Parking Completed",
-                      //   style: CustomTextStyle(
-                      //       fontSize: 14,
-                      //       color: AppColor.mainColor,
-                      //       fontWeight: FontWeight.bold),
-                      //   maxLines: 1,
-                      // ),
-                    ),
-                    CustomDisplayText(
-                      label: toCurrencyString(data["amount"].toString()),
-                      fontSize: 14,
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      maxLines: 1,
-                    ),
-                  ],
-                ),
-                Container(height: 22),
-                Row(
-                  children: [
-                    Icon(
-                      CupertinoIcons.calendar,
-                      color: Colors.grey.shade400,
-                      size: 28,
-                    ),
-                    Container(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomDisplayText(
-                          label: convertDateFormat(data["dt_in"]),
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          maxLines: 1,
-                        ),
-                        CustomDisplayText(
-                          label: Variables.convertTime(
-                              data["dt_in"].toString().split(" ")[1]),
-                          fontSize: 14,
-                          color: const Color.fromARGB(255, 137, 140, 148),
-                          fontWeight: FontWeight.w500,
-                          maxLines: 1,
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: 10,
-                    ),
-                    const Icon(
-                      Icons.arrow_right_alt_outlined,
-                      color: Color.fromARGB(255, 22, 22, 22),
-                      size: 28,
-                    ),
-                    Container(
-                      width: 10,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomDisplayText(
-                          label: convertDateFormat(data["dt_out"]),
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          maxLines: 1,
-                        ),
-                        CustomDisplayText(
-                          label: Variables.convertTime(
-                              data["dt_out"].toString().split(" ")[1]),
-                          fontSize: 14,
-                          color: const Color.fromARGB(255, 137, 140, 148),
-                          fontWeight: FontWeight.w500,
-                          maxLines: 1,
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-                Container(height: 11),
-              ],
+                    ],
+                  ),
+                  Container(height: 22),
+                  Row(
+                    children: [
+                      Icon(
+                        CupertinoIcons.calendar,
+                        color: Colors.grey.shade400,
+                        size: 28,
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomDisplayText(
+                            label: convertDateFormat(data["dt_in"]),
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            maxLines: 1,
+                          ),
+                          CustomDisplayText(
+                            label: Variables.convertTime(
+                                data["dt_in"].toString().split(" ")[1]),
+                            fontSize: 14,
+                            color: const Color.fromARGB(255, 137, 140, 148),
+                            fontWeight: FontWeight.w500,
+                            maxLines: 1,
+                          ),
+                        ],
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                      const Icon(
+                        Icons.arrow_right_alt_outlined,
+                        color: Color.fromARGB(255, 22, 22, 22),
+                        size: 28,
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomDisplayText(
+                            label: convertDateFormat(data["dt_out"]),
+                            fontSize: 16,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            maxLines: 1,
+                          ),
+                          CustomDisplayText(
+                            label: Variables.convertTime(
+                                data["dt_out"].toString().split(" ")[1]),
+                            fontSize: 14,
+                            color: const Color.fromARGB(255, 137, 140, 148),
+                            fontWeight: FontWeight.w500,
+                            maxLines: 1,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                  Container(height: 11),
+                ],
+              ),
             ),
           ),
         ),

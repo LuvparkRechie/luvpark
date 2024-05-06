@@ -31,7 +31,7 @@ class _MainLandingScreenState extends State<MainLandingScreen> {
   @override
   void initState() {
     super.initState();
-    _pages.add(const Dashboard3());
+    _pages.add(Dashboard3());
     _pages.add(ParkingActivity(
       tabIndex: widget.parkingIndex ?? 0,
     ));

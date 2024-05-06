@@ -520,7 +520,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
     String? geoShareId = prefs.getString("geo_share_id");
 
     HttpRequest(
-      api: "${ApiKeys.gApiLuvParkGetShareLoc}?geo_share_id=${geoShareId!}",
+      api: "${ApiKeys.gApiLuvParkPutShareLoc}?geo_share_id=${geoShareId!}",
     ).get().then((pendingInviteData) async {
       if (pendingInviteData.isNotEmpty) {
         invitedWidget = <Widget>[];

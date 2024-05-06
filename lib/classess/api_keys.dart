@@ -185,7 +185,7 @@ class ApiKeys {
   static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';
   //GETSHARE
   ///Get pending  user in map share
-  static const gApiLuvParkGetShareLoc = '/ords/$luvApi/geo/gpsShare';
+
   //Invite friend
   static const gApiLuvParkPutShareLoc = '/ords/$luvApi/geo/gpsShare';
 

@@ -89,99 +89,87 @@ class _CustomDialogState extends State<CustomDialog> {
                     ),
                     const SizedBox(height: 20),
                     CustomDisplayText(
-                        label: "Extend Parking",
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.textHeaderLabelColor),
+                        label: "Extend your parking now",
+                        fontSize: 20,
+                        fontWeight: FontWeight.w400,
+                        letterSpacing: .5,
+                        color: AppColor.textSubColor),
                     const SizedBox(height: 10),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // AutoSizeText(
-                                  //   "No of hours",
-                                  //   style: CustomTextStyle(
-                                  //     fontWeight: FontWeight.bold,
-                                  //     color: Colors.black,
-                                  //   ),
-                                  //   softWrap: true,
-                                  // ),
-                                  // Container(
-                                  //   height: 5,
-                                  // ),
-                                  CustomDisplayText(
-                                    label: "No of hours",
-                                    fontWeight: FontWeight.normal,
-                                    fontSize: 14,
-                                    color: AppColor.textSecondaryColor,
-                                  ),
-                                ],
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (counter == 1) return;
+                              counter--;
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: Colors.white,
+                                border:
+                                    Border.all(color: AppColor.primaryColor)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.remove,
+                                color: Colors.grey,
+                                size: 25,
                               ),
                             ),
-                            Row(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      if (counter == 1) return;
-                                      counter--;
-                                    });
-                                  },
-                                  child: const CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: Colors.white,
-                                    child: Icon(
-                                      Icons.remove,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  width: 10,
-                                ),
-                                CustomDisplayText(
-                                  label: counter.toString(),
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColor.primaryColor,
-                                  fontSize: 20,
-                                ),
-                                Container(
-                                  width: 10,
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      if (counter >= 12) return;
-                                      counter++;
-                                    });
-                                  },
-                                  child: const CircleAvatar(
-                                    radius: 15,
-                                    backgroundColor: Colors.white,
-                                    child: Icon(
-                                      Icons.add,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                          ),
+                        ),
+                        Container(
+                          width: 10,
+                        ),
+                        Column(
+                          children: [
+                            CustomDisplayText(
+                              label: counter.toString(),
+                              fontWeight: FontWeight.bold,
+                              color: AppColor.primaryColor,
+                              fontSize: 40,
+                            ),
+                            CustomDisplayText(
+                              label: "Hours",
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.textSubColor,
+                              letterSpacing: .5,
+                              fontSize: 12,
                             ),
                           ],
                         ),
-                      ),
+                        Container(
+                          width: 10,
+                        ),
+                        InkWell(
+                          onTap: () {
+                            setState(() {
+                              if (counter >= 12) return;
+                              counter++;
+                            });
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(100),
+                                color: AppColor.primaryColor,
+                                border:
+                                    Border.all(color: AppColor.primaryColor)),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.add,
+                                color: Colors.white,
+                                size: 25,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     CustomButton(
                       label: "Submit",
                       onTap: () async {

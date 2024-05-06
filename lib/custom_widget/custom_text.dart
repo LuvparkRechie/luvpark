@@ -65,6 +65,7 @@ class CustomDisplayText extends StatelessWidget {
         maxLines: maxLines,
         overflow: overflow,
         presetFontSizes: presetFontSizes,
+        softWrap: true,
       ),
     );
   }

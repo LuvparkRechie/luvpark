@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark/classess/api_keys.dart';
+import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
@@ -380,7 +381,6 @@ class NotificationController {
           receivedAction.payload!["geo_share_id"]!,
           context,
           (isSuccess) {
-            print("isSuccess click $isSuccess");
             if (isSuccess) {
               AwesomeNotifications().dismiss(receivedAction.id!);
               if (MyApp.scaffoldKey.currentContext != null) {
@@ -443,11 +443,6 @@ class NotificationController {
 }
 
 Future<void> updateLocation(LatLng position) async {
-  // bool isRunning = await FlutterForegroundTask.isRunningService;
-
-  // if (isRunning) {
-
-  // }
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var geoConId = prefs.getString('geo_connect_id');
   if (geoConId == null) return;
@@ -478,9 +473,8 @@ Future<void> getSharingData(ctr) async {
   var akongId = prefs.getString('myId');
   if (akongId == null) return;
   HttpRequest(
-    api: "${ApiKeys.gApiLuvParkGetShareLoc}?user_id=${akongId.toString()}",
+    api: "${ApiKeys.gApiLuvParkPutShareLoc}?user_id=${akongId.toString()}",
   ).get().then((notificationData) async {
-    //  ShareLocationDatabase.instance.deleteAll();
     if (notificationData == "No Internet") {
       return;
     }
@@ -492,6 +486,12 @@ Future<void> getSharingData(ctr) async {
             .readNotificationByMateId(dataRow["geo_connect_id"],
                 dataRow["updated_on"] == null ? "" : dataRow["updated_on"])
             .then((returnData) async {
+          DateTime pdt = DateTime.parse(
+              dataRow["created_on"].toString().replaceAll("/", "-"));
+
+          DateTime targetDate =
+              DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
+          if (!Variables.withinOneHourRange(targetDate)) return;
           if (returnData == null) {
             var resData = {
               ShareLocationDataFields.connectMateId:
@@ -500,6 +500,7 @@ Future<void> getSharingData(ctr) async {
                   ? ""
                   : dataRow["updated_on"].toString()
             };
+
             await ShareLocationDatabase.instance
                 .insertUpdate(resData)
                 .then((updateProcess) {
@@ -544,6 +545,13 @@ Future<void> getParkingTrans(int ctr) async {
             .readNotificationByDateOut(
                 dataRow["dt_in"].toString(), dataRow["reservation_id"])
             .then((returnData) async {
+          DateTime pdt =
+              DateTime.parse(dataRow["dt_in"].toString().replaceAll("/", "-"));
+
+          DateTime targetDate =
+              DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
+
+          if (!Variables.withinOneHourRange(targetDate)) return;
           if (returnData == null) {
             // Insert process
 
@@ -561,7 +569,7 @@ Future<void> getParkingTrans(int ctr) async {
             };
             if (dataRow["is_active"] == "Y" && dataRow["status"] == "U") {
               ctr++;
-              print("Insert Process");
+
               NotificationController.createNewNotification(
                   int.parse(dataRow["reservation_id"].toString()),
                   0,
@@ -575,7 +583,7 @@ Future<void> getParkingTrans(int ctr) async {
                   "Your Parking at ${dataRow["notes"]} is about to expire.",
                   dataRow["dt_out"].toString(),
                   "custom_Screen");
-              print("Scheduled Process");
+
               await NotificationDatabase.instance.insertUpdate(resData);
             }
           } else {

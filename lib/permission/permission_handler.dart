@@ -1,19 +1,21 @@
-import 'dart:io';
-
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/main.dart';
 
 class PermissionHandlerScreen extends StatefulWidget {
   final bool isLogin;
   final int index;
+  final Widget widget;
   const PermissionHandlerScreen(
-      {super.key, required this.isLogin, required this.index});
+      {super.key,
+      required this.isLogin,
+      required this.index,
+      required this.widget});
 
   @override
   State<PermissionHandlerScreen> createState() =>
@@ -41,15 +43,10 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
   didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
       LocationPermission checkPermission = await Geolocator.checkPermission();
-      print("checkPermission $checkPermission");
       if (checkPermission == LocationPermission.always ||
           checkPermission == LocationPermission.whileInUse) {
-        // ignore: use_build_context_synchronously
         Navigator.pop(context);
-        MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
-          '/',
-          (route) => (route.settings.name != '/'),
-        );
+        Variables.pageTrans(widget.widget);
       }
     }
   }
@@ -64,66 +61,46 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Image(
-                        height: MediaQuery.of(context).size.height * 0.20,
-                        image: const AssetImage(
-                            'assets/images/location_permission.png')),
-                  ),
-                  Center(
-                    child: CustomDisplayText(
-                      label: "Use your location",
-                      color: AppColor.textMainColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      height: 0,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Center(
+                      child: Image(
+                          height: MediaQuery.of(context).size.height * 0.20,
+                          image: const AssetImage(
+                              'assets/images/location_permission.png')),
                     ),
-                  ),
-                  const SizedBox(height: 20),
-                  CustomDisplayText(
-                    label:
-                        "With your consent, we may collect precise location data from your"
-                        " mobile device to provide location-based services within the App such as;",
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
-                  const SizedBox(height: 20),
-                  CustomDisplayText(
-                    label: "Identifying and finding nearby parking zones.",
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
-                  const SizedBox(height: 10),
-                  CustomDisplayText(
-                    label:
-                        "Using the map to get the direction to the parking zone.",
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
-                  const SizedBox(height: 10),
-                  CustomDisplayText(
-                    label:
-                        "Share location feature where user can share his/her location to another luvpark user.",
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
-                  const SizedBox(height: 20),
-                  CustomDisplayText(
-                    label:
-                        'You need to give this permission from the system settings.',
-                    fontSize: 15,
-                    color: Colors.black54,
-                  ),
-                  const SizedBox(height: 50),
-                ],
+                    Center(
+                      child: CustomDisplayText(
+                        label: "Use your location",
+                        color: AppColor.textMainColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w700,
+                        height: 0,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    CustomDisplayText(
+                      label:
+                          "With your consent, we may collect precise location data from your mobile device to provide location-based services."
+                          " luvpark requires access to location in the background to enable \"Share Location feature\" for user to effortlessly"
+                          " share their current whereabouts with another luvpark user. It seamlessly utilizes background processes to"
+                          " consistently monitors the user's device location, ensuring real-time updates for seamless communication and coordination.",
+                      fontSize: 16,
+                      color: Colors.black54,
+                      letterSpacing: .5,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    const SizedBox(height: 20),
+                  ],
+                ),
               ),
             ),
             CustomButton(
-                label: !isOpenSettings ? "Request Permission" : "Open Settings",
+                label:
+                    !isOpenSettings ? "Continue Permission" : "Open Settings",
                 onTap: !isOpenSettings
                     ? () async {
                         final statusReq = await Geolocator.checkPermission();
@@ -158,11 +135,8 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
                 color: Colors.grey.shade200,
                 textColor: Colors.black,
                 onTap: () async {
-                  exit(0);
+                  Navigator.of(context).pop();
                 }),
-            Container(
-              height: 50,
-            ),
           ],
         ),
       ),
