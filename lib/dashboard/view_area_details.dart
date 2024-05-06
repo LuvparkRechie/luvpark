@@ -140,6 +140,10 @@ class _ViewDetailsState extends State<ViewDetails> {
           ),
         ),
       );
+      //  mapController.animateCamera(CameraUpdate.newLatLngBounds(
+      //       bounds,
+      //       50, // Adjust padding as needed
+      //     ));
     }
   }
 
@@ -230,6 +234,29 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   Widget bodyWidget(firstItem) {
+    LatLngBounds bounds = LatLngBounds(
+      southwest: LatLng(
+        currentLocation!.latitude < destLocation!.latitude
+            ? currentLocation!.latitude
+            : destLocation!.latitude,
+        currentLocation!.longitude < destLocation!.longitude
+            ? currentLocation!.longitude
+            : destLocation!.longitude,
+      ),
+      northeast: LatLng(
+        currentLocation!.latitude > destLocation!.latitude
+            ? currentLocation!.latitude
+            : destLocation!.latitude,
+        currentLocation!.longitude > destLocation!.longitude
+            ? currentLocation!.longitude
+            : destLocation!.longitude,
+      ),
+    );
+
+    LatLng center = LatLng(
+      (bounds.southwest.latitude + bounds.northeast.latitude) / 2,
+      (bounds.southwest.longitude + bounds.northeast.longitude) / 2,
+    );
     return Column(
       children: [
         Expanded(
@@ -237,9 +264,38 @@ class _ViewDetailsState extends State<ViewDetails> {
           children: [
             GoogleMap(
               mapType: MapType.normal,
-              onMapCreated: _onMapCreated,
+              onMapCreated: (GoogleMapController controller) {
+                if (mounted) {
+                  setState(() {
+                    mapController = controller;
+                    DefaultAssetBundle.of(context)
+                        .loadString('assets/custom_map_style/map_style.json')
+                        .then((String style) {
+                      controller.setMapStyle(style);
+                    });
+                  });
+                  mapController.animateCamera(
+                    CameraUpdate.newCameraPosition(
+                      CameraPosition(
+                        target: LatLng(
+                          double.parse(
+                              widget.areaData[0]["pa_latitude"].toString()),
+                          double.parse(
+                              widget.areaData[0]["pa_longitude"].toString()),
+                        ),
+                        zoom: 12,
+                      ),
+                    ),
+                  );
+                  mapController.animateCamera(CameraUpdate.newLatLngBounds(
+                    bounds,
+                    50, // Adjust padding as needed
+                  ));
+                }
+              },
               initialCameraPosition: CameraPosition(
-                target: currentLocation!,
+                target: center,
+                zoom: 12.0,
               ),
               zoomGesturesEnabled: true,
               markers: {

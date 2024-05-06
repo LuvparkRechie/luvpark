@@ -85,8 +85,8 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
                     CustomDisplayText(
                       label:
                           "With your consent, we may collect precise location data from your mobile device to provide location-based services."
-                          " luvpark requires access to location in the background to enable \"Share Location feature\" for user to effortlessly"
-                          " share their current whereabouts with another luvpark user. It seamlessly utilizes background processes to"
+                          "\nluvpark requires access to location in the background to enable \"Share Location feature\" for user to effortlessly"
+                          " share their current whereabouts with another luvpark user.\nIt seamlessly utilizes background processes to"
                           " consistently monitors the user's device location, ensuring real-time updates for seamless communication and coordination.",
                       fontSize: 16,
                       color: Colors.black54,
@@ -130,13 +130,6 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
                         AppSettings.openAppSettings();
                       }),
             const SizedBox(height: 16.0),
-            CustomButtonCancel(
-                label: "Cancel",
-                color: Colors.grey.shade200,
-                textColor: Colors.black,
-                onTap: () async {
-                  Navigator.of(context).pop();
-                }),
           ],
         ),
       ),

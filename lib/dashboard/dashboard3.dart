@@ -9,6 +9,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
@@ -23,6 +24,7 @@ import 'package:luvpark/dashboard/filter_map_v2.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
+import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:luvpark/verify_user/verify_user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -164,6 +166,7 @@ class _Dashboard3State extends State<Dashboard3> {
       'userData',
     );
     bool servicestatus = await Geolocator.isLocationServiceEnabled();
+    final statusReq = await Geolocator.checkPermission();
     if (!servicestatus) {
       // ignore: use_build_context_synchronously
       showAlertDialog(context, "Attention",
@@ -172,6 +175,13 @@ class _Dashboard3State extends State<Dashboard3> {
         Navigator.of(context).pop();
       });
       return;
+    } else if (statusReq == LocationPermission.denied) {
+      // ignore: use_build_context_synchronously
+      Variables.pageTrans(PermissionHandlerScreen(
+        isLogin: true,
+        index: 1,
+        widget: MainLandingScreen(),
+      ));
     } else {
       DashboardComponent.getPositionLatLong().then((position) {
         String subApi =

@@ -6,7 +6,6 @@ import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:luvpark/Registration/registration.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
@@ -21,7 +20,6 @@ import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/pa_message/pa_message.dart';
-import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -331,22 +329,6 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
     await prefs.clear(); // This clears all data in SharedPreferences.
   }
 
-  void siAdongMuragBuang(Widget widget) async {
-    final statusReq = await Geolocator.checkPermission();
-    print("on board settongs $statusReq");
-    if (statusReq == LocationPermission.denied) {
-      // ignore: use_build_context_synchronously
-      Variables.pageTrans(PermissionHandlerScreen(
-        isLogin: true,
-        index: 1,
-        widget: widget,
-      ));
-    }
-    if (statusReq == LocationPermission.whileInUse) {
-      Variables.pageTrans(widget);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
@@ -416,7 +398,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               color: AppColor.primaryColor,
               label: "Create Account",
               onTap: () async {
-                siAdongMuragBuang(RegistrationPage());
+                Variables.pageTrans(RegistrationPage());
               },
             ),
             const SizedBox(height: 16.0),
@@ -426,7 +408,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               label: "Login",
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
-                siAdongMuragBuang(LoginScreen(
+                Variables.pageTrans(LoginScreen(
                   index: 0,
                 ));
               },
