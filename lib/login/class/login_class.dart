@@ -26,7 +26,6 @@ class LoginComponent {
       "mobile_no": mobile,
       "pwd": pass,
     };
-
     HttpRequest(api: ApiKeys.gApiSubFolderPostLogin, parameters: postParam)
         .post()
         .then((returnPost) {
@@ -56,7 +55,6 @@ class LoginComponent {
         if (returnPost["success"] == 'Y') {
           var getApi =
               "${ApiKeys.gApiSubFolderLogin}?mobile_no=$mobile&auth_key=${returnPost["auth_key"].toString()}";
-
           HttpRequest(api: getApi).get().then((objData) async {
             if (objData == "No Internet") {
               //   Navigator.pop(context);

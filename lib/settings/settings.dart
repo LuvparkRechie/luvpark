@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 // import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
@@ -13,6 +15,7 @@ import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
+import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/faq/faq.dart';
 import 'package:luvpark/location_sharing/map_display.dart';
@@ -21,6 +24,8 @@ import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/pa_message/pa_message.dart';
 import 'package:luvpark/profile/profile_details.dart';
+import 'package:luvpark/profile/update_profile.dart';
+import 'package:luvpark/settings/referralcode.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -44,6 +49,7 @@ class _SettingsPageState extends State<SettingsPage> {
   bool loading = true;
   String myImage = "";
   String fullName = "Not specified";
+  String email = "Not specified";
   bool hasInternetPage = true;
   bool? isActiveMpin;
   bool isAllowMPIN = false;
@@ -64,15 +70,24 @@ class _SettingsPageState extends State<SettingsPage> {
     var myPicData = prefs.getString(
       'myProfilePic',
     );
+
     setState(() {
       myProfilePic = jsonDecode(myPicData!).toString();
     });
 
-    if (jsonDecode(akongP!)['first_name'] != null) {
-      setState(() {
-        fullName =
-            "${jsonDecode(akongP!)['first_name'].toString()} ${jsonDecode(akongP!)['middle_name'].toString() == "null" ? "" : jsonDecode(akongP!)['middle_name'].toString()[0]} ${jsonDecode(akongP!)['last_name'].toString()}";
-      });
+    if (akongP != null) {
+      var userData = jsonDecode(akongP!);
+      if (userData['first_name'] != null) {
+        setState(() {
+          fullName =
+              "${userData['first_name']} ${userData['middle_name'] != null ? userData['middle_name'][0] : ''} ${userData['last_name']}";
+        });
+        setState(() {
+          if (userData['email'] != null) {
+            email = userData['email'];
+          }
+        });
+      }
     }
     setState(() {
       loading = false;
@@ -88,8 +103,7 @@ class _SettingsPageState extends State<SettingsPage> {
     return CustomParentWidget(
         appbarColor: AppColor.primaryColor,
         child: Container(
-          color: Color(0xFFF1F1F1),
-          //color: const Color(0xFFF1F1F1),
+          color: Color.fromARGB(255, 249, 248, 248),
           child: loading
               ? const Center(
                   child: CircularProgressIndicator(),
@@ -107,146 +121,158 @@ class _SettingsPageState extends State<SettingsPage> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Visibility(
+                                visible: fullName == "Not specified",
+                                child: Container(
+                                  height: 70,
+                                  color: AppColor.primaryColor,
+                                  child: verifyAccountList(
+                                    'Verify your account',
+                                    'Complete your profile to unlock all features!',
+                                    () {
+                                      Variables.pageTrans(
+                                          const UpdateProfile());
+                                    },
+                                  ),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
                         Padding(
                           padding: EdgeInsets.only(
-                              top: 20, right: 20, left: 20, bottom: 0),
-                          child: Stack(
+                              top: 20, right: 20, left: 20, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomDisplayText(
-                                      label: "Settings",
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black),
-                                ],
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  GestureDetector(
-                                      onTap: () {
-                                        showModalConfirmation(
-                                          context,
-                                          "Confirmation",
-                                          "Are you sure you want to logout?",
-                                          "Cancel",
-                                          () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          () async {
-                                            SharedPreferences pref =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            // final service =
-                                            //     FlutterBackgroundService();
-                                            Navigator.pop(context);
-                                            CustomModal(context: context)
-                                                .loader();
-
-                                            await NotificationDatabase.instance
-                                                .readAllNotifications()
-                                                .then((notifData) async {
-                                              if (notifData.isNotEmpty) {
-                                                for (var nData in notifData) {
-                                                  NotificationController
-                                                      .cancelNotificationsById(
-                                                          nData["reserved_id"]);
-                                                }
-                                              }
-
-                                              // if (mounted) {
-                                              //   setState(() {
-                                              //     service.invoke("stopService");
-                                              //   });
-                                              // }
-                                              var logData =
-                                                  pref.getString('loginData');
-                                              var mappedLogData = [
-                                                jsonDecode(logData!)
-                                              ];
-                                              mappedLogData[0]["is_active"] =
-                                                  "N";
-                                              pref.setString(
-                                                  "loginData",
-                                                  jsonEncode(
-                                                      mappedLogData[0]!));
-                                              pref.remove('myId');
-                                              NotificationDatabase.instance
-                                                  .deleteAll();
-                                              PaMessageDatabase.instance
-                                                  .deleteAll();
-                                              ShareLocationDatabase.instance
-                                                  .deleteAll();
-                                              NotificationController
-                                                  .cancelNotifications();
-                                              ForegroundNotif.onStop();
-                                              BiometricLogin().clearPassword();
-                                              Timer(const Duration(seconds: 1),
-                                                  () {
-                                                Navigator.of(context)
-                                                    .pop(context);
-                                                Variables.pageTrans(
-                                                    const LoginScreen(
-                                                        index: 1));
-                                              });
-                                            });
-                                          },
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8.0),
-                                        child: Image.asset(
-                                          "assets/images/Logout.png",
-                                          width: 24,
-                                          height: 24,
-                                          color: Colors.red,
-                                        ),
-                                      )),
-                                ],
-                              ),
+                              CustomDisplayText(
+                                  label: "Settings",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black),
                             ],
                           ),
                         ),
                         Expanded(
                             child: SingleChildScrollView(
-                          padding: const EdgeInsets.only(
-                            left: 20,
-                            right: 20,
-                            top: 20,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 20,
                           ),
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Visibility(
+                                visible: fullName != "Not specified",
+                                child: Padding(
+                                  padding: const EdgeInsets.only(bottom: 20.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      Variables.pageTrans(ReferralCode());
+                                    },
+                                    child: Container(
+                                      clipBehavior: Clip.antiAlias,
+                                      decoration: ShapeDecoration(
+                                        color: Color(0xFFFFCE29),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(11),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 11),
+                                        child: Row(
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                  color: Colors.black12,
+                                                  width: 2,
+                                                ),
+                                              ),
+                                              child: CircleAvatar(
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                child: Image.asset(
+                                                  "assets/images/gift.png",
+                                                  scale: 5,
+                                                ),
+                                              ),
+                                            ),
+                                            Container(
+                                              width: 10,
+                                            ),
+                                            Expanded(
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  CustomDisplayText(
+                                                    label:
+                                                        "Free credits up to 500",
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w700,
+                                                    letterSpacing: -0.32,
+                                                  ),
+                                                  CustomDisplayText(
+                                                    label:
+                                                        "Refer and earn free points and rewards",
+                                                    color: Colors.black54,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w500,
+                                                    height: 0,
+                                                    letterSpacing: -0.28,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const Icon(
+                                              Icons.keyboard_arrow_right,
+                                              color: Colors.black54,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
                               InkWell(
                                 onTap: () {
                                   Variables.pageTrans(
-                                      ProfileDetails(callBack: () {
-                                    getAccountStatus();
-                                  }));
+                                    ProfileDetails(
+                                      callBack: () {
+                                        getAccountStatus();
+                                      },
+                                    ),
+                                  );
                                 },
                                 child: Container(
                                   clipBehavior: Clip.antiAlias,
                                   decoration: ShapeDecoration(
-                                    color: const Color(0xFFf8f8fb),
+                                    color: const Color(0xFFFFFFFF),
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(11),
                                     ),
+                                    shadows: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.1),
+                                        spreadRadius: 0,
+                                        blurRadius: 1,
+                                        offset: Offset(0, 2),
+                                      ),
+                                    ],
                                   ),
                                   child: Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 11),
+                                        horizontal: 10, vertical: 10),
                                     child: Row(
                                       children: [
                                         Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: AppColor.primaryColor,
-                                              width: 2,
-                                            ),
-                                          ),
                                           child: myProfilePic != 'null'
                                               ? CircleAvatar(
                                                   radius: 25,
@@ -296,8 +322,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 fontWeight: FontWeight.w700,
                                                 letterSpacing: -0.32,
                                               ),
-                                              const CustomDisplayText(
-                                                label: 'View Profile',
+                                              CustomDisplayText(
+                                                label: email,
                                                 color: Colors.black54,
                                                 fontSize: 12,
                                                 fontWeight: FontWeight.w500,
@@ -317,206 +343,248 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                               ),
                               Container(
-                                height: 20,
+                                height: 10,
                               ),
-                              if (fullName == "Not specified")
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: AppColor.primaryColor,
+                              // if (fullName == "Not specified")
+                              //   Container(
+                              //     width: MediaQuery.of(context).size.width,
+                              //     decoration: BoxDecoration(
+                              //       borderRadius: BorderRadius.circular(10),
+                              //       color: AppColor.primaryColor,
+                              //       boxShadow: [
+                              //         BoxShadow(
+                              //           color: Colors.black.withOpacity(0.1),
+                              //           spreadRadius: 0,
+                              //           blurRadius: 1,
+                              //           offset: Offset(0, 2),
+                              //         ),
+                              //       ],
+                              //     ),
+                              //     child: Padding(
+                              //       padding: const EdgeInsets.symmetric(
+                              //         horizontal: 20,
+                              //         vertical: 20,
+                              //       ),
+                              //       child: Stack(
+                              //         children: [
+                              //           Column(
+                              //             crossAxisAlignment:
+                              //                 CrossAxisAlignment.start,
+                              //             children: [
+                              //               const CustomDisplayText(
+                              //                 label: "Starter Plan",
+                              //                 fontSize: 20,
+                              //                 color: Colors.white,
+                              //               ),
+                              //               Container(
+                              //                 height: 10,
+                              //               ),
+                              //               const CustomDisplayText(
+                              //                 label: "Complete your profile",
+                              //                 fontSize: 16,
+                              //                 color: Colors.white70,
+                              //               ),
+                              //               Container(
+                              //                 height: 5,
+                              //               ),
+                              //               const CustomDisplayText(
+                              //                 label: "to unlock all features!",
+                              //                 fontSize: 16,
+                              //                 color: Colors.white70,
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         ],
+                              //       ),
+                              //     ),
+                              //   ),
+                              // if (fullName == "Not specified")
+                              //   Container(
+                              //     height: 10,
+                              //   ),
+                              Container(
+                                height: 102,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  color: Color(0xFFFFFFFF),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(11),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 20,
-                                      vertical: 20,
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 0,
+                                      blurRadius: 1,
+                                      offset: Offset(0, 2),
                                     ),
-                                    child: Stack(
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                    //horizontal: 20.0,
+                                    vertical: 10,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Container(
+                                        width: 70,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
-                                            const CustomDisplayText(
-                                              label: "Starter Plan",
-                                              fontSize: 20,
-                                              color: Colors.white,
+                                            GestureDetector(
+                                              child: Container(
+                                                child: Image.asset(
+                                                    height: 34,
+                                                    width: 34,
+                                                    'assets/images/wallet.png'),
+                                              ),
+                                              onTap: () {},
                                             ),
-                                            Container(
-                                              height: 10,
-                                            ),
-                                            const CustomDisplayText(
-                                              label: "Complete your profile",
-                                              fontSize: 16,
-                                              color: Colors.white70,
-                                            ),
-                                            Container(
-                                              height: 5,
-                                            ),
-                                            const CustomDisplayText(
-                                              label: "to unlock all features!",
-                                              fontSize: 16,
-                                              color: Colors.white70,
+                                            Container(height: 5),
+                                            CustomDisplayText(
+                                              label: 'My Wallet',
+                                              fontSize: 12,
                                             ),
                                           ],
                                         ),
-                                        const Positioned(
-                                          right: -5,
-                                          top: 5,
-                                          child: Image(
-                                            height: 100,
-                                            width: 100,
-                                            image: AssetImage(
-                                                "assets/images/complete_prof.png"),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              if (fullName == "Not specified")
-                                Container(
-                                  height: 20,
-                                ),
-                              Container(
-                                clipBehavior: Clip.antiAlias,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFf8f8fb),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(11),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 11),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomDisplayText(
-                                        label: 'Account Management',
-                                        fontWeight: FontWeight.bold,
                                       ),
-                                      Divider(color: Colors.grey),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/password.png'),
-                                          "Change Password", () {
-                                        Variables.pageTrans(
-                                            const ChangePasswordScreen());
-                                      }),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/myvehicles.png'),
-                                          "My Vehicles", () {
-                                        Variables.pageTrans(const MyVehicles());
-                                      }),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 20,
-                              ),
-                              Container(
-                                clipBehavior: Clip.antiAlias,
-                                decoration: ShapeDecoration(
-                                  color: const Color(0xFFf8f8fb),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(11),
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 11),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomDisplayText(
-                                        label: 'Features',
-                                        fontWeight: FontWeight.bold,
+                                      VerticalDivider(
+                                        color: Colors.grey,
+                                        indent: 20,
+                                        endIndent: 20,
                                       ),
-                                      Divider(color: Colors.grey),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/share-location.png'),
-                                          "Active sharing", () async {
-                                        CustomModal(context: context).loader();
-                                        String id = await Variables.getUserId();
-                                        SharedPreferences prefs =
-                                            await SharedPreferences
-                                                .getInstance();
-                                        await Functions.getSharedData(id,
-                                            (sharedData) async {
-                                          Navigator.pop(context);
-
-                                          if (sharedData["data"].isEmpty &&
-                                              sharedData["msg"] ==
-                                                  "No Internet") {
-                                            if (mounted) {
-                                              setState(() {
-                                                hasInternetPage = false;
-                                              });
-                                            }
-                                          } else {
-                                            if (mounted) {
-                                              setState(() {
-                                                hasInternetPage = true;
-                                              });
-                                            }
-                                            if (sharedData["data"].isNotEmpty) {
-                                              List myData = sharedData["data"];
-                                              int existDataLength = myData
-                                                  .where((element) {
-                                                    return int.parse(
-                                                            element["user_id"]
-                                                                .toString()) ==
-                                                        int.parse(
-                                                            id.toString());
-                                                  })
-                                                  .toList()
-                                                  .length;
-
-                                              if (existDataLength > 0) {
-                                                ForegroundNotif.onStop();
+                                      Container(
+                                        width: 70,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              child: Container(
+                                                child: Image.asset(
+                                                    height: 34,
+                                                    width: 34,
+                                                    'assets/images/parkhistory.png'),
+                                              ),
+                                              onTap: () {
                                                 Variables.pageTrans(
-                                                    const MapSharingScreen());
-                                              } else {
-                                                prefs.remove('geo_connect_id');
-                                                showAlertDialog(
-                                                    context,
-                                                    "LuvPark",
-                                                    "You don't have active sharing.",
-                                                    () {
-                                                  Navigator.of(context).pop();
+                                                    const MyVehicles());
+                                              },
+                                            ),
+                                            Container(height: 5),
+                                            CustomDisplayText(
+                                              label: 'My Vehicles',
+                                              fontSize: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      VerticalDivider(
+                                        color: Colors.grey,
+                                        indent: 20,
+                                        endIndent: 20,
+                                      ),
+                                      Container(
+                                        width: 70,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            GestureDetector(
+                                              child: Container(
+                                                child: Image.asset(
+                                                    height: 34,
+                                                    width: 34,
+                                                    'assets/images/sharelocation.png'),
+                                              ),
+                                              onTap: () async {
+                                                CustomModal(context: context)
+                                                    .loader();
+                                                String id =
+                                                    await Variables.getUserId();
+                                                SharedPreferences prefs =
+                                                    await SharedPreferences
+                                                        .getInstance();
+                                                await Functions.getSharedData(
+                                                    id, (sharedData) async {
+                                                  Navigator.pop(context);
+
+                                                  if (sharedData["data"]
+                                                          .isEmpty &&
+                                                      sharedData["msg"] ==
+                                                          "No Internet") {
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        hasInternetPage = false;
+                                                      });
+                                                    }
+                                                  } else {
+                                                    if (mounted) {
+                                                      setState(() {
+                                                        hasInternetPage = true;
+                                                      });
+                                                    }
+                                                    if (sharedData["data"]
+                                                        .isNotEmpty) {
+                                                      List myData =
+                                                          sharedData["data"];
+                                                      int existDataLength =
+                                                          myData
+                                                              .where((element) {
+                                                                return int.parse(
+                                                                        element["user_id"]
+                                                                            .toString()) ==
+                                                                    int.parse(id
+                                                                        .toString());
+                                                              })
+                                                              .toList()
+                                                              .length;
+
+                                                      if (existDataLength > 0) {
+                                                        ForegroundNotif
+                                                            .onStop();
+                                                        Variables.pageTrans(
+                                                            const MapSharingScreen());
+                                                      } else {
+                                                        prefs.remove(
+                                                            'geo_connect_id');
+                                                        showAlertDialog(
+                                                            context,
+                                                            "LuvPark",
+                                                            "You don't have active sharing.",
+                                                            () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        });
+                                                      }
+                                                    } else {
+                                                      prefs.remove(
+                                                          'geo_connect_id');
+                                                      showAlertDialog(
+                                                          context,
+                                                          "LuvPark",
+                                                          "You don't have active sharing.",
+                                                          () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      });
+                                                    }
+                                                  }
                                                 });
-                                              }
-                                            } else {
-                                              prefs.remove('geo_connect_id');
-                                              showAlertDialog(
-                                                  context,
-                                                  "LuvPark",
-                                                  "You don't have active sharing.",
-                                                  () {
-                                                Navigator.of(context).pop();
-                                              });
-                                            }
-                                          }
-                                        });
-                                      }),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/Messages.png'),
-                                          "Messages", () async {
-                                        Variables.pageTrans(const PaMessage());
-                                      }),
-                                      // listColumn(
-                                      //     Image.asset(
-                                      //         'assets/images/queue_parking.png'),
-                                      //     "Queued Parking", () async {
-                                      //   Variables.pageTrans(const QueueList());
-                                      // }),
+                                              },
+                                            ),
+                                            Container(height: 5),
+                                            CustomDisplayText(
+                                              maxLines: 2,
+                                              label: 'Sharing',
+                                              fontSize: 12,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
@@ -524,39 +592,176 @@ class _SettingsPageState extends State<SettingsPage> {
                               Container(
                                 height: 20,
                               ),
+                              CustomDisplayText(
+                                label: 'My Account'.toUpperCase(),
+                                fontWeight: FontWeight.bold,
+                              ),
+                              Container(height: 10),
                               Container(
                                 clipBehavior: Clip.antiAlias,
                                 decoration: ShapeDecoration(
-                                  color: const Color(0xFFf8f8fb),
+                                  color: Color(0xFFFFFFFF),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(11),
                                   ),
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 0,
+                                      blurRadius: 1,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 11),
+                                      horizontal: 15, vertical: 10),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      CustomDisplayText(
-                                        label: 'Information',
-                                        fontWeight: FontWeight.bold,
+                                      myAccountList(
+                                        Image.asset(
+                                          'assets/images/lock-open.png',
+                                        ),
+                                        Color(0xFF0078FF).withOpacity(0.1),
+                                        "Change Password",
+                                        'Make changes to your account',
+                                        () {
+                                          Variables.pageTrans(
+                                              const ChangePasswordScreen());
+                                        },
                                       ),
                                       Divider(
                                         color: Colors.grey,
                                       ),
+                                      myAccountList(
+                                        Image.asset(
+                                          'assets/images/log-out.png',
+                                        ),
+                                        Color(0xFFFF2828).withOpacity(0.1),
+                                        "Log out",
+                                        '',
+                                        () {
+                                          showModalConfirmation(
+                                            context,
+                                            "Confirmation",
+                                            "Are you sure you want to logout?",
+                                            "Cancel",
+                                            () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            () async {
+                                              SharedPreferences pref =
+                                                  await SharedPreferences
+                                                      .getInstance();
+                                              Navigator.pop(context);
+                                              CustomModal(context: context)
+                                                  .loader();
+                                              await NotificationDatabase
+                                                  .instance
+                                                  .readAllNotifications()
+                                                  .then((notifData) async {
+                                                if (notifData.isNotEmpty) {
+                                                  for (var nData in notifData) {
+                                                    NotificationController
+                                                        .cancelNotificationsById(
+                                                            nData[
+                                                                "reserved_id"]);
+                                                  }
+                                                }
+                                                var logData =
+                                                    pref.getString('loginData');
+                                                var mappedLogData = [
+                                                  jsonDecode(logData!)
+                                                ];
+                                                mappedLogData[0]["is_active"] =
+                                                    "N";
+                                                pref.setString(
+                                                    "loginData",
+                                                    jsonEncode(
+                                                        mappedLogData[0]!));
+                                                pref.remove('myId');
+                                                NotificationDatabase.instance
+                                                    .deleteAll();
+                                                PaMessageDatabase.instance
+                                                    .deleteAll();
+                                                ShareLocationDatabase.instance
+                                                    .deleteAll();
+                                                NotificationController
+                                                    .cancelNotifications();
+                                                ForegroundNotif.onStop();
+                                                BiometricLogin()
+                                                    .clearPassword();
+                                                Timer(
+                                                    const Duration(seconds: 1),
+                                                    () {
+                                                  Navigator.of(context)
+                                                      .pop(context);
+                                                  Variables.pageTrans(
+                                                      const LoginScreen(
+                                                          index: 1));
+                                                });
+                                              });
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                height: 20,
+                              ),
+                              Container(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    CustomDisplayText(
+                                      label: 'Help and Support'.toUpperCase(),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: 10,
+                              ),
+                              Container(
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  color: Color(0xFFFFFFFF),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(11),
+                                  ),
+                                  shadows: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      spreadRadius: 0,
+                                      blurRadius: 1,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
                                       listColumn(
-                                          Image.asset(
-                                              'assets/images/faqs123.png'),
-                                          "FAQ", () async {
-                                        Variables.pageTrans(
-                                            const FaqsLuvPark());
-                                      }),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/terms-of-use.png'),
-                                          "Terms of use", () async {
+                                        "Frequently Ask Question",
+                                        () async {
+                                          Variables.pageTrans(
+                                              const FaqsLuvPark());
+                                        },
+                                      ),
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      listColumn("Terms of Use", () async {
                                         Variables.pageTrans(const WebviewPage(
                                           urlDirect:
                                               "https://luvpark.ph/terms-of-use/",
@@ -564,10 +769,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                           isBuyToken: false,
                                         ));
                                       }),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/privacy-policy.png'),
-                                          "Privacy Policy", () async {
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      listColumn("Privacy Policy", () async {
                                         Variables.pageTrans(const WebviewPage(
                                           urlDirect:
                                               "https://luvpark.ph/privacy-policy/",
@@ -575,10 +780,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                           isBuyToken: false,
                                         ));
                                       }),
-                                      listColumn(
-                                          Image.asset(
-                                              'assets/images/about-luvpark.png'),
-                                          "About luvpark", () {
+                                      Divider(
+                                        color: Colors.grey,
+                                      ),
+                                      listColumn("About LuvPark", () {
                                         Variables.pageTrans(
                                             const AboutLuvPark());
                                       }),
@@ -607,32 +812,19 @@ class _SettingsPageState extends State<SettingsPage> {
         ));
   }
 
-  Widget listColumn(dynamic icon, String title, Function onTap) {
+  Widget listColumn(String title, Function onTap) {
     return GestureDetector(
       onTap: () {
         onTap();
       },
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 15),
+        padding: const EdgeInsets.symmetric(vertical: 10),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Expanded(
               child: Row(
                 children: [
-                  if (icon is IconData)
-                    Icon(
-                      icon,
-                      color: title.toLowerCase() == "logout"
-                          ? Colors.red
-                          : const Color.fromARGB(255, 95, 95, 95),
-                    ),
-                  if (icon is Image)
-                    Container(
-                      width: 27,
-                      height: 27,
-                      child: icon,
-                    ),
                   Container(
                     width: 20,
                   ),
@@ -644,9 +836,144 @@ class _SettingsPageState extends State<SettingsPage> {
                 ],
               ),
             ),
+            Image.asset(
+              'assets/images/external-link.png',
+              scale: 1.1,
+            ),
+            Container(
+              width: 5,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget myAccountList(
+    dynamic icon,
+    Color color,
+    String title,
+    String desc,
+    Function onTap,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 5),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  if (icon is Image)
+                    Container(
+                      width: 38,
+                      height: 38,
+                      child: CircleAvatar(
+                        backgroundColor: color,
+                        child: icon,
+                      ),
+                    ),
+                  Container(
+                    width: 20,
+                  ),
+                  Column(
+                    children: [
+                      if (desc == '')
+                        Column(
+                          children: [
+                            CustomDisplayText(
+                              label: title,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ],
+                        )
+                      else
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDisplayText(
+                              label: title,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            CustomDisplayText(
+                              label: desc,
+                              fontSize: 12,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.grey,
+                            ),
+                          ],
+                        )
+                    ],
+                  ),
+                ],
+              ),
+            ),
             const Icon(
               Icons.keyboard_arrow_right,
               color: Colors.black54,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget verifyAccountList(
+    String title,
+    String desc,
+    Function onTap,
+  ) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          vertical: 5,
+          horizontal: 20,
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomDisplayText(
+                            label: title,
+                            fontSize: 14,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          CustomDisplayText(
+                            label: desc,
+                            fontSize: 12,
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const Icon(
+              Icons.keyboard_arrow_right,
+              color: Colors.white,
             ),
           ],
         ),

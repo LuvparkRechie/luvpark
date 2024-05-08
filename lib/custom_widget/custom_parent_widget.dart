@@ -194,9 +194,10 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: const Icon(
-                  Icons.arrow_back,
+                  Icons.arrow_back_ios_new,
                   weight: 1,
                   color: Colors.white,
+                  size: 16,
                 ),
               ),
             ),
@@ -210,7 +211,8 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
           height: 1.0, // line height (1.0 is the default)
         ),
       ),
-      centerTitle: true,
+      centerTitle: false,
+      titleSpacing: -4,
       bottom: widget.appBarTabBar ?? widget.appBarTabBar,
     );
   }

@@ -636,7 +636,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        //  info("Referral Code", referralcode),
                         info("Gender", gender),
                         info("Civil Status", civilStatus),
                         info("Birthday", bday),
@@ -693,20 +692,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                       ),
                     ],
                   ),
-                  if (label == "Referral Code")
-                    Positioned(
-                      right: 0,
-                      child: SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: IconButton(
-                          icon: FaIcon(FontAwesomeIcons.copy),
-                          onPressed: () {
-                            FlutterClipboard.copy(referralcode);
-                          },
-                        ),
-                      ),
-                    ),
                 ],
               ),
             ],
