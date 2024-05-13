@@ -14,7 +14,6 @@ import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
-import 'package:luvpark/parking_trans/parking_history.dart';
 import 'package:luvpark/reserve/receipt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -574,7 +573,6 @@ class _ParkingActivityState extends State<ParkingActivity>
                                                                             false,
                                                                         child: ElevatedButton.icon(
                                                                             onPressed: () {
-                                                                              print("click sulod ${reservedData[index]}");
                                                                               CustomModal(context: context).loader();
                                                                               var param = "${ApiKeys.gApiSubFolderGetDirection}?ref_no=${reservedData[index]["reservation_ref_no"]}";
 
@@ -639,6 +637,9 @@ class _ParkingActivityState extends State<ParkingActivity>
                                                                                       ticketId: returnData["items"][0]["ticket_id"],
                                                                                       isAutoExtend: reservedData[index]["is_auto_extend"].toString(),
                                                                                       reservationId: reservedData[index]["reservation_id"],
+                                                                                      onTap: () {
+                                                                                        onRefresh();
+                                                                                      },
                                                                                     ));
                                                                                   }
                                                                                 }
@@ -719,49 +720,7 @@ class _ParkingActivityState extends State<ParkingActivity>
                                             itemCount: reservedData.length),
                                       ),
                           ),
-                          InkWell(
-                            onTap: () {
-                              Variables.pageTrans(
-                                  ParkingHistory(parkingData: reservedsubData));
-                            },
-                            child: Container(
-                              padding: EdgeInsets.only(
-                                  bottom: 10, top: 10, left: 10, right: 10),
-                              decoration: BoxDecoration(color: Colors.white
-                                  // border: Border(
-                                  //   // bottom: BorderSide(
-                                  //   //   color: Colors.white,
-                                  //   // ),
-                                  // ),
-                                  ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.history,
-                                    color: AppColor.primaryColor,
-                                  ),
-                                  Container(width: 10),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomDisplayText(
-                                          label: "Parking History",
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          color:
-                                              Color.fromARGB(255, 32, 31, 31),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(width: 10),
-                                  Icon(Icons.keyboard_arrow_right_outlined)
-                                ],
-                              ),
-                            ),
-                          ),
+                          Container()
                         ],
                       ),
               ),

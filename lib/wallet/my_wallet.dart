@@ -516,11 +516,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:luvpark/buy_token/buy_token.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -562,6 +559,7 @@ class _MyWalletState extends State<MyWallet>
   bool isLoadingHist = true;
   List histData = [];
   final today = DateTime.now();
+  Timer? timer1;
   // ignore: prefer_typing_uninitialized_variables
   var myProfilePic;
 
@@ -585,6 +583,7 @@ class _MyWalletState extends State<MyWallet>
   @override
   void dispose() {
     _tabController.dispose();
+    timer1!.cancel();
     super.dispose();
   }
 
@@ -609,8 +608,7 @@ class _MyWalletState extends State<MyWallet>
       });
     }
 
-    _getData(jsonDecode(akongP!)['user_id'].toString());
-    getPaymentAllData(jsonDecode(akongP!)['user_id'].toString());
+    _getData();
   }
 
   void getPaymentAllData(apiFolder) async {
@@ -681,43 +679,52 @@ class _MyWalletState extends State<MyWallet>
     });
   }
 
-  void _getData(id) {
-    String subApi =
-        "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(akongP!)['user_id'].toString()}";
+  void _getData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
-    HttpRequest(api: subApi).get().then((returnBalance) async {
-      if (returnBalance == "No Internet") {
-        if (mounted) {
-          setState(() {
-            hasInternetBal = false;
-            loadingBal = false;
-          });
-        }
+    akongP = prefs.getString(
+      'userData',
+    );
+    timer1 = Timer.periodic(Duration(seconds: 3), (timer) {
+      String subApi =
+          "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(akongP!)['user_id'].toString()}";
 
-        return;
-      }
-      if (returnBalance == null) {
-        showAlertDialog(context, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Navigator.of(context).pop();
+      HttpRequest(api: subApi).get().then((returnBalance) async {
+        print("returnBalance $returnBalance");
+        if (returnBalance == "No Internet") {
           if (mounted) {
             setState(() {
-              hasInternetBal = true;
+              hasInternetBal = false;
               loadingBal = false;
             });
           }
-        });
-      }
-      if (mounted) {
-        setState(() {
-          userBal =
-              double.parse(returnBalance["items"][0]["amount_bal"].toString());
-          ptsBal =
-              double.parse(returnBalance["items"][0]["points_bal"].toString());
-          hasInternetBal = true;
-          loadingBal = false;
-        });
-      }
+
+          return;
+        }
+        if (returnBalance == null) {
+          showAlertDialog(context, "Error",
+              "Error while connecting to server, Please try again.", () {
+            Navigator.of(context).pop();
+            if (mounted) {
+              setState(() {
+                hasInternetBal = true;
+                loadingBal = false;
+              });
+            }
+          });
+        }
+        if (mounted) {
+          setState(() {
+            userBal = double.parse(
+                returnBalance["items"][0]["amount_bal"].toString());
+            ptsBal = double.parse(
+                returnBalance["items"][0]["points_bal"].toString());
+            hasInternetBal = true;
+            loadingBal = false;
+          });
+        }
+        getPaymentAllData(jsonDecode(akongP!)['user_id'].toString());
+      });
     });
   }
 

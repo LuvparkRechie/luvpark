@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/Registration/class/registration_class.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -394,7 +392,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
                         };
                         Navigator.pop(context);
                         showModalConfirmation(context, "Confirmation",
-                            "Are you sure you want to proceed?", "No", () {
+                            "Are you sure you want to proceed?", "", "Yes", () {
                           Navigator.of(context).pop();
                         }, () async {
                           Navigator.of(context).pop();

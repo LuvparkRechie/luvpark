@@ -951,11 +951,22 @@ class _Dashboard3State extends State<Dashboard3> {
                               await SharedPreferences.getInstance();
                           String? geoShareId = prefs.getString('geo_share_id');
                           if (geoShareId == null) {
-                            Variables.customBottomSheet(
+                            showModalConfirmation(
                                 context,
-                                VerifyUserAcct(
-                                  isInvite: true,
-                                ));
+                                "luvpark Notice",
+                                "This functionality involves utilizing a background process to continuously obtain and update the current location. "
+                                    "The background process will automatically deactivate once the location sharing has ended.",
+                                "Cancel",
+                                "Continue", () {
+                              Navigator.of(context).pop();
+                            }, () async {
+                              Navigator.of(context).pop();
+                              Variables.customBottomSheet(
+                                  context,
+                                  VerifyUserAcct(
+                                    isInvite: true,
+                                  ));
+                            });
                           } else {
                             showAlertDialog(context, "LuvPark",
                                 "You still have active sharing.", () {
@@ -1420,24 +1431,30 @@ class _Dashboard3State extends State<Dashboard3> {
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Container(
-                                      padding: const EdgeInsets.only(
-                                          top: 1, left: 8, right: 7, bottom: 1),
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: ShapeDecoration(
-                                        color: AppColor.primaryColor,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(41),
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.only(
+                                            top: 1,
+                                            left: 8,
+                                            right: 7,
+                                            bottom: 1),
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: ShapeDecoration(
+                                          color: AppColor.primaryColor,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(41),
+                                          ),
                                         ),
-                                      ),
-                                      child: CustomDisplayText(
-                                        label: "${data["vehicle_types_list"]}",
-                                        color: Colors.white,
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w600,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
+                                        child: CustomDisplayText(
+                                          label:
+                                              "${data["vehicle_types_list"]}",
+                                          color: Colors.white,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w600,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
                                       ),
                                     ),
                                     InkWell(

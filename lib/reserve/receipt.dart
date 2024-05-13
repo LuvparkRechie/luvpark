@@ -46,6 +46,7 @@ class ReserveReceipt extends StatefulWidget {
       hours,
       amount,
       refno;
+  final Function? onTap;
   final bool isReserved;
   final String? dtOut, dateIn;
   final String isAutoExtend;
@@ -78,6 +79,7 @@ class ReserveReceipt extends StatefulWidget {
     required this.tab,
     required this.address,
     required this.isAutoExtend,
+    this.onTap,
     this.isShowRate = false,
     this.reservationId = 0,
     this.ticketId = 0,
@@ -538,6 +540,7 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                           "Auto extend successfully cancelled.", () async {
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
+                        widget.onTap!();
                       });
                     } else {
                       Navigator.pop(context);

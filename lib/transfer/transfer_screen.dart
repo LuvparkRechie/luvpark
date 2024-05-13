@@ -475,7 +475,7 @@ class _TransferOptionsState extends State<TransferOptions> {
                       return;
                     }
                     showModalConfirmation(context, "Confirmation",
-                        "Are you sure you want to proceed?", "Cancel", () {
+                        "Are you sure you want to proceed?", "", "Yes", () {
                       Navigator.of(context).pop();
                     }, () async {
                       Navigator.of(context).pop();

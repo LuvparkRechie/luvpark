@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 // import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
@@ -15,14 +13,13 @@ import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/faq/faq.dart';
 import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
-import 'package:luvpark/pa_message/pa_message.dart';
+import 'package:luvpark/parking_trans/parking_history.dart';
 import 'package:luvpark/profile/profile_details.dart';
 import 'package:luvpark/profile/update_profile.dart';
 import 'package:luvpark/settings/referralcode.dart';
@@ -207,27 +204,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                               width: 10,
                                             ),
                                             Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  CustomDisplayText(
-                                                    label:
-                                                        "Free credits up to 500",
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w700,
-                                                    letterSpacing: -0.32,
-                                                  ),
-                                                  CustomDisplayText(
-                                                    label:
-                                                        "Refer and earn free points and rewards",
-                                                    color: Colors.black54,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w500,
-                                                    height: 0,
-                                                    letterSpacing: -0.28,
-                                                  ),
-                                                ],
+                                              child: CustomDisplayText(
+                                                label:
+                                                    "Refer and earn free rewards",
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w700,
+                                                letterSpacing: -0.32,
                                               ),
                                             ),
                                             const Icon(
@@ -428,27 +410,33 @@ class _SettingsPageState extends State<SettingsPage> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
                                     children: [
-                                      Container(
-                                        width: 70,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              child: Container(
-                                                child: Image.asset(
-                                                    height: 34,
-                                                    width: 34,
-                                                    'assets/images/wallet.png'),
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                child: Container(
+                                                  child: Image.asset(
+                                                      height: 34,
+                                                      width: 34,
+                                                      'assets/images/parking_history.png'),
+                                                ),
+                                                onTap: () async {
+                                                  Variables.pageTrans(
+                                                      ParkingHistory());
+                                                },
                                               ),
-                                              onTap: () {},
-                                            ),
-                                            Container(height: 5),
-                                            CustomDisplayText(
-                                              label: 'My Wallet',
-                                              fontSize: 12,
-                                            ),
-                                          ],
+                                              Container(height: 5),
+                                              CustomDisplayText(
+                                                label: 'Parking History',
+                                                fontSize: 12,
+                                                alignment: TextAlign.center,
+                                                maxLines: 1,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       VerticalDivider(
@@ -456,30 +444,32 @@ class _SettingsPageState extends State<SettingsPage> {
                                         indent: 20,
                                         endIndent: 20,
                                       ),
-                                      Container(
-                                        width: 70,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              child: Container(
-                                                child: Image.asset(
-                                                    height: 34,
-                                                    width: 34,
-                                                    'assets/images/parkhistory.png'),
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                child: Container(
+                                                  child: Image.asset(
+                                                      height: 34,
+                                                      width: 34,
+                                                      'assets/images/parkhistory.png'),
+                                                ),
+                                                onTap: () {
+                                                  Variables.pageTrans(
+                                                      const MyVehicles());
+                                                },
                                               ),
-                                              onTap: () {
-                                                Variables.pageTrans(
-                                                    const MyVehicles());
-                                              },
-                                            ),
-                                            Container(height: 5),
-                                            CustomDisplayText(
-                                              label: 'My Vehicles',
-                                              fontSize: 12,
-                                            ),
-                                          ],
+                                              Container(height: 5),
+                                              CustomDisplayText(
+                                                label: 'My Vehicles',
+                                                fontSize: 12,
+                                                maxLines: 1,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       VerticalDivider(
@@ -487,70 +477,86 @@ class _SettingsPageState extends State<SettingsPage> {
                                         indent: 20,
                                         endIndent: 20,
                                       ),
-                                      Container(
-                                        width: 70,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            GestureDetector(
-                                              child: Container(
-                                                child: Image.asset(
-                                                    height: 34,
-                                                    width: 34,
-                                                    'assets/images/sharelocation.png'),
-                                              ),
-                                              onTap: () async {
-                                                CustomModal(context: context)
-                                                    .loader();
-                                                String id =
-                                                    await Variables.getUserId();
-                                                SharedPreferences prefs =
-                                                    await SharedPreferences
-                                                        .getInstance();
-                                                await Functions.getSharedData(
-                                                    id, (sharedData) async {
-                                                  Navigator.pop(context);
+                                      Expanded(
+                                        child: Container(
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              GestureDetector(
+                                                child: Container(
+                                                  child: Image.asset(
+                                                      height: 34,
+                                                      width: 34,
+                                                      'assets/images/sharelocation.png'),
+                                                ),
+                                                onTap: () async {
+                                                  CustomModal(context: context)
+                                                      .loader();
+                                                  String id = await Variables
+                                                      .getUserId();
+                                                  SharedPreferences prefs =
+                                                      await SharedPreferences
+                                                          .getInstance();
+                                                  await Functions.getSharedData(
+                                                      id, (sharedData) async {
+                                                    Navigator.pop(context);
 
-                                                  if (sharedData["data"]
-                                                          .isEmpty &&
-                                                      sharedData["msg"] ==
-                                                          "No Internet") {
-                                                    if (mounted) {
-                                                      setState(() {
-                                                        hasInternetPage = false;
-                                                      });
-                                                    }
-                                                  } else {
-                                                    if (mounted) {
-                                                      setState(() {
-                                                        hasInternetPage = true;
-                                                      });
-                                                    }
                                                     if (sharedData["data"]
-                                                        .isNotEmpty) {
-                                                      List myData =
-                                                          sharedData["data"];
-                                                      int existDataLength =
-                                                          myData
-                                                              .where((element) {
-                                                                return int.parse(
-                                                                        element["user_id"]
-                                                                            .toString()) ==
-                                                                    int.parse(id
-                                                                        .toString());
-                                                              })
-                                                              .toList()
-                                                              .length;
+                                                            .isEmpty &&
+                                                        sharedData["msg"] ==
+                                                            "No Internet") {
+                                                      showAlertDialog(
+                                                          context,
+                                                          "Error",
+                                                          "Please check your internet connection and try again",
+                                                          () {
+                                                        Navigator.pop(context);
+                                                      });
+                                                    } else {
+                                                      if (sharedData["data"]
+                                                          .isNotEmpty) {
+                                                        List myData =
+                                                            sharedData["data"];
+                                                        int existDataLength =
+                                                            myData
+                                                                .where(
+                                                                    (element) {
+                                                                  return int.parse(
+                                                                          element["user_id"]
+                                                                              .toString()) ==
+                                                                      int.parse(
+                                                                          id.toString());
+                                                                })
+                                                                .toList()
+                                                                .length;
 
-                                                      if (existDataLength > 0) {
-                                                        ForegroundNotif
-                                                            .onStop();
-                                                        Variables.pageTrans(
-                                                            const MapSharingScreen());
+                                                        if (existDataLength >
+                                                            0) {
+                                                          ForegroundNotif
+                                                              .onStop();
+                                                          Variables.pageTrans(
+                                                              const MapSharingScreen());
+                                                        } else {
+                                                          prefs.remove(
+                                                              "geo_share_id");
+                                                          prefs.remove(
+                                                              "geo_connect_id");
+                                                          showAlertDialog(
+                                                              context,
+                                                              "LuvPark",
+                                                              "You don't have active sharing.",
+                                                              () {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                          });
+                                                        }
                                                       } else {
                                                         prefs.remove(
-                                                            'geo_connect_id');
+                                                            "geo_share_id");
+                                                        prefs.remove(
+                                                            "geo_connect_id");
                                                         showAlertDialog(
                                                             context,
                                                             "LuvPark",
@@ -560,29 +566,18 @@ class _SettingsPageState extends State<SettingsPage> {
                                                               .pop();
                                                         });
                                                       }
-                                                    } else {
-                                                      prefs.remove(
-                                                          'geo_connect_id');
-                                                      showAlertDialog(
-                                                          context,
-                                                          "LuvPark",
-                                                          "You don't have active sharing.",
-                                                          () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      });
                                                     }
-                                                  }
-                                                });
-                                              },
-                                            ),
-                                            Container(height: 5),
-                                            CustomDisplayText(
-                                              maxLines: 2,
-                                              label: 'Sharing',
-                                              fontSize: 12,
-                                            ),
-                                          ],
+                                                  });
+                                                },
+                                              ),
+                                              Container(height: 5),
+                                              CustomDisplayText(
+                                                maxLines: 1,
+                                                label: 'Active Sharing',
+                                                fontSize: 12,
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -647,7 +642,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                             context,
                                             "Confirmation",
                                             "Are you sure you want to logout?",
-                                            "Cancel",
+                                            "",
+                                            "Yes",
                                             () {
                                               Navigator.of(context).pop();
                                             },

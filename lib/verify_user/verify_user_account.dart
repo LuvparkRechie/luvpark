@@ -169,8 +169,9 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
             showModalConfirmation(
                 context,
                 "Location Sharing",
-                "You have successfully shared your location.\Do you want to view on map?",
-                "Cancel", () {
+                "You have successfully shared your location. \Do you want to view on map?",
+                "",
+                "Yes", () {
               Navigator.of(context).pop();
             }, () async {
               Navigator.pop(context);

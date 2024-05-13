@@ -509,7 +509,8 @@ class _RegistrationFormState extends State<UpdateProfile> {
                               context,
                               "Confirmation",
                               "Are you sure you want to proceed?",
-                              "Cancel", () {
+                              "",
+                              "Yes", () {
                             Navigator.of(context).pop();
                           }, () async {
                             Navigator.of(context).pop();

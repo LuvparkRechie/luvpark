@@ -92,15 +92,18 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
     var myBrgyData = prefs.getString(
       'brgyData',
     );
+    print("myProvinceData ${myProvinceData != 'null'}");
 
-    if (myProvinceData != 'null') {
+    if (myProvinceData != null) {
+      print("waa bay");
       setState(() {
         ddRegion = widget.regionId.text.isEmpty ? null : widget.regionId.text;
       });
     }
 
-    if (myProvinceData != 'null') {
-      provinceData = jsonDecode(myProvinceData!);
+    if (myProvinceData != null) {
+      print("ne lpaos dre if");
+      provinceData = jsonDecode(myProvinceData);
       setState(() {
         ddProvice =
             widget.provinceId.text.isEmpty ? null : widget.provinceId.text;
@@ -110,13 +113,14 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
         }).toList()[0]["province"];
       });
     } else {
+      print("ne lpaos dre ellse");
       setState(() {
         ddProvice = null;
       });
     }
 
-    if (myCityData != 'null') {
-      cityData = jsonDecode(myCityData!);
+    if (myCityData != null) {
+      cityData = jsonDecode(myCityData);
       setState(() {
         ddCity = widget.cityId.text.isEmpty ? null : widget.cityId.text;
         cityName = cityData.where((element) {
@@ -130,8 +134,8 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
       });
     }
 
-    if (myBrgyData != 'null') {
-      brgyData = jsonDecode(myBrgyData!);
+    if (myBrgyData != null) {
+      brgyData = jsonDecode(myBrgyData);
       setState(() {
         ddBrgy = widget.brgyId.text.isEmpty ? null : widget.brgyId.text;
         brgyName = brgyData.where((element) {
@@ -144,6 +148,7 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
         ddBrgy = null;
       });
     }
+
     if (mounted) {
       setState(() {
         widget.searchAddress.text = "$provinceName $cityName $brgyName";
@@ -156,6 +161,7 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
   }
 
   void getRegionData() async {
+    print("ne sulod sa get region data");
     FocusManager.instance.primaryFocus!.unfocus();
     CustomModal(context: context).loader();
     const HttpRequest(api: ApiKeys.gApiSubFolderGetRegion)

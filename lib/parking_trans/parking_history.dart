@@ -25,8 +25,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ParkingHistory extends StatefulWidget {
-  final List parkingData;
-  const ParkingHistory({super.key, required this.parkingData});
+  const ParkingHistory({super.key});
 
   @override
   State<ParkingHistory> createState() => _ParkingHistoryState();

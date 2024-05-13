@@ -1,8 +1,6 @@
 import 'package:clipboard/clipboard.dart';
 import 'package:dotted_border/dotted_border.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -51,7 +49,7 @@ class _ReferralCodeState extends State<ReferralCode> {
                     ),
                     CustomDisplayText(
                       label:
-                          'Send a referral link to a friends via SMS \nand link via LuvPark App',
+                          'Send a referral link to a friends via SMS \nand link via luvpark App',
                       maxLines: 2,
                       color: Colors.grey,
                       fontSize: 12,

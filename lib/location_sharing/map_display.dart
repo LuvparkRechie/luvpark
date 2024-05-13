@@ -259,7 +259,8 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                   context,
                                   "Confirmation",
                                   "Are you sure you want close this page?",
-                                  "Cancel",
+                                  "",
+                                  "Yes",
                                   () {
                                     Navigator.of(context).pop();
                                   },
@@ -407,7 +408,8 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                     context,
                                     "Share Location",
                                     "Are you sure you want to end sharing?",
-                                    "Not now", () {
+                                    "",
+                                    "Yes", () {
                                   Navigator.of(context).pop();
                                 }, () async {
                                   Navigator.pop(context);

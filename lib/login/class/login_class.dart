@@ -159,6 +159,15 @@ class LoginComponent {
                   // }
                   // service.startService();
                   // AndroidBackgroundProcess.initilizeBackgroundService();
+                  prefs.remove(
+                    'provinceData',
+                  );
+                  prefs.remove(
+                    'cityData',
+                  );
+                  prefs.remove(
+                    'brgyData',
+                  );
 
                   Variables.pageTrans(const MainLandingScreen());
                 } else {
@@ -167,6 +176,7 @@ class LoginComponent {
                         context,
                         "Inactive Account",
                         "Your account is currently inactive. Would you like to activate it now?",
+                        "",
                         "Not now", () {
                       Navigator.of(context).pop();
                       cb([false, "No"]);

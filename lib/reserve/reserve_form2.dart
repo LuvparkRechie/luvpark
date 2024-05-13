@@ -932,7 +932,8 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                       context,
                                                       "Enable Auto Extend",
                                                       "Your parking duration will be automatically extended using your available balance if it is enabled.\n\Would you like to enable it?",
-                                                      "Cancel", () {
+                                                      "",
+                                                      "Yes", () {
                                                     Navigator.of(context).pop();
                                                     setState(() {
                                                       allowAutoExtend = false;
@@ -1046,6 +1047,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                         context,
                                                         "Confirmation",
                                                         "Your parking duration will be automatically extended using your available balance if it is enabled.\n\nWould you like to proceed?",
+                                                        "",
                                                         "Cancel", () {
                                                       Navigator.of(context)
                                                           .pop();
@@ -1512,7 +1514,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
           if (returnPost["success"] == "Q") {
             Navigator.of(context).pop();
             showModalConfirmation(
-                context, "Confirmation", returnPost["msg"], "Cancel", () {
+                context, "Confirmation", returnPost["msg"], "", "Yes", () {
               Navigator.of(context).pop();
             }, () async {
               String userId = await Variables.getUserId();
