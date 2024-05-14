@@ -76,15 +76,13 @@ class _QRPayState extends State<QRPay> {
     var akongP = prefs.getString(
       'userData',
     );
-    // ignore: prefer_typing_uninitialized_variables
-
-    // ignore: use_build_context_synchronously
 
     HttpRequest(
             api:
                 "${ApiKeys.gApiSubFolderPayments}${jsonDecode(akongP!)['user_id'].toString()}")
         .get()
         .then((paymentKey) {
+      print("paymentKey $paymentKey");
       if (paymentKey == "No Internet") {
         setState(() {
           hasInternet = false;
@@ -174,6 +172,7 @@ class _QRPayState extends State<QRPay> {
 
         var openAppResult = await LaunchApp.openApp(
             androidPackageName: galleryPackageName, openStore: true);
+        // ignore: unnecessary_statements
         openAppResult;
         break;
       }
@@ -205,11 +204,7 @@ class _QRPayState extends State<QRPay> {
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
-      child: WillPopScope(
-          onWillPop: () async {
-            return true;
-          },
-          child: bodyniya()),
+      child: PopScope(canPop: true, child: bodyniya()),
     );
   }
 
@@ -504,15 +499,14 @@ class _QRPayState extends State<QRPay> {
               Container(
                 height: 20,
               ),
-              Center(
-                child: CustomDisplayText(
-                  label: loading ? "" : 'Scan QR Code to pay',
+              Text(
+                "QR Pay",
+                style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                   color: const Color(0xFF787878),
-                  alignment: TextAlign.center,
                 ),
-              ),
+              )
             ],
           ),
         ),

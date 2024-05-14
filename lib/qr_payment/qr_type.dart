@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/qr_payment/my_qr.dart';
 import 'package:luvpark/qr_payment/payment_qr.dart';
 
 class QRType extends StatefulWidget {
-  final int index;
-  const QRType({super.key, required this.index});
+  const QRType({
+    super.key,
+  });
 
   @override
   State<QRType> createState() => _QRTypeState();
@@ -33,10 +35,28 @@ class _QRTypeState extends State<QRType> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     return CustomParent1Widget(
         canPop: true,
-        appBarheaderText: widget.index == 0 ? "QR Pay" : "Receive",
+        appBarheaderText: "",
+        prefSize: 80,
         appBarIconClick: () {
           Navigator.of(context).pop();
         },
-        child: _pages[widget.index]);
+        appBarTabBar: TabBar(
+          indicatorColor: AppColor.mainColor, // Indicator color
+          indicatorWeight: 4, // Indicator thickness
+          controller: _tabController,
+          onTap: (index) {
+            setState(() {
+              tabIndex = index;
+            });
+          },
+          tabs: [
+            Tab(text: 'QR Pay'),
+            Tab(text: 'Receive'),
+          ],
+        ),
+        child: TabBarView(
+          controller: _tabController,
+          children: _pages,
+        ));
   }
 }

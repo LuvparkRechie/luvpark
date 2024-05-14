@@ -92,17 +92,14 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
     var myBrgyData = prefs.getString(
       'brgyData',
     );
-    print("myProvinceData ${myProvinceData != 'null'}");
 
     if (myProvinceData != null) {
-      print("waa bay");
       setState(() {
         ddRegion = widget.regionId.text.isEmpty ? null : widget.regionId.text;
       });
     }
 
     if (myProvinceData != null) {
-      print("ne lpaos dre if");
       provinceData = jsonDecode(myProvinceData);
       setState(() {
         ddProvice =
@@ -113,7 +110,6 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
         }).toList()[0]["province"];
       });
     } else {
-      print("ne lpaos dre ellse");
       setState(() {
         ddProvice = null;
       });

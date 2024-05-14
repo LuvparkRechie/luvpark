@@ -98,6 +98,7 @@ class _CustomParentWidgetState extends State<CustomParentWidget> {
 
 class CustomParent1Widget extends StatefulWidget {
   final Widget? floatingButton;
+  final double? prefSize;
   final String appBarheaderText;
   final Function? appBarIconClick;
   final TabBar? appBarTabBar;
@@ -114,6 +115,7 @@ class CustomParent1Widget extends StatefulWidget {
       this.floatingButton,
       this.bodyColor,
       this.canPop = false,
+      this.prefSize,
       this.appBarTabBar});
 
   @override
@@ -132,7 +134,8 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
           child: widget.floatingButton == null
               ? Scaffold(
                   appBar: PreferredSize(
-                    preferredSize: const Size.fromHeight(kToolbarHeight),
+                    preferredSize:
+                        Size.fromHeight(widget.prefSize ?? kToolbarHeight),
                     child: appBar(),
                   ),
                   body: childs(),
@@ -171,7 +174,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
 
   Widget appBar() {
     return AppBar(
-      elevation: 0,
+      elevation: 2,
       backgroundColor: AppColor.primaryColor,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
@@ -197,7 +200,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
                   Icons.arrow_back_ios_new,
                   weight: 1,
                   color: Colors.white,
-                  size: 16,
+                  size: 20,
                 ),
               ),
             ),
@@ -351,7 +354,7 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
                 Icons.arrow_back_ios_new,
                 weight: 1,
                 color: Colors.black,
-                size: 16,
+                size: 20,
               ),
             ),
       title: Row(

@@ -577,7 +577,6 @@ class _ParkingActivityState extends State<ParkingActivity>
                                                                               var param = "${ApiKeys.gApiSubFolderGetDirection}?ref_no=${reservedData[index]["reservation_ref_no"]}";
 
                                                                               HttpRequest(api: param).get().then((returnData) async {
-                                                                                print("returnData getDirection $returnData");
                                                                                 if (returnData == "No Internet") {
                                                                                   Navigator.of(context).pop();
                                                                                   showAlertDialog(context, "Error", "Please check your internet connection and try again.", () {
