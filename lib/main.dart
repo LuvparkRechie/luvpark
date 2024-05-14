@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,6 +28,7 @@ import 'package:luvpark/sqlite/share_location_table.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'package:rive/math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:upgrader/upgrader.dart';
@@ -50,7 +52,6 @@ void main() async {
   DartPingIOS.register();
   await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
-  backgroundFunc();
 
   final packageInfo = await PackageInfo.fromPlatform();
   Variables.version = packageInfo.version;
@@ -58,6 +59,10 @@ void main() async {
   final status = await Permission.notification.status;
   if (status.isDenied) {
     await Permission.notification.request();
+  }
+  bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
+  if (!isAllowed) {
+    AwesomeNotifications().requestPermissionToSendNotifications();
   }
 
   NotificationController.initializeLocalNotifications();
@@ -102,6 +107,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     //ForegroundNotifTask.setContext(context);
+    backgroundFunc();
   }
 
   @override

@@ -176,7 +176,7 @@ class _CustomConfirmationModalState extends State<CustomConfirmationModal> {
                                 Expanded(
                                   child: CustomDisplayText(
                                     label:
-                                        "I acknowledge that I have read and understood the notice.",
+                                        "I acknowledged that I have read and understood the notice.",
                                     fontSize: 14,
                                     alignment: TextAlign.left,
                                     fontWeight: FontWeight.w500,
