@@ -1,10 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:clipboard/clipboard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -595,7 +593,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             getLoadAddress(jsonDecode(akongP!)['city_id'],
                                 ApiKeys.gApiSubFolderGetBrgy, (returnBrgy) {
                               Navigator.pop(context);
-                              Variables.pageTrans(const UpdateProfile());
+                              Variables.pageTrans(
+                                  const UpdateProfile(), context);
                             });
                           });
                         });
@@ -606,7 +605,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                           prefs.setString('cityData', "null");
                         });
                         // ignore: use_build_context_synchronously
-                        Variables.pageTrans(const UpdateProfile());
+                        Variables.pageTrans(const UpdateProfile(), context);
                       }
                     },
                     child: Container(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -14,37 +13,17 @@ class AboutLuvPark extends StatelessWidget {
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
-      child: CustomParentWidget(
-        appbarColor: AppColor.primaryColor,
+      child: CustomParent1Widget(
+        appBarheaderText: "About luvpark",
+        appBarIconClick: () {
+          Navigator.of(context).pop();
+        },
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // App Logo or Icon
-                InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.primaryColor,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child: const Padding(
-                      padding: EdgeInsets.all(5.0),
-                      child: Icon(
-                        Icons.arrow_back,
-                        size: 20,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 20,
-                ),
                 Center(
                   child: Image(
                     height: MediaQuery.of(context).size.height * 0.15,
@@ -55,7 +34,6 @@ class AboutLuvPark extends StatelessWidget {
                 Container(
                   height: 20,
                 ),
-
                 CustomDisplayText(
                   label: 'About luvpark',
                   fontSize: 20,
@@ -69,7 +47,6 @@ class AboutLuvPark extends StatelessWidget {
                   color: Colors.black,
                   fontSize: 14,
                 ),
-
                 const SizedBox(height: 20),
                 CustomDisplayText(
                   label: 'Contact Us',
@@ -89,7 +66,6 @@ class AboutLuvPark extends StatelessWidget {
                   color: const Color.fromARGB(255, 18, 17, 17),
                   fontSize: 14,
                 ),
-
                 const SizedBox(height: 50),
                 Center(
                   child: GestureDetector(
@@ -118,11 +94,13 @@ class AboutLuvPark extends StatelessWidget {
                 Center(
                   child: GestureDetector(
                     onTap: () {
-                      Variables.pageTrans(const WebviewPage(
-                        urlDirect: "https://luvpark.ph/privacy-policy/",
-                        label: "luvpark",
-                        isBuyToken: false,
-                      ));
+                      Variables.pageTrans(
+                          const WebviewPage(
+                            urlDirect: "https://luvpark.ph/privacy-policy/",
+                            label: "luvpark",
+                            isBuyToken: false,
+                          ),
+                          context);
                     },
                     child: CustomDisplayText(
                       label: 'Privacy Policy',

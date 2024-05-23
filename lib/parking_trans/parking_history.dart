@@ -9,7 +9,6 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/classess/api_keys.dart';
-import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -118,7 +117,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
   Widget build(BuildContext context) {
     return CustomParent1Widget(
       canPop: true,
-      bodyColor: Colors.grey.shade100,
+      //  bodyColor: Colors.grey.shade100,
       appBarheaderText: "Parking History",
       appBarIconClick: () {
         Navigator.pop(context);
@@ -150,7 +149,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                           : RefreshIndicator(
                               onRefresh: refresh,
                               child: ListView(
-                                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                padding: EdgeInsets.zero,
                                 children: histParent,
                               ),
                             ),
@@ -263,7 +262,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                     ),
                   ),
                   builder: (BuildContext context) {
-                    return ParkingDetails(
+                    return Details(
                         param: parameters, amount: data["amount"].toString());
                   },
                 );
@@ -273,118 +272,110 @@ class _ParkingHistoryState extends State<ParkingHistory> {
         },
         child: Container(
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border(
-              left: BorderSide(color: AppColor.primaryColor, width: 4),
-            ),
-          ),
-          child: Container(
-            decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.only(
-                  bottom: 10.0, left: 10, right: 10, top: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: CustomDisplayText(
-                          label: data["reservation_ref_no"].toString(),
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                          maxLines: 1,
-                        ),
-
-                        //  AutoSizeText(
-                        //   "Parking Completed",
-                        //   style: CustomTextStyle(
-                        //       fontSize: 14,
-                        //       color: AppColor.mainColor,
-                        //       fontWeight: FontWeight.bold),
-                        //   maxLines: 1,
-                        // ),
-                      ),
-                      CustomDisplayText(
-                        label: toCurrencyString(data["amount"].toString()),
+              border: Border.all(color: Colors.grey.shade200, width: 1)),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                bottom: 10.0, left: 10, right: 10, top: 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomDisplayText(
+                        label: data["reservation_ref_no"].toString(),
                         fontSize: 14,
                         color: Colors.black,
-                        fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.w600,
                         maxLines: 1,
                       ),
-                    ],
-                  ),
-                  Container(height: 22),
-                  Row(
-                    children: [
-                      Icon(
-                        CupertinoIcons.calendar,
-                        color: Colors.grey.shade400,
-                        size: 28,
-                      ),
-                      Container(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomDisplayText(
-                            label: convertDateFormat(data["dt_in"]),
-                            fontSize: 16,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            maxLines: 1,
-                          ),
-                          CustomDisplayText(
-                            label: Variables.convertTime(
-                                data["dt_in"].toString().split(" ")[1]),
-                            fontSize: 14,
-                            color: const Color.fromARGB(255, 137, 140, 148),
-                            fontWeight: FontWeight.w500,
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: 10,
-                      ),
-                      const Icon(
-                        Icons.arrow_right_alt_outlined,
-                        color: Color.fromARGB(255, 22, 22, 22),
-                        size: 28,
-                      ),
-                      Container(
-                        width: 10,
-                      ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomDisplayText(
-                            label: convertDateFormat(data["dt_out"]),
-                            fontSize: 16,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            maxLines: 1,
-                          ),
-                          CustomDisplayText(
-                            label: Variables.convertTime(
-                                data["dt_out"].toString().split(" ")[1]),
-                            fontSize: 14,
-                            color: const Color.fromARGB(255, 137, 140, 148),
-                            fontWeight: FontWeight.w500,
-                            maxLines: 1,
-                          ),
-                        ],
-                      )
-                    ],
-                  ),
-                  Container(height: 11),
-                ],
-              ),
+
+                      //  AutoSizeText(
+                      //   "Parking Completed",
+                      //   style: CustomTextStyle(
+                      //       fontSize: 14,
+                      //       color: AppColor.mainColor,
+                      //       fontWeight: FontWeight.bold),
+                      //   maxLines: 1,
+                      // ),
+                    ),
+                    CustomDisplayText(
+                      label: toCurrencyString(data["amount"].toString()),
+                      fontSize: 14,
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
+                Container(height: 22),
+                Row(
+                  children: [
+                    Icon(
+                      CupertinoIcons.calendar,
+                      color: Colors.grey.shade400,
+                      size: 28,
+                    ),
+                    Container(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomDisplayText(
+                          label: convertDateFormat(data["dt_in"]),
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          maxLines: 1,
+                        ),
+                        CustomDisplayText(
+                          label: Variables.convertTime(
+                              data["dt_in"].toString().split(" ")[1]),
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 137, 140, 148),
+                          fontWeight: FontWeight.w500,
+                          maxLines: 1,
+                        ),
+                      ],
+                    ),
+                    Container(
+                      width: 10,
+                    ),
+                    const Icon(
+                      Icons.arrow_right_alt_outlined,
+                      color: Color.fromARGB(255, 22, 22, 22),
+                      size: 28,
+                    ),
+                    Container(
+                      width: 10,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomDisplayText(
+                          label: convertDateFormat(data["dt_out"]),
+                          fontSize: 16,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          maxLines: 1,
+                        ),
+                        CustomDisplayText(
+                          label: Variables.convertTime(
+                              data["dt_out"].toString().split(" ")[1]),
+                          fontSize: 14,
+                          color: const Color.fromARGB(255, 137, 140, 148),
+                          fontWeight: FontWeight.w500,
+                          maxLines: 1,
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+                Container(height: 11),
+              ],
             ),
           ),
         ),
@@ -393,16 +384,16 @@ class _ParkingHistoryState extends State<ParkingHistory> {
   }
 }
 
-class ParkingDetails extends StatefulWidget {
+class Details extends StatefulWidget {
   final Map<String, dynamic> param;
   final String amount;
-  const ParkingDetails({super.key, required this.param, required this.amount});
+  const Details({super.key, required this.param, required this.amount});
 
   @override
-  State<ParkingDetails> createState() => _ParkingDetailsState();
+  State<Details> createState() => _DetailsState();
 }
 
-class _ParkingDetailsState extends State<ParkingDetails> {
+class _DetailsState extends State<Details> {
   @override
   void initState() {
     super.initState();

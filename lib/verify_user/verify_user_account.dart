@@ -176,14 +176,7 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
             }, () async {
               Navigator.pop(context);
               Navigator.pop(context);
-              Variables.pageTrans(MapSharingScreen(
-                  // isAccept: false,
-                  // geoConnectMate: int.parse(
-                  //   returnPost["geo_connect_id"]
-                  //       .toString(),
-                  // ),
-                  // sharer: true,
-                  ));
+              Variables.pageTrans(MapSharingScreen(), context);
             });
           } else {
             Navigator.of(context).pop();

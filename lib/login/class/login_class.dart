@@ -169,7 +169,7 @@ class LoginComponent {
                     'brgyData',
                   );
 
-                  Variables.pageTrans(const MainLandingScreen());
+                  Variables.pageTrans(const MainLandingScreen(), context);
                 } else {
                   if (objData["items"][0]["msg"] == 'Not Yet Registered') {
                     showModalConfirmation(

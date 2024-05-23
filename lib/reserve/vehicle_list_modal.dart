@@ -46,6 +46,9 @@ class _VehicleOptionState extends State<VehicleOption> {
   @override
   void initState() {
     super.initState();
+    dropdownValue = widget.vehicleData.length == 1
+        ? widget.vehicleData[0]["value"].toString()
+        : "";
     WidgetsBinding.instance.addPostFrameCallback((_) {
       refresh();
     });

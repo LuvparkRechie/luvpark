@@ -466,10 +466,12 @@ class _PayParkingConfirmationState extends State<PayParkingConfirmation> {
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
                 Navigator.pop(context);
-                Variables.pageTrans(const MainLandingScreen(
-                  parkingIndex: 1,
-                  index: 1,
-                ));
+                Variables.pageTrans(
+                    const MainLandingScreen(
+                      parkingIndex: 1,
+                      index: 1,
+                    ),
+                    context);
               }
             });
           } else {

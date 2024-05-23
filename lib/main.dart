@@ -28,7 +28,6 @@ import 'package:luvpark/sqlite/share_location_table.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
-import 'package:rive/math.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:upgrader/upgrader.dart';
@@ -230,7 +229,7 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       var mappedLogData = [jsonDecode(logData)];
       if (mappedLogData[0]["is_active"] == "Y") {
-        Variables.pageTrans(const MainLandingScreen());
+        Variables.pageTrans(const MainLandingScreen(), context);
       } else {
         // ignore: use_build_context_synchronously
 
@@ -404,7 +403,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               color: AppColor.primaryColor,
               label: "Create Account",
               onTap: () async {
-                Variables.pageTrans(RegistrationPage());
+                Variables.pageTrans(RegistrationPage(), context);
               },
             ),
             const SizedBox(height: 16.0),
@@ -414,9 +413,11 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               label: "Login",
               onTap: () {
                 FocusScope.of(context).requestFocus(FocusNode());
-                Variables.pageTrans(LoginScreen(
-                  index: 0,
-                ));
+                Variables.pageTrans(
+                    LoginScreen(
+                      index: 0,
+                    ),
+                    context);
               },
             ),
             Container(

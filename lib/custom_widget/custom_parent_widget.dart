@@ -12,6 +12,7 @@ class CustomParentWidget extends StatefulWidget {
   final Color? bodyColor;
   final Widget child;
   final bool? onPop;
+  final bool? extendedBody;
   final TabBar? appBarTabBar;
   final double? toolbarHeight;
   final Widget? floatingButton;
@@ -20,6 +21,7 @@ class CustomParentWidget extends StatefulWidget {
       required this.child,
       this.appBarTabBar,
       this.onPop = true,
+      this.extendedBody = false,
       this.toolbarHeight = 0,
       this.floatingButton,
       this.bodyColor,
@@ -40,6 +42,7 @@ class _CustomParentWidgetState extends State<CustomParentWidget> {
           canPop: widget.onPop!,
           child: widget.floatingButton == null
               ? Scaffold(
+                  extendBodyBehindAppBar: widget.extendedBody!,
                   appBar: PreferredSize(
                     preferredSize: const Size.fromHeight(0),
                     child: appBar(),
@@ -65,33 +68,35 @@ class _CustomParentWidgetState extends State<CustomParentWidget> {
       toolbarHeight: widget.toolbarHeight,
       automaticallyImplyLeading: false,
       backgroundColor: widget.appbarColor,
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: widget.appbarColor,
-        // statusBarBrightness: Brightness.dark,
-        // statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Platform.isIOS
-            ? Brightness.light
-            : widget.appbarColor == const Color(0xffffffff)
-                ? Brightness.dark
-                : Brightness.light,
-        statusBarIconBrightness: Platform.isIOS
-            ? Brightness.light
-            : widget.appbarColor == const Color(0xffffffff)
-                ? Brightness.dark
-                : Brightness.light,
-      ),
+      systemOverlayStyle: widget.extendedBody == true
+          ? SystemUiOverlayStyle(
+              statusBarColor: widget.appbarColor,
+              statusBarBrightness: Brightness.dark,
+              statusBarIconBrightness: Brightness.dark,
+            )
+          : SystemUiOverlayStyle(
+              statusBarColor: widget.appbarColor,
+              statusBarBrightness: Platform.isIOS
+                  ? Brightness.light
+                  : widget.appbarColor == const Color(0xffffffff)
+                      ? Brightness.dark
+                      : Brightness.light,
+              statusBarIconBrightness: Platform.isIOS
+                  ? Brightness.light
+                  : widget.appbarColor == const Color(0xffffffff)
+                      ? Brightness.dark
+                      : Brightness.light,
+            ),
       bottom: widget.appBarTabBar ?? widget.appBarTabBar,
     );
   }
 
   Widget safeArea() {
-    return SafeArea(
-      child: Container(
-        color: widget.bodyColor == null ? AppColor.bodyColor : widget.bodyColor,
-        height: MediaQuery.of(context).size.height,
-        width: MediaQuery.of(context).size.width,
-        child: widget.child,
-      ),
+    return Container(
+      color: widget.bodyColor == null ? AppColor.bodyColor : widget.bodyColor,
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
+      child: widget.child,
     );
   }
 }
@@ -174,16 +179,16 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
 
   Widget appBar() {
     return AppBar(
-      elevation: 2,
-      backgroundColor: AppColor.primaryColor,
+      elevation: 0,
+      backgroundColor: AppColor.bodyColor,
       systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        systemNavigationBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.bodyColor,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        systemNavigationBarColor: Colors.black,
         statusBarBrightness:
             Platform.isIOS ? Brightness.light : Brightness.light,
         statusBarIconBrightness:
-            Platform.isIOS ? Brightness.light : Brightness.light,
+            Platform.isIOS ? Brightness.light : Brightness.dark,
       ),
       leading: widget.appBarIconClick == null
           ? const SizedBox(
@@ -199,7 +204,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
                 child: const Icon(
                   Icons.arrow_back_ios_new,
                   weight: 1,
-                  color: Colors.white,
+                  color: Colors.black,
                   size: 20,
                 ),
               ),
@@ -207,7 +212,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
       title: AutoSizeText(
         widget.appBarheaderText,
         style: GoogleFonts.lato(
-          color: const Color(0xFFFFFFFF),
+          color: Colors.black,
           fontSize: 16.0,
           fontStyle: FontStyle.normal,
           fontWeight: FontWeight.w600, // FontWeight.bold for a bolder text

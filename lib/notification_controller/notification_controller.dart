@@ -233,14 +233,12 @@ class NotificationController {
         title: title!,
         body: body!,
         wakeUpScreen: true,
-        autoDismissible: false,
+        autoDismissible: payload == "custom_Screen" ? true : false,
         notificationLayout: NotificationLayout.BigPicture,
         payload: {'notificationId': payload!, "geo_share_id": "$geoShareId"},
       ),
       actionButtons: payload == "custom_Screen"
-          ? [
-              NotificationActionButton(key: 'VIEW', label: 'View Ticket'),
-            ]
+          ? []
           : [
               NotificationActionButton(key: 'ACCEPT', label: 'Accept'),
               NotificationActionButton(key: 'DECLINE', label: 'Reject'),
@@ -360,6 +358,9 @@ class NotificationController {
       ReceivedAction receivedAction) async {
     BuildContext context = MyApp.navigatorKey.currentState!.context;
 
+    print("receivedAction $receivedAction");
+    print("button keypressed ${receivedAction.buttonKeyPressed}");
+
     void redirect() async {
       MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
         '/${receivedAction.payload!["notificationId"]}',
@@ -406,6 +407,15 @@ class NotificationController {
           Navigator.of(MyApp.scaffoldKey.currentContext!).pop();
         }
         redirect();
+        break;
+      case "":
+        if (receivedAction.payload!["notificationId"].toString() ==
+            "custom_Screen") {
+          if (MyApp.scaffoldKey.currentContext != null) {
+            Navigator.of(MyApp.scaffoldKey.currentContext!).pop();
+          }
+          redirect();
+        }
         break;
       // default:
       //   redirect();

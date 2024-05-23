@@ -14,7 +14,8 @@ import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 
 class FilterMap extends StatefulWidget {
   final Function callBack;
-  const FilterMap({super.key, required this.callBack});
+  final String radius;
+  const FilterMap({super.key, required this.callBack, required this.radius});
 
   @override
   State<FilterMap> createState() => _FilterMapState();
@@ -154,7 +155,16 @@ class _FilterMapState extends State<FilterMap> {
         hasNetRadius = true;
         loadingRadius = false;
         radiusData = dataRadius;
+        if (radiusData.isNotEmpty) {
+          ddRadius = radiusData
+              .where((e) {
+                return e["value"].toString() == widget.radius.toString();
+              })
+              .toList()[0]["value"]
+              .toString();
+        }
       });
+      print("dddd radius $ddRadius");
     });
   }
 
@@ -175,11 +185,11 @@ class _FilterMapState extends State<FilterMap> {
                 child: Column(
                   children: [
                     buildRadius(),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     buildRadioOptions('Vehicle Type'),
-                    SizedBox(height: 20),
+                    SizedBox(height: 10),
                     buildFilterChips('Parking Type', pTypeData),
-                    SizedBox(height: 20.0),
+                    SizedBox(height: 10.0),
                     buildFilterChips('Amenities', amenitiess),
                     SizedBox(height: 10),
                   ],
@@ -218,58 +228,22 @@ class _FilterMapState extends State<FilterMap> {
   }
 
   Widget buildRadioOptions(String title) {
-    return Container(
-      width: Variables.screenSize.width,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-        borderRadius: BorderRadius.all(
-          Radius.circular(
-            20,
-          ),
-        ),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.5),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10.0, 10, 10, 0),
-            child: LabelText(text: title),
-          ),
-          loadingTypes
-              ? Container(height: 30)
-              : Column(
-                  children: [
-                    for (int i = 0; i < vehicleTypes.length; i++)
-                      Container(
-                        height: 40,
-                        child: RadioListTile<String>(
-                          title:
-                              CustomDisplayText(label: vehicleTypes[i]["text"]),
-                          value: vehicleTypes[i]["value"].toString(),
-                          groupValue: selectedVehicleType,
-                          onChanged: (String? value) {
-                            setState(() {
-                              selectedVehicleType = value;
-                            });
-                          },
-                        ),
-                      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LabelText(text: title),
+        loadingTypes
+            ? Container(height: 30)
+            : Column(
+                children: [
+                  for (int i = 0; i < vehicleTypes.length; i++)
                     Container(
-                      height: 40,
+                      height: 30,
                       child: RadioListTile<String>(
-                        title: CustomDisplayText(label: "None"),
-                        value: "",
+                        contentPadding: EdgeInsets.zero,
+                        title:
+                            CustomDisplayText(label: vehicleTypes[i]["text"]),
+                        value: vehicleTypes[i]["value"].toString(),
                         groupValue: selectedVehicleType,
                         onChanged: (String? value) {
                           setState(() {
@@ -278,159 +252,124 @@ class _FilterMapState extends State<FilterMap> {
                         },
                       ),
                     ),
-                  ],
-                ),
-          SizedBox(height: 10.0),
-        ],
-      ),
+                  Container(
+                    height: 30,
+                    child: RadioListTile<String>(
+                      contentPadding: EdgeInsets.zero,
+                      title: CustomDisplayText(label: "None"),
+                      value: "",
+                      groupValue: selectedVehicleType,
+                      onChanged: (String? value) {
+                        setState(() {
+                          selectedVehicleType = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
+              ),
+        SizedBox(height: 10.0),
+      ],
     );
   }
 
   Widget buildFilterChips(String title, List filters) {
     return Container(
       width: Variables.screenSize.width,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.2),
-            spreadRadius: 1,
-            blurRadius: 4,
-            offset: Offset(0, 2),
-          ),
-        ],
-        borderRadius: BorderRadius.all(
-          Radius.circular(
-            20,
-          ),
-        ),
-        border: Border.all(
-          color: Colors.grey.withOpacity(0.5),
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            LabelText(text: title),
-            SizedBox(height: 8.0),
-            Wrap(spacing: 8.0, children: [
-              for (int i = 0; i < filters.length; i++)
-                FilterChip(
-                  checkmarkColor: Colors.white,
-                  backgroundColor: Color.fromARGB(255, 225, 223, 223),
-                  label: CustomDisplayText(label: filters[i]["text"]),
-                  selected: title == "Amenities"
-                      ? selectedFiltersAmen
-                          .contains(filters[i]["value"].toString())
-                      : selectedFilters
-                          .contains(filters[i]["value"].toString()),
-                  onSelected: (bool selected) {
-                    setState(() {
-                      if (selected) {
-                        if (title == "Amenities") {
-                          selectedFiltersAmen
-                              .add(filters[i]["value"].toString());
-                        } else {
-                          selectedFilters.add(filters[i]["value"].toString());
-                        }
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LabelText(text: title),
+          SizedBox(height: 8.0),
+          Wrap(spacing: 10.0, children: [
+            for (int i = 0; i < filters.length; i++)
+              FilterChip(
+                checkmarkColor: Colors.white,
+                backgroundColor: Color.fromARGB(255, 225, 223, 223),
+                label: CustomDisplayText(label: filters[i]["text"]),
+                selected: title == "Amenities"
+                    ? selectedFiltersAmen
+                        .contains(filters[i]["value"].toString())
+                    : selectedFilters.contains(filters[i]["value"].toString()),
+                onSelected: (bool selected) {
+                  setState(() {
+                    if (selected) {
+                      if (title == "Amenities") {
+                        selectedFiltersAmen.add(filters[i]["value"].toString());
                       } else {
-                        if (title == "Amenities") {
-                          selectedFiltersAmen
-                              .remove(filters[i]["value"].toString());
-                        } else {
-                          selectedFilters
-                              .remove(filters[i]["value"].toString());
-                        }
+                        selectedFilters.add(filters[i]["value"].toString());
                       }
-                    });
-                  },
-                  labelStyle: TextStyle(
-                    color: (title == "Amenities"
-                            ? selectedFiltersAmen
-                                .contains(filters[i]["value"].toString())
-                            : selectedFilters
-                                .contains(filters[i]["value"].toString()))
-                        ? Colors.white
-                        : Colors.black, // Change text color based on selection
-                  ),
-                  selectedColor: AppColor
-                      .primaryColor, // Optional: Change background color when selected
+                    } else {
+                      if (title == "Amenities") {
+                        selectedFiltersAmen
+                            .remove(filters[i]["value"].toString());
+                      } else {
+                        selectedFilters.remove(filters[i]["value"].toString());
+                      }
+                    }
+                  });
+                },
+                labelStyle: TextStyle(
+                  color: (title == "Amenities"
+                          ? selectedFiltersAmen
+                              .contains(filters[i]["value"].toString())
+                          : selectedFilters
+                              .contains(filters[i]["value"].toString()))
+                      ? Colors.white
+                      : Colors.black, // Change text color based on selection
                 ),
-            ]),
-          ],
-        ),
+                selectedColor: AppColor
+                    .primaryColor, // Optional: Change background color when selected
+              ),
+          ]),
+        ],
       ),
     );
   }
 
   Widget buildRadius() {
-    return Container(
-        width: Variables.screenSize.width,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.2),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: Offset(0, 2),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LabelText(text: "Radius"),
+        SizedBox(height: 8.0),
+        DropdownButtonFormField(
+          dropdownColor: Colors.white,
+          decoration: InputDecoration(
+            fillColor: Colors.white,
+            filled: true,
+            hintText: "",
+            hintStyle: GoogleFonts.varela(
+              fontWeight: FontWeight.w600,
+              color: Colors.grey.shade500,
+              fontSize: 15,
             ),
-          ],
-          borderRadius: BorderRadius.all(
-            Radius.circular(
-              20,
-            ),
+            contentPadding: const EdgeInsets.all(10),
+            border: InputBorder.none,
           ),
-          border: Border.all(
-            color: Colors.grey.withOpacity(0.5),
-          ),
+          value: ddRadius,
+          onChanged: (String? newValue) async {
+            ddRadius = newValue!;
+          },
+          isExpanded: true,
+          menuMaxHeight: 400,
+          items: radiusData.map((item) {
+            return DropdownMenuItem(
+                value: item['value'].toString(),
+                child: AutoSizeText(
+                  item['text'],
+                  style: GoogleFonts.varela(
+                    color: Colors.black,
+                    fontWeight: FontWeight.normal,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxFontSize: 15,
+                  maxLines: 2,
+                ));
+          }).toList(),
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(10.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              LabelText(text: "Radius"),
-              SizedBox(height: 8.0),
-              DropdownButtonFormField(
-                dropdownColor: Colors.white,
-                decoration: InputDecoration(
-                    fillColor: Colors.grey.shade100,
-                    filled: true,
-                    hintText: "",
-                    hintStyle: GoogleFonts.varela(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade500,
-                      fontSize: 15,
-                    ),
-                    contentPadding: const EdgeInsets.all(10),
-                    border: InputBorder.none),
-                value: ddRadius,
-                onChanged: (String? newValue) async {
-                  ddRadius = newValue!;
-                },
-                isExpanded: true,
-                menuMaxHeight: 400,
-                items: radiusData.map((item) {
-                  return DropdownMenuItem(
-                      value: item['value'].toString(),
-                      child: AutoSizeText(
-                        item['text'],
-                        style: GoogleFonts.varela(
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxFontSize: 15,
-                        maxLines: 2,
-                      ));
-                }).toList(),
-              ),
-              SizedBox(height: 10.0),
-            ],
-          ),
-        ));
+        SizedBox(height: 10.0),
+      ],
+    );
   }
 }

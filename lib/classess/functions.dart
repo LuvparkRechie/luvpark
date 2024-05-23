@@ -587,4 +587,31 @@ class Functions {
       }
     });
   }
+
+//Get Average
+  static Future<void> getAverage(Function cb, BuildContext context) async {
+    HttpRequest(api: ApiKeys.gApiSubFolderGetAverage)
+        .get()
+        .then((avgData) async {
+      if (avgData == "No Internet") {
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          cb({"msg": "No Internet", "data": []});
+          Navigator.of(context).pop();
+        });
+
+        return;
+      }
+      if (avgData == null) {
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          cb({"msg": "Error", "data": []});
+          Navigator.of(context).pop();
+        });
+        return;
+      } else {
+        cb({"msg": "Success", "data": avgData["items"]});
+      }
+    });
+  }
 }

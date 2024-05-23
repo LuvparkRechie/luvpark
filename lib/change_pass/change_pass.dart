@@ -360,9 +360,11 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     "loginData", jsonEncode(mappedLogData[0]!));
                                 Future.delayed(const Duration(seconds: 1), () {
                                   Navigator.pop(context);
-                                  Variables.pageTrans(const LoginScreen(
-                                    index: 1,
-                                  ));
+                                  Variables.pageTrans(
+                                      const LoginScreen(
+                                        index: 1,
+                                      ),
+                                      context);
                                 });
                               });
                             } else {

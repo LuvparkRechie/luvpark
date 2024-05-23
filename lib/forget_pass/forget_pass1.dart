@@ -265,14 +265,16 @@ class _ForgetPass1State extends State<ForgetPass1> {
                         } else {
                           if (retvalue["success"] == "Y") {
                             Navigator.of(context).pop();
-                            Variables.pageTrans(OtpTransferScreen(
-                              otp: int.parse(retvalue["otp"].toString()),
-                              mobileNo: widget.mobileNumber,
-                              isForgotPassword: true,
-                              onCallbackTap: (myOtp) {
-                                submitData(myOtp.toString());
-                              },
-                            ));
+                            Variables.pageTrans(
+                                OtpTransferScreen(
+                                  otp: int.parse(retvalue["otp"].toString()),
+                                  mobileNo: widget.mobileNumber,
+                                  isForgotPassword: true,
+                                  onCallbackTap: (myOtp) {
+                                    submitData(myOtp.toString());
+                                  },
+                                ),
+                                context);
                           } else {
                             Navigator.of(context).pop();
                             showAlertDialog(context, "Error", retvalue["msg"],

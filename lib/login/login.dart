@@ -246,11 +246,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                 });
                                 Navigator.pop(context);
                                 Variables.pageTrans(
-                                  ActivateAccountScreen(
-                                      mobileNo:
-                                          "63${mobileNumber.text.replaceAll(" ", "")}",
-                                      password: password.text),
-                                );
+                                    ActivateAccountScreen(
+                                        mobileNo:
+                                            "63${mobileNumber.text.replaceAll(" ", "")}",
+                                        password: password.text),
+                                    context);
                               });
                             } else {
                               LoginComponent().loginFunc(
@@ -401,14 +401,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                           LocationPermission.denied) {
                                         Variables.pageTrans(
                                             PermissionHandlerScreen(
-                                          isLogin: true,
-                                          index: 1,
-                                          widget: widget,
-                                        ));
+                                              isLogin: true,
+                                              index: 1,
+                                              widget: widget,
+                                            ),
+                                            context);
                                       }
                                       if (statusReq ==
                                           LocationPermission.whileInUse) {
-                                        Variables.pageTrans(RegistrationPage());
+                                        Variables.pageTrans(
+                                            RegistrationPage(), context);
                                       }
                                     }
                                   },
@@ -563,15 +565,19 @@ class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
                               if (objData["success"] == "Y") {
                                 Navigator.of(context).pop();
                                 if (objData["is_verified"] == "Y") {
-                                  Variables.pageTrans(ForgotPassVerified(
-                                      label: "Forgot\nPassword",
-                                      mobileNumber:
-                                          "63${mobileNumber.text.toString().replaceAll(" ", "")}"));
+                                  Variables.pageTrans(
+                                      ForgotPassVerified(
+                                          label: "Forgot\nPassword",
+                                          mobileNumber:
+                                              "63${mobileNumber.text.toString().replaceAll(" ", "")}"),
+                                      context);
                                 } else {
-                                  Variables.pageTrans(ForgetPass1(
-                                      mobileNumber: mobileNumber.text
-                                          .toString()
-                                          .replaceAll(" ", "")));
+                                  Variables.pageTrans(
+                                      ForgetPass1(
+                                          mobileNumber: mobileNumber.text
+                                              .toString()
+                                              .replaceAll(" ", "")),
+                                      context);
                                 }
                               } else {
                                 showAlertDialog(

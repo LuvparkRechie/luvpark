@@ -5,31 +5,28 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
-import 'package:luvpark/custom_widget/custom_loader.dart';
-import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/dashboard/filter_map_v2.dart';
+import 'package:luvpark/dashboard/search_place.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/permission/permission_handler.dart';
-import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:luvpark/verify_user/verify_user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class Dashboard3 extends StatefulWidget {
   const Dashboard3({super.key});
@@ -39,97 +36,45 @@ class Dashboard3 extends StatefulWidget {
 }
 
 class _Dashboard3State extends State<Dashboard3> {
-  TextEditingController locationController = TextEditingController();
-  TextEditingController hoursController = TextEditingController();
   TextEditingController searchController = TextEditingController();
+  PanelController panelController = PanelController();
 
   List pTypeData = [];
   List radiusData = [];
-  bool onViewPopup = false;
   late GoogleMapController mapController;
-  bool isShowKeyboard = false;
   LatLng? startLocation;
-  String locationAddress = "";
   String pTypeCode = "";
   String amenities = "";
   String vtypeId = "";
-  String myAddress = "";
   List filteredArea = [];
-  List subMapData = [];
-  LatLng? directionPosition;
-  Uint8List? marketimages;
-  double? cameraZoom;
   CameraPosition? initialCameraPosition;
   bool isLoadingPage = true;
   bool isLoadingMap = true;
-  bool isBooked = false;
   bool hasInternetBal = true;
-  bool isClickedIcon = false;
   List<String> images = [
     'assets/images/geo_tag.png',
-    'assets/images/red_marker.png'
   ];
   List<String> searchImage = ['assets/images/search_pin.png'];
-  var parentWidget = <Widget>[];
-  List dataNearrest = [];
   List subDataNearest = [];
   List<Marker> markers = <Marker>[];
-  LocationSettings locationSettings = const LocationSettings(
-    accuracy: LocationAccuracy.high,
-    distanceFilter: 10000,
-  );
-  BuildContext? ctxt;
-  // ignore: prefer_typing_uninitialized_variables
+  var myData;
   var logData;
-  bool isDrawerOpen = false;
   String? ddRadius;
   bool onSearchAdd = false;
-  bool isClickedMarker = false;
-  bool isAtMinHeight = false;
-  bool isLoadingSearch = false;
-  //Getting radius
-  bool isLoadingRadius = true;
-  String radiusValue = "0";
-  String radiusName = "Radius";
-  int ctrR = 0;
-  double userBal = 0.0;
+  double userBal = 0.0, avgRate = 0.0, maxPanelHeight = 0.0;
   bool isClicked = false;
-  double minSheetHeight = 0.4;
-  double filterPosition = 0.4;
-  //Vehicle Type
-  int vehicleId = 0;
-  String vehicleName = "Vehicle";
-  int ctrV = 0;
-  bool isShow = true;
-  bool isAllowBooking = true;
-  //Hours Relate
-  String etaDistance = "";
-  String buttonText = "Book";
-  late ScrollController _scrollController;
-  List sortednearestSubData = [];
-  var paddingW = <Widget>[];
-  bool isVisible = true;
-  List<String> suggestions = [];
-  bool isLoading = true;
-  int searchData = 0;
-  bool isOntapSuggestion = false;
 
   @override
   void initState() {
     super.initState();
     ddRadius = "10000";
-    _scrollController = ScrollController();
-
     searchController.addListener(() {});
-
     getUsersData();
   }
 
   @override
   void dispose() {
     super.dispose();
-    _scrollController.dispose();
-    // locationSubscription!.cancel();
   }
 
   void showFilter() {
@@ -140,10 +85,11 @@ class _Dashboard3State extends State<Dashboard3> {
       barrierLabel: MaterialLocalizations.of(context).dialogLabel,
       barrierColor: Colors.black.withOpacity(0.5),
       pageBuilder: (context, _, __) {
-        // return VerticalModal(callBack: cb);
-        return FilterMap(callBack: (dataCallBack) {
-          getFilteredData(dataCallBack);
-        });
+        return FilterMap(
+            radius: ddRadius!,
+            callBack: (dataCallBack) {
+              getFilteredData(dataCallBack);
+            });
       },
       transitionBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
@@ -162,7 +108,7 @@ class _Dashboard3State extends State<Dashboard3> {
 
   Future<void> getUsersData() async {
     final prefs = await SharedPreferences.getInstance();
-    var myData = prefs.getString(
+    myData = prefs.getString(
       'userData',
     );
     bool servicestatus = await Geolocator.isLocationServiceEnabled();
@@ -177,11 +123,13 @@ class _Dashboard3State extends State<Dashboard3> {
       return;
     } else if (statusReq == LocationPermission.denied) {
       // ignore: use_build_context_synchronously
-      Variables.pageTrans(PermissionHandlerScreen(
-        isLogin: true,
-        index: 1,
-        widget: MainLandingScreen(),
-      ));
+      Variables.pageTrans(
+          PermissionHandlerScreen(
+            isLogin: true,
+            index: 1,
+            widget: MainLandingScreen(),
+          ),
+          context);
     } else {
       DashboardComponent.getPositionLatLong().then((position) {
         String subApi =
@@ -229,7 +177,6 @@ class _Dashboard3State extends State<Dashboard3> {
             setState(() {
               logData = jsonDecode(myData);
               startLocation = LatLng(position.latitude, position.longitude);
-              isAtMinHeight = false;
             });
           }
 
@@ -254,18 +201,12 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   displayMapData(nearestData, lat, lng) async {
-    final Uint8List availabeMarkIcons = await DashboardComponent().getImages(
-        images[0], (MediaQuery.of(context).devicePixelRatio * 40).round());
     int ctr = 0;
 
     if (mounted) {
       setState(() {
         markers = [];
-        parentWidget = <Widget>[];
         subDataNearest = nearestData;
-        sortednearestSubData = [];
-
-        isLoadingSearch = true;
       });
     }
 
@@ -274,29 +215,27 @@ class _Dashboard3State extends State<Dashboard3> {
         ctr++;
         var items = nearestData[i];
         items["index"] = i.toString();
-
+        final Uint8List markerIcon = await Variables.capturePng(
+            context,
+            printScreen(AppColor.bodyColor, "$i",
+                "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}"),
+            80,
+            true);
         if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
           markers.add(
             Marker(
-                icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+                icon: BitmapDescriptor.fromBytes(markerIcon),
                 markerId: MarkerId(ctr.toString()),
                 position: LatLng(double.parse(items["pa_latitude"].toString()),
                     double.parse(items["pa_longitude"].toString())),
                 onTap: () {
-                  subMapData = [];
-                  locationAddress = "";
-                  if (isBooked) return;
                   setState(() {
-                    paddingW = <Widget>[];
                     isLoadingPage = true;
-                    isBooked = true;
-                    onViewPopup = true;
                   });
                   if (userBal <
                       double.parse(logData["min_wallet_bal"].toString())) {
                     setState(() {
                       isLoadingPage = false;
-                      isBooked = false;
                     });
                     showAlertDialog(
                         context,
@@ -308,28 +247,12 @@ class _Dashboard3State extends State<Dashboard3> {
                     });
                     return;
                   } else {
-                    setState(() {
-                      onViewPopup = true;
-                      isBooked = false;
-                      paddingW.add(Row(
-                        children: [
-                          bottomListDetails(
-                              "time_money", "${items["parking_schedule"]}"),
-                          bottomListDetails2(
-                              "road", "${items["parking_type_name"]} PARKING"),
-                          bottomListDetails3("carpool",
-                              "${items["ps_vacant_count"].toString()} AVAILABLE"),
-                        ],
-                      ));
-                    });
-                    Variables.pageTrans(ViewDetails(areaData: [items]));
+                    Variables.pageTrans(
+                        ViewDetails(areaData: [items]), context);
                   }
                 }),
           );
         }
-        parentWidget.add(
-          _listItem(items, const EdgeInsets.only(top: 10, bottom: 20), false),
-        );
 
         if (mounted) {
           setState(() {});
@@ -383,7 +306,6 @@ class _Dashboard3State extends State<Dashboard3> {
 
           isLoadingPage = false;
           isLoadingMap = false;
-          isLoadingSearch = false;
         });
       }
     } else {
@@ -397,24 +319,11 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   markerDisplay(canBook, items) {
-    setState(() {
-      isClickedMarker = true;
-      isAtMinHeight = false;
-    });
-
     if (items.length > 0) {
       DashboardComponent.getAddress(
               double.parse(items["pa_latitude"].toString()),
               double.parse(items["pa_longitude"].toString()))
-          .then((address) {
-        locationAddress = address!;
-
-        setState(() {
-          minSheetHeight = 0.04;
-
-          subMapData.add(items);
-        });
-      });
+          .then((address) {});
     }
   }
 
@@ -476,124 +385,95 @@ class _Dashboard3State extends State<Dashboard3> {
     });
   }
 
-  void onChangeTrigger(textSuggest) async {
-    await DashboardComponent()
-        .fetchSuggestions(
-            textSuggest,
-            double.parse(startLocation!.latitude.toString()),
-            double.parse(startLocation!.longitude.toString()),
-            ddRadius.toString())
-        .then((suggestions) {
-      setState(() {
-        this.suggestions = suggestions;
-        searchData = suggestions.length;
-      });
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     ctxt = context;
 
-    return CustomParentWidget(
-        appbarColor: AppColor.primaryColor,
-        child: Material(
-            child: !hasInternetBal
-                ? NoInternetConnected(onTap: () {
-                    if (isClicked) return;
-                    setState(() {
-                      isClicked = true;
-                      hasInternetBal = true;
-                    });
-                    getUsersData();
-                  })
-                : isLoadingMap
-                    ? SizedBox(
-                        height: MediaQuery.of(context).size.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Image(
-                                width: 100,
-                                height: 100,
-                                image: AssetImage(
-                                    "assets/images/luvpark_transparent.png")),
-                            FadeIn(
-                              delay: const Duration(milliseconds: 400),
-                              child: Shimmer.fromColors(
-                                baseColor: Colors.black,
-                                highlightColor: Colors.grey[100]!,
-                                child: CustomDisplayText(
-                                  label:
-                                      'Getting nearest parking area for you.',
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.normal,
-                                  maxLines: 1,
-                                ),
-                              ),
-                            ),
-                          ],
+    return !hasInternetBal
+        ? NoInternetConnected(onTap: () {
+            if (isClicked) return;
+            setState(() {
+              isClicked = true;
+              hasInternetBal = true;
+            });
+            getUsersData();
+          })
+        : isLoadingMap
+            ? SizedBox(
+                height: MediaQuery.of(context).size.height,
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Image(
+                        width: 100,
+                        height: 100,
+                        image: AssetImage(
+                            "assets/images/luvpark_transparent.png")),
+                    FadeIn(
+                      delay: const Duration(milliseconds: 400),
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.black,
+                        highlightColor: Colors.grey[100]!,
+                        child: CustomDisplayText(
+                          label: 'Getting nearest parking area for you.',
+                          color: Colors.black,
+                          fontSize: 14,
+                          fontWeight: FontWeight.normal,
+                          maxLines: 1,
                         ),
-                      )
-                    : userBal <
-                            double.parse(logData["min_wallet_bal"].toString())
-                        ? noMapDisplay()
-                        : mapDisplay()));
+                      ),
+                    ),
+                  ],
+                ),
+              )
+            : userBal < double.parse(logData["min_wallet_bal"].toString())
+                ? noMapDisplay()
+                : mapDisplay();
   }
 
   Widget noMapDisplay() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 19),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Visibility(
-            visible: isVisible,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  height: 20,
+          Container(
+            height: 20,
+          ),
+          searchBar(false),
+          Container(
+            height: 30,
+          ),
+          subDataNearest.isEmpty
+              ? Container()
+              : Text(
+                  'Parking Nearby',
+                  style: GoogleFonts.lato(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    height: 0.06,
+                  ),
                 ),
-                searchBar(false),
-                Container(
-                  height: 30,
+          Container(
+            height: 8,
+          ),
+          subDataNearest.isEmpty
+              ? Container()
+              : CustomDisplayText(
+                  label: 'The best parking space near you',
+                  color: const Color.fromARGB(255, 82, 82, 82),
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  height: 0,
                 ),
-                subDataNearest.isEmpty
-                    ? Container()
-                    : Text(
-                        'Parking Nearby',
-                        style: GoogleFonts.lato(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          height: 0.06,
-                        ),
-                      ),
-                Container(
+          subDataNearest.isEmpty
+              ? Container()
+              : Container(
                   height: 8,
                 ),
-                subDataNearest.isEmpty
-                    ? Container()
-                    : CustomDisplayText(
-                        label: 'The best parking space near you',
-                        color: const Color.fromARGB(255, 82, 82, 82),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        height: 0,
-                      ),
-                subDataNearest.isEmpty
-                    ? Container()
-                    : Container(
-                        height: 8,
-                      ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: isVisible,
-            child: Expanded(
+          Expanded(
               child: isLoadingPage
                   ? ListView.builder(
                       itemCount: 10,
@@ -603,267 +483,11 @@ class _Dashboard3State extends State<Dashboard3> {
                     )
                   : subDataNearest.isEmpty
                       ? const NoDataFound()
-                      : SingleChildScrollView(
-                          child: Column(
-                            children: parentWidget,
-                          ),
-                        ),
-            ),
-          ),
-          Visibility(
-            visible: !isVisible,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(0, 20, 20, 0),
-              child: Row(
-                children: [
-                  InkWell(
-                      onTap: () {
-                        setState(() {
-                          isVisible = !isVisible;
-                        });
-                      },
-                      child: Icon(Icons.arrow_back)),
-                  Container(width: 5),
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius:
-                            BorderRadius.circular(!isShow ? 10 : 16.0),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              readOnly: false,
-                              enabled: true,
-                              autofocus: true,
-                              controller: searchController,
-                              decoration: InputDecoration(
-                                hintText: " Search parking area",
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.only(
-                                    left: 10, top: 5, right: 5, bottom: 5),
-                                alignLabelWithHint: true,
-                                hintStyle: Platform.isAndroid
-                                    ? GoogleFonts.dmSans(
-                                        color: Color(0x993C3C43),
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w400,
-                                        height: 0.08,
-                                        letterSpacing: -0.41,
-                                      )
-                                    : TextStyle(
-                                        color: Color(0x993C3C43),
-                                        fontSize: 17,
-                                        fontWeight: FontWeight.w400,
-                                        height: 0.08,
-                                        letterSpacing: -0.41,
-                                      ),
-                              ),
-                              onChanged: (query) async {
-                                onChangeTrigger(query);
-                              },
-                            ),
-                          ),
-                          if (searchController.text.isNotEmpty)
-                            Padding(
-                              padding: const EdgeInsets.only(right: 8.0),
-                              child: InkWell(
-                                  onTap: () {
-                                    setState(() {
-                                      searchController.clear();
-                                    });
-                                  },
-                                  child: Icon(Icons.close, size: 20)),
-                            ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Container(height: 10),
-          Visibility(
-            visible: !isVisible,
-            child: Expanded(
-              child: FadeInUp(
-                child: suggestions.isEmpty
-                    ? Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          CustomDisplayText(
-                              label: "No data",
-                              fontWeight: FontWeight.normal,
-                              color: AppColor.textSubColor,
-                              fontSize: 16),
-                          Container(
-                            height: 10,
-                          ),
-                        ],
-                      )
-                    : suggestions[0] == "No Internet"
-                        ? Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Image(
-                                height:
-                                    MediaQuery.of(context).size.height * .20,
-                                width: MediaQuery.of(context).size.width / 2,
-                                image: const AssetImage(
-                                    "assets/images/no_internet.png"),
-                              ),
-                              Container(
-                                height: 20,
-                              ),
-                              CustomDisplayText(
-                                  label:
-                                      "Please check your internet connection.",
-                                  fontWeight: FontWeight.normal,
-                                  color: AppColor.textSubColor,
-                                  fontSize: 12),
-                              Container(
-                                height: 10,
-                              ),
-                            ],
-                          )
-                        : ListView.builder(
-                            itemCount: suggestions.length,
-                            itemBuilder: (context, index) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  InkWell(
-                                      onTap: () async {
-                                        // if (isOntapSuggestion) return;
-                                        CustomModal(context: context).loader();
-                                        if (mounted) {
-                                          setState(() {
-                                            isOntapSuggestion = true;
-                                          });
-                                        }
-
-                                        await DashboardComponent.searchPlaces(
-                                            context,
-                                            suggestions[index]
-                                                .split("=Rechie=")[0],
-                                            (searchedPlace) {
-                                          if (searchedPlace == "No Internet") {
-                                            Navigator.pop(context);
-                                            return;
-                                          }
-                                          Navigator.of(context).pop();
-                                          setState(() {
-                                            isVisible = !isVisible;
-                                          });
-
-                                          List data = [
-                                            {
-                                              "lat":
-                                                  searchedPlace[0].toString(),
-                                              "long":
-                                                  searchedPlace[1].toString(),
-                                              "place": suggestions[index]
-                                                  .toString()
-                                                  .split("=Rechie=")[0],
-                                              "radius": 10000,
-                                              "hours":
-                                                  hoursController.text.isEmpty
-                                                      ? "1"
-                                                      : hoursController.text,
-                                            }
-                                          ];
-
-                                          for (var marker in markers) {
-                                            mapController.hideMarkerInfoWindow(
-                                                marker.markerId);
-                                          }
-
-                                          DashboardComponent.getNearest(
-                                              ctxt,
-                                              pTypeCode,
-                                              ddRadius.toString(),
-                                              data[0]["lat"].toString(),
-                                              data[0]["long"].toString(),
-                                              vtypeId,
-                                              amenities, (nearestData) {
-                                            if (mounted) {
-                                              setState(() {
-                                                onSearchAdd = true;
-                                                isLoadingPage = true;
-                                                searchController.text =
-                                                    data[0]["place"].toString();
-                                                startLocation = LatLng(
-                                                    double.parse(data[0]["lat"]
-                                                        .toString()),
-                                                    double.parse(data[0]["long"]
-                                                        .toString()));
-                                                ddRadius = data[0]["radius"]
-                                                    .toString();
-                                                hoursController.text =
-                                                    data[0]["hours"].toString();
-                                                isClickedMarker = false;
-                                                //  isAtMinHeight = true;
-                                                minSheetHeight = 0.4;
-
-                                                isOntapSuggestion = false;
-                                                if (nearestData ==
-                                                    "No Internet") {
-                                                  hasInternetBal = false;
-                                                }
-                                              });
-                                            }
-
-                                            displayMapData(
-                                                nearestData,
-                                                data[0]["lat"].toString(),
-                                                data[0]["long"].toString());
-                                          });
-                                        });
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(10.0),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                color: AppColor.primaryColor,
-                                              ),
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(3.0),
-                                                child: Icon(
-                                                  Icons.location_pin,
-                                                  size: 20,
-                                                  color: AppColor.bodyColor,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 10,
-                                            ),
-                                            Expanded(
-                                                child: CustomDisplayText(
-                                              label: suggestions[index]
-                                                  .split("=Rechie=")[0],
-                                              fontWeight: FontWeight.normal,
-                                              color: Colors.black,
-                                              maxLines: 2,
-                                            ))
-                                          ],
-                                        ),
-                                      )),
-                                  const Divider()
-                                ],
-                              );
-                            },
-                          ),
-              ),
-            ),
-          ),
+                      : ListItems(
+                          data: subDataNearest,
+                          userbal: userBal,
+                          minBalance: double.parse(
+                              logData["min_wallet_bal"].toString()))),
         ],
       ),
     );
@@ -872,877 +496,467 @@ class _Dashboard3State extends State<Dashboard3> {
   Widget mapDisplay() {
     return Column(
       children: [
-        Expanded(
-          child: Stack(
-            children: [
-              GoogleMap(
-                mapType: MapType.normal,
-                onMapCreated: _onMapCreated,
-                zoomGesturesEnabled: true,
-                initialCameraPosition: initialCameraPosition!,
-                mapToolbarEnabled: false,
-                zoomControlsEnabled: false,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                compassEnabled: false,
-                buildingsEnabled: false,
-                tiltGesturesEnabled: true,
-                markers: Set<Marker>.of(markers),
-              ),
-              Positioned(
-                bottom: 10,
-                right: 10,
-                child: SpeedDial(
-                    overlayOpacity: 0,
-                    animatedIcon: AnimatedIcons.menu_close,
-                    children: [
-                      SpeedDialChild(
-                        child: Image.asset(
-                          "assets/images/current_location.png",
-                          width: 24,
-                          height: 24,
-                        ),
-                        label: 'Current Location',
-                        onTap: () {
-                          if (isClicked) return;
-                          setState(() {
-                            isClicked = true;
-                            hasInternetBal = true;
-                            isLoadingMap = true;
-                            searchController.clear();
-                            onSearchAdd = false;
-                          });
-                          getUsersData();
-                        },
-                      ),
-                      SpeedDialChild(
-                        child: Image.asset(
-                          "assets/images/parking_areas.png",
-                          width: 24,
-                          height: 24,
-                        ),
-                        label: "Parking Areas",
-                        onTap: () {
-                          Variables.pageTrans(
-                            ViewList(
-                              nearestData: subDataNearest,
-                              balance: userBal,
-                              bottomW: paddingW,
-                              minBalance: double.parse(
-                                  logData["min_wallet_bal"].toString()),
-                              onTap: () {
-                                setState(() {
-                                  onViewPopup = false;
-                                });
-                              },
-                            ),
-                          );
-                        },
-                      ),
-                      SpeedDialChild(
-                        label: 'Share Location',
-                        child: Image.asset(
-                          "assets/images/share-location.png",
-                          width: 24,
-                          height: 24,
-                        ),
-                        onTap: () async {
-                          SharedPreferences prefs =
-                              await SharedPreferences.getInstance();
-                          String? geoShareId = prefs.getString('geo_share_id');
-                          if (geoShareId == null) {
-                            showModalConfirmation(
-                                context,
-                                "luvpark Notice",
-                                "This functionality involves utilizing a background process to continuously obtain and update the current location. "
-                                    "The background process will automatically deactivate once the location sharing has ended.",
-                                "Cancel",
-                                "Continue", () {
-                              Navigator.of(context).pop();
-                            }, () async {
-                              Navigator.of(context).pop();
-                              Variables.customBottomSheet(
-                                  context,
-                                  VerifyUserAcct(
-                                    isInvite: true,
-                                  ));
-                            });
-                          } else {
-                            showAlertDialog(context, "LuvPark",
-                                "You still have active sharing.", () {
-                              Navigator.of(context).pop();
-                            });
-                          }
-                        },
-                      ),
-                    ]),
-              )
-            ],
-          ),
-        ),
-        Visibility(
-          visible: !isVisible,
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            width: Variables.screenSize.width,
-            height: Variables.screenSize.height * 0.50,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(10, 20, 20, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      InkWell(
-                          onTap: () {
-                            setState(() {
-                              isVisible = !isVisible;
-                            });
-                          },
-                          child: Icon(Icons.arrow_back)),
-                      Container(width: 5),
-                      Expanded(
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.grey.shade100,
-                            borderRadius:
-                                BorderRadius.circular(!isShow ? 10 : 16.0),
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: TextField(
-                                  readOnly: false,
-                                  enabled: true,
-                                  autofocus: true,
-                                  controller: searchController,
-                                  decoration: InputDecoration(
-                                    hintText: " Search parking area",
-                                    border: InputBorder.none,
-                                    contentPadding: EdgeInsets.only(
-                                        left: 10, top: 5, right: 5, bottom: 5),
-                                    alignLabelWithHint: true,
-                                    hintStyle: Platform.isAndroid
-                                        ? GoogleFonts.dmSans(
-                                            color: Color(0x993C3C43),
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w400,
-                                            height: 0.08,
-                                            letterSpacing: -0.41,
-                                          )
-                                        : TextStyle(
-                                            color: Color(0x993C3C43),
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.w400,
-                                            height: 0.08,
-                                            letterSpacing: -0.41,
-                                          ),
-                                  ),
-                                  onChanged: (query) async {
-                                    onChangeTrigger(query);
-                                  },
-                                ),
-                              ),
-                              if (searchController.text.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: InkWell(
-                                      onTap: () {
-                                        setState(() {
-                                          searchController.clear();
-                                        });
-                                      },
-                                      child: Icon(Icons.close, size: 20)),
-                                ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  Container(height: 5),
-                  Expanded(
-                    child: FadeInUp(
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height,
-                          color: Colors.white,
-                          child: suggestions.isEmpty
-                              ? Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CustomDisplayText(
-                                        label: "No data",
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColor.textSubColor,
-                                        fontSize: 16),
-                                    Container(
-                                      height: 10,
-                                    ),
-                                  ],
-                                )
-                              : suggestions[0] == "No Internet"
-                                  ? Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Image(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              .20,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2,
-                                          image: const AssetImage(
-                                              "assets/images/no_internet.png"),
-                                        ),
-                                        Container(
-                                          height: 20,
-                                        ),
-                                        CustomDisplayText(
-                                            label:
-                                                "Please check your internet connection.",
-                                            fontWeight: FontWeight.normal,
-                                            color: AppColor.textSubColor,
-                                            fontSize: 12),
-                                        Container(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    )
-                                  : ListView.builder(
-                                      itemCount: suggestions.length,
-                                      itemBuilder: (context, index) {
-                                        return Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            InkWell(
-                                                onTap: () async {
-                                                  if (isOntapSuggestion) return;
-                                                  CustomModal(context: context)
-                                                      .loader();
-                                                  if (mounted) {
-                                                    setState(() {
-                                                      isOntapSuggestion = true;
-                                                    });
-                                                  }
-
-                                                  await DashboardComponent
-                                                      .searchPlaces(
-                                                          context,
-                                                          suggestions[index]
-                                                              .split(
-                                                                  "=Rechie=")[0],
-                                                          (searchedPlace) {
-                                                    Navigator.of(context).pop();
-                                                    setState(() {
-                                                      isVisible = !isVisible;
-                                                    });
-
-                                                    List data = [
-                                                      {
-                                                        "lat": searchedPlace[0]
-                                                            .toString(),
-                                                        "long": searchedPlace[1]
-                                                            .toString(),
-                                                        "place": suggestions[
-                                                                index]
-                                                            .toString()
-                                                            .split(
-                                                                "=Rechie=")[0],
-                                                        "radius": 10000,
-                                                        "hours": hoursController
-                                                                .text.isEmpty
-                                                            ? "1"
-                                                            : hoursController
-                                                                .text,
-                                                      }
-                                                    ];
-
-                                                    for (var marker
-                                                        in markers) {
-                                                      mapController
-                                                          .hideMarkerInfoWindow(
-                                                              marker.markerId);
-                                                    }
-
-                                                    DashboardComponent
-                                                        .getNearest(
-                                                            ctxt,
-                                                            pTypeCode,
-                                                            ddRadius.toString(),
-                                                            data[0]["lat"]
-                                                                .toString(),
-                                                            data[0]["long"]
-                                                                .toString(),
-                                                            vtypeId,
-                                                            amenities,
-                                                            (nearestData) {
-                                                      if (mounted) {
-                                                        setState(() {
-                                                          onSearchAdd = true;
-                                                          isLoadingPage = true;
-                                                          searchController
-                                                              .text = data[0]
-                                                                  ["place"]
-                                                              .toString();
-                                                          startLocation = LatLng(
-                                                              double.parse(data[
-                                                                      0]["lat"]
-                                                                  .toString()),
-                                                              double.parse(data[
-                                                                      0]["long"]
-                                                                  .toString()));
-                                                          ddRadius = data[0]
-                                                                  ["radius"]
-                                                              .toString();
-                                                          hoursController.text =
-                                                              data[0]["hours"]
-                                                                  .toString();
-                                                          isClickedMarker =
-                                                              false;
-                                                          //  isAtMinHeight = true;
-                                                          minSheetHeight = 0.4;
-
-                                                          isOntapSuggestion =
-                                                              false;
-                                                          if (nearestData ==
-                                                              "No Internet") {
-                                                            hasInternetBal =
-                                                                false;
-                                                          }
-                                                        });
-                                                      }
-
-                                                      displayMapData(
-                                                          nearestData,
-                                                          data[0]["lat"]
-                                                              .toString(),
-                                                          data[0]["long"]
-                                                              .toString());
-                                                    });
-                                                  });
-                                                },
-                                                child: Padding(
-                                                  padding: const EdgeInsets.all(
-                                                      10.0),
-                                                  child: Row(
-                                                    children: [
-                                                      Container(
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          shape:
-                                                              BoxShape.circle,
-                                                          color: AppColor
-                                                              .primaryColor,
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(3.0),
-                                                          child: Icon(
-                                                            Icons.location_pin,
-                                                            size: 20,
-                                                            color: AppColor
-                                                                .bodyColor,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Container(
-                                                        width: 10,
-                                                      ),
-                                                      Expanded(
-                                                          child:
-                                                              CustomDisplayText(
-                                                        label: suggestions[
-                                                                index]
-                                                            .split(
-                                                                "=Rechie=")[0],
-                                                        fontWeight:
-                                                            FontWeight.normal,
-                                                        color: Colors.black,
-                                                        maxLines: 2,
-                                                      ))
-                                                    ],
-                                                  ),
-                                                )),
-                                            const Divider()
-                                          ],
-                                        );
-                                      },
-                                    )),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: isVisible,
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            width: Variables.screenSize.width,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  searchBar(false),
-                ],
-              ),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: false,
-          child: AnimatedContainer(
-            duration: Duration(milliseconds: 200),
-            width: Variables.screenSize.width,
-            color: Colors.white,
-            child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [],
-              ),
-            ),
-          ),
+        Expanded(child: _body()),
+        SlidingUpPanel(
+          maxHeight: Variables.screenSize.height * 0.33,
+          minHeight: 50,
+          parallaxEnabled: true,
+          parallaxOffset: .5,
+          controller: panelController,
+          onPanelSlide: (double pos) async {},
+          defaultPanelState: PanelState.OPEN,
+          panelBuilder: (sc) {
+            return _panel(sc);
+          },
         ),
       ],
     );
   }
 
-  //Search Child
-  Widget searchBar(isReadOnly) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(!isShow ? 10 : 16.0),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              readOnly: true,
-              enabled: true,
-              autofocus: false,
-              controller: searchController,
-              decoration: InputDecoration(
-                hintText: "Search parking area",
-                border: InputBorder.none,
-                prefixIcon: const Icon(
-                  Icons.search,
-                  color: Color(0xFF9C9C9C),
-                ),
-                hintStyle: Platform.isAndroid
-                    ? GoogleFonts.dmSans(
-                        color: Color(0x993C3C43),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                        height: 0.08,
-                        letterSpacing: -0.41,
-                      )
-                    : TextStyle(
-                        color: Color(0x993C3C43),
-                        fontSize: 17,
-                        fontWeight: FontWeight.w400,
-                        height: 0.08,
-                        letterSpacing: -0.41,
+  Widget _body() {
+    return Stack(
+      fit: StackFit.loose,
+      children: [
+        GoogleMap(
+          mapType: MapType.normal,
+          onMapCreated: _onMapCreated,
+          zoomGesturesEnabled: true,
+          initialCameraPosition: initialCameraPosition!,
+          mapToolbarEnabled: false,
+          zoomControlsEnabled: false,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          compassEnabled: false,
+          buildingsEnabled: false,
+          tiltGesturesEnabled: true,
+          markers: Set<Marker>.of(markers),
+        ),
+        SafeArea(child: searchBar(false)),
+        Positioned(
+          bottom: 20,
+          right: 20,
+          child: Row(
+            children: [
+              InkWell(
+                onTap: () {
+                  Variables.pageTrans(
+                      ViewList(
+                        nearestData: subDataNearest,
+                        balance: userBal,
+                        minBalance:
+                            double.parse(logData["min_wallet_bal"].toString()),
+                        onTap: () {},
                       ),
+                      context);
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    "assets/images/vh_list.png",
+                    width: 20.013092041015625,
+                    height: 19.998329162597656,
+                  ),
+                ),
               ),
-              onTap: () {
-                setState(() {
-                  isVisible = !isVisible;
-                });
-              },
-            ),
+              Container(width: 10),
+              InkWell(
+                onTap: () async {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  String? geoShareId = prefs.getString('geo_share_id');
+                  if (geoShareId == null) {
+                    showModalConfirmation(
+                        context,
+                        "luvpark Notice",
+                        "This functionality involves utilizing a background process to continuously obtain and update the current location. "
+                            "The background process will automatically deactivate once the location sharing has ended.",
+                        "Cancel",
+                        "Continue", () {
+                      Navigator.of(context).pop();
+                    }, () async {
+                      Navigator.of(context).pop();
+                      Variables.customBottomSheet(
+                          context,
+                          VerifyUserAcct(
+                            isInvite: true,
+                          ));
+                    });
+                  } else {
+                    showAlertDialog(
+                        context, "LuvPark", "You still have active sharing.",
+                        () {
+                      Navigator.of(context).pop();
+                    });
+                  }
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    "assets/images/navigation.png",
+                    width: 20.013092041015625,
+                    height: 19.998329162597656,
+                  ),
+                ),
+              ),
+              Container(width: 10),
+              InkWell(
+                onTap: () {
+                  if (isClicked) return;
+                  setState(() {
+                    isClicked = true;
+                    hasInternetBal = true;
+                    isLoadingMap = true;
+                    searchController.clear();
+                    onSearchAdd = false;
+                  });
+                  getUsersData();
+                },
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: Colors.white,
+                  child: Image.asset(
+                    "assets/images/nearest.png",
+                    width: 20.013092041015625,
+                    height: 19.998329162597656,
+                  ),
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 10.0, right: 10),
-            child: InkWell(
-              onTap: () {
-                showFilter();
-              },
-              child: const Icon(
-                Icons.tune_outlined,
-                color: Color(0xFF9C9C9C),
-              ),
-            ),
-          )
+        )
+      ],
+    );
+  }
+
+  Widget _panel(sc) {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+                width: 71,
+                height: 6,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(56),
+                    color: Color(0xffd9d9d9))),
+          ),
+          Container(height: 20),
+          CustomDisplayText(
+            label: "Hi, ${jsonDecode(myData!)['first_name']}",
+            fontWeight: FontWeight.w500,
+            fontSize: 16,
+            maxFontsize: 1,
+            maxLines: 1,
+          ),
+          CustomDisplayText(
+            label: "Welcome to luvpark",
+            fontWeight: FontWeight.w500,
+            fontSize: 13,
+            maxFontsize: 1,
+            maxLines: 1,
+            color: Colors.grey,
+          ),
+          Container(height: 10),
+          Expanded(child: HorizontalListView(nearestData: subDataNearest)),
         ],
       ),
     );
   }
 
-  Widget _listItem(data, EdgeInsets padding, isShowPopup) {
-    String finalSttime =
-        "${data["start_time"].toString().substring(0, 2)}:${data["start_time"].toString().substring(2)}";
-    String finalEndtime =
-        "${data["end_time"].toString().substring(0, 2)}:${data["end_time"].toString().substring(2)}";
-    bool isOpen =
-        DashboardComponent.checkAvailability(finalSttime, finalEndtime);
-
-    return Container(
-      decoration: const BoxDecoration(
-          color: Color(0xFFffffff),
-          borderRadius: BorderRadius.all(Radius.circular(10))),
-      child: Padding(
-        padding: padding,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: 73,
-                  height: 90,
-                  decoration: ShapeDecoration(
-                      color: const Color(0xFFD9D9D9),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      image: const DecorationImage(
-                          image: AssetImage("assets/images/map_view.png"),
-                          fit: BoxFit.cover)),
+  //Search Child
+  Widget searchBar(isReadOnly) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16.0),
+        ),
+        height: 50,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: 14,
+          ),
+          child: Row(
+            children: [
+              GestureDetector(
+                onTap: () {
+                  showFilter();
+                },
+                child: Icon(
+                  Iconsax.filter,
+                  color: AppColor.primaryColor,
                 ),
-                Container(
-                  width: 10,
-                ),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Flexible(
-                                      child: Container(
-                                        padding: const EdgeInsets.only(
-                                            top: 1,
-                                            left: 8,
-                                            right: 7,
-                                            bottom: 1),
-                                        clipBehavior: Clip.antiAlias,
-                                        decoration: ShapeDecoration(
-                                          color: AppColor.primaryColor,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(41),
-                                          ),
-                                        ),
-                                        child: CustomDisplayText(
-                                          label:
-                                              "${data["vehicle_types_list"]}",
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                    InkWell(
-                                      onTap: () async {
-                                        if (userBal <
-                                            double.parse(
-                                                logData["min_wallet_bal"]
-                                                    .toString())) {
-                                          setState(() {
-                                            isLoadingPage = false;
-                                            isBooked = false;
-                                          });
-                                          showAlertDialog(
-                                              context,
-                                              "Attention",
-                                              "Your balance is below the required minimum for this feature. "
-                                                  "Please ensure a minimum balance of ${double.parse(logData["min_wallet_bal"].toString())} tokens to access the requested service.",
-                                              () {
-                                            Navigator.of(context).pop();
-                                          });
-                                          return;
-                                        }
-                                        CustomModal(context: context).loader();
-
-                                        Position position =
-                                            await Geolocator.getCurrentPosition(
-                                          desiredAccuracy:
-                                              LocationAccuracy.high,
-                                        );
-                                        // ignore: use_build_context_synchronously
-                                        Navigator.pop(context);
-
-                                        String mapUrl = "";
-                                        String dest =
-                                            "${data["pa_latitude"]},${data["pa_longitude"]}";
-                                        String origin =
-                                            "${position.latitude.toString()},${position.longitude.toString()}";
-
-                                        if (Platform.isIOS) {
-                                          mapUrl =
-                                              'https://maps.apple.com/?daddr=$dest';
-                                        } else {
-                                          mapUrl =
-                                              "https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$dest&travelmode=driving&dir_action=navigate";
-                                        }
-                                        if (await canLaunchUrl(
-                                            Uri.parse(mapUrl))) {
-                                          await launchUrl(Uri.parse(mapUrl),
-                                              mode: LaunchMode
-                                                  .externalApplication);
-                                        } else {
-                                          throw 'Something went wrong while opening map. Pleaase report problem';
-                                        }
-                                        // Variables.pageTrans(ParkingRoute(
-                                        //   latLng: LatLng(data["pa_latitude"],
-                                        //       data["pa_longitude"]),
-                                        //   place: data["park_area_name"],
-                                        // ));
-                                      },
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: ShapeDecoration(
-                                          color: const Color(0x160078FF),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              12,
-                                            ),
-                                          ),
-                                        ),
-                                        child: Icon(
-                                          Icons.directions,
-                                          size: 20,
-                                          color: AppColor.primaryColor,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                                Container(
-                                  height: 5,
-                                ),
-                                CustomDisplayText(
-                                  label: "${data["park_area_name"]}",
-                                  color: Colors.black,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  maxLines: 1,
-                                )
-                              ],
-                            ),
+              ),
+              Expanded(
+                child: TextField(
+                  readOnly: true,
+                  controller: searchController,
+                  decoration: InputDecoration(
+                    hintText: "Search parking area",
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 10),
+                    hintStyle: Platform.isAndroid
+                        ? GoogleFonts.dmSans(
+                            color: Color(0x993C3C43),
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                            height: 0.08,
+                            letterSpacing: -0.41,
+                          )
+                        : TextStyle(
+                            color: Color(0x993C3C43),
+                            fontSize: 17,
+                            fontWeight: FontWeight.w400,
+                            height: 0.08,
+                            letterSpacing: -0.41,
                           ),
-                        ],
-                      ),
-                      Container(
-                        height: 5,
-                      ),
-                      data["address"] == null
-                          ? Container()
-                          : CustomDisplayText(
-                              label: "${data["address"]}",
-                              color: const Color(0xFF8D8D8D),
-                              fontSize: 14,
-                              fontWeight: FontWeight.normal,
-                              maxLines: 2,
-                            )
-                    ],
                   ),
-                ),
-              ],
-            ),
-            Container(
-              height: 10,
-            ),
-            Row(
-              children: [
-                SizedBox(
-                  width: 73,
-                  child: Center(
-                    child: CustomDisplayText(
-                      label: isOpen ? "Open Now" : "Closed",
-                      color: isOpen ? Colors.green : Colors.red,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                Container(
-                  width: 10,
-                ),
-                Expanded(
-                  child: InkWell(
-                    onTap: () async {
-                      if (isBooked) return;
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return SearchPlaces(
+                              latlng: LatLng(
+                                startLocation!.latitude,
+                                startLocation!.longitude,
+                              ),
+                              radius: ddRadius.toString(),
+                              pTypeCode: pTypeCode,
+                              vtypeId: vtypeId,
+                              amenities: amenities,
+                              callback: (searchedObj) {
+                                Navigator.of(context).pop();
 
-                      SharedPreferences pref =
-                          await SharedPreferences.getInstance();
+                                if (mounted) {
+                                  setState(() {
+                                    onSearchAdd = true;
+                                    isLoadingPage = true;
+                                    searchController.text =
+                                        searchedObj["searchedData"][0]["place"]
+                                            .toString();
+                                    startLocation = LatLng(
+                                        double.parse(searchedObj["searchedData"]
+                                                [0]["lat"]
+                                            .toString()),
+                                        double.parse(searchedObj["searchedData"]
+                                                [0]["long"]
+                                            .toString()));
+                                    ddRadius = searchedObj["searchedData"][0]
+                                            ["radius"]
+                                        .toString();
 
-                      if (data["vehicle_types_list"].toString().contains("|")) {
-                        pref.setString(
-                            'availableVehicle',
-                            jsonEncode(data["vehicle_types_list"]
-                                .toString()
-                                .toLowerCase()));
-                      } else {
-                        pref.setString(
-                            'availableVehicle',
-                            jsonEncode(data["vehicle_types_list"]
-                                .toString()
-                                .toLowerCase()));
-                      }
-                      setState(() {
-                        isLoadingPage = true;
-                        isBooked = true;
-                      });
-                      if (userBal <
-                          double.parse(logData["min_wallet_bal"].toString())) {
-                        setState(() {
-                          isLoadingPage = false;
-                          isBooked = false;
-                        });
-                        // ignore: use_build_context_synchronously
-                        showAlertDialog(
-                            context,
-                            "Attention",
-                            "Your balance is below the required minimum for this feature. "
-                                "Please ensure a minimum balance of ${double.parse(logData["min_wallet_bal"].toString())} tokens to access the requested service.",
-                            () {
-                          Navigator.of(context).pop();
-                        });
-                        return;
-                      } else {
-                        if (onViewPopup) {
-                          setState(() {
-                            onViewPopup = false;
-                          });
-                        }
-                        // ignore: use_build_context_synchronously
-                        CustomModal(
-                                context: context,
-                                title: "Analyzing distance.\nAlmost there!")
-                            .loader();
-
-                        CustomModal(context: context).loader();
-                        Functions.getUserBalance((dataBalance) async {
-                          if (dataBalance != "null" ||
-                              dataBalance != "No Internet") {
-                            Functions.computeDistanceResorChckIN(
-                                context,
-                                LatLng(
-                                    data["pa_latitude"], data["pa_longitude"]),
-                                (success) {
-                              if (success["success"]) {
-                                var dataItemParam = [];
-                                dataItemParam.add(data);
-
-                                setState(() {
-                                  isBooked = false;
-                                  isLoadingPage = false;
-                                });
-
-                                Navigator.pop(context);
-                                Variables.pageTrans(ReserveForm2(
-                                  queueChkIn: [
-                                    {
-                                      "is_chkIn": success["can_checkIn"],
-                                      "is_queue":
-                                          data["is_allow_reserve"] == "N"
+                                    if (searchedObj == "No Internet") {
+                                      hasInternetBal = false;
                                     }
-                                  ],
-                                  areaData: dataItemParam,
-                                  isCheckIn: success["can_checkIn"],
-                                  pId: data["park_area_id"],
-                                  userBal: dataBalance.toString(),
-                                ));
-                              } else {
-                                setState(() {
-                                  isBooked = false;
-                                  isLoadingPage = false;
-                                });
-                                Navigator.pop(context);
-                              }
-                            });
-                          } else {
-                            setState(() {
-                              isBooked = false;
-                              isLoadingPage = false;
-                            });
-                            Navigator.pop(context);
-                          }
+                                  });
+                                }
+
+                                displayMapData(
+                                    searchedObj["data"],
+                                    double.parse(searchedObj["searchedData"][0]
+                                            ["lat"]
+                                        .toString()),
+                                    double.parse(searchedObj["searchedData"][0]
+                                            ["long"]
+                                        .toString()));
+                              });
                         });
-                      }
-                    },
-                    child: Container(
-                      width: Variables.screenSize.width,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(7),
-                          color: AppColor.primaryColor),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                        child: Center(
-                          child: CustomDisplayText(
-                            label: "Book",
-                            color: Colors.white,
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10),
+                child: InkWell(
+                  onTap: () {},
+                  child: Icon(
+                    Icons.search,
+                    color: AppColor.primaryColor,
                   ),
                 ),
-              ],
-            ),
-
-            // Container(
-            //   height: 10,
-            // ),
-            const Divider(
-              color: Color.fromARGB(255, 223, 223, 223),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
-              ),
-              child: Row(
-                children: [
-                  bottomListDetails(
-                      "time_money", "${data["parking_schedule"]}"),
-                  bottomListDetails2(
-                      "road", "${data["parking_type_name"]} PARKING"),
-                  bottomListDetails3("carpool",
-                      "${data["ps_vacant_count"].toString()} AVAILABLE"),
-                ],
-              ),
-            ),
-
-            const Divider(
-              color: Color.fromARGB(255, 223, 223, 223),
-            ),
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 
-  // bottom List
+  Widget reserveShimmer() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
+      child: Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: const Color(0xFFe6faff),
+        child: Container(
+          height: 100.0,
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+            color: const Color(0xFFffffff),
+            border: Border.all(
+                style: BorderStyle.solid, color: Colors.grey.shade100),
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+//Display Text as marker
+  Widget printScreen(Color color, String index, String rate) {
+    return Container(
+      height: 50,
+      width: 100,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(5.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: Center(
+                  child: Text(
+                    "P",
+                    style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white),
+                    maxLines: 1,
+                  ),
+                ),
+              ),
+            ),
+            Container(width: 5),
+            Text(
+              "₱$rate",
+              style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black),
+              maxLines: 1,
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class HorizontalListView extends StatefulWidget {
+  final List nearestData;
+  const HorizontalListView({
+    super.key,
+    required this.nearestData,
+  });
+
+  @override
+  State<HorizontalListView> createState() => _HorizontalListViewState();
+}
+
+class _HorizontalListViewState extends State<HorizontalListView> {
+  List dataFiltered = [];
+  @override
+  void initState() {
+    dataFiltered = widget.nearestData.take(5).toList();
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      scrollDirection: Axis.horizontal,
+      itemCount: dataFiltered.length, // Set your desired item count
+      itemBuilder: (context, index) {
+        return Padding(
+          padding: const EdgeInsets.only(right: 5),
+          child: InkWell(
+            onTap: () {
+              Variables.pageTrans(
+                  ViewDetails(areaData: [dataFiltered[index]]), context);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+              width: Variables.screenSize.width * .88,
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Colors.grey.shade200,
+                ),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundColor: AppColor.primaryColor,
+                        child: CustomDisplayText(
+                          label: "S",
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Container(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDisplayText(
+                              label: dataFiltered[index]["park_area_name"],
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            Container(height: 2),
+                            CustomDisplayText(
+                              label: dataFiltered[index]["address"],
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.grey,
+                            ),
+                            Container(height: 5),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(height: 33),
+                  Row(
+                    children: [
+                      bottomListDetails("time_money",
+                          dataFiltered[index]["parking_schedule"]),
+                      bottomListDetails2(
+                          "road", dataFiltered[index]["parking_type_name"]),
+                      bottomListDetails3("carpool",
+                          "${dataFiltered[index]["ps_vacant_count"].toString()} AVAILABLE"),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   Widget bottomListDetails(String icon, String label) {
     return Expanded(
         child: Row(
@@ -1794,7 +1008,7 @@ class _Dashboard3State extends State<Dashboard3> {
               fontSize: 12,
               maxLines: 1,
             ),
-          )
+          ),
         ],
       ),
     ));
@@ -1825,27 +1039,5 @@ class _Dashboard3State extends State<Dashboard3> {
         )
       ],
     ));
-  }
-
-  Widget reserveShimmer() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: const Color(0xFFe6faff),
-        child: Container(
-          height: 100.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: const Color(0xFFffffff),
-            border: Border.all(
-                style: BorderStyle.solid, color: Colors.grey.shade100),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(15),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

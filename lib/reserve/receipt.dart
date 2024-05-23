@@ -96,7 +96,6 @@ class _ReserveReceiptState extends State<ReserveReceipt>
     with SingleTickerProviderStateMixin {
   OverlayEntry? overlayEntry;
   late Animation<Color?> animation;
-  late AnimationController controller;
   late GoogleMapController mapController;
   // ignore: prefer_typing_uninitialized_variables
   var startLocation;
@@ -118,33 +117,10 @@ class _ReserveReceiptState extends State<ReserveReceipt>
   void initState() {
     super.initState();
     showRate();
-
-    controller = AnimationController(
-      duration: const Duration(milliseconds: 500),
-      vsync: this,
-    );
-    final CurvedAnimation curve =
-        CurvedAnimation(parent: controller, curve: Curves.linear);
-    animation = ColorTween(
-            begin: const Color.fromARGB(255, 136, 197, 247), end: Colors.blue)
-        .animate(curve);
-    // Keep the animation going forever once it is started
-    animation.addStatusListener((status) {
-      // Reverse the animation after it has been completed
-      if (status == AnimationStatus.completed) {
-        controller.reverse();
-      } else if (status == AnimationStatus.dismissed) {
-        controller.forward();
-      }
-      setState(() {});
-    });
-    // Remove this line if you want to start the animation later
-    controller.forward();
   }
 
   @override
   dispose() {
-    controller.dispose();
     super.dispose();
   }
 
@@ -261,9 +237,11 @@ class _ReserveReceiptState extends State<ReserveReceipt>
       canPop: true,
       appBarheaderText: "Parking Ticket",
       appBarIconClick: () {
-        Variables.pageTrans(const MainLandingScreen(
-          index: 1,
-        ));
+        Variables.pageTrans(
+            const MainLandingScreen(
+              index: 1,
+            ),
+            context);
       },
       child: SingleChildScrollView(
         child: Column(
@@ -332,75 +310,84 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                 : Container(
                     height: 38,
                   ),
-            backup(),
+            ReceiptBody(
+              amount: widget.amount,
+              plateNo: widget.plateNo,
+              startDate: widget.startDate,
+              startTime: widget.startTime,
+              endTime: widget.endTime,
+              hours: widget.hours,
+              parkArea: widget.parkArea,
+              refno: widget.refno,
+            ),
             Container(
               height: 10,
             ),
-            Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomDisplayText(
-                          label: widget.parkArea,
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          maxLines: 1,
-                        ),
-                        Container(height: 5),
-                        CustomDisplayText(
-                          label: widget.address,
-                          color: const Color(0xFF8D8D8D),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    width: 10,
-                  ),
-                  InkWell(
-                    onTap: () async {
-                      var permissionStatus = await Geolocator.checkPermission();
+            // Padding(
+            //   padding:
+            //       const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
+            //   child: Row(
+            //     children: [
+            //       Expanded(
+            //         child: Column(
+            //           crossAxisAlignment: CrossAxisAlignment.start,
+            //           children: [
+            //             CustomDisplayText(
+            //               label: widget.parkArea,
+            //               color: Colors.black,
+            //               fontSize: 16,
+            //               fontWeight: FontWeight.bold,
+            //               maxLines: 1,
+            //             ),
+            //             Container(height: 5),
+            //             CustomDisplayText(
+            //               label: widget.address,
+            //               color: const Color(0xFF8D8D8D),
+            //               fontSize: 14,
+            //               fontWeight: FontWeight.w600,
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //       Container(
+            //         width: 10,
+            //       ),
+            //       InkWell(
+            //         onTap: () async {
+            //           var permissionStatus = await Geolocator.checkPermission();
 
-                      if ((permissionStatus == LocationPermission.whileInUse ||
-                              permissionStatus == LocationPermission.always) &&
-                          await Geolocator.isLocationServiceEnabled()) {
-                        getCurrentLocation();
-                      } else {
-                        locatePosition();
-                      }
-                    },
-                    child: Container(
-                      width: 30,
-                      height: 30,
-                      decoration: ShapeDecoration(
-                        color: const Color(0x160078FF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(
-                            12,
-                          ),
-                        ),
-                      ),
-                      child: Icon(
-                        Icons.directions,
-                        size: 20,
-                        color: AppColor.primaryColor,
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Container(
-              height: 20,
-            ),
+            //           if ((permissionStatus == LocationPermission.whileInUse ||
+            //                   permissionStatus == LocationPermission.always) &&
+            //               await Geolocator.isLocationServiceEnabled()) {
+            //             getCurrentLocation();
+            //           } else {
+            //             locatePosition();
+            //           }
+            //         },
+            //         child: Container(
+            //           width: 30,
+            //           height: 30,
+            //           decoration: ShapeDecoration(
+            //             color: const Color(0x160078FF),
+            //             shape: RoundedRectangleBorder(
+            //               borderRadius: BorderRadius.circular(
+            //                 12,
+            //               ),
+            //             ),
+            //           ),
+            //           child: Icon(
+            //             Icons.directions,
+            //             size: 20,
+            //             color: AppColor.primaryColor,
+            //           ),
+            //         ),
+            //       )
+            //     ],
+            //   ),
+            // ),
+            // Container(
+            //   height: 20,
+            // ),
             if (widget.isReserved && int.parse(widget.tab.toString()) == 0)
               CustomButton(
                   label: "Check-in",
@@ -421,9 +408,11 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                                   showAlertDialog(context, "Success",
                                       "Successfully checked-in.", () {
                                     Navigator.of(context).pop();
-                                    Variables.pageTrans(const MainLandingScreen(
-                                      index: 1,
-                                    ));
+                                    Variables.pageTrans(
+                                        const MainLandingScreen(
+                                          index: 1,
+                                        ),
+                                        context);
                                   });
                                 }
                               });
@@ -642,108 +631,6 @@ class _ReserveReceiptState extends State<ReserveReceipt>
     );
   }
 
-  Widget backup() {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      decoration: ShapeDecoration(
-        color: const Color(0xFFF8F8F8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(18),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                Text(
-                  'Total Token',
-                  style: CustomTextStyle(
-                    color: const Color(0xFF353536),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 0,
-                    letterSpacing: -0.32,
-                  ),
-                ),
-                Expanded(
-                  child: Text(
-                    toCurrencyString(widget.amount),
-                    style: CustomTextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                    textAlign: TextAlign.right,
-                    softWrap: true,
-                  ),
-                )
-              ],
-            ),
-            const Divider(),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Vehicle", widget.plateNo),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Date In-Out", widget.startDate),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Time In-Out",
-                "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.startTime))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.endTime))}"),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Duration",
-                "${widget.hours} ${int.parse(widget.hours) > 1 ? "hrs" : "hr"}"),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Reference", widget.refno.toString()),
-            Container(
-              height: 10,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget confirmDetails(String label, String value) {
-    return Row(
-      children: [
-        Expanded(
-          child: AutoSizeText(
-            label,
-            style: CustomTextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.black54,
-            ),
-            textAlign: TextAlign.left,
-            softWrap: true,
-            maxLines: 1,
-            minFontSize: 1,
-          ),
-        ),
-        Expanded(
-          child: AutoSizeText(
-            value,
-            style: CustomTextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            softWrap: true,
-            maxLines: 1,
-            minFontSize: 1,
-          ),
-        ),
-      ],
-    );
-  }
-
   Widget printScreen() {
     return Container(
       color: AppColor.bodyColor,
@@ -819,7 +706,16 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                 : Container(
                     height: 38,
                   ),
-            backup(),
+            ReceiptBody(
+              amount: widget.amount,
+              plateNo: widget.plateNo,
+              startDate: widget.startDate,
+              startTime: widget.startTime,
+              endTime: widget.endTime,
+              hours: widget.hours,
+              parkArea: widget.parkArea,
+              refno: widget.refno,
+            ),
             Container(
               height: 10,
             ),
@@ -890,5 +786,137 @@ class _ReserveReceiptState extends State<ReserveReceipt>
         });
       });
     });
+  }
+}
+
+class ReceiptBody extends StatelessWidget {
+  final String amount,
+      plateNo,
+      startDate,
+      startTime,
+      endTime,
+      hours,
+      refno,
+      parkArea;
+  const ReceiptBody(
+      {super.key,
+      required this.amount,
+      required this.plateNo,
+      required this.startDate,
+      required this.startTime,
+      required this.endTime,
+      required this.hours,
+      required this.parkArea,
+      required this.refno});
+
+  @override
+  Widget build(BuildContext context) {
+    return backup();
+  }
+
+  Widget backup() {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(
+        color: const Color(0xFFF8F8F8),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  'Total Token',
+                  style: CustomTextStyle(
+                    color: const Color(0xFF353536),
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    height: 0,
+                    letterSpacing: -0.32,
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    toCurrencyString(amount),
+                    style: CustomTextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      height: 0,
+                      letterSpacing: -0.32,
+                    ),
+                    textAlign: TextAlign.right,
+                    softWrap: true,
+                  ),
+                )
+              ],
+            ),
+            const Divider(),
+            Container(
+              height: 10,
+            ),
+            confirmDetails("Vehicle", plateNo),
+            Container(
+              height: 10,
+            ),
+            confirmDetails("Date In-Out", startDate),
+            Container(
+              height: 10,
+            ),
+            confirmDetails("Time In-Out",
+                "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(startTime))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(endTime))}"),
+            Container(
+              height: 10,
+            ),
+            confirmDetails(
+                "Duration", "$hours ${int.parse(hours) > 1 ? "hrs" : "hr"}"),
+            Container(
+              height: 10,
+            ),
+            confirmDetails("Reference", refno.toString()),
+            Container(
+              height: 10,
+            ),
+            confirmDetails("Parking Zone", parkArea.toString()),
+            Container(
+              height: 10,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget confirmDetails(String label, String value) {
+    return Row(
+      children: [
+        Expanded(
+          child: AutoSizeText(
+            label,
+            style: CustomTextStyle(
+              fontWeight: FontWeight.w500,
+              color: Colors.black54,
+            ),
+            textAlign: TextAlign.left,
+            softWrap: true,
+            maxLines: 1,
+            minFontSize: 1,
+          ),
+        ),
+        Expanded(
+          child: AutoSizeText(
+            value,
+            style: CustomTextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            softWrap: true,
+            maxLines: 1,
+            minFontSize: 1,
+          ),
+        ),
+      ],
+    );
   }
 }

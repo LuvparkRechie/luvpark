@@ -32,3 +32,43 @@ class MySeparator extends StatelessWidget {
     );
   }
 }
+
+class DynamicDashLine extends StatelessWidget {
+  final Color color;
+  final double height;
+  final double dashWidth;
+  final double dashGap;
+
+  const DynamicDashLine({
+    required this.color,
+    this.height = 1,
+    this.dashWidth = 3,
+    this.dashGap = 4,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          double contWidht = constraints.maxWidth;
+          final dashCount = (contWidht / (dashWidth + dashGap)).floor();
+          final dashLine = Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: List.generate(dashCount, (_) {
+              return SizedBox(
+                width: dashWidth,
+                height: height,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(color: color),
+                ),
+              );
+            }),
+          );
+
+          return dashLine;
+        },
+      ),
+    );
+  }
+}

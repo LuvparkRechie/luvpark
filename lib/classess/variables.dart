@@ -13,6 +13,7 @@ import 'package:intl/intl.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pointycastle/export.dart' as crypto;
+import 'package:screenshot/screenshot.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/timezone.dart' as tzz;
 
@@ -126,9 +127,9 @@ class Variables {
     return transformedFullName;
   }
 
-  static Future<void> pageTrans(Widget param) {
+  static Future<void> pageTrans(Widget param, BuildContext context) {
     return Navigator.push(
-      ctxt!,
+      context,
       PageRouteBuilder(
         pageBuilder: (context, animation, secondaryAnimation) => param,
         transitionsBuilder: (context, animation, secondaryAnimation, child) {
@@ -477,6 +478,39 @@ class Variables {
     return byteData!.buffer.asUint8List();
   }
 
+  static Future<Uint8List> createOvalImage(
+      BuildContext context, String base64String, int width) async {
+    Uint8List bytes = base64Decode(base64String);
+    double targetWidth = MediaQuery.of(context).devicePixelRatio * width;
+
+    // Decode the image as a ui.Image
+    ui.Image image = await decodeImageFromList(bytes);
+
+    // Create an oval canvas with the target width
+    ui.PictureRecorder recorder = ui.PictureRecorder();
+    Canvas canvas = Canvas(recorder);
+    Rect ovalRect = Rect.fromLTWH(0, 0, targetWidth,
+        targetWidth * 0.5); // Adjust the height ratio to make it oval
+    canvas.clipRRect(RRect.fromRectAndRadius(
+      ovalRect,
+      Radius.circular(targetWidth / 10), // Adjust the radius as needed
+    ));
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      ovalRect,
+      Paint(),
+    );
+
+    // Encode the oval image as PNG
+    ui.Picture picture = recorder.endRecording();
+    ui.Image encodedImage =
+        await picture.toImage(targetWidth.round(), (targetWidth * 0.5).round());
+    ByteData? byteData =
+        await encodedImage.toByteData(format: ui.ImageByteFormat.png);
+    return byteData!.buffer.asUint8List();
+  }
+
   static String formatDateWithMonthAndTime(String dateString) {
     // Parse the string into a DateTime object
     DateTime dateTime = DateTime.parse(dateString);
@@ -490,7 +524,7 @@ class Variables {
     DateTime originalDate = DateTime.parse(dateString);
 
     // Format the date to "thu 23 jan" format
-    DateFormat newDateFormat = DateFormat('E dd MMM');
+    DateFormat newDateFormat = DateFormat('E MMM dd');
     String formattedDate = newDateFormat.format(originalDate);
 
     return formattedDate;
@@ -530,5 +564,35 @@ class Variables {
     DateTime oneHourAgo = currentDateTime.subtract(Duration(hours: 1));
     return targetDateTime.isAfter(oneHourAgo) &&
         targetDateTime.isBefore(currentDateTime);
+  }
+
+  static String formatTimeLeft(Duration duration) {
+    if (duration.inSeconds < 60) {
+      return '${duration.inSeconds} ${duration.inSeconds == 1 ? 'second' : 'seconds'} left';
+    } else {
+      int hours = duration.inHours;
+      int minutes = duration.inMinutes.remainder(60);
+      if (hours == 0) {
+        return '$minutes ${minutes == 1 ? 'minute' : 'minutes'} left';
+      } else {
+        return '$hours ${hours == 1 ? 'hour' : 'hours'} and $minutes ${minutes == 1 ? 'minute' : 'minutes'} left';
+      }
+    }
+  }
+
+  //convert widget to image and display on map or capture as png
+  static Future<Uint8List> capturePng(
+      BuildContext context, Widget printWidget, int size, bool isOval) async {
+    Uint8List bytes = await ScreenshotController().captureFromWidget(
+      printWidget,
+    );
+    Uint8List pngBytes = bytes.buffer.asUint8List();
+    Uint8List ovalIconBytes =
+        await Variables.createOvalImage(context, base64Encode(pngBytes), size);
+
+    Uint8List iconBytes =
+        await Variables.getMarkerIcon(context, base64Encode(pngBytes), size);
+
+    return isOval ? ovalIconBytes : iconBytes;
   }
 }

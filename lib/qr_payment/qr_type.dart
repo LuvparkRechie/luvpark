@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
+import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/qr_payment/my_qr.dart';
 import 'package:luvpark/qr_payment/payment_qr.dart';
 
@@ -50,8 +51,22 @@ class _QRTypeState extends State<QRType> with SingleTickerProviderStateMixin {
             });
           },
           tabs: [
-            Tab(text: 'QR Pay'),
-            Tab(text: 'Receive'),
+            Tab(
+              child: CustomDisplayText(
+                label: 'QR Pay',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            Tab(
+              child: CustomDisplayText(
+                label: 'Receive',
+                fontSize: 16,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ],
         ),
         child: TabBarView(

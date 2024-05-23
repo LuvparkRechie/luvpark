@@ -443,9 +443,11 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                               });
                               Navigator.of(context).pop();
 
-                              Variables.pageTrans(const LoginScreen(
-                                index: 1,
-                              ));
+                              Variables.pageTrans(
+                                  const LoginScreen(
+                                    index: 1,
+                                  ),
+                                  context);
                             });
                           } else {
                             Navigator.pop(context);
@@ -503,10 +505,12 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                         if (returnData["success"] == 'Y') {
                           timer!.cancel();
                           Navigator.of(context).pop();
-                          Variables.pageTrans(SuccessRegistration(
-                            mobile: widget.mobileNo!,
-                            acctStatusTxt: "Registered",
-                          ));
+                          Variables.pageTrans(
+                              SuccessRegistration(
+                                mobile: widget.mobileNo!,
+                                acctStatusTxt: "Registered",
+                              ),
+                              context);
                         } else {
                           Navigator.of(context).pop();
                           showAlertDialog(context, "Error", returnData["msg"],

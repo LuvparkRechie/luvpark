@@ -340,19 +340,21 @@ class _RegistrationPageState extends State<RegistrationPage> {
                                             ),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = () async {
-                                          Variables.pageTrans(WebviewPage(
-                                            hasAgree: true,
-                                            onAgree: () {
-                                              Navigator.pop(context);
-                                              setState(() {
-                                                isAgree = true;
-                                              });
-                                            },
-                                            urlDirect:
-                                                "https://luvpark.ph/terms-of-use/",
-                                            label: "luvpark",
-                                            isBuyToken: false,
-                                          ));
+                                          Variables.pageTrans(
+                                              WebviewPage(
+                                                hasAgree: true,
+                                                onAgree: () {
+                                                  Navigator.pop(context);
+                                                  setState(() {
+                                                    isAgree = true;
+                                                  });
+                                                },
+                                                urlDirect:
+                                                    "https://luvpark.ph/terms-of-use/",
+                                                label: "luvpark",
+                                                isBuyToken: false,
+                                              ),
+                                              context);
                                         },
                                     )
                                   ]),

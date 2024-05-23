@@ -46,7 +46,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
       if (checkPermission == LocationPermission.always ||
           checkPermission == LocationPermission.whileInUse) {
         Navigator.pop(context);
-        Variables.pageTrans(widget.widget);
+        Variables.pageTrans(widget.widget, context);
       }
     }
   }

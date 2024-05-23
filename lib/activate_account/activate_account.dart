@@ -422,7 +422,8 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen>
                                     "Congratulations! Your account has been activated!",
                                     () async {
                                   Navigator.of(context).pop();
-                                  Variables.pageTrans(LoginScreen(index: 1));
+                                  Variables.pageTrans(
+                                      LoginScreen(index: 1), context);
                                 });
                               } else {
                                 Navigator.of(context).pop();

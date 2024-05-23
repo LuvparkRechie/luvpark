@@ -188,8 +188,10 @@ class _TransferOptionsState extends State<TransferOptions> {
 
             Navigator.of(context).pop();
 
-            Variables.pageTrans(SuccessDetails(
-                amount: tokenAmount.text.toString().replaceAll(",", "")));
+            Variables.pageTrans(
+                SuccessDetails(
+                    amount: tokenAmount.text.toString().replaceAll(",", "")),
+                context);
           } else {
             Navigator.of(context).pop();
             showAlertDialog(context, "Error", retvalue["msg"], () {
@@ -230,13 +232,15 @@ class _TransferOptionsState extends State<TransferOptions> {
         } else {
           if (retvalue["success"] == "Y") {
             Navigator.of(context).pop();
-            Variables.pageTrans(OtpTransferScreen(
-              otp: int.parse(retvalue["otp"].toString()),
-              mobileNo: jsonDecode(akongP!)['mobile_no'].toString(),
-              onCallbackTap: () {
-                transferFunc();
-              },
-            ));
+            Variables.pageTrans(
+                OtpTransferScreen(
+                  otp: int.parse(retvalue["otp"].toString()),
+                  mobileNo: jsonDecode(akongP!)['mobile_no'].toString(),
+                  onCallbackTap: () {
+                    transferFunc();
+                  },
+                ),
+                context);
           } else {
             Navigator.of(context).pop();
             showAlertDialog(context, "Error", retvalue["msg"], () {

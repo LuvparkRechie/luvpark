@@ -352,7 +352,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                   )
                                 ],
                               ),
-                              Container(height: 42),
+                              Container(height: 27),
                               LabelText(text: "How long do you want to park?"),
                               Container(height: 10),
                               InkWell(
@@ -753,31 +753,76 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                           left: 20.0,
                                           right: 20,
                                         ),
-                                        child: Column(
+                                        child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            CustomDisplayText(
-                                                label: jsonDecode(myData!)[
-                                                            'first_name'] ==
-                                                        null
-                                                    ? "Not specified"
-                                                    : "${jsonDecode(myData!)['first_name'].toString()} ${jsonDecode(myData!)['middle_name'] == null ? "" : jsonDecode(myData!)['middle_name'].toString()[0]} ${jsonDecode(myData!)['last_name'].toString()}",
-                                                color: Colors.black,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                                letterSpacing: -0.41),
-                                            CustomDisplayText(
-                                              label:
-                                                  "+${jsonDecode(myData!)['mobile_no'].toString()}",
-                                              color: const Color(0xFF131313)
-                                                  .withOpacity(0.5),
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              letterSpacing: -0.41,
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  CustomDisplayText(
+                                                      label: jsonDecode(
+                                                                      myData!)[
+                                                                  'first_name'] ==
+                                                              null
+                                                          ? "Not specified"
+                                                          : "${jsonDecode(myData!)['first_name'].toString()} ${jsonDecode(myData!)['middle_name'] == null ? "" : jsonDecode(myData!)['middle_name'].toString()[0]} ${jsonDecode(myData!)['last_name'].toString()}",
+                                                      color: Colors.black,
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      letterSpacing: -0.41),
+                                                  Container(height: 3),
+                                                  CustomDisplayText(
+                                                    label:
+                                                        "+${jsonDecode(myData!)['mobile_no'].toString()}",
+                                                    color:
+                                                        const Color(0xFF131313)
+                                                            .withOpacity(0.5),
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w500,
+                                                    letterSpacing: -0.41,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
+                                            Expanded(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: CustomDisplayText(
+                                                      label: widget.userBal
+                                                          .toString(),
+                                                      fontSize: 16,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color:
+                                                          AppColor.primaryColor,
+                                                    ),
+                                                  ),
+                                                  Container(height: 3),
+                                                  Align(
+                                                    alignment:
+                                                        Alignment.centerRight,
+                                                    child: CustomDisplayText(
+                                                      label: "Wallet Balance",
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.black,
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
+                                            )
                                           ],
                                         ),
                                       ),
@@ -1421,40 +1466,42 @@ class _ReserveForm2State extends State<ReserveForm2> {
                         Navigator.pop(context);
                         if (cbData == "Success") {
                           Variables.pageTrans(
-                            ReserveReceipt(
-                              spaceName: returnPost['park_space_name'],
-                              parkArea: widget.areaData[0]["park_area_name"],
-                              startDate: params["dt_in"]
-                                          .toString()
-                                          .split(" ")[0] ==
-                                      params["dt_out"].toString().split(" ")[0]
-                                  ? params["dt_in"].toString().split(" ")[0]
-                                  : "${params["dt_in"].toString().split(" ")[0]} - ${params["dt_out"].toString().split(" ")[0]}",
-                              startTime: params["dt_in"]
-                                  .toString()
-                                  .split(" ")[1]
-                                  .toString(),
-                              endTime: params["dt_out"]
-                                  .toString()
-                                  .split(" ")[1]
-                                  .toString(),
-                              plateNo: params["vehicle_plate_no"].toString(),
-                              hours: params["no_hours"].toString(),
-                              amount: returnPay['applied_amt'].toString(),
-                              refno: returnPost["ps_ref_no"].toString(),
-                              lat: double.parse(
-                                  returnPost['pa_latitude'].toString()),
-                              long: double.parse(
-                                  returnPost['pa_longitude'].toString()),
-                              canReserved: false,
-                              isReserved: false,
-                              isVehicleSelected: isVsel,
-                              tab: 0,
-                              paramsCalc: params,
-                              address: "",
-                              isAutoExtend: "",
-                            ),
-                          );
+                              ReserveReceipt(
+                                spaceName: returnPost['park_space_name'],
+                                parkArea: widget.areaData[0]["park_area_name"],
+                                startDate: params["dt_in"]
+                                            .toString()
+                                            .split(" ")[0] ==
+                                        params["dt_out"]
+                                            .toString()
+                                            .split(" ")[0]
+                                    ? params["dt_in"].toString().split(" ")[0]
+                                    : "${params["dt_in"].toString().split(" ")[0]} - ${params["dt_out"].toString().split(" ")[0]}",
+                                startTime: params["dt_in"]
+                                    .toString()
+                                    .split(" ")[1]
+                                    .toString(),
+                                endTime: params["dt_out"]
+                                    .toString()
+                                    .split(" ")[1]
+                                    .toString(),
+                                plateNo: params["vehicle_plate_no"].toString(),
+                                hours: params["no_hours"].toString(),
+                                amount: returnPay['applied_amt'].toString(),
+                                refno: returnPost["ps_ref_no"].toString(),
+                                lat: double.parse(
+                                    returnPost['pa_latitude'].toString()),
+                                long: double.parse(
+                                    returnPost['pa_longitude'].toString()),
+                                canReserved: false,
+                                isReserved: false,
+                                isVehicleSelected: isVsel,
+                                tab: 0,
+                                paramsCalc: params,
+                                address: "",
+                                isAutoExtend: "",
+                              ),
+                              context);
                         }
                       });
                     });
@@ -1464,42 +1511,46 @@ class _ReserveForm2State extends State<ReserveForm2> {
                     Navigator.pop(context);
 
                     Variables.pageTrans(
-                      ReserveReceipt(
-                          spaceName: returnPost['park_space_name'],
-                          parkArea: widget.areaData[0]["park_area_name"],
-                          startDate: params["dt_in"].toString().split(" ")[0] ==
-                                  params["dt_out"].toString().split(" ")[0]
-                              ? Variables.formatDate(
-                                  params["dt_in"].toString().split(" ")[0])
-                              : "${Variables.formatDate(params["dt_in"].toString().split(" ")[0])} - ${Variables.formatDate(params["dt_out"].toString().split(" ")[0])}",
-                          startTime: params["dt_in"]
-                              .toString()
-                              .split(" ")[1]
-                              .toString(),
-                          endTime: params["dt_out"]
-                              .toString()
-                              .split(" ")[1]
-                              .toString(),
-                          plateNo: params["vehicle_plate_no"].toString(),
-                          hours: params["no_hours"].toString(),
-                          amount: returnPay['applied_amt'].toString(),
-                          refno: returnPost["ps_ref_no"].toString(),
-                          lat: double.parse(
-                              returnPost['ps_latitude'].toString()),
-                          long: double.parse(
-                              returnPost['ps_longitude'].toString()),
-                          canReserved: false,
-                          isReserved: false,
-                          isVehicleSelected: isVsel,
-                          tab: 2,
-                          isShowRate: true,
-                          reservationId: int.parse(returnPay["reservation_id"]),
-                          address: "",
-                          isAutoExtend: "",
-                          paramsCalc: params),
+                        ReserveReceipt(
+                            spaceName: returnPost['park_space_name'],
+                            parkArea: widget.areaData[0]["park_area_name"],
+                            startDate: params["dt_in"]
+                                        .toString()
+                                        .split(" ")[0] ==
+                                    params["dt_out"].toString().split(" ")[0]
+                                ? Variables.formatDate(
+                                    params["dt_in"].toString().split(" ")[0])
+                                : "${Variables.formatDate(params["dt_in"].toString().split(" ")[0])} - ${Variables.formatDate(params["dt_out"].toString().split(" ")[0])}",
+                            startTime: params["dt_in"]
+                                .toString()
+                                .split(" ")[1]
+                                .toString(),
+                            endTime: params["dt_out"]
+                                .toString()
+                                .split(" ")[1]
+                                .toString(),
+                            plateNo: params["vehicle_plate_no"].toString(),
+                            hours: params["no_hours"].toString(),
+                            amount: returnPay['applied_amt'].toString(),
+                            refno: returnPost["ps_ref_no"].toString(),
+                            lat: double.parse(
+                                returnPost['ps_latitude'].toString()),
+                            long: double.parse(
+                                returnPost['ps_longitude'].toString()),
+                            canReserved: false,
+                            isReserved: false,
+                            isVehicleSelected: isVsel,
+                            tab: 2,
+                            isShowRate: true,
+                            reservationId:
+                                int.parse(returnPay["reservation_id"]),
+                            address: "",
+                            isAutoExtend: "",
+                            paramsCalc: params),
+                        context
 
-                      ///
-                    );
+                        ///
+                        );
                     return;
                   }
                 } else {
@@ -1556,7 +1607,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                     showAlertDialog(context, "Success", queParamData["msg"],
                         () {
                       Navigator.of(context).pop();
-                      Variables.pageTrans(MainLandingScreen());
+                      Variables.pageTrans(MainLandingScreen(), context);
                     });
                   } else {
                     showAlertDialog(context, "LuvPark", queParamData["msg"],

@@ -61,7 +61,7 @@ class _PaMessageState extends State<PaMessage> {
     return CustomParent1Widget(
       appBarIconClick: () {
         Navigator.pop(context);
-        Variables.pageTrans(MainLandingScreen());
+        Variables.pageTrans(MainLandingScreen(), context);
       },
       canPop: true,
       appBarheaderText: "Messages",

@@ -269,7 +269,8 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                       timers!.cancel();
                                     });
                                     Navigator.of(context).pop();
-                                    Variables.pageTrans(MainLandingScreen());
+                                    Variables.pageTrans(
+                                        MainLandingScreen(), context);
                                   },
                                 );
                               },

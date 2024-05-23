@@ -227,14 +227,20 @@ class DashboardComponent {
             ]);
           } else {
             callback([]);
+            showAlertDialog(context, "Error", "No data found", () {
+              Navigator.pop(context);
+            });
           }
         } catch (e) {
           callback([]);
+          showAlertDialog(context, "Error", "No data found", () {
+            Navigator.pop(context);
+          });
         }
       } else {
+        callback([]);
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again", () {
-          callback("No Internet");
           Navigator.pop(context);
         });
       }

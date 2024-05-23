@@ -178,6 +178,9 @@ class _BookingNoticeState extends State<BookingNotice> {
                                                 FocusScope.of(context)
                                                     .requestFocus(FocusNode());
                                                 Navigator.pop(context);
+                                                if (Navigator.canPop(context)) {
+                                                  Navigator.pop(context);
+                                                }
                                               }),
                                         ),
                                       ),

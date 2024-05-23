@@ -131,7 +131,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                     'Complete your profile to unlock all features!',
                                     () {
                                       Variables.pageTrans(
-                                          const UpdateProfile());
+                                          const UpdateProfile(), context);
                                     },
                                   ),
                                 ),
@@ -167,7 +167,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                   padding: const EdgeInsets.only(bottom: 20.0),
                                   child: InkWell(
                                     onTap: () {
-                                      Variables.pageTrans(ReferralCode());
+                                      Variables.pageTrans(
+                                          ReferralCode(), context);
                                     },
                                     child: Container(
                                       clipBehavior: Clip.antiAlias,
@@ -225,13 +226,11 @@ class _SettingsPageState extends State<SettingsPage> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  Variables.pageTrans(
-                                    ProfileDetails(
-                                      callBack: () {
-                                        getAccountStatus();
-                                      },
-                                    ),
-                                  );
+                                  Variables.pageTrans(ProfileDetails(
+                                    callBack: () {
+                                      getAccountStatus();
+                                    },
+                                  ), context);
                                 },
                                 child: Container(
                                   clipBehavior: Clip.antiAlias,
@@ -327,63 +326,6 @@ class _SettingsPageState extends State<SettingsPage> {
                               Container(
                                 height: 10,
                               ),
-                              // if (fullName == "Not specified")
-                              //   Container(
-                              //     width: MediaQuery.of(context).size.width,
-                              //     decoration: BoxDecoration(
-                              //       borderRadius: BorderRadius.circular(10),
-                              //       color: AppColor.primaryColor,
-                              //       boxShadow: [
-                              //         BoxShadow(
-                              //           color: Colors.black.withOpacity(0.1),
-                              //           spreadRadius: 0,
-                              //           blurRadius: 1,
-                              //           offset: Offset(0, 2),
-                              //         ),
-                              //       ],
-                              //     ),
-                              //     child: Padding(
-                              //       padding: const EdgeInsets.symmetric(
-                              //         horizontal: 20,
-                              //         vertical: 20,
-                              //       ),
-                              //       child: Stack(
-                              //         children: [
-                              //           Column(
-                              //             crossAxisAlignment:
-                              //                 CrossAxisAlignment.start,
-                              //             children: [
-                              //               const CustomDisplayText(
-                              //                 label: "Starter Plan",
-                              //                 fontSize: 20,
-                              //                 color: Colors.white,
-                              //               ),
-                              //               Container(
-                              //                 height: 10,
-                              //               ),
-                              //               const CustomDisplayText(
-                              //                 label: "Complete your profile",
-                              //                 fontSize: 16,
-                              //                 color: Colors.white70,
-                              //               ),
-                              //               Container(
-                              //                 height: 5,
-                              //               ),
-                              //               const CustomDisplayText(
-                              //                 label: "to unlock all features!",
-                              //                 fontSize: 16,
-                              //                 color: Colors.white70,
-                              //               ),
-                              //             ],
-                              //           ),
-                              //         ],
-                              //       ),
-                              //     ),
-                              //   ),
-                              // if (fullName == "Not specified")
-                              //   Container(
-                              //     height: 10,
-                              //   ),
                               Container(
                                 height: 102,
                                 clipBehavior: Clip.antiAlias,
@@ -424,8 +366,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                                       'assets/images/parking_history.png'),
                                                 ),
                                                 onTap: () async {
+                                                  print("nyawaaa");
                                                   Variables.pageTrans(
-                                                      ParkingHistory());
+                                                      ParkingHistory(),
+                                                      context);
                                                 },
                                               ),
                                               Container(height: 5),
@@ -459,7 +403,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 ),
                                                 onTap: () {
                                                   Variables.pageTrans(
-                                                      const MyVehicles());
+                                                      const MyVehicles(),
+                                                      context);
                                                 },
                                               ),
                                               Container(height: 5),
@@ -536,7 +481,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                           ForegroundNotif
                                                               .onStop();
                                                           Variables.pageTrans(
-                                                              const MapSharingScreen());
+                                                              const MapSharingScreen(),
+                                                              context);
                                                         } else {
                                                           prefs.remove(
                                                               "geo_share_id");
@@ -624,7 +570,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                         'Make changes to your account',
                                         () {
                                           Variables.pageTrans(
-                                              const ChangePasswordScreen());
+                                              const ChangePasswordScreen(),
+                                              context);
                                         },
                                       ),
                                       Divider(
@@ -696,7 +643,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                       .pop(context);
                                                   Variables.pageTrans(
                                                       const LoginScreen(
-                                                          index: 1));
+                                                          index: 1),
+                                                      context);
                                                 });
                                               });
                                             },
@@ -751,37 +699,41 @@ class _SettingsPageState extends State<SettingsPage> {
                                         "Frequently Ask Question",
                                         () async {
                                           Variables.pageTrans(
-                                              const FaqsLuvPark());
+                                              const FaqsLuvPark(), context);
                                         },
                                       ),
                                       Divider(
                                         color: Colors.grey,
                                       ),
                                       listColumn("Terms of Use", () async {
-                                        Variables.pageTrans(const WebviewPage(
-                                          urlDirect:
-                                              "https://luvpark.ph/terms-of-use/",
-                                          label: "Terms of use",
-                                          isBuyToken: false,
-                                        ));
+                                        Variables.pageTrans(
+                                            const WebviewPage(
+                                              urlDirect:
+                                                  "https://luvpark.ph/terms-of-use/",
+                                              label: "Terms of use",
+                                              isBuyToken: false,
+                                            ),
+                                            context);
                                       }),
                                       Divider(
                                         color: Colors.grey,
                                       ),
                                       listColumn("Privacy Policy", () async {
-                                        Variables.pageTrans(const WebviewPage(
-                                          urlDirect:
-                                              "https://luvpark.ph/privacy-policy/",
-                                          label: "Privacy Policy",
-                                          isBuyToken: false,
-                                        ));
+                                        Variables.pageTrans(
+                                            const WebviewPage(
+                                              urlDirect:
+                                                  "https://luvpark.ph/privacy-policy/",
+                                              label: "Privacy Policy",
+                                              isBuyToken: false,
+                                            ),
+                                            context);
                                       }),
                                       Divider(
                                         color: Colors.grey,
                                       ),
                                       listColumn("About LuvPark", () {
                                         Variables.pageTrans(
-                                            const AboutLuvPark());
+                                            const AboutLuvPark(), context);
                                       }),
                                     ],
                                   ),
@@ -790,12 +742,14 @@ class _SettingsPageState extends State<SettingsPage> {
                               Container(
                                 height: 20,
                               ),
-                              CustomDisplayText(
-                                label: 'V${Variables.version}',
-                                color: const Color(0xFF9C9C9C),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                height: 0,
+                              Center(
+                                child: CustomDisplayText(
+                                  label: 'V${Variables.version}',
+                                  color: const Color(0xFF9C9C9C),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                ),
                               ),
                               Container(
                                 height: 20,

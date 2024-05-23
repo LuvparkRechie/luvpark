@@ -575,6 +575,7 @@ class _ValidateNumberPageState extends State<ValidateNumberPage> {
                                       }
                                     ]
                                   };
+                                  print("plainText $plainText");
 
                                   Navigator.of(context).pop();
 
@@ -616,6 +617,7 @@ class _ValidateNumberPageState extends State<ValidateNumberPage> {
     setState(() {
       hash = Uri.encodeComponent(output);
     });
+    print("hash $hash");
     // ignore: use_build_context_synchronously
 
     // ignore: use_build_context_synchronously

@@ -164,13 +164,15 @@ class _RegistrationFormState extends State<UpdateProfile> {
         } else {
           if (retvalue["success"] == "Y") {
             Navigator.of(context).pop();
-            Variables.pageTrans(OtpTransferScreen(
-              otp: int.parse(retvalue["otp"].toString()),
-              mobileNo: paramInfo["mobile_no"].toString(),
-              onCallbackTap: () {
-                submitInfo(paramInfo);
-              },
-            ));
+            Variables.pageTrans(
+                OtpTransferScreen(
+                  otp: int.parse(retvalue["otp"].toString()),
+                  mobileNo: paramInfo["mobile_no"].toString(),
+                  onCallbackTap: () {
+                    submitInfo(paramInfo);
+                  },
+                ),
+                context);
           } else {
             Navigator.of(context).pop();
             showAlertDialog(context, "Error", retvalue["msg"], () {

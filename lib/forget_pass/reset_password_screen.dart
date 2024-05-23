@@ -313,15 +313,17 @@ class _ResetPasswordState extends State<ResetPassword> {
                                   () {
                                 Navigator.of(context).pop();
 
-                                Variables.pageTrans(OTPScreen(
-                                  otp: int.parse(returnVal["otp"]),
-                                  mobileNo: widget.mobileNo,
-                                  reqType: "RP",
-                                  seqId: widget.seqId,
-                                  seca: widget.seca,
-                                  seqNo: widget.seqNo,
-                                  newPass: newPass.text,
-                                ));
+                                Variables.pageTrans(
+                                    OTPScreen(
+                                      otp: int.parse(returnVal["otp"]),
+                                      mobileNo: widget.mobileNo,
+                                      reqType: "RP",
+                                      seqId: widget.seqId,
+                                      seca: widget.seca,
+                                      seqNo: widget.seqNo,
+                                      newPass: newPass.text,
+                                    ),
+                                    context);
                               });
                             } else {
                               Navigator.of(context).pop();

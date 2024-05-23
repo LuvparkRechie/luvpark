@@ -235,7 +235,7 @@ class _SuccessDetailsState extends State<SuccessDetails> {
                             Navigator.pop(context);
                             Navigator.pop(context);
                           }
-                          Variables.pageTrans(const TransferOptions());
+                          Variables.pageTrans(const TransferOptions(), context);
                         },
                       ),
                       Container(
@@ -247,9 +247,11 @@ class _SuccessDetailsState extends State<SuccessDetails> {
                         label: "Done",
                         onTap: () {
                           Navigator.pop(context);
-                          Variables.pageTrans(const MainLandingScreen(
-                            index: 2,
-                          ));
+                          Variables.pageTrans(
+                              const MainLandingScreen(
+                                index: 2,
+                              ),
+                              context);
                         },
                       ),
                     ],

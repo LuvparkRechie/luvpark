@@ -1,24 +1,24 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
+import 'package:luvpark/custom_widget/broken_line.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
+import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
+import 'package:luvpark/reserve/parking_details.dart';
 import 'package:luvpark/reserve/receipt.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class ParkingActivity extends StatefulWidget {
   final int tabIndex;
@@ -210,68 +210,55 @@ class _ParkingActivityState extends State<ParkingActivity>
             .copyWith(textScaler: const TextScaler.linear(1)),
         child: PopScope(
           canPop: false,
-          child: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              toolbarHeight: 0,
-              automaticallyImplyLeading: false,
-              backgroundColor: AppColor.primaryColor,
-              systemOverlayStyle: SystemUiOverlayStyle(
-                statusBarColor: AppColor.primaryColor,
-                // statusBarBrightness: Brightness.dark,
-                // statusBarIconBrightness: Brightness.dark,
-                statusBarBrightness:
-                    Platform.isIOS ? Brightness.light : Brightness.light,
-                statusBarIconBrightness:
-                    Platform.isIOS ? Brightness.light : Brightness.light,
-              ),
-              bottom: TabBar(
-                controller: _tabController,
-                indicatorColor: AppColor.mainColor,
-                indicatorSize: TabBarIndicatorSize.tab,
-                indicatorWeight: 3,
-                onTap: (value) {
-                  if (currentTab == value) return;
+          child: CustomParent1Widget(
+            appBarheaderText: "",
+            appBarTabBar: TabBar(
+              controller: _tabController,
+              indicatorColor: AppColor.primaryColor,
+              indicatorSize: TabBarIndicatorSize.tab,
+              indicatorWeight: 3,
+              onTap: (value) {
+                if (currentTab == value) return;
+                setState(() {
+                  currentTab = value;
+                });
+                if (currentTab == 0) {
                   setState(() {
-                    currentTab = value;
+                    paramStatus = "C";
                   });
-                  if (currentTab == 0) {
-                    setState(() {
-                      paramStatus = "C";
-                    });
-                  } else {
-                    setState(() {
-                      paramStatus = "U";
-                    });
-                  }
-                  onRefresh();
-                },
-                tabs: [
-                  Tab(
+                } else {
+                  setState(() {
+                    paramStatus = "U";
+                  });
+                }
+                onRefresh();
+              },
+              tabs: [
+                Tab(
+                  child: CustomDisplayText(
+                      label: 'Reservations',
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                      fontSize: 16),
+                ),
+                Tab(
                     child: CustomDisplayText(
-                        label: 'Reservations',
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        fontSize: currentTab == 0 ? 16 : 14),
-                  ),
-                  Tab(
-                      child: CustomDisplayText(
-                          label: 'Active Parking',
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                          fontSize: currentTab == 1 ? 16 : 14)),
-                ],
-              ),
+                        label: 'Active Parking',
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                        fontSize: 16)),
+              ],
             ),
-            body: SafeArea(
+            child: SafeArea(
               child: Container(
-                color: Colors.grey.shade100,
+                //  color: Color.fromARGB(255, 249, 248, 248),
                 height: MediaQuery.of(context).size.height,
                 width: MediaQuery.of(context).size.width,
                 child: !hasInternetResData
                     ? NoInternetConnected(onTap: () {
                         setState(() {
                           loadingResData = true;
+                          hasInternetResData = true;
                         });
                         Future.delayed(const Duration(seconds: 1), () {
                           getReservation();
@@ -296,6 +283,7 @@ class _ParkingActivityState extends State<ParkingActivity>
                                           setState(() {
                                             loadingResData = true;
                                           });
+                                          print(" nataya ");
                                           Future.delayed(
                                               const Duration(seconds: 1), () {
                                             getReservation();
@@ -305,410 +293,523 @@ class _ParkingActivityState extends State<ParkingActivity>
                                     : RefreshIndicator(
                                         onRefresh: onRefresh,
                                         child: ListView.separated(
-                                            padding: const EdgeInsets.all(15),
+                                            padding: const EdgeInsets.all(10),
                                             itemBuilder: (context, index) {
                                               return Container(
-                                                height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.22,
-                                                child: Stack(children: [
-                                                  Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Container(
-                                                          color: AppColor
-                                                              .primaryColor,
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(20.0),
-                                                            child: Center(
-                                                                child:
-                                                                    RotatedBox(
-                                                              quarterTurns: 3,
-                                                              child:
-                                                                  CustomDisplayText(
-                                                                label:
-                                                                    '${reservedData[index]["notes"]}',
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                maxLines: 2,
-                                                                alignment:
-                                                                    TextAlign
-                                                                        .center,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            )),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Expanded(
-                                                        flex: 4,
-                                                        child: Container(
-                                                          color: AppColor
-                                                              .bodyColor,
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(10),
-                                                          child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
+                                                width:
+                                                    Variables.screenSize.width,
+                                                decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color:
+                                                          Colors.grey.shade200,
+                                                      width: 2,
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7)),
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              20.0),
+                                                      child: Column(
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Row(
                                                                   children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          CustomDisplayText(
-                                                                        label: reservedData[index]
-                                                                            [
-                                                                            "reservation_ref_no"],
-                                                                        fontSize:
-                                                                            16,
-                                                                        color: Colors
-                                                                            .black,
-                                                                        fontWeight:
-                                                                            FontWeight.bold,
-                                                                        maxLines:
-                                                                            1,
-                                                                        overflow:
-                                                                            TextOverflow.ellipsis,
-                                                                      ),
+                                                                    Icon(
+                                                                      CupertinoIcons
+                                                                          .calendar,
+                                                                      color: AppColor
+                                                                          .mainColor,
                                                                     ),
                                                                     Container(
                                                                         width:
                                                                             10),
-                                                                    Container(
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: reservedData[index]["status"] ==
-                                                                                "U"
-                                                                            ? const Color.fromARGB(
-                                                                                255,
-                                                                                216,
-                                                                                248,
-                                                                                216)
-                                                                            : const Color.fromARGB(
-                                                                                255,
-                                                                                243,
-                                                                                228,
-                                                                                206),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(7),
-                                                                      ),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                5,
-                                                                            vertical:
-                                                                                3),
+                                                                    Flexible(
                                                                         child:
-                                                                            Center(
-                                                                          child:
-                                                                              CustomDisplayText(
-                                                                            label: reservedData[index]["status"] == "U"
-                                                                                ? "ACTIVE PARKING"
-                                                                                : "CONFIRMED",
-                                                                            fontSize:
-                                                                                12,
-                                                                            color: reservedData[index]["status"] == "U"
-                                                                                ? Colors.green
-                                                                                : Colors.orange,
-                                                                            fontWeight:
-                                                                                FontWeight.w600,
-                                                                            maxLines:
-                                                                                1,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Container(
-                                                                    height: 10),
-                                                                Row(
-                                                                  children: [
-                                                                    Expanded(
-                                                                        child:
-                                                                            Row(
-                                                                      children: [
-                                                                        Icon(
-                                                                          CupertinoIcons
-                                                                              .calendar,
-                                                                          color: Colors
-                                                                              .grey
-                                                                              .shade400,
-                                                                          size:
-                                                                              20,
-                                                                        ),
-                                                                        Container(
-                                                                          width:
-                                                                              10,
-                                                                        ),
-                                                                        Expanded(
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              CustomDisplayText(
-                                                                                label: Variables.convertDateFormat(reservedData[index]["dt_in"]),
-                                                                                fontSize: 14,
-                                                                                color: Colors.black,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                maxLines: 1,
-                                                                              ),
-                                                                              CustomDisplayText(
-                                                                                label: Variables.convertTime(reservedData[index]["dt_in"].toString().split(" ")[1]),
-                                                                                fontSize: 12,
-                                                                                color: const Color.fromARGB(255, 137, 140, 148),
-                                                                                fontWeight: FontWeight.w500,
-                                                                                maxLines: 1,
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        ),
-                                                                      ],
-                                                                    )),
-                                                                    Container(
-                                                                        width:
-                                                                            5),
-                                                                    Icon(
-                                                                        Icons
-                                                                            .arrow_right_alt_outlined,
-                                                                        size:
-                                                                            20),
-                                                                    Container(
-                                                                        width:
-                                                                            5),
-                                                                    Expanded(
-                                                                        child:
-                                                                            Row(
-                                                                      children: [
-                                                                        Expanded(
-                                                                          child:
-                                                                              Column(
-                                                                            crossAxisAlignment:
-                                                                                CrossAxisAlignment.start,
-                                                                            children: [
-                                                                              CustomDisplayText(
-                                                                                label: Variables.convertDateFormat(reservedData[index]["dt_out"]),
-                                                                                fontSize: 14,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                maxLines: 1,
-                                                                                color: Colors.black,
-                                                                              ),
-                                                                              CustomDisplayText(
-                                                                                label: Variables.convertTime(reservedData[index]["dt_out"].toString().split(" ")[1]),
-                                                                                fontSize: 12,
-                                                                                fontWeight: FontWeight.bold,
-                                                                                maxLines: 1,
-                                                                                color: const Color.fromARGB(255, 137, 140, 148),
-                                                                              ),
-                                                                            ],
-                                                                          ),
-                                                                        )
-                                                                      ],
+                                                                            CustomDisplayText(
+                                                                      label: Variables.convertDateFormat(
+                                                                          reservedData[index]
+                                                                              [
+                                                                              "dt_in"]),
+                                                                      fontSize:
+                                                                          14,
+                                                                      maxLines:
+                                                                          1,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
                                                                     ))
                                                                   ],
                                                                 ),
-                                                                Row(
-                                                                  children: [
-                                                                    if (reservedData[index]
-                                                                            [
-                                                                            "status"] ==
-                                                                        "U")
-                                                                      Expanded(
-                                                                        child: ElevatedButton.icon(
-                                                                            onPressed: () async {
-                                                                              String mapUrl = "";
-                                                                              String dest = "${reservedData[index]["pa_latitude"]},${reservedData[index]["pa_longitude"]}";
-                                                                              if (Platform.isIOS) {
-                                                                                mapUrl = 'https://maps.apple.com/?daddr=$dest';
-                                                                              } else {
-                                                                                mapUrl = 'https://www.google.com/maps/search/?api=1&query=${reservedData[index]["pa_latitude"]},${reservedData[index]["pa_longitude"]}';
-                                                                              }
-                                                                              if (await canLaunchUrl(Uri.parse(mapUrl))) {
-                                                                                await launchUrl(Uri.parse(mapUrl), mode: LaunchMode.externalApplication);
-                                                                              } else {
-                                                                                throw 'Something went wrong while opening map. Pleaase report problem';
-                                                                              }
-                                                                            },
-                                                                            style: ElevatedButton.styleFrom(
-                                                                                backgroundColor: Colors.white,
-                                                                                shape: const StadiumBorder(
-                                                                                  side: BorderSide(width: 1, color: Colors.blue),
-                                                                                )),
-                                                                            icon: Icon(
-                                                                              Icons.location_pin,
-                                                                              color: AppColor.primaryColor,
-                                                                            ),
-                                                                            label: CustomDisplayText(
-                                                                              label: 'Find Vehicle'.toUpperCase(),
-                                                                              fontSize: 12,
-                                                                              color: AppColor.primaryColor,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              maxLines: 2,
-                                                                              alignment: TextAlign.center,
-                                                                            )),
-                                                                      ),
-                                                                    Container(
-                                                                        width:
-                                                                            10),
-                                                                    Expanded(
-                                                                      child:
-                                                                          IgnorePointer(
-                                                                        ignoring:
-                                                                            false,
-                                                                        child: ElevatedButton.icon(
-                                                                            onPressed: () {
-                                                                              CustomModal(context: context).loader();
-                                                                              var param = "${ApiKeys.gApiSubFolderGetDirection}?ref_no=${reservedData[index]["reservation_ref_no"]}";
-
-                                                                              HttpRequest(api: param).get().then((returnData) async {
-                                                                                if (returnData == "No Internet") {
-                                                                                  Navigator.of(context).pop();
-                                                                                  showAlertDialog(context, "Error", "Please check your internet connection and try again.", () {
-                                                                                    Navigator.of(context).pop();
-                                                                                  });
-                                                                                }
-                                                                                if (returnData == null) {
-                                                                                  Navigator.of(context).pop();
-                                                                                  showAlertDialog(context, "Error", "Error while connecting to server, Please contact support.", () {
-                                                                                    Navigator.of(context).pop();
-                                                                                  });
-
-                                                                                  return;
-                                                                                } else {
-                                                                                  if (returnData["items"].length == 0) {
-                                                                                    Navigator.of(context).pop();
-                                                                                    showAlertDialog(context, "Error", "No data found, Please change location.", () {
-                                                                                      Navigator.of(context).pop();
-                                                                                    });
-                                                                                  } else {
-                                                                                    Navigator.pop(context);
-                                                                                    var dateInRelated = "";
-                                                                                    var dateOutRelated = "";
-                                                                                    dateInRelated = reservedData[index]["dt_in"];
-                                                                                    dateOutRelated = reservedData[index]["dt_out"];
-                                                                                    Map<String, dynamic> parameters = {
-                                                                                      "client_id": jsonDecode(akongP!)['user_id'].toString(),
-                                                                                      "park_area_id": returnData["items"][0]["park_area_id"],
-                                                                                      "vehicle_type_id": returnData["items"][0]["vehicle_type_id"],
-                                                                                      "vehicle_plate_no": returnData["items"][0]["vehicle_plate_no"].toString(),
-                                                                                      "dt_in": dateInRelated,
-                                                                                      "dt_out": dateOutRelated,
-                                                                                      "no_hours": int.parse(reservedData[index]["no_hours"].toString()),
-                                                                                      "tran_type": "E",
-                                                                                    };
-
-                                                                                    Variables.pageTrans(ReserveReceipt(
-                                                                                      isVehicleSelected: false,
-                                                                                      spaceName: returnData["items"][0]["park_space_name"].toString(),
-                                                                                      parkArea: returnData["items"][0]["park_area_name"].toString(),
-                                                                                      startDate: dateInRelated.toString().split(" ")[0].toString() == dateOutRelated.toString().split(" ")[0].toString() ? Variables.formatDate(dateInRelated.toString().split(" ")[0]) : "${Variables.formatDate(dateInRelated.toString().split(" ")[0])} - ${Variables.formatDate(dateOutRelated.toString().split(" ")[0])}",
-                                                                                      startTime: dateInRelated.toString().split(" ")[1].toString(),
-                                                                                      endTime: dateOutRelated.toString().split(" ")[1].toString(),
-                                                                                      plateNo: returnData["items"][0]["vehicle_plate_no"].toString(),
-                                                                                      hours: reservedData[index]["no_hours"].toString(),
-                                                                                      amount: reservedData[index]["amount"].toString(),
-                                                                                      refno: reservedData[index]["reservation_ref_no"].toString().toString(),
-                                                                                      lat: double.parse(returnData["items"][0]["park_space_latitude"].toString()),
-                                                                                      long: double.parse(returnData["items"][0]["park_space_longitude"].toString()),
-                                                                                      dtOut: dateOutRelated,
-                                                                                      dateIn: dateInRelated,
-                                                                                      isReserved: true,
-                                                                                      tab: currentTab,
-                                                                                      canReserved: true,
-                                                                                      paramsCalc: parameters,
-                                                                                      address: returnData["items"][0]["address"],
-                                                                                      ticketId: returnData["items"][0]["ticket_id"],
-                                                                                      isAutoExtend: reservedData[index]["is_auto_extend"].toString(),
-                                                                                      reservationId: reservedData[index]["reservation_id"],
-                                                                                      onTap: () {
-                                                                                        onRefresh();
-                                                                                      },
-                                                                                    ));
-                                                                                  }
-                                                                                }
-                                                                              });
-                                                                            },
-                                                                            style: ElevatedButton.styleFrom(
-                                                                                backgroundColor: Colors.white,
-                                                                                shape: const StadiumBorder(
-                                                                                  side: BorderSide(width: 1, color: Colors.blue),
-                                                                                )),
-                                                                            icon: Icon(Icons.check_circle, color: AppColor.primaryColor),
-                                                                            label: CustomDisplayText(
-                                                                              label: 'View Details'.toUpperCase(),
-                                                                              fontSize: 12,
-                                                                              color: AppColor.primaryColor,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              maxLines: 2,
-                                                                              alignment: TextAlign.center,
-                                                                            )),
-                                                                      ),
-                                                                    ),
-                                                                  ],
+                                                              ),
+                                                              Container(
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: reservedData[index]
+                                                                              [
+                                                                              "status"] ==
+                                                                          "U"
+                                                                      ? reservedData[index]["is_auto_extend"].toString() ==
+                                                                              "Y"
+                                                                          ? Colors.purple.withOpacity(
+                                                                              .1)
+                                                                          : AppColor.mainColor.withOpacity(
+                                                                              .1)
+                                                                      : const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          243,
+                                                                          228,
+                                                                          206),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              7),
                                                                 ),
-                                                              ]),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          5,
+                                                                      vertical:
+                                                                          3),
+                                                                  child: Center(
+                                                                    child:
+                                                                        CustomDisplayText(
+                                                                      label: reservedData[index]["status"] ==
+                                                                              "U"
+                                                                          ? "${reservedData[index]["is_auto_extend"].toString() == "Y" ? "EXTENDED" : "ACTIVE"} PARKING"
+                                                                          : "CONFIRMED",
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: reservedData[index]["status"] ==
+                                                                              "U"
+                                                                          ? reservedData[index]["is_auto_extend"].toString() == "Y"
+                                                                              ? Colors.purple
+                                                                              : AppColor.mainColor
+                                                                          : Colors.orange,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                      maxLines:
+                                                                          1,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          Container(height: 10),
+                                                          Row(
+                                                            children: [
+                                                              Icon(
+                                                                CupertinoIcons
+                                                                    .time,
+                                                                color: AppColor
+                                                                    .mainColor,
+                                                              ),
+                                                              Container(
+                                                                  width: 10),
+                                                              CustomDisplayText(
+                                                                label: Variables.convertTime(reservedData[
+                                                                            index]
+                                                                        [
+                                                                        "dt_in"]
+                                                                    .toString()
+                                                                    .split(
+                                                                        " ")[1]),
+                                                                fontSize: 14,
+                                                                maxLines: 1,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                              Container(
+                                                                  width: 5),
+                                                              CircleAvatar(
+                                                                radius: 8,
+                                                                backgroundColor:
+                                                                    AppColor
+                                                                        .mainColor,
+                                                              ),
+                                                              DynamicDashLine(
+                                                                color: AppColor
+                                                                    .mainColor,
+                                                                height: 1,
+                                                                dashWidth: 3,
+                                                                dashGap: 2,
+                                                              ),
+                                                              CircleAvatar(
+                                                                radius: 8,
+                                                                backgroundColor:
+                                                                    AppColor
+                                                                        .mainColor,
+                                                              ),
+                                                              Container(
+                                                                  width: 5),
+                                                              CustomDisplayText(
+                                                                label: Variables.convertTime(reservedData[
+                                                                            index]
+                                                                        [
+                                                                        "dt_out"]
+                                                                    .toString()
+                                                                    .split(
+                                                                        " ")[1]),
+                                                                fontSize: 14,
+                                                                maxLines: 1,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Divider(
+                                                      height: 2,
+                                                    ),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        CustomModal(
+                                                                context:
+                                                                    context)
+                                                            .loader();
+                                                        var param =
+                                                            "${ApiKeys.gApiSubFolderGetDirection}?ref_no=${reservedData[index]["reservation_ref_no"]}";
+
+                                                        HttpRequest(api: param)
+                                                            .get()
+                                                            .then(
+                                                                (returnData) async {
+                                                          print(
+                                                              "resData ${returnData["items"]}");
+                                                          if (returnData ==
+                                                              "No Internet") {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            showAlertDialog(
+                                                                context,
+                                                                "Error",
+                                                                "Please check your internet connection and try again.",
+                                                                () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            });
+                                                          }
+                                                          if (returnData ==
+                                                              null) {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            showAlertDialog(
+                                                                context,
+                                                                "Error",
+                                                                "Error while connecting to server, Please contact support.",
+                                                                () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                            });
+
+                                                            return;
+                                                          } else {
+                                                            if (returnData[
+                                                                        "items"]
+                                                                    .length ==
+                                                                0) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              showAlertDialog(
+                                                                  context,
+                                                                  "Error",
+                                                                  "No data found, Please change location.",
+                                                                  () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              });
+                                                            } else {
+                                                              Navigator.pop(
+                                                                  context);
+                                                              var dateInRelated =
+                                                                  "";
+                                                              var dateOutRelated =
+                                                                  "";
+                                                              dateInRelated =
+                                                                  reservedData[
+                                                                          index]
+                                                                      ["dt_in"];
+                                                              dateOutRelated =
+                                                                  reservedData[
+                                                                          index]
+                                                                      [
+                                                                      "dt_out"];
+                                                              Map<String,
+                                                                      dynamic>
+                                                                  parameters = {
+                                                                "client_id": jsonDecode(
+                                                                            akongP!)[
+                                                                        'user_id']
+                                                                    .toString(),
+                                                                "park_area_id":
+                                                                    returnData["items"]
+                                                                            [0][
+                                                                        "park_area_id"],
+                                                                "vehicle_type_id":
+                                                                    returnData["items"]
+                                                                            [0][
+                                                                        "vehicle_type_id"],
+                                                                "vehicle_plate_no":
+                                                                    returnData["items"][0]
+                                                                            [
+                                                                            "vehicle_plate_no"]
+                                                                        .toString(),
+                                                                "dt_in":
+                                                                    dateInRelated,
+                                                                "dt_out":
+                                                                    dateOutRelated,
+                                                                "no_hours": int.parse(
+                                                                    reservedData[index]
+                                                                            [
+                                                                            "no_hours"]
+                                                                        .toString()),
+                                                                "tran_type":
+                                                                    "E",
+                                                              };
+                                                              if (reservedData[
+                                                                              index]
+                                                                          [
+                                                                          "status"]
+                                                                      .toString() ==
+                                                                  "C") {
+                                                                Variables.pageTrans(
+                                                                    ReserveReceipt(
+                                                                      isVehicleSelected:
+                                                                          false,
+                                                                      spaceName:
+                                                                          returnData["items"][0]["park_space_name"]
+                                                                              .toString(),
+                                                                      parkArea: returnData["items"][0]
+                                                                              [
+                                                                              "park_area_name"]
+                                                                          .toString(),
+                                                                      startDate: dateInRelated.toString().split(" ")[0].toString() == dateOutRelated.toString().split(" ")[0].toString()
+                                                                          ? Variables.formatDate(dateInRelated
+                                                                              .toString()
+                                                                              .split(" ")[0])
+                                                                          : "${Variables.formatDate(dateInRelated.toString().split(" ")[0])} - ${Variables.formatDate(dateOutRelated.toString().split(" ")[0])}",
+                                                                      startTime: dateInRelated
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[1]
+                                                                          .toString(),
+                                                                      endTime: dateOutRelated
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[1]
+                                                                          .toString(),
+                                                                      plateNo: returnData["items"][0]
+                                                                              [
+                                                                              "vehicle_plate_no"]
+                                                                          .toString(),
+                                                                      hours: reservedData[index]
+                                                                              [
+                                                                              "no_hours"]
+                                                                          .toString(),
+                                                                      amount: reservedData[index]
+                                                                              [
+                                                                              "amount"]
+                                                                          .toString(),
+                                                                      refno: reservedData[index]
+                                                                              [
+                                                                              "reservation_ref_no"]
+                                                                          .toString()
+                                                                          .toString(),
+                                                                      lat: double.parse(returnData["items"][0]
+                                                                              [
+                                                                              "park_space_latitude"]
+                                                                          .toString()),
+                                                                      long: double.parse(returnData["items"][0]
+                                                                              [
+                                                                              "park_space_longitude"]
+                                                                          .toString()),
+                                                                      dtOut:
+                                                                          dateOutRelated,
+                                                                      dateIn:
+                                                                          dateInRelated,
+                                                                      isReserved:
+                                                                          true,
+                                                                      tab:
+                                                                          currentTab,
+                                                                      canReserved:
+                                                                          true,
+                                                                      paramsCalc:
+                                                                          parameters,
+                                                                      address: returnData["items"]
+                                                                              [
+                                                                              0]
+                                                                          [
+                                                                          "address"],
+                                                                      ticketId: returnData["items"]
+                                                                              [
+                                                                              0]
+                                                                          [
+                                                                          "ticket_id"],
+                                                                      isAutoExtend:
+                                                                          reservedData[index]["is_auto_extend"]
+                                                                              .toString(),
+                                                                      reservationId:
+                                                                          reservedData[index]
+                                                                              [
+                                                                              "reservation_id"],
+                                                                      onTap:
+                                                                          () {
+                                                                        onRefresh();
+                                                                      },
+                                                                    ),
+                                                                    context);
+                                                              } else {
+                                                                Variables.pageTrans(
+                                                                    ParkingDetails(
+                                                                      startDate: dateInRelated.toString().split(" ")[0].toString() == dateOutRelated.toString().split(" ")[0].toString()
+                                                                          ? Variables.formatDate(dateInRelated
+                                                                              .toString()
+                                                                              .split(" ")[0])
+                                                                          : "${Variables.formatDate(dateInRelated.toString().split(" ")[0])} - ${Variables.formatDate(dateOutRelated.toString().split(" ")[0])}",
+                                                                      startTime: dateInRelated
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[1]
+                                                                          .toString(),
+                                                                      endTime: dateOutRelated
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[1]
+                                                                          .toString(),
+                                                                      resData:
+                                                                          reservedData,
+                                                                      returnData:
+                                                                          returnData[
+                                                                              "items"],
+                                                                      dtOut:
+                                                                          dateOutRelated,
+                                                                      dateIn:
+                                                                          dateInRelated,
+                                                                      paramsCalc:
+                                                                          parameters,
+                                                                      onTap:
+                                                                          () {
+                                                                        onRefresh();
+                                                                      },
+                                                                    ),
+                                                                    context);
+                                                              }
+                                                            }
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Padding(
+                                                        padding: EdgeInsets
+                                                            .symmetric(
+                                                                horizontal: 20,
+                                                                vertical: 15),
+                                                        child: Row(
+                                                          children: [
+                                                            Expanded(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  CustomDisplayText(
+                                                                    label:
+                                                                        '${reservedData[index]["notes"]}',
+                                                                    fontSize:
+                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    maxLines: 1,
+                                                                    color: Color(
+                                                                        0xFF232323),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                  CustomDisplayText(
+                                                                    label: reservedData[
+                                                                            index]
+                                                                        [
+                                                                        "reservation_ref_no"],
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    maxLines: 1,
+                                                                    color: Color(
+                                                                        0xFF444242),
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_forward_ios_outlined,
+                                                              size: 20,
+                                                              color: AppColor
+                                                                  .mainColor,
+                                                            )
+                                                          ],
                                                         ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                  IgnorePointer(
-                                                    child: CustomPaint(
-                                                      painter: SideCutsDesign(),
-                                                      child: SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.25,
-                                                        width: double.infinity,
+                                                    ),
+                                                    Divider(
+                                                      height: 2,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20.0,
+                                                          vertical: 10),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          CustomDisplayText(
+                                                            label: "Total",
+                                                            fontSize: 14,
+                                                            maxLines: 1,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          CustomDisplayText(
+                                                            label: reservedData[
+                                                                    index]
+                                                                ["amount"],
+                                                            fontSize: 14,
+                                                            maxLines: 1,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
-                                                  ),
-                                                  IgnorePointer(
-                                                    child: CustomPaint(
-                                                      painter:
-                                                          DottedInitialPath(),
-                                                      child: SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.25,
-                                                        width: double.infinity,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  IgnorePointer(
-                                                    child: CustomPaint(
-                                                      painter:
-                                                          DottedMiddlePath(),
-                                                      child: SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            0.25,
-                                                        width: double.infinity,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ]),
+                                                  ],
+                                                ),
                                               );
                                             },
                                             separatorBuilder:

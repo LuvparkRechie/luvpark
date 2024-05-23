@@ -100,14 +100,14 @@ class _MyVehiclesState extends State<MyVehicles> {
             backgroundColor: AppColor.primaryColor,
             onPressed: () async {
               Variables.pageTrans(
-                VehicleRegDialog(
-                  userId: jsonDecode(akongP!)['user_id'].toString(),
-                  plateNo: "",
-                  callback: () {
-                    onRefresh();
-                  },
-                ),
-              );
+                  VehicleRegDialog(
+                    userId: jsonDecode(akongP!)['user_id'].toString(),
+                    plateNo: "",
+                    callback: () {
+                      onRefresh();
+                    },
+                  ),
+                  context);
             },
             tooltip: 'Toggle',
             child: const Center(

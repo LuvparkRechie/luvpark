@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/dashboard/dashboard3.dart';
@@ -63,6 +64,20 @@ class _MainLandingScreenState extends State<MainLandingScreen> {
       child: PopScope(
         canPop: false,
         child: Scaffold(
+          extendBodyBehindAppBar: _currentIndex == 0 ? true : false,
+          appBar: _currentIndex > 0
+              ? null
+              : AppBar(
+                  elevation: 0,
+                  toolbarHeight: 0,
+                  automaticallyImplyLeading: false,
+                  backgroundColor: Colors.transparent,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.transparent,
+                    statusBarBrightness: Brightness.dark,
+                    statusBarIconBrightness: Brightness.dark,
+                  ),
+                ),
           body: _pages[_currentIndex],
           bottomNavigationBar: BottomAppBar(
             shape: const CircularNotchedRectangle(),
@@ -107,8 +122,8 @@ class _MainLandingScreenState extends State<MainLandingScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image(
-              height: 28,
-              width: 28,
+              height: 24,
+              width: 24,
               fit: BoxFit.cover,
               image: AssetImage(
                   "assets/images/${_currentIndex == index ? '${iconData}_active' : "${iconData}_inactive"}.png"),
@@ -121,7 +136,7 @@ class _MainLandingScreenState extends State<MainLandingScreen> {
               color: _currentIndex == index
                   ? AppColor.primaryColor
                   : Color(0xFF666666),
-              fontSize: 14,
+              fontSize: 12,
               fontWeight: FontWeight.bold,
               height: 0.16,
               maxLines: 1,

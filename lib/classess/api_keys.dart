@@ -73,9 +73,9 @@ class ApiKeys {
       '/ords/$parkSpaceApi/base/vehicletypes';
 
 //get neareast space data sa mapa
-  // static const gApiSubFolderGetNearestSpace =
-  //     '/ords/$parkSpaceApi/park/nearest';
-  static const gApiSubFolderGetNearestSpace = '/ords/$parkSpaceApi/ps/nearest';
+
+  static const gApiSubFolderGetNearestSpace =
+      '/ords/$parkSpaceApi/zone/nearestParking';
 
   //get parking type filter dropdown dashboard
   static const gApiSubFolderGetParkingTypes =
@@ -225,10 +225,12 @@ class ApiKeys {
   //Cancel Auto Extend   parameter: reservation_id
   static const gApiLuvPayPutCancelAutoExtend =
       '/ords/$luvApi/ps/stopAutoExtend';
-
   //GET amenities by park_area
-  static const gApiSubFolderGetAmenities = '/ords/$parkSpaceApi/ps/amenities';
+  static const gApiSubFolderGetAmenities =
+      '/ords/$parkSpaceApi/zone/parkingAmenities';
   //Get all amenities
   static const gApiSubFolderGetAllAmenities =
       '/ords/$parkSpaceApi/rf/amenities';
+  static const gApiSubFolderGetAverage =
+      '/ords/$luvApi/feedback/getAverageRatingOnBooking';
 }
