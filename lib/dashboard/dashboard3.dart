@@ -46,6 +46,7 @@ class _Dashboard3State extends State<Dashboard3> {
   String pTypeCode = "";
   String amenities = "";
   String vtypeId = "";
+  String isAllowOverNight = "N";
   List filteredArea = [];
   CameraPosition? initialCameraPosition;
   bool isLoadingPage = true;
@@ -187,7 +188,8 @@ class _Dashboard3State extends State<Dashboard3> {
               startLocation!.latitude,
               startLocation!.longitude,
               vtypeId,
-              amenities, (nearestData) {
+              amenities,
+              isAllowOverNight, (nearestData) {
             if (nearestData == "No Internet") {
               setState(() {
                 hasInternetBal = false;
@@ -201,16 +203,47 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   displayMapData(nearestData, lat, lng) async {
+    final Uint8List availabeMarkIcons =
+        await DashboardComponent().getSearchMarker(searchImage[0], 80);
     int ctr = 0;
 
     if (mounted) {
       setState(() {
         markers = [];
         subDataNearest = nearestData;
+        startLocation =
+            LatLng(double.parse(lat.toString()), double.parse(lng.toString()));
+        initialCameraPosition = CameraPosition(
+          target: startLocation!,
+          zoom: subDataNearest.isEmpty ? 12 : 16,
+          tilt: 0,
+          bearing: 0,
+        );
+        if (onSearchAdd) {
+          markers.add(Marker(
+            markerId: const MarkerId('Searched place'),
+            position: LatLng(
+                double.parse(lat.toString()), double.parse(lng.toString())),
+            icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+          ));
+          if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                    target: LatLng(double.parse(lat.toString()),
+                        double.parse(lng.toString())),
+                    zoom: nearestData.isEmpty ? 12 : 16),
+              ),
+            );
+          }
+        }
+
+        isLoadingPage = false;
+        isLoadingMap = false;
       });
     }
-
-    if (nearestData.isNotEmpty) {
+    if (nearestData.isNotEmpty &&
+        userBal >= double.parse(logData["min_wallet_bal"].toString())) {
       for (var i = 0; i < nearestData.length; i++) {
         ctr++;
         var items = nearestData[i];
@@ -221,6 +254,7 @@ class _Dashboard3State extends State<Dashboard3> {
                 "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}"),
             80,
             true);
+        print("markerIcon $markerIcon");
         if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
           markers.add(
             Marker(
@@ -258,63 +292,6 @@ class _Dashboard3State extends State<Dashboard3> {
           setState(() {});
         }
       }
-    } else {
-      setState(() {
-        subDataNearest = [];
-      });
-    }
-    if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
-      if (mounted) {
-        if (onSearchAdd) {
-          final Uint8List availabeMarkIcons =
-              await DashboardComponent().getSearchMarker(searchImage[0], 80);
-          initialCameraPosition = CameraPosition(
-            target: LatLng(
-                double.parse(lat.toString()), double.parse(lng.toString())),
-            zoom: subDataNearest.isEmpty ? 12 : 16,
-          );
-
-          if (nearestData.isNotEmpty && onSearchAdd) {
-            markers.add(Marker(
-              markerId: const MarkerId('Searched place'),
-              position: LatLng(
-                  double.parse(lat.toString()), double.parse(lng.toString())),
-              icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
-            ));
-            mapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(
-                    target: LatLng(double.parse(lat.toString()),
-                        double.parse(lng.toString())),
-                    zoom: nearestData.isEmpty ? 12 : 16),
-              ),
-            );
-          }
-        } else {
-          if (mounted) {
-            initialCameraPosition = CameraPosition(
-              target: startLocation!,
-              zoom: 10,
-              tilt: 0,
-              bearing: 0,
-            );
-          }
-        }
-        setState(() {
-          startLocation = LatLng(
-              double.parse(lat.toString()), double.parse(lng.toString()));
-
-          isLoadingPage = false;
-          isLoadingMap = false;
-        });
-      }
-    } else {
-      if (mounted) {
-        setState(() {
-          isLoadingPage = false;
-          isLoadingMap = false;
-        });
-      }
     }
   }
 
@@ -325,28 +302,6 @@ class _Dashboard3State extends State<Dashboard3> {
               double.parse(items["pa_longitude"].toString()))
           .then((address) {});
     }
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    if (mounted) {
-      setState(() {
-        mapController = controller;
-        DefaultAssetBundle.of(context)
-            .loadString('assets/custom_map_style/map_style.json')
-            .then((String style) {
-          controller.setMapStyle(style);
-          // for (var marker in markers) {
-          //   mapController.showMarkerInfoWindow(marker.markerId);
-          // }
-        });
-      });
-    }
-
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(target: startLocation!, zoom: 13),
-      ),
-    );
   }
 
   void getFilteredData(data) {
@@ -364,7 +319,8 @@ class _Dashboard3State extends State<Dashboard3> {
         startLocation!.latitude,
         startLocation!.longitude,
         data["vh_type"],
-        data["amen"], (nearestData) {
+        data["amen"],
+        data["is_allow_overnight"], (nearestData) {
       print("nearestData $nearestData");
       if (nearestData == "No Internet") {
         setState(() {
@@ -376,6 +332,7 @@ class _Dashboard3State extends State<Dashboard3> {
         pTypeCode = data["p_type"];
         amenities = data["amen"];
         vtypeId = data["vh_type"];
+        isAllowOverNight = data["is_allow_overnight"];
       });
       displayMapData(
         nearestData,
@@ -433,61 +390,66 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   Widget noMapDisplay() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 19),
+    return SafeArea(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 20,
-          ),
           searchBar(false),
-          Container(
-            height: 30,
-          ),
-          subDataNearest.isEmpty
-              ? Container()
-              : Text(
-                  'Parking Nearby',
-                  style: GoogleFonts.lato(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 0.06,
-                  ),
-                ),
-          Container(
-            height: 8,
-          ),
-          subDataNearest.isEmpty
-              ? Container()
-              : CustomDisplayText(
-                  label: 'The best parking space near you',
-                  color: const Color.fromARGB(255, 82, 82, 82),
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  height: 0,
-                ),
-          subDataNearest.isEmpty
-              ? Container()
-              : Container(
-                  height: 8,
-                ),
           Expanded(
-              child: isLoadingPage
-                  ? ListView.builder(
-                      itemCount: 10,
-                      itemBuilder: ((context, index) {
-                        return reserveShimmer();
-                      }),
-                    )
-                  : subDataNearest.isEmpty
-                      ? const NoDataFound()
-                      : ListItems(
-                          data: subDataNearest,
-                          userbal: userBal,
-                          minBalance: double.parse(
-                              logData["min_wallet_bal"].toString()))),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  subDataNearest.isEmpty
+                      ? Container()
+                      : Text(
+                          'Parking Nearby',
+                          style: GoogleFonts.lato(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            height: 0.06,
+                          ),
+                        ),
+                  Container(
+                    height: 8,
+                  ),
+                  subDataNearest.isEmpty
+                      ? Container()
+                      : CustomDisplayText(
+                          label: 'The best parking space near you',
+                          color: const Color.fromARGB(255, 82, 82, 82),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          height: 0,
+                        ),
+                  subDataNearest.isEmpty
+                      ? Container()
+                      : Container(
+                          height: 8,
+                        ),
+                  Expanded(
+                    child: isLoadingPage
+                        ? ListView.builder(
+                            itemCount: 10,
+                            itemBuilder: ((context, index) {
+                              return reserveShimmer();
+                            }),
+                          )
+                        : subDataNearest.isEmpty
+                            ? const NoDataFound()
+                            : ListItems(
+                                data: subDataNearest,
+                                userbal: userBal,
+                                minBalance: double.parse(
+                                  logData["min_wallet_bal"].toString(),
+                                ),
+                              ),
+                  ),
+                ],
+              ),
+            ),
+          )
         ],
       ),
     );
@@ -519,7 +481,24 @@ class _Dashboard3State extends State<Dashboard3> {
       children: [
         GoogleMap(
           mapType: MapType.normal,
-          onMapCreated: _onMapCreated,
+          onMapCreated: (GoogleMapController controller) {
+            if (mounted) {
+              setState(() {
+                mapController = controller;
+                DefaultAssetBundle.of(context)
+                    .loadString('assets/custom_map_style/map_style.json')
+                    .then((String style) {
+                  controller.setMapStyle(style);
+                });
+              });
+            }
+
+            mapController.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(target: startLocation!, zoom: 13),
+              ),
+            );
+          },
           zoomGesturesEnabled: true,
           initialCameraPosition: initialCameraPosition!,
           mapToolbarEnabled: false,
@@ -729,6 +708,7 @@ class _Dashboard3State extends State<Dashboard3> {
                               pTypeCode: pTypeCode,
                               vtypeId: vtypeId,
                               amenities: amenities,
+                              isAllowOverNight: isAllowOverNight,
                               callback: (searchedObj) {
                                 Navigator.of(context).pop();
 
@@ -878,83 +858,91 @@ class _HorizontalListViewState extends State<HorizontalListView> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      padding: EdgeInsets.zero,
-      scrollDirection: Axis.horizontal,
-      itemCount: dataFiltered.length, // Set your desired item count
-      itemBuilder: (context, index) {
-        return Padding(
-          padding: const EdgeInsets.only(right: 5),
-          child: InkWell(
-            onTap: () {
-              Variables.pageTrans(
-                  ViewDetails(areaData: [dataFiltered[index]]), context);
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-              width: Variables.screenSize.width * .88,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  color: Colors.grey.shade200,
-                ),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
-                children: [
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 20,
-                        backgroundColor: AppColor.primaryColor,
-                        child: CustomDisplayText(
-                          label: "S",
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+    return widget.nearestData.isEmpty
+        ? const NoDataFound(
+            size: 70,
+            textText:
+                "No parking area found nearby. Please search another place.",
+          )
+        : ListView.builder(
+            padding: EdgeInsets.zero,
+            scrollDirection: Axis.horizontal,
+            itemCount: dataFiltered.length, // Set your desired item count
+            itemBuilder: (context, index) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 5),
+                child: InkWell(
+                  onTap: () {
+                    Variables.pageTrans(
+                        ViewDetails(areaData: [dataFiltered[index]]), context);
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    width: Variables.screenSize.width * .88,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: Colors.grey.shade200,
                       ),
-                      Container(width: 10),
-                      Expanded(
-                        child: Column(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomDisplayText(
-                              label: dataFiltered[index]["park_area_name"],
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundColor: AppColor.primaryColor,
+                              child: CustomDisplayText(
+                                label: "S",
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
                             ),
-                            Container(height: 2),
-                            CustomDisplayText(
-                              label: dataFiltered[index]["address"],
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey,
+                            Container(width: 10),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomDisplayText(
+                                    label: dataFiltered[index]
+                                        ["park_area_name"],
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  Container(height: 2),
+                                  CustomDisplayText(
+                                    label: dataFiltered[index]["address"],
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.grey,
+                                  ),
+                                  Container(height: 5),
+                                ],
+                              ),
                             ),
-                            Container(height: 5),
                           ],
                         ),
-                      ),
-                    ],
+                        Container(height: 33),
+                        Row(
+                          children: [
+                            bottomListDetails("time_money",
+                                dataFiltered[index]["parking_schedule"]),
+                            bottomListDetails2("road",
+                                dataFiltered[index]["parking_type_name"]),
+                            bottomListDetails3("carpool",
+                                "${dataFiltered[index]["ps_vacant_count"].toString()} AVAILABLE"),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
-                  Container(height: 33),
-                  Row(
-                    children: [
-                      bottomListDetails("time_money",
-                          dataFiltered[index]["parking_schedule"]),
-                      bottomListDetails2(
-                          "road", dataFiltered[index]["parking_type_name"]),
-                      bottomListDetails3("carpool",
-                          "${dataFiltered[index]["ps_vacant_count"].toString()} AVAILABLE"),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
-    );
+                ),
+              );
+            },
+          );
   }
 
   Widget bottomListDetails(String icon, String label) {

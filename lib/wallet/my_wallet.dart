@@ -234,6 +234,7 @@ class _MyWalletState extends State<MyWallet>
   Widget build(BuildContext context) {
     return CustomParentWidget(
         appbarColor: AppColor.primaryColor,
+        bodyColor: Color.fromARGB(255, 249, 248, 248),
         child: RefreshIndicator(
           onRefresh: getPreferences,
           child: Stack(
@@ -396,9 +397,11 @@ class _MyWalletState extends State<MyWallet>
                                     });
                                     return;
                                   }
-                                  Variables.pageTrans(const BuyTokenPage(
-                                    index: 1,
-                                  ));
+                                  Variables.pageTrans(
+                                      const BuyTokenPage(
+                                        index: 1,
+                                      ),
+                                      context);
                                 },
                                 child: Container(
                                   decoration: BoxDecoration(
@@ -503,7 +506,7 @@ class _MyWalletState extends State<MyWallet>
                               )
                             : InkWell(
                                 onTap: () {
-                                  Variables.pageTrans(const QRType());
+                                  Variables.pageTrans(const QRType(), context);
                                 },
                                 child: Container(
                                     decoration: BoxDecoration(

@@ -99,6 +99,9 @@ class _NoDataFoundState extends State<NoDataFound> {
                 label: widget.textText ?? "No data found",
                 fontWeight: FontWeight.w500,
                 color: AppColor.textSubColor,
+                alignment: TextAlign.center,
+                maxLines: 2,
+                minFontsize: 1,
                 fontSize: 14),
             Container(
               height: 10,

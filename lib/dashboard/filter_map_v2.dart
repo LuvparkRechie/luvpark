@@ -26,6 +26,10 @@ class _FilterMapState extends State<FilterMap> {
   List pTypeData = [];
   List amenitiess = [];
   List radiusData = [];
+  List overNightData = [
+    {"name": "Yes", "value": "Y"},
+    {"name": "No", "value": "N"}
+  ];
   List<String> selectedFilters = [];
   List<String> selectedFiltersAmen = [];
   bool hasNetVhTypes = true;
@@ -35,6 +39,7 @@ class _FilterMapState extends State<FilterMap> {
   bool loadingTypes = true;
   bool loadingAmen = true;
   bool loadingPTypes = true;
+  String isAllowOverNight = "N";
   String? selectedVehicleType;
   String? ddRadius;
 
@@ -184,6 +189,8 @@ class _FilterMapState extends State<FilterMap> {
                 padding: EdgeInsets.all(16.0),
                 child: Column(
                   children: [
+                    buildOvernight(),
+                    SizedBox(height: 10),
                     buildRadius(),
                     SizedBox(height: 10),
                     buildRadioOptions('Vehicle Type'),
@@ -213,7 +220,8 @@ class _FilterMapState extends State<FilterMap> {
                             : selectedVehicleType,
                         "amen": filterAmen.toString(),
                         "p_type": filterVtype.toString(),
-                        "radius": ddRadius == null ? 10000 : ddRadius
+                        "radius": ddRadius == null ? 10000 : ddRadius,
+                        "is_allow_overnight": isAllowOverNight,
                       });
                       Navigator.of(context).pop();
                     },
@@ -224,6 +232,44 @@ class _FilterMapState extends State<FilterMap> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget buildOvernight() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        LabelText(text: "Allow Overnight"),
+        Container(
+          height: 30,
+          child: RadioListTile<String>(
+            contentPadding: EdgeInsets.zero,
+            title: CustomDisplayText(label: "Yes"),
+            value: overNightData[0]["value"],
+            groupValue: isAllowOverNight,
+            onChanged: (String? value) {
+              setState(() {
+                isAllowOverNight = value!;
+              });
+            },
+          ),
+        ),
+        Container(
+          height: 30,
+          child: RadioListTile<String>(
+            contentPadding: EdgeInsets.zero,
+            title: CustomDisplayText(label: "No"),
+            value: overNightData[1]["value"],
+            groupValue: isAllowOverNight,
+            onChanged: (String? value) {
+              setState(() {
+                isAllowOverNight = value!;
+              });
+            },
+          ),
+        ),
+        SizedBox(height: 10.0),
+      ],
     );
   }
 

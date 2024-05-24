@@ -9,6 +9,7 @@ import 'package:dart_ping/dart_ping.dart';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -478,39 +479,6 @@ class Variables {
     return byteData!.buffer.asUint8List();
   }
 
-  static Future<Uint8List> createOvalImage(
-      BuildContext context, String base64String, int width) async {
-    Uint8List bytes = base64Decode(base64String);
-    double targetWidth = MediaQuery.of(context).devicePixelRatio * width;
-
-    // Decode the image as a ui.Image
-    ui.Image image = await decodeImageFromList(bytes);
-
-    // Create an oval canvas with the target width
-    ui.PictureRecorder recorder = ui.PictureRecorder();
-    Canvas canvas = Canvas(recorder);
-    Rect ovalRect = Rect.fromLTWH(0, 0, targetWidth,
-        targetWidth * 0.5); // Adjust the height ratio to make it oval
-    canvas.clipRRect(RRect.fromRectAndRadius(
-      ovalRect,
-      Radius.circular(targetWidth / 10), // Adjust the radius as needed
-    ));
-    canvas.drawImageRect(
-      image,
-      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
-      ovalRect,
-      Paint(),
-    );
-
-    // Encode the oval image as PNG
-    ui.Picture picture = recorder.endRecording();
-    ui.Image encodedImage =
-        await picture.toImage(targetWidth.round(), (targetWidth * 0.5).round());
-    ByteData? byteData =
-        await encodedImage.toByteData(format: ui.ImageByteFormat.png);
-    return byteData!.buffer.asUint8List();
-  }
-
   static String formatDateWithMonthAndTime(String dateString) {
     // Parse the string into a DateTime object
     DateTime dateTime = DateTime.parse(dateString);
@@ -580,19 +548,69 @@ class Variables {
     }
   }
 
+  static Future<Uint8List> createOvalImage(
+      BuildContext context, String base64String, int width) async {
+    Uint8List bytes = base64Decode(base64String);
+    double targetWidth = MediaQuery.of(context).devicePixelRatio * width;
+
+    // Compress the image
+    Uint8List compressedBytes = await compressImage(bytes);
+
+    // Decode the compressed image as a ui.Image
+    ui.Image image = await decodeImageFromList(compressedBytes);
+
+    // Create an oval canvas with the target width
+    ui.PictureRecorder recorder = ui.PictureRecorder();
+    Canvas canvas = Canvas(recorder);
+    Rect ovalRect = Rect.fromLTWH(0, 0, targetWidth,
+        targetWidth * 0.5); // Adjust the height ratio to make it oval
+    canvas.clipRRect(RRect.fromRectAndRadius(
+      ovalRect,
+      Radius.circular(targetWidth / 10), // Adjust the radius as needed
+    ));
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTWH(0, 0, image.width.toDouble(), image.height.toDouble()),
+      ovalRect,
+      Paint(),
+    );
+
+    // Encode the oval image as PNG
+    ui.Picture picture = recorder.endRecording();
+    ui.Image encodedImage =
+        await picture.toImage(targetWidth.round(), (targetWidth * 0.5).round());
+    ByteData? byteData =
+        await encodedImage.toByteData(format: ui.ImageByteFormat.png);
+    return byteData!.buffer.asUint8List();
+  }
+
   //convert widget to image and display on map or capture as png
   static Future<Uint8List> capturePng(
       BuildContext context, Widget printWidget, int size, bool isOval) async {
-    Uint8List bytes = await ScreenshotController().captureFromWidget(
-      printWidget,
-    );
+    Uint8List markerBeytes;
+    Uint8List bytes = await ScreenshotController()
+        .captureFromWidget(printWidget, delay: Duration(milliseconds: 10));
     Uint8List pngBytes = bytes.buffer.asUint8List();
-    Uint8List ovalIconBytes =
-        await Variables.createOvalImage(context, base64Encode(pngBytes), size);
 
-    Uint8List iconBytes =
-        await Variables.getMarkerIcon(context, base64Encode(pngBytes), size);
+    markerBeytes = isOval
+        ? await Variables.createOvalImage(context, base64Encode(pngBytes), size)
+        : await Variables.getMarkerIcon(context, base64Encode(pngBytes), size);
 
-    return isOval ? ovalIconBytes : iconBytes;
+    return markerBeytes;
+  }
+
+  //Reduce Image size
+  static Future<Uint8List> compressImage(Uint8List imageBytes) async {
+    // Compress the image
+    List<int> compressedBytes = await FlutterImageCompress.compressWithList(
+      imageBytes,
+      minHeight: 500, // Set a lower minimum height
+      minWidth: 900, // Set a lower minimum width
+      quality: 50,
+      format: CompressFormat.png, // Specify the desired format
+    );
+
+    // Convert compressed bytes to Uint8List
+    return Uint8List.fromList(compressedBytes);
   }
 }

@@ -17,9 +17,9 @@ import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 
 class DashboardComponent {
   static getNearest(context, String parkType, radius, lat, long, vhId, amenity,
-      Function callBack) async {
+      isAllowOverNight, Function callBack) async {
     var params =
-        "parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
+        "is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
     print("params nearest $params");
     try {
       var returnData = await HttpRequest(

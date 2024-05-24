@@ -212,23 +212,6 @@ class _ViewDetailsState extends State<ViewDetails> {
     );
   }
 
-  Widget printScreen(String imgName, Color color) {
-    return Container(
-      width: 120, // Set the width to adjust the size of the marker image
-      height: 120,
-      color: color,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Image(
-          fit: BoxFit.contain,
-          image: AssetImage(
-            "assets/images/$imgName.png",
-          ),
-        ),
-      ),
-    );
-  }
-
   Widget bodyWidget(etaData) {
     LatLngBounds bounds = LatLngBounds(
       southwest: LatLng(
@@ -444,6 +427,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                 )),
           ],
         )),
+
         Container(
           width: Variables.screenSize.width,
           color: Colors.white,
@@ -458,28 +442,26 @@ class _ViewDetailsState extends State<ViewDetails> {
                       scrollDirection: Axis.horizontal,
                       itemCount: vehicles.length,
                       itemBuilder: ((context, index) {
-                        return Flexible(
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                  top: 5, left: 8, right: 7, bottom: 5),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: AppColor.primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(41),
-                                ),
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                top: 5, left: 8, right: 7, bottom: 5),
+                            clipBehavior: Clip.antiAlias,
+                            decoration: ShapeDecoration(
+                              color: AppColor.primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(41),
                               ),
-                              child: Center(
-                                child: CustomDisplayText(
-                                  label: "${vehicles[index]}",
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                            ),
+                            child: Center(
+                              child: CustomDisplayText(
+                                label: "${vehicles[index]}",
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ),
                           ),
@@ -771,6 +753,23 @@ class _ViewDetailsState extends State<ViewDetails> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget printScreen(String imgName, Color color) {
+    return Container(
+      width: 120, // Set the width to adjust the size of the marker image
+      height: 120,
+      color: color,
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Image(
+          fit: BoxFit.contain,
+          image: AssetImage(
+            "assets/images/$imgName.png",
+          ),
+        ),
+      ),
     );
   }
 }

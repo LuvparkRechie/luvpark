@@ -11,7 +11,7 @@ import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 
 class SearchPlaces extends StatefulWidget {
   final LatLng latlng;
-  final String radius, pTypeCode, vtypeId, amenities;
+  final String radius, pTypeCode, vtypeId, amenities, isAllowOverNight;
   final Function callback;
 
   const SearchPlaces(
@@ -21,6 +21,7 @@ class SearchPlaces extends StatefulWidget {
       required this.pTypeCode,
       required this.vtypeId,
       required this.callback,
+      required this.isAllowOverNight,
       required this.amenities});
 
   @override
@@ -198,19 +199,19 @@ class _SearchPlacesState extends State<SearchPlaces> {
                                                       }
                                                     ];
 
-                                                    DashboardComponent
-                                                        .getNearest(
-                                                            ctxt,
-                                                            widget.pTypeCode,
-                                                            widget.radius
-                                                                .toString(),
-                                                            data[0]["lat"]
-                                                                .toString(),
-                                                            data[0]["long"]
-                                                                .toString(),
-                                                            widget.vtypeId,
-                                                            widget.amenities,
-                                                            (nearestData) {
+                                                    DashboardComponent.getNearest(
+                                                        ctxt,
+                                                        widget.pTypeCode,
+                                                        widget.radius
+                                                            .toString(),
+                                                        data[0]["lat"]
+                                                            .toString(),
+                                                        data[0]["long"]
+                                                            .toString(),
+                                                        widget.vtypeId,
+                                                        widget.amenities,
+                                                        widget.isAllowOverNight,
+                                                        (nearestData) {
                                                       Navigator.pop(context);
                                                       widget.callback({
                                                         "data": nearestData,
