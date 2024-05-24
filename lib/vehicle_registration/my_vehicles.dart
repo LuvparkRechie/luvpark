@@ -84,9 +84,9 @@ class _MyVehiclesState extends State<MyVehicles> {
   @override
   Widget build(BuildContext context) {
     myContext = context;
-    return CustomParent1Widget(
+    return CustomParentWidgetV2(
       canPop: true,
-      appBarheaderText: "My Vehicles",
+      appBarHeaderText: "My Vehicles",
       bodyColor: Colors.grey.shade50,
       appBarIconClick: () {
         Navigator.pop(context);
@@ -136,134 +136,120 @@ class _MyVehiclesState extends State<MyVehicles> {
                             onTap: onRefresh,
                           );
                         } else {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Stack(
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    showCupertinoModalPopup(
-                                        context: context,
-                                        builder: (BuildContext cont) {
-                                          return CupertinoActionSheet(
-                                            actions: [
-                                              CupertinoActionSheetAction(
-                                                  onPressed: () {
-                                                    CustomModal(
-                                                            context: context)
-                                                        .loader();
-                                                    var params = {
-                                                      "user_id":
-                                                          jsonDecode(akongP!)[
-                                                                  'user_id']
-                                                              .toString(),
-                                                      "vehicle_plate_no":
-                                                          myVehicles[index][
-                                                              "vehicle_plate_no"],
-                                                    };
+                          return Stack(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  showCupertinoModalPopup(
+                                      context: context,
+                                      builder: (BuildContext cont) {
+                                        return CupertinoActionSheet(
+                                          actions: [
+                                            CupertinoActionSheetAction(
+                                                onPressed: () {
+                                                  CustomModal(context: context)
+                                                      .loader();
+                                                  var params = {
+                                                    "user_id": jsonDecode(
+                                                            akongP!)['user_id']
+                                                        .toString(),
+                                                    "vehicle_plate_no":
+                                                        myVehicles[index][
+                                                            "vehicle_plate_no"],
+                                                  };
 
-                                                    HttpRequest(
-                                                            api: ApiKeys
-                                                                .gApiLuvParkDeleteVehicle,
-                                                            parameters: params)
-                                                        .deleteData()
-                                                        .then((retDelete) {
-                                                      print(
-                                                          "retDelete $retDelete");
-                                                      if (retDelete ==
-                                                          "Success") {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        onRefresh();
-                                                        return;
-                                                      }
-                                                      if (retDelete ==
-                                                          "No Internet") {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        setState(() {
-                                                          hasInternet = false;
-                                                        });
-                                                        return;
-                                                      } else {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        setState(() {
-                                                          hasInternet = true;
-                                                        });
-                                                        return;
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Text(
-                                                    "Delete",
-                                                    style: Platform.isAndroid
-                                                        ? GoogleFonts.dmSans(
-                                                            color: Colors.red,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            fontSize: 15,
-                                                          )
-                                                        : TextStyle(
-                                                            color: Colors.red,
-                                                            fontWeight:
-                                                                FontWeight
-                                                                    .normal,
-                                                            fontSize: 15,
-                                                            fontFamily:
-                                                                "SFProTextReg",
-                                                          ),
-                                                  )),
-                                            ],
-                                          );
-                                        });
-                                  },
-                                  child: Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(7),
-                                        border: Border.all(
-                                            color: const Color.fromARGB(
-                                                255, 232, 241, 248))),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 20, vertical: 10),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 50,
-                                            height: 50,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              border: Border.all(
-                                                  color: AppColor.mainColor),
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: Icon(
-                                              myVehicles[index]
-                                                          ["vehicle_type_id"] ==
-                                                      1
-                                                  ? Icons.motorcycle_outlined
-                                                  : Icons
-                                                      .time_to_leave_outlined,
-                                              color: AppColor.primaryColor,
-                                            ),
+                                                  HttpRequest(
+                                                          api: ApiKeys
+                                                              .gApiLuvParkDeleteVehicle,
+                                                          parameters: params)
+                                                      .deleteData()
+                                                      .then((retDelete) {
+                                                    print(
+                                                        "retDelete $retDelete");
+                                                    if (retDelete ==
+                                                        "Success") {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      onRefresh();
+                                                      return;
+                                                    }
+                                                    if (retDelete ==
+                                                        "No Internet") {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      setState(() {
+                                                        hasInternet = false;
+                                                      });
+                                                      return;
+                                                    } else {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      setState(() {
+                                                        hasInternet = true;
+                                                      });
+                                                      return;
+                                                    }
+                                                  });
+                                                },
+                                                child: Text(
+                                                  "Delete",
+                                                  style: Platform.isAndroid
+                                                      ? GoogleFonts.dmSans(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 15,
+                                                        )
+                                                      : TextStyle(
+                                                          color: Colors.red,
+                                                          fontWeight:
+                                                              FontWeight.normal,
+                                                          fontSize: 15,
+                                                          fontFamily:
+                                                              "SFProTextReg",
+                                                        ),
+                                                )),
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      border: Border.all(
+                                          color: const Color.fromARGB(
+                                              255, 232, 241, 248))),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 20, vertical: 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: 50,
+                                          height: 50,
+                                          child: Icon(
+                                            myVehicles[index]
+                                                        ["vehicle_type_id"] ==
+                                                    1
+                                                ? Icons.motorcycle_outlined
+                                                : Icons.time_to_leave_outlined,
+                                            color: AppColor.primaryColor,
                                           ),
-                                          Container(
-                                            width: 10,
-                                          ),
-                                          Expanded(
-                                            child: Column(
+                                        ),
+                                        Row(
+                                          children: [
+                                            Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                                  CrossAxisAlignment.end,
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
@@ -272,29 +258,43 @@ class _MyVehiclesState extends State<MyVehicles> {
                                                 ),
                                                 CustomDisplayText(
                                                   label: myVehicles[index]
-                                                      ["vehicle_plate_no"],
-                                                  color: Colors.black,
+                                                      ["vehicle_brand_name"],
                                                   fontSize: 14,
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.w700,
                                                 ),
                                                 CustomDisplayText(
                                                   label: myVehicles[index]
-                                                      ["vehicle_brand_name"],
-                                                  fontSize: 12,
+                                                      ["vehicle_plate_no"],
                                                   color: const Color.fromARGB(
                                                       255, 137, 140, 148),
+                                                  fontSize: 12,
                                                   fontWeight: FontWeight.normal,
                                                 ),
                                               ],
                                             ),
-                                          ),
-                                        ],
-                                      ),
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                left: 20.0,
+                                                top: 5,
+                                              ),
+                                              child: Row(
+                                                children: [
+                                                  Icon(
+                                                    Icons.chevron_right_sharp,
+                                                    color: Colors.black,
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           );
                         }
                       })),

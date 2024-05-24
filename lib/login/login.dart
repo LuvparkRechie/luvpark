@@ -18,6 +18,8 @@ import 'package:luvpark/custom_widget/custom_textfield.dart';
 import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/forget_pass/forget_pass1.dart';
+import 'package:luvpark/forget_pass/forget_password.dart';
+import 'package:luvpark/forget_pass/forget_password_success.dart';
 import 'package:luvpark/forget_pass/forgot_passVerified.dart';
 import 'package:luvpark/login/class/login_class.dart';
 import 'package:luvpark/permission/permission_handler.dart';
@@ -91,26 +93,47 @@ class _LoginScreenState extends State<LoginScreen> {
                   ],
                 ),
                 Container(
-                  height: 10,
+                  height: 40,
                 ),
-                Center(
-                  child: Image(
-                    height: MediaQuery.of(context).size.height * 0.15,
-                    width: MediaQuery.of(context).size.width * .60,
-                    image: const AssetImage("assets/images/login_logo.png"),
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image(
+                      height: MediaQuery.of(context).size.height * 0.10,
+                      width: MediaQuery.of(context).size.width * .20,
+                      image: const AssetImage("assets/images/luvparklogo.png"),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        CustomDisplayText(
+                          label: 'luvpark',
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: AppColor.primaryColor,
+                        ),
+                        CustomDisplayText(
+                          label: 'Find Book Park',
+                          fontSize: 10,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.grey.shade700,
+                          alignment: TextAlign.end,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
                 Container(
-                  height: 20,
+                  height: 100,
                 ),
                 CustomDisplayText(
-                  label: "Login",
-                  fontSize: 25,
+                  label: "LOGIN",
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
                   color: AppColor.textHeaderLabelColor,
                 ),
                 CustomDisplayText(
-                  label: "Please login to your account",
+                  label: "Enter your mobile number to log in",
                   fontSize: 14,
                   fontWeight: FontWeight.normal,
                   color: AppColor.textSubColor,
@@ -118,13 +141,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 Container(
                   height: 20,
                 ),
-                LabelText(text: "Mobile"),
                 CustomMobileNumber(
                   labelText: "10 digit mobile number",
                   controller: mobileNumber,
                   inputFormatters: [Variables.maskFormatter],
                 ),
-                LabelText(text: "Password"),
                 CustomTextField(
                   labelText: "Enter your password",
                   controller: password,
@@ -141,37 +162,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   alignment: Alignment.centerRight,
                   child: InkWell(
                     onTap: () async {
-                      showModalBottomSheet(
-                        context: context,
-                        isDismissible: true,
-                        enableDrag: true,
-                        isScrollControlled: true,
-                        // This makes the sheet full screen
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(
-                                15.0), // Adjust the radius as needed
-                          ),
-                        ),
-                        builder: (BuildContext context) {
-                          return const ForgotPasswordBottomSheet();
-                        },
+                      Variables.pageTrans(
+                        ForgetPassword(),
+                        context,
                       );
-                      // SharedPreferences prefs =
-                      //     await SharedPreferences.getInstance();
-                      // var myData = prefs.getString(
-                      //   'userData',
-                      // );
-
-                      // if (myData != null &&
-                      //     jsonDecode(myData)['last_name'].toString() !=
-                      //         'null') {
-                      //   Variables.pageTrans(ForgotPassVerified(
-                      //     label: "Forgot\nPassword",
-                      //   ));
-                      // } else {
-                      //   Variables.pageTrans(const ForgetPass1());
-                      // }
                     },
                     child: CustomDisplayText(
                       label: "Forgot Password?",
@@ -195,7 +189,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 //       )
                 //     :
                 CustomButton(
-                    label: "Login",
+                    label: "LOG IN",
                     onTap: () async {
                       FocusScope.of(context).requestFocus(FocusNode());
 
@@ -343,7 +337,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       }
                     }),
                 Container(
-                  height: 100,
+                  height: 20,
                 ),
                 Center(
                   child: RichText(
@@ -429,170 +423,166 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-class ForgotPasswordBottomSheet extends StatefulWidget {
-  const ForgotPasswordBottomSheet({
-    super.key,
-  });
+// class ForgotPasswordBottomSheet extends StatefulWidget {
+//   const ForgotPasswordBottomSheet({
+//     super.key,
+//   });
 
-  @override
-  State<ForgotPasswordBottomSheet> createState() =>
-      _ForgotPasswordBottomSheetState();
-}
+//   @override
+//   State<ForgotPasswordBottomSheet> createState() =>
+//       _ForgotPasswordBottomSheetState();
+// }
 
-class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
-  TextEditingController mobileNumber = TextEditingController();
-  bool isLoadingBtn = false;
-  @override
-  void initState() {
-    super.initState();
-  }
+// class _ForgotPasswordBottomSheetState extends State<ForgotPasswordBottomSheet> {
+//   TextEditingController mobileNumber = TextEditingController();
+//   bool isLoadingBtn = false;
+//   @override
+//   void initState() {
+//     super.initState();
+//   }
 
-  @override
-  Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: const TextScaler.linear(1)),
-      child: Wrap(
-        children: [
-          Container(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(
-                top: Radius.circular(15),
-              ),
-            ),
-            width: MediaQuery.of(context).size.width,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-              child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 64,
-                        height: 7,
-                        decoration: ShapeDecoration(
-                          color: const Color(0xFFD9D9D9),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(7)),
-                        ),
-                      ),
-                    ),
-                    Container(height: 20),
-                    CustomDisplayText(
-                      label: "Forgot Password",
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColor.textHeaderLabelColor,
-                    ),
-                    Container(
-                      height: 5,
-                    ),
-                    CustomDisplayText(
-                      label:
-                          "To proceed please input your registered\nmobile number.",
-                      fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      color: AppColor.textSubColor,
-                    ),
-                    Container(
-                      height: 15,
-                    ),
-                    CustomMobileNumber(
-                      labelText: "Mobile No",
-                      controller: mobileNumber,
-                      inputFormatters: [Variables.maskFormatter],
-                    ),
-                    Container(
-                      height: 20,
-                    ),
-                    // isLoadingBtn
-                    //     ? Shimmer.fromColors(
-                    //         baseColor: Colors.grey.shade300,
-                    //         highlightColor: const Color(0xFFe6faff),
-                    //         child: CustomButton(
-                    //           label: "",
-                    //           onTap: () {},
-                    //         ),
-                    //       )
-                    //     :
-                    CustomButton(
-                        label: "Proceed",
-                        onTap: () async {
-                          CustomModal(context: context).loader();
-                          FocusManager.instance.primaryFocus!.unfocus();
-                          if (isLoadingBtn) return;
-                          setState(() {
-                            isLoadingBtn = true;
-                          });
-                          HttpRequest(
-                                  api:
-                                      "${ApiKeys.gApiLuvParkGetAcctStat}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
-                              .get()
-                              .then((objData) {
-                            if (objData == "No Internet") {
-                              Navigator.pop(context);
-                              setState(() {
-                                isLoadingBtn = false;
-                              });
-                              showAlertDialog(context, "Error",
-                                  "Please check your internet connection and try again.",
-                                  () {
-                                Navigator.of(context).pop();
-                              });
-                              return;
-                            }
-                            if (objData == null) {
-                              Navigator.pop(context);
-                              setState(() {
-                                isLoadingBtn = false;
-                              });
-                              showAlertDialog(context, "Error",
-                                  "Error while connecting to server, Please try again.",
-                                  () {
-                                Navigator.of(context).pop();
-                              });
+//   @override
+//   Widget build(BuildContext context) {
+//     return MediaQuery(
+//       data: MediaQuery.of(context)
+//           .copyWith(textScaler: const TextScaler.linear(1)),
+//       child: Wrap(
+//         children: [
+//           Container(
+//             padding: EdgeInsets.only(
+//                 bottom: MediaQuery.of(context).viewInsets.bottom),
+//             decoration: const BoxDecoration(
+//               color: Colors.white,
+//               borderRadius: BorderRadius.vertical(
+//                 top: Radius.circular(15),
+//               ),
+//             ),
+//             width: MediaQuery.of(context).size.width,
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+//               child: Column(
+//                   mainAxisSize: MainAxisSize.min,
+//                   crossAxisAlignment: CrossAxisAlignment.start,
+//                   children: [
+//                     Center(
+//                       child: Container(
+//                         width: 64,
+//                         height: 7,
+//                         decoration: ShapeDecoration(
+//                           color: const Color(0xFFD9D9D9),
+//                           shape: RoundedRectangleBorder(
+//                               borderRadius: BorderRadius.circular(7)),
+//                         ),
+//                       ),
+//                     ),
+//                     Container(height: 20),
+//                     CustomDisplayText(
+//                       label: "Forgot Password",
+//                       fontSize: 20,
+//                       fontWeight: FontWeight.bold,
+//                       color: AppColor.textHeaderLabelColor,
+//                     ),
+//                     Container(
+//                       height: 5,
+//                     ),
+//                     CustomDisplayText(
+//                       label:
+//                           "To proceed please input your registered\nmobile number.",
+//                       fontSize: 14,
+//                       fontWeight: FontWeight.normal,
+//                       color: AppColor.textSubColor,
+//                     ),
+//                     Container(
+//                       height: 15,
+//                     ),
+//                     CustomMobileNumber(
+//                       labelText: "Mobile No",
+//                       controller: mobileNumber,
+//                       inputFormatters: [Variables.maskFormatter],
+//                     ),
+//                     Container(
+//                       height: 20,
+//                     ),
+//                     // isLoadingBtn
+//                     //     ? Shimmer.fromColors(
+//                     //         baseColor: Colors.grey.shade300,
+//                     //         highlightColor: const Color(0xFFe6faff),
+//                     //         child: CustomButton(
+//                     //           label: "",
+//                     //           onTap: () {},
+//                     //         ),
+//                     //       )
+//                     //     :
+//                     CustomButton(
+//                         label: "Proceed",
+//                         onTap: () async {
+//                           CustomModal(context: context).loader();
+//                           FocusManager.instance.primaryFocus!.unfocus();
+//                           if (isLoadingBtn) return;
+//                           setState(() {
+//                             isLoadingBtn = true;
+//                           });
+//                           HttpRequest(
+//                                   api:
+//                                       "${ApiKeys.gApiLuvParkGetAcctStat}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
+//                               .get()
+//                               .then((objData) {
+//                             if (objData == "No Internet") {
+//                               Navigator.pop(context);
+//                               setState(() {
+//                                 isLoadingBtn = false;
+//                               });
+//                               showAlertDialog(context, "Error",
+//                                   "Please check your internet connection and try again.",
+//                                   () {
+//                                 Navigator.of(context).pop();
+//                               });
+//                               return;
+//                             }
+//                             if (objData == null) {
+//                               Navigator.pop(context);
+//                               setState(() {
+//                                 isLoadingBtn = false;
+//                               });
+//                               showAlertDialog(context, "Error",
+//                                   "Error while connecting to server, Please try again.",
+//                                   () {
+//                                 Navigator.of(context).pop();
+//                               });
 
-                              return;
-                            } else {
-                              setState(() {
-                                isLoadingBtn = false;
-                              });
-                              Navigator.pop(context);
-                              if (objData["success"] == "Y") {
-                                Navigator.of(context).pop();
-                                if (objData["is_verified"] == "Y") {
-                                  Variables.pageTrans(
-                                      ForgotPassVerified(
-                                          label: "Forgot\nPassword",
-                                          mobileNumber:
-                                              "63${mobileNumber.text.toString().replaceAll(" ", "")}"),
-                                      context);
-                                } else {
-                                  Variables.pageTrans(
-                                      ForgetPass1(
-                                          mobileNumber: mobileNumber.text
-                                              .toString()
-                                              .replaceAll(" ", "")),
-                                      context);
-                                }
-                              } else {
-                                showAlertDialog(
-                                    context, "LuvPark", objData["msg"], () {
-                                  Navigator.of(context).pop();
-                                });
-                              }
-                            }
-                          });
-                        }),
-                  ]),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
+//                               return;
+//                             } else {
+//                               setState(() {
+//                                 isLoadingBtn = false;
+//                               });
+//                               Navigator.pop(context);
+//                               if (objData["success"] == "Y") {
+//                                 Navigator.of(context).pop();
+//                                 if (objData["is_verified"] == "Y") {
+//                                   Variables.pageTrans(ForgotPassVerified(
+//                                       label: "Forgot\nPassword",
+//                                       mobileNumber:
+//                                           "63${mobileNumber.text.toString().replaceAll(" ", "")}"));
+//                                 } else {
+//                                   Variables.pageTrans(ForgetPass1(
+//                                       mobileNumber: mobileNumber.text
+//                                           .toString()
+//                                           .replaceAll(" ", "")));
+//                                 }
+//                               } else {
+//                                 showAlertDialog(
+//                                     context, "LuvPark", objData["msg"], () {
+//                                   Navigator.of(context).pop();
+//                                 });
+//                               }
+//                             }
+//                           });
+//                         }),
+//                   ]),
+//             ),
+//           ),
+//         ],
+//       ),
+//     );
+//   }
+// }

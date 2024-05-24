@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -12,6 +13,7 @@ import 'package:luvpark/custom_widget/custom_textfield.dart';
 import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/password_indicator.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
+import 'package:luvpark/forget_pass/forget_password_success.dart';
 import 'package:luvpark/http_request/http_request_model.dart';
 import 'package:luvpark/transfer/otp_transfer.dart';
 
@@ -25,6 +27,7 @@ class ForgetPass1 extends StatefulWidget {
 
 class _ForgetPass1State extends State<ForgetPass1> {
   TextEditingController mobileNumber = TextEditingController();
+  TextEditingController confirmpassword = TextEditingController();
   TextEditingController password = TextEditingController();
   bool? confirmPasswordVisibility = true;
   bool? newPasswordVisibility = true;
@@ -38,7 +41,7 @@ class _ForgetPass1State extends State<ForgetPass1> {
   bool isObscureConfirm = true;
   bool isLoadingPage = true;
   int passStrength = 0;
-  // ignore: prefer_typing_uninitialized_variables
+  String passwordError = '';
 
   @override
   void initState() {
@@ -62,50 +65,35 @@ class _ForgetPass1State extends State<ForgetPass1> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              InkWell(
-                onTap: () {
-                  Navigator.pop(context);
-                },
-                child: const Icon(Icons.arrow_back),
-              ),
               Container(
                 height: 40,
               ),
-              const Image(
-                height: 100,
-                width: 100,
-                fit: BoxFit.contain,
-                image: AssetImage(
-                  "assets/images/forget_pass_image.png",
-                ),
-              ),
-              Container(
-                height: 20,
-              ),
               CustomDisplayText(
-                label: "Forgot Password",
-                fontWeight: FontWeight.w600,
+                label: "Create a new password",
+                fontWeight: FontWeight.bold,
                 color: Colors.black,
                 fontSize: 20,
               ),
-              CustomDisplayText(
-                label: "Create a new strong password",
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: const Color(0x75353536),
-                height: 0,
-                letterSpacing: -0.28,
-                maxLines: 1,
+              Container(
+                height: 5,
+              ),
+              Padding(
+                padding: const EdgeInsets.only(
+                  right: 40,
+                ),
+                child: CustomDisplayText(
+                  label:
+                      "Password must be different from your previously used passwords",
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: const Color(0x75353536),
+                  height: 0,
+                  letterSpacing: -0.28,
+                  maxLines: 2,
+                ),
               ),
               Container(
-                height: 20,
-              ),
-              LabelText(text: "Mobile Number"),
-              CustomMobileNumber(
-                labelText: "Mobile No",
-                controller: mobileNumber,
-                isReadOnly: true,
-                inputFormatters: [Variables.maskFormatter],
+                height: 40,
               ),
               LabelText(text: "New Password"),
               CustomTextField(
@@ -122,6 +110,35 @@ class _ForgetPass1State extends State<ForgetPass1> {
                 onChange: (value) async {
                   setState(() {
                     passStrength = Variables.getPasswordStrength(value);
+                    if (confirmpassword.text.isNotEmpty) {
+                      if (password.text != confirmpassword.text) {
+                        passwordError = "Passwords do not match";
+                      } else {
+                        passwordError = '';
+                      }
+                    }
+                  });
+                },
+              ),
+              LabelText(text: "Confirm Password"),
+              CustomTextField(
+                labelText: "Password",
+                controller: confirmpassword,
+                isObscure: isObscureConfirm,
+                suffixIcon:
+                    !isObscureConfirm ? Icons.visibility : Icons.visibility_off,
+                onIconTap: () {
+                  setState(() {
+                    isObscureConfirm = !isObscureConfirm;
+                  });
+                },
+                onChange: (value) async {
+                  setState(() {
+                    if (password.text != value) {
+                      passwordError = "Passwords did not match";
+                    } else {
+                      passwordError = '';
+                    }
                   });
                 },
               ),
@@ -208,6 +225,34 @@ class _ForgetPass1State extends State<ForgetPass1> {
                             ),
                           ],
                         ),
+                      if (passwordError.isNotEmpty)
+                        Row(
+                          children: [
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Icon(
+                                  Icons.circle_sharp,
+                                  color: Colors.red,
+                                  size: 18,
+                                ),
+                                Icon(
+                                  Icons.close_rounded,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                              ],
+                            ),
+                            Container(
+                              width: 5,
+                            ),
+                            CustomDisplayText(
+                              label: passwordError,
+                              color: Colors.red,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ],
+                        ),
                       Container(
                         height: 10,
                       ),
@@ -226,66 +271,87 @@ class _ForgetPass1State extends State<ForgetPass1> {
                 height: 30,
               ),
               CustomButton(
-                  label: "Submit",
-                  onTap: () async {
-                    // ignore: use_build_context_synchronously
+                label: "Create password",
+                onTap: () async {
+                  if (mobileNumber.text.isEmpty ||
+                      password.text.isEmpty ||
+                      confirmpassword.text.isEmpty) {
+                    return;
+                  }
 
-                    if (mobileNumber.text.isEmpty || password.text.isEmpty) {
-                      return;
-                    }
+                  if (passwordError.isNotEmpty) {
+                    // Do not proceed if there's an error
+                    return;
+                  }
 
-                    CustomModal(context: context).loader();
+                  CustomModal(context: context).loader();
 
-                    Map<String, dynamic> parameters = {
-                      "mobile_no": "63${widget.mobileNumber}",
-                    };
+                  Map<String, dynamic> parameters = {
+                    "mobile_no": "63${widget.mobileNumber}",
+                  };
 
-                    HttpRequest(
-                            api: ApiKeys.gApiSubFolderPostReqOtpShare,
-                            parameters: parameters)
-                        .post()
-                        .then(
-                      (retvalue) {
-                        if (retvalue == "No Internet") {
+                  HttpRequest(
+                          api: ApiKeys.gApiSubFolderPostReqOtpShare,
+                          parameters: parameters)
+                      .post()
+                      .then(
+                    (retvalue) {
+                      if (retvalue == "No Internet") {
+                        Navigator.pop(context);
+                        showAlertDialog(context, "Error",
+                            "Please check your internet connection and try again.",
+                            () {
                           Navigator.pop(context);
-                          showAlertDialog(context, "Error",
-                              "Please check your internet connection and try again.",
-                              () {
-                            Navigator.pop(context);
-                          });
-                          return;
-                        }
-                        if (retvalue == null) {
-                          Navigator.pop(context);
-                          showAlertDialog(context, "Error",
-                              "Error while connecting to server, Please try again.",
-                              () {
-                            Navigator.of(context).pop();
-                          });
+                        });
+                        return;
+                      }
+                      if (retvalue == null) {
+                        Navigator.pop(context);
+                        showAlertDialog(context, "Error",
+                            "Error while connecting to server, Please try again.",
+                            () {
+                          Navigator.of(context).pop();
+                        });
+                      } else {
+                        if (retvalue["success"] == "Y") {
+                          Navigator.of(context).pop();
+                          Variables.pageTrans(
+                              OtpTransferScreen(
+                                otp: int.parse(retvalue["otp"].toString()),
+                                mobileNo: widget.mobileNumber,
+                                isForgotPassword: true,
+                                onCallbackTap: (myOtp) {
+                                  submitData(myOtp.toString());
+                                },
+                              ),
+                              context);
                         } else {
-                          if (retvalue["success"] == "Y") {
+                          Navigator.of(context).pop();
+                          showAlertDialog(context, "Error", retvalue["msg"],
+                              () {
                             Navigator.of(context).pop();
-                            Variables.pageTrans(
-                                OtpTransferScreen(
-                                  otp: int.parse(retvalue["otp"].toString()),
-                                  mobileNo: widget.mobileNumber,
-                                  isForgotPassword: true,
-                                  onCallbackTap: (myOtp) {
-                                    submitData(myOtp.toString());
-                                  },
-                                ),
-                                context);
-                          } else {
-                            Navigator.of(context).pop();
-                            showAlertDialog(context, "Error", retvalue["msg"],
-                                () {
-                              Navigator.of(context).pop();
-                            });
-                          }
+                          });
                         }
-                      },
-                    );
-                  }),
+                      }
+                    },
+                  );
+                },
+              ),
+              Container(
+                height: 20,
+              ),
+              Center(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: CustomDisplayText(
+                    label: 'Back',
+                    color: AppColor.primaryColor,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -323,16 +389,7 @@ class _ForgetPass1State extends State<ForgetPass1> {
         });
       } else {
         if (returnPost["success"] == 'Y') {
-          Navigator.of(context).pop();
-          showAlertDialog(context, "Success",
-              "You have successfully changed your password, to proceed please login.",
-              () {
-            Navigator.of(context).pop();
-            if (Navigator.canPop(context)) {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            }
-          });
+          Variables.pageTrans(ForgetPasswordSuccess(), context);
         } else {
           Navigator.pop(context);
           showAlertDialog(context, "Error", returnPost['msg'], () {
