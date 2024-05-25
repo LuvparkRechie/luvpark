@@ -12,8 +12,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/functions.dart' as func;
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
+import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
@@ -55,7 +57,7 @@ class _Dashboard3State extends State<Dashboard3> {
   List<String> images = [
     'assets/images/geo_tag.png',
   ];
-  List<String> searchImage = ['assets/images/search_pin.png'];
+  List<String> searchImage = ['assets/images/my_marker2.png'];
   List subDataNearest = [];
   List<Marker> markers = <Marker>[];
   var myData;
@@ -204,7 +206,7 @@ class _Dashboard3State extends State<Dashboard3> {
 
   displayMapData(nearestData, lat, lng) async {
     final Uint8List availabeMarkIcons =
-        await DashboardComponent().getSearchMarker(searchImage[0], 80);
+        await DashboardComponent().getSearchMarker(searchImage[0], 120);
     int ctr = 0;
 
     if (mounted) {
@@ -215,24 +217,24 @@ class _Dashboard3State extends State<Dashboard3> {
             LatLng(double.parse(lat.toString()), double.parse(lng.toString()));
         initialCameraPosition = CameraPosition(
           target: startLocation!,
-          zoom: subDataNearest.isEmpty ? 12 : 16,
+          zoom: subDataNearest.isEmpty ? 16 : 16,
           tilt: 0,
           bearing: 0,
         );
+        markers.add(Marker(
+          markerId: const MarkerId('current_location'),
+          position: LatLng(
+              double.parse(lat.toString()), double.parse(lng.toString())),
+          icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+        ));
         if (onSearchAdd) {
-          markers.add(Marker(
-            markerId: const MarkerId('Searched place'),
-            position: LatLng(
-                double.parse(lat.toString()), double.parse(lng.toString())),
-            icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
-          ));
           if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
             mapController.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                     target: LatLng(double.parse(lat.toString()),
                         double.parse(lng.toString())),
-                    zoom: nearestData.isEmpty ? 12 : 16),
+                    zoom: nearestData.isEmpty ? 16 : 16),
               ),
             );
           }
@@ -281,8 +283,19 @@ class _Dashboard3State extends State<Dashboard3> {
                     });
                     return;
                   } else {
-                    Variables.pageTrans(
-                        ViewDetails(areaData: [items]), context);
+                    CustomModal(context: context).loader();
+                    func.Functions.getAmenities(context, "", (cb) {
+                      print("cb $cb");
+                      if (cb["msg"] == "Success") {
+                        Navigator.of(context).pop();
+                        if (cb["data"].isNotEmpty) {
+                          Variables.pageTrans(
+                              ViewDetails(
+                                  areaData: [items], amenitiesData: cb["data"]),
+                              context);
+                        }
+                      }
+                    });
                   }
                 }),
           );
@@ -456,22 +469,33 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   Widget mapDisplay() {
-    return Column(
-      children: [
-        Expanded(child: _body()),
-        SlidingUpPanel(
-          maxHeight: Variables.screenSize.height * 0.33,
-          minHeight: 50,
-          parallaxEnabled: true,
-          parallaxOffset: .5,
-          controller: panelController,
-          onPanelSlide: (double pos) async {},
-          defaultPanelState: PanelState.OPEN,
-          panelBuilder: (sc) {
-            return _panel(sc);
-          },
-        ),
-      ],
+    return SlidingUpPanel(
+      maxHeight: Variables.screenSize.height * 0.50,
+      minHeight: 50,
+      parallaxEnabled: true,
+      parallaxOffset: .3,
+      borderRadius: BorderRadius.only(
+        topLeft: Radius.circular(24.0),
+        topRight: Radius.circular(24.0),
+      ),
+      controller: panelController,
+      body: Column(
+        children: [
+          Expanded(
+            child: _body(),
+          ),
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24.0),
+                topRight: Radius.circular(24.0),
+              ),
+            ),
+            height: 110,
+          )
+        ],
+      ),
+      panel: _panel(),
     );
   }
 
@@ -493,11 +517,11 @@ class _Dashboard3State extends State<Dashboard3> {
               });
             }
 
-            mapController.animateCamera(
-              CameraUpdate.newCameraPosition(
-                CameraPosition(target: startLocation!, zoom: 13),
-              ),
-            );
+            // mapController.animateCamera(
+            //   CameraUpdate.newCameraPosition(
+            //     CameraPosition(target: startLocation!, zoom: 13),
+            //   ),
+            // );
           },
           zoomGesturesEnabled: true,
           initialCameraPosition: initialCameraPosition!,
@@ -609,38 +633,49 @@ class _Dashboard3State extends State<Dashboard3> {
     );
   }
 
-  Widget _panel(sc) {
+  Widget _panel() {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Center(
-            child: Container(
-                width: 71,
-                height: 6,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(56),
-                    color: Color(0xffd9d9d9))),
+          Container(
+            height: 80,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: Container(
+                      width: 71,
+                      height: 6,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(56),
+                          color: Color(0xffd9d9d9))),
+                ),
+                Container(height: 20),
+                CustomDisplayText(
+                  label:
+                      "${jsonDecode(myData!)['first_name'] == null ? "Welcome to luvpark" : "Hi, " + jsonDecode(myData!)['first_name']}",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 16,
+                  maxFontsize: 1,
+                  maxLines: 1,
+                ),
+                CustomDisplayText(
+                  label:
+                      "Parking ${subDataNearest.length >= 5 ? "areas" : "area"} near you",
+                  fontWeight: FontWeight.w500,
+                  fontSize: 14,
+                  maxFontsize: 1,
+                  maxLines: 1,
+                  color: Colors.grey,
+                ),
+                Container(height: 10),
+              ],
+            ),
           ),
-          Container(height: 20),
-          CustomDisplayText(
-            label: "Hi, ${jsonDecode(myData!)['first_name']}",
-            fontWeight: FontWeight.w500,
-            fontSize: 16,
-            maxFontsize: 1,
-            maxLines: 1,
-          ),
-          CustomDisplayText(
-            label: "Welcome to luvpark",
-            fontWeight: FontWeight.w500,
-            fontSize: 13,
-            maxFontsize: 1,
-            maxLines: 1,
-            color: Colors.grey,
-          ),
-          Container(height: 10),
-          Expanded(child: HorizontalListView(nearestData: subDataNearest)),
+          Expanded(
+              child: HorizontalListView(
+                  nearestData: subDataNearest, startLocation: startLocation!)),
         ],
       ),
     );
@@ -839,8 +874,10 @@ class _Dashboard3State extends State<Dashboard3> {
 
 class HorizontalListView extends StatefulWidget {
   final List nearestData;
+  final LatLng startLocation;
   const HorizontalListView({
     super.key,
+    required this.startLocation,
     required this.nearestData,
   });
 
@@ -866,81 +903,37 @@ class _HorizontalListViewState extends State<HorizontalListView> {
           )
         : ListView.builder(
             padding: EdgeInsets.zero,
-            scrollDirection: Axis.horizontal,
             itemCount: dataFiltered.length, // Set your desired item count
             itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.only(right: 5),
-                child: InkWell(
-                  onTap: () {
-                    Variables.pageTrans(
-                        ViewDetails(areaData: [dataFiltered[index]]), context);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
-                    width: Variables.screenSize.width * .88,
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: Colors.grey.shade200,
-                      ),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CircleAvatar(
-                              radius: 20,
-                              backgroundColor: AppColor.primaryColor,
-                              child: CustomDisplayText(
-                                label: "S",
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                            ),
-                            Container(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomDisplayText(
-                                    label: dataFiltered[index]
-                                        ["park_area_name"],
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  Container(height: 2),
-                                  CustomDisplayText(
-                                    label: dataFiltered[index]["address"],
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.grey,
-                                  ),
-                                  Container(height: 5),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                        Container(height: 33),
-                        Row(
-                          children: [
-                            bottomListDetails("time_money",
-                                dataFiltered[index]["parking_schedule"]),
-                            bottomListDetails2("road",
-                                dataFiltered[index]["parking_type_name"]),
-                            bottomListDetails3("carpool",
-                                "${dataFiltered[index]["ps_vacant_count"].toString()} AVAILABLE"),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              print("dataFiltered ${dataFiltered[index]}");
+              double distance = Geolocator.distanceBetween(
+                widget.startLocation.latitude,
+                widget.startLocation.longitude,
+                dataFiltered[index]["pa_latitude"],
+                dataFiltered[index]["pa_longitude"],
               );
+              String getDistanceString(sss) {
+                if (sss >= 1000) {
+                  // If the distance is greater than or equal to 1000 meters, display in kilometers
+                  double distanceInKilometers = sss / 1000;
+                  return '${distanceInKilometers.toStringAsFixed(2)} km';
+                } else {
+                  // Otherwise, display in meters
+                  return '${sss.toStringAsFixed(2)} m';
+                }
+              }
+
+              String finalSttime =
+                  "${dataFiltered[index]["start_time"].toString().substring(0, 2)}:${dataFiltered[index]["start_time"].toString().substring(2)}";
+              String finalEndtime =
+                  "${dataFiltered[index]["end_time"].toString().substring(0, 2)}:${dataFiltered[index]["end_time"].toString().substring(2)}";
+              bool isOpen = DashboardComponent.checkAvailability(
+                  finalSttime, finalEndtime);
+
+              return NearestList(
+                  nearestData: dataFiltered[index],
+                  isOpen: isOpen,
+                  distance: getDistanceString(distance));
             },
           );
   }
@@ -1027,5 +1020,79 @@ class _HorizontalListViewState extends State<HorizontalListView> {
         )
       ],
     ));
+  }
+}
+
+class NearestList extends StatelessWidget {
+  final dynamic nearestData;
+  final bool isOpen;
+  final String distance;
+  const NearestList(
+      {super.key,
+      required this.nearestData,
+      required this.isOpen,
+      required this.distance});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: InkWell(
+        onTap: () {
+          CustomModal(context: context).loader();
+          func.Functions.getAmenities(context, "", (cb) {
+            print("cb $cb");
+            if (cb["msg"] == "Success") {
+              Navigator.of(context).pop();
+              if (cb["data"].isNotEmpty) {
+                Variables.pageTrans(
+                    ViewDetails(
+                        areaData: [nearestData], amenitiesData: cb["data"]),
+                    context);
+              }
+            }
+          });
+        },
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          width: Variables.screenSize.width * .88,
+          height: 74,
+          decoration: BoxDecoration(
+            border: Border.all(
+              color: Colors.grey.shade200,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CustomDisplayText(
+                      label: nearestData["park_area_name"],
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    CustomDisplayText(
+                      label:
+                          "$distance  ●  ${nearestData["parking_schedule"]}  ●  ${isOpen ? "open" : "close"}",
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.keyboard_arrow_right_outlined,
+                color: AppColor.primaryColor,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

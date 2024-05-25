@@ -6,11 +6,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
+import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -18,8 +21,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
-import 'package:luvpark/dashboard/view_rates.dart';
-import 'package:luvpark/http_request/http_request_model.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -27,7 +28,9 @@ import 'package:url_launcher/url_launcher.dart';
 
 class ViewDetails extends StatefulWidget {
   final List areaData;
-  const ViewDetails({required this.areaData, super.key});
+  final List amenitiesData;
+  const ViewDetails(
+      {required this.areaData, required this.amenitiesData, super.key});
 
   @override
   State<ViewDetails> createState() => _ViewDetailsState();
@@ -40,13 +43,16 @@ class _ViewDetailsState extends State<ViewDetails> {
   LatLng? destLocation;
   List<String> digitPairs = [];
   List etaData = [];
+  List ratesData = [];
   bool hasNet = true;
+  bool isViewDetails = false;
   bool isLoadingBtn = false;
   String finalSttime = "";
   String finalEndtime = "";
   String currAdd = "";
   bool isOpen = false;
   Timer? timer;
+  int selected = 0; // Track whether the item is selected
 
   List<Marker> markers = <Marker>[];
   List<String> vehicles = [];
@@ -54,6 +60,7 @@ class _ViewDetailsState extends State<ViewDetails> {
   @override
   void initState() {
     super.initState();
+
     digitPairs =
         Variables.splitNumberIntoPairs(widget.areaData[0]["end_time"], 2);
     destLocation = LatLng(
@@ -148,45 +155,6 @@ class _ViewDetailsState extends State<ViewDetails> {
           } catch (e) {}
         });
       });
-    });
-  }
-
-  void getAmenities(rateData) async {
-    HttpRequest(
-      api:
-          '${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=${widget.areaData[0]["park_area_id"]}',
-    ).get().then((amenitiesData) async {
-      if (amenitiesData == "No Internet") {
-        Navigator.pop(context);
-        showAlertDialog(context, "Error",
-            "Please check your internet connection and try again.", () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-      if (amenitiesData == null) {
-        Navigator.of(context).pop();
-        showAlertDialog(context, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
-      if (amenitiesData["items"].isNotEmpty) {
-        Navigator.of(context).pop();
-        Variables.pageTrans(
-            ViewRates(
-              data: rateData,
-              amenData: amenitiesData["items"],
-            ),
-            context);
-      } else {
-        Navigator.of(context).pop();
-        showAlertDialog(context, "LuvPark", amenitiesData["msg"], () {
-          Navigator.of(context).pop();
-        });
-        return;
-      }
     });
   }
 
@@ -292,99 +260,103 @@ class _ViewDetailsState extends State<ViewDetails> {
                     Navigator.of(context).pop();
                   },
                   child: CircleAvatar(
+                    radius: 16,
                     backgroundColor: Colors.white,
                     child: const Padding(
                       padding: EdgeInsets.only(left: 6.0),
                       child: Icon(
                         Icons.arrow_back_ios,
-                        size: 20,
+                        size: 16,
                         color: Colors.black,
                       ),
                     ),
                   ),
                 )),
-            Positioned(
-              top: 80,
-              left: 20,
-              right: 20,
-              child: Container(
-                  clipBehavior: Clip.antiAlias,
-                  padding: EdgeInsets.all(10),
-                  decoration: ShapeDecoration(
-                    color: Color(0xFFFFFFFF),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(11),
+            Visibility(
+              visible: !isViewDetails,
+              child: Positioned(
+                top: 80,
+                left: 20,
+                right: 20,
+                child: Container(
+                    clipBehavior: Clip.antiAlias,
+                    padding: EdgeInsets.all(10),
+                    decoration: ShapeDecoration(
+                      color: Color(0xFFFFFFFF),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      shadows: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 0,
+                          blurRadius: 1,
+                          offset: Offset(0, 2),
+                        ),
+                      ],
                     ),
-                    shadows: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 0,
-                        blurRadius: 1,
-                        offset: Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  width: Variables.screenSize.width,
-                  child: Row(
-                    children: <Widget>[
-                      Column(
-                        children: <Widget>[
-                          Icon(
-                            Icons.radio_button_checked,
-                            color: Colors.orange,
-                          ),
-                          Dash(
-                              direction: Axis.vertical,
-                              length: 40,
-                              dashLength: 5,
-                              dashThickness: 3.0,
-                              dashColor: Colors.grey.shade400),
-                          Image(
-                            image: AssetImage("assets/images/my_marker.png"),
-                            height: 20,
-                            width: 20,
-                          ),
-                        ],
-                      ),
-                      Container(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                    width: Variables.screenSize.width,
+                    child: Row(
+                      children: <Widget>[
+                        Column(
                           children: <Widget>[
-                            CustomDisplayText(
-                              label: "Current Location",
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
+                            Icon(
+                              Icons.radio_button_checked,
+                              color: Colors.orange,
                             ),
-                            CustomDisplayText(
-                              label: currAdd,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              overflow: TextOverflow.ellipsis,
-                              color: Colors.grey,
-                            ),
-                            Divider(),
-                            CustomDisplayText(
-                              label: widget.areaData[0]["park_area_name"],
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            CustomDisplayText(
-                              label: widget.areaData[0]["address"],
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.grey,
-                              overflow: TextOverflow.ellipsis,
+                            Dash(
+                                direction: Axis.vertical,
+                                length: 40,
+                                dashLength: 5,
+                                dashThickness: 3.0,
+                                dashColor: Colors.grey.shade400),
+                            Image(
+                              image: AssetImage("assets/images/my_marker.png"),
+                              height: 20,
+                              width: 20,
                             ),
                           ],
                         ),
-                      ),
-                    ],
-                  )),
+                        Container(
+                          width: 10,
+                        ),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              CustomDisplayText(
+                                label: "Current Location",
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              CustomDisplayText(
+                                label: currAdd,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                overflow: TextOverflow.ellipsis,
+                                color: Colors.grey,
+                              ),
+                              Divider(),
+                              CustomDisplayText(
+                                label: widget.areaData[0]["park_area_name"],
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              CustomDisplayText(
+                                label: widget.areaData[0]["address"],
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.grey,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
             ),
             Positioned(
                 bottom: 20,
@@ -428,163 +400,192 @@ class _ViewDetailsState extends State<ViewDetails> {
           ],
         )),
 
-        Container(
-          width: Variables.screenSize.width,
-          color: Colors.white,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 5),
-                child: SizedBox(
-                  height: 30,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: vehicles.length,
-                      itemBuilder: ((context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 5.0),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 5, left: 8, right: 7, bottom: 5),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              color: AppColor.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(41),
-                              ),
-                            ),
-                            child: Center(
-                              child: CustomDisplayText(
-                                label: "${vehicles[index]}",
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        );
-                      })),
+        isViewDetails
+            ? showParkingDetails()
+            : Container(
+                width: Variables.screenSize.width,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(15),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 5, 20, 5),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
                             children: [
-                              CustomDisplayText(
-                                label: "Parking Slot",
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                maxLines: 1,
+                              Icon(CupertinoIcons.clock_fill,
+                                  color: AppColor.primaryColor),
+                              Container(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomDisplayText(
+                                      label: "Worktime",
+                                      color: Colors.grey,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      maxLines: 1,
+                                    ),
+                                    CustomDisplayText(
+                                      label:
+                                          "${widget.areaData[0]["parking_schedule"]}",
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              if (widget.areaData[0]["park_size"] == null)
-                                CustomDisplayText(
-                                  label: "No data yet",
-                                  color: const Color(0xFF8D8D8D),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  maxLines: 2,
+                              Container(width: 10),
+                              Container(
+                                width: 65,
+                                height: 26,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(45),
+                                  color:
+                                      isOpen ? Color(0xFF7BB56C) : Colors.red,
                                 ),
-                              if (widget.areaData[0]["park_size"] != null)
-                                CustomDisplayText(
-                                  label: widget.areaData[0]["park_size"] == null
-                                      ? "Unknown"
-                                      : "${widget.areaData[0]["park_size"]}",
-                                  color: const Color(0xFF8D8D8D),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  maxLines: 2,
+                                child: Center(
+                                  child: CustomDisplayText(
+                                    label: isOpen ? "Open" : "Close",
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              if (widget.areaData[0]["park_size"] != null)
-                                CustomDisplayText(
-                                  label: widget.areaData[0]["park_size"] == null
-                                      ? "Unknown"
-                                      : "${widget.areaData[0]["park_orientation"]}",
-                                  color: const Color(0xFF8D8D8D),
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  maxLines: 2,
-                                ),
+                              )
                             ],
                           ),
-                        ),
-                        Container(width: 20),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomDisplayText(
-                              label: etaData[0]["distance"],
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            CustomDisplayText(
-                              label: "${etaData[0]["time"].toString()}",
-                              fontSize: 12,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
-                        )
-                      ],
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-              ),
-              Divider(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                child: Row(
-                  children: [
-                    Expanded(
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 10, 10),
                       child: Row(
                         children: [
-                          Icon(
-                            CupertinoIcons.clock_fill,
-                            color: Colors.blue,
-                            size: 20,
+                          Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                                color: AppColor.primaryColor,
+                                borderRadius: BorderRadius.circular(5)),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 6, vertical: 4),
+                            child: Center(
+                              child: CustomDisplayText(
+                                label: "P",
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                maxLines: 1,
+                              ),
+                            ),
                           ),
                           Container(width: 10),
-                          RichText(
-                            text: TextSpan(
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                TextSpan(
-                                  text: isOpen ? "Open now" : "Closed",
-                                  style: GoogleFonts.dmSans(
-                                    color: isOpen ? Colors.green : Colors.black,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 0.11,
-                                    letterSpacing: -0.41,
+                                CustomDisplayText(
+                                  label: "Availability",
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  maxLines: 1,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text:
+                                            "${widget.areaData[0]["ps_vacant_count"]}",
+                                        style: GoogleFonts.dmSans(
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            "/${widget.areaData[0]["ps_total_count"]} slots available",
+                                        style: GoogleFonts.dmSans(
+                                          color: Colors.grey,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                TextSpan(
-                                  text: " ● ",
-                                  style: GoogleFonts.dmSans(
-                                    color: isOpen ? Colors.green : Colors.red,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                              ],
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {
+                              CustomModal(context: context).loader();
+
+                              HttpRequest(
+                                      api:
+                                          '${ApiKeys.gApiSubFolderGetRates}?park_area_id=${widget.areaData[0]["park_area_id"]}')
+                                  .get()
+                                  .then((returnData) async {
+                                if (returnData == "No Internet") {
+                                  Navigator.pop(context);
+                                  showAlertDialog(context, "Error",
+                                      "Please check your internet connection and try again.",
+                                      () {
+                                    Navigator.of(context).pop();
+                                  });
+
+                                  return;
+                                }
+                                if (returnData == null) {
+                                  Navigator.of(context).pop();
+                                  showAlertDialog(context, "Error",
+                                      "Error while connecting to server, Please try again.",
+                                      () {
+                                    Navigator.of(context).pop();
+                                  });
+
+                                  return;
+                                }
+
+                                if (returnData["items"].length > 0) {
+                                  Navigator.of(context).pop();
+                                  setState(() {
+                                    ratesData = returnData["items"];
+                                    isViewDetails = true;
+                                  });
+                                } else {
+                                  Navigator.of(context).pop();
+                                  showAlertDialog(
+                                      context, "LuvPark", returnData["msg"],
+                                      () {
+                                    Navigator.of(context).pop();
+                                  });
+                                }
+                              });
+                            },
+                            child: Row(
+                              children: [
+                                CustomDisplayText(
+                                  label: "Parking details",
+                                  fontSize: 14,
+                                  color: AppColor.primaryColor,
+                                  fontWeight: FontWeight.w600,
                                 ),
-                                TextSpan(
-                                  text:
-                                      " Close at ${Variables.convert24HourTo12HourFormat("${digitPairs[0]}:${digitPairs[1]}")}",
-                                  style: GoogleFonts.dmSans(
-                                    color: Color(0xFF131313),
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    height: 0.11,
-                                    letterSpacing: -0.41,
-                                  ),
+                                Icon(
+                                  Icons.keyboard_arrow_right_outlined,
+                                  color: AppColor.primaryColor,
                                 )
                               ],
                             ),
@@ -592,166 +593,125 @@ class _ViewDetailsState extends State<ViewDetails> {
                         ],
                       ),
                     ),
-                    InkWell(
-                      onTap: () {
-                        CustomModal(context: context).loader();
-                        HttpRequest(
-                                api:
-                                    '${ApiKeys.gApiSubFolderGetRates}?park_area_id=${widget.areaData[0]["park_area_id"]}')
-                            .get()
-                            .then((returnData) async {
-                          if (returnData == "No Internet") {
-                            Navigator.pop(context);
-                            showAlertDialog(context, "Error",
-                                "Please check your internet connection and try again.",
-                                () {
-                              Navigator.of(context).pop();
-                            });
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
+                      child: isLoadingBtn
+                          ? Shimmer.fromColors(
+                              baseColor: Colors.grey.shade300,
+                              highlightColor: const Color(0xFFe6faff),
+                              child: CustomButton(
+                                label: "",
+                                onTap: () {},
+                              ),
+                            )
+                          : widget.areaData[0]["is_allow_reserve"] == "N"
+                              ? CustomButton(
+                                  color: AppColor.primaryColor.withOpacity(.6),
+                                  textColor: Colors.white,
+                                  label: "Book",
+                                  onTap: () {
+                                    showAlertDialog(context, "LuvPark",
+                                        "This area is not available at the moment.",
+                                        () {
+                                      Navigator.of(context).pop();
+                                    });
+                                  })
+                              : CustomButton(
+                                  label: "Book",
+                                  onTap: () async {
+                                    if (isLoadingBtn) return;
+                                    CustomModal(context: context).loader();
+                                    SharedPreferences pref =
+                                        await SharedPreferences.getInstance();
 
-                            return;
-                          }
-                          if (returnData == null) {
-                            Navigator.of(context).pop();
-                            showAlertDialog(context, "Error",
-                                "Error while connecting to server, Please try again.",
-                                () {
-                              Navigator.of(context).pop();
-                            });
+                                    if (widget.areaData[0]["vehicle_types_list"]
+                                        .toString()
+                                        .contains("|")) {
+                                      pref.setString(
+                                          'availableVehicle',
+                                          jsonEncode(widget.areaData[0]
+                                                  ["vehicle_types_list"]
+                                              .toString()
+                                              .toLowerCase()));
+                                    } else {
+                                      pref.setString(
+                                          'availableVehicle',
+                                          jsonEncode(widget.areaData[0]
+                                                  ["vehicle_types_list"]
+                                              .toString()
+                                              .toLowerCase()));
+                                    }
+                                    if (mounted) {
+                                      setState(() {
+                                        isLoadingBtn = true;
+                                      });
+                                    }
+                                    Functions.getUserBalance(
+                                        (dataBalance) async {
+                                      if (dataBalance != "null" ||
+                                          dataBalance != "No Internet") {
+                                        Functions.computeDistanceResorChckIN(
+                                            context,
+                                            LatLng(
+                                                widget.areaData[0]
+                                                    ["pa_latitude"],
+                                                widget.areaData[0]
+                                                    ["pa_longitude"]),
+                                            (success) {
+                                          if (success["success"]) {
+                                            var dataItemParam = [];
+                                            dataItemParam
+                                                .add(widget.areaData[0]);
+                                            print(
+                                                "uss ${success["can_checkIn"]}");
+                                            setState(() {
+                                              isLoadingBtn = false;
+                                            });
 
-                            return;
-                          }
-
-                          if (returnData["items"].length > 0) {
-                            getAmenities(returnData["items"]);
-                          } else {
-                            Navigator.of(context).pop();
-                            showAlertDialog(
-                                context, "LuvPark", returnData["msg"], () {
-                              Navigator.of(context).pop();
-                            });
-                          }
-                        });
-                      },
-                      child: CustomDisplayText(
-                        label: "View details",
-                        fontSize: 14,
-                        color: AppColor.primaryColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                                            Navigator.pop(context);
+                                            Variables.pageTrans(
+                                                ReserveForm2(
+                                                  queueChkIn: [
+                                                    {
+                                                      "is_chkIn": success[
+                                                          "can_checkIn"],
+                                                      "is_queue": widget
+                                                                  .areaData[0][
+                                                              "is_allow_reserve"] ==
+                                                          "N"
+                                                    }
+                                                  ],
+                                                  areaData: dataItemParam,
+                                                  isCheckIn:
+                                                      success["can_checkIn"],
+                                                  pId: widget.areaData[0]
+                                                      ["park_area_id"],
+                                                  userBal:
+                                                      dataBalance.toString(),
+                                                ),
+                                                context);
+                                          } else {
+                                            setState(() {
+                                              isLoadingBtn = false;
+                                            });
+                                            Navigator.pop(context);
+                                          }
+                                        });
+                                      } else {
+                                        setState(() {
+                                          isLoadingBtn = false;
+                                        });
+                                        Navigator.pop(context);
+                                      }
+                                    });
+                                  },
+                                ),
                     ),
+                    Container(height: 20)
                   ],
                 ),
               ),
-              Divider(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
-                child: isLoadingBtn
-                    ? Shimmer.fromColors(
-                        baseColor: Colors.grey.shade300,
-                        highlightColor: const Color(0xFFe6faff),
-                        child: CustomButton(
-                          label: "",
-                          onTap: () {},
-                        ),
-                      )
-                    : widget.areaData[0]["is_allow_reserve"] == "N"
-                        ? CustomButton(
-                            color: AppColor.primaryColor.withOpacity(.6),
-                            textColor: Colors.white,
-                            label: "Book",
-                            onTap: () {
-                              showAlertDialog(context, "LuvPark",
-                                  "This area is not available at the moment.",
-                                  () {
-                                Navigator.of(context).pop();
-                              });
-                            })
-                        : CustomButton(
-                            label: "Book",
-                            onTap: () async {
-                              if (isLoadingBtn) return;
-                              CustomModal(context: context).loader();
-                              SharedPreferences pref =
-                                  await SharedPreferences.getInstance();
-
-                              if (widget.areaData[0]["vehicle_types_list"]
-                                  .toString()
-                                  .contains("|")) {
-                                pref.setString(
-                                    'availableVehicle',
-                                    jsonEncode(widget.areaData[0]
-                                            ["vehicle_types_list"]
-                                        .toString()
-                                        .toLowerCase()));
-                              } else {
-                                pref.setString(
-                                    'availableVehicle',
-                                    jsonEncode(widget.areaData[0]
-                                            ["vehicle_types_list"]
-                                        .toString()
-                                        .toLowerCase()));
-                              }
-                              if (mounted) {
-                                setState(() {
-                                  isLoadingBtn = true;
-                                });
-                              }
-                              Functions.getUserBalance((dataBalance) async {
-                                if (dataBalance != "null" ||
-                                    dataBalance != "No Internet") {
-                                  Functions.computeDistanceResorChckIN(
-                                      context,
-                                      LatLng(widget.areaData[0]["pa_latitude"],
-                                          widget.areaData[0]["pa_longitude"]),
-                                      (success) {
-                                    if (success["success"]) {
-                                      var dataItemParam = [];
-                                      dataItemParam.add(widget.areaData[0]);
-                                      print("uss ${success["can_checkIn"]}");
-                                      setState(() {
-                                        isLoadingBtn = false;
-                                      });
-
-                                      Navigator.pop(context);
-                                      Variables.pageTrans(
-                                          ReserveForm2(
-                                            queueChkIn: [
-                                              {
-                                                "is_chkIn":
-                                                    success["can_checkIn"],
-                                                "is_queue": widget.areaData[0]
-                                                        ["is_allow_reserve"] ==
-                                                    "N"
-                                              }
-                                            ],
-                                            areaData: dataItemParam,
-                                            isCheckIn: success["can_checkIn"],
-                                            pId: widget.areaData[0]
-                                                ["park_area_id"],
-                                            userBal: dataBalance.toString(),
-                                          ),
-                                          context);
-                                    } else {
-                                      setState(() {
-                                        isLoadingBtn = false;
-                                      });
-                                      Navigator.pop(context);
-                                    }
-                                  });
-                                } else {
-                                  setState(() {
-                                    isLoadingBtn = false;
-                                  });
-                                  Navigator.pop(context);
-                                }
-                              });
-                            },
-                          ),
-              ),
-              Container(height: 20)
-            ],
-          ),
-        ),
       ],
     );
   }
@@ -769,6 +729,351 @@ class _ViewDetailsState extends State<ViewDetails> {
             "assets/images/$imgName.png",
           ),
         ),
+      ),
+    );
+  }
+
+  Widget showParkingDetails() {
+    return Container(
+      // Custom content of the bottom sheet
+      width: Variables.screenSize.width,
+      height: Variables.screenSize.height * 0.50,
+      color: Color(0xFFf8f8f8),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        child: Column(
+          children: [
+            GestureDetector(
+              onTap: () {
+                setState(() {
+                  isViewDetails = false;
+                });
+              },
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.arrow_back_ios,
+                    color: AppColor.primaryColor,
+                  ),
+                  Container(width: 10),
+                  CustomDisplayText(
+                    label: "Back",
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColor.primaryColor,
+                  )
+                ],
+              ),
+            ),
+            Container(height: 20),
+            Expanded(
+                child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                CustomDisplayText(
+                  label: "Vehicles",
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                Container(height: 10),
+                SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: ratesData.length,
+                      itemBuilder: ((context, index) {
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selected = index;
+                            });
+                            print("ratesData ${ratesData[index]}");
+                            showDialog(
+                                context: context,
+                                builder: ((context) {
+                                  return Center(
+                                    child: Wrap(
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              color: AppColor.bodyColor,
+                                              border: Border.all(
+                                                color: Colors.grey.shade200,
+                                              ),
+                                            ),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      CustomDisplayText(
+                                                        label: "Rates",
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 20,
+                                                      ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Icon(Iconsax
+                                                            .close_circle),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  SizedBox(height: 5),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Column(
+                                                      children: [
+                                                        details(
+                                                            "Base Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "base_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                        details(
+                                                          "Base Hours",
+                                                          "${ratesData[index]['base_hours']} ${int.parse(ratesData[index]['base_hours'].toString()) > 1 ? "hrs" : "hr"}",
+                                                        ),
+                                                        details(
+                                                            "Succeeding Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "succeeding_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                        details(
+                                                            "Overnight Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "overnight_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                        details(
+                                                            "Daily Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "daily_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                        details(
+                                                            "Daily Penalty Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "daily_penalty_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                        details(
+                                                            "First Hour Penalty Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "first_hr_penalty_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                        details(
+                                                            "Succeeding Penalty Rate",
+                                                            toCurrencyString(
+                                                                ratesData[index]
+                                                                        [
+                                                                        "succeeding_hr_penalty_rate"]
+                                                                    .toString()
+                                                                    .trim())),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  SizedBox(height: 10),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }));
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.only(right: 5.0),
+                            child: Container(
+                              padding: const EdgeInsets.only(
+                                  top: 5, left: 8, right: 7, bottom: 5),
+                              clipBehavior: Clip.antiAlias,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(7),
+                                border: Border.all(
+                                  color: selected == index
+                                      ? Colors.blue
+                                      : Color(0xFFDFE7EF),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  CustomDisplayText(
+                                    label:
+                                        "${ratesData[index]["vehicle_type"]}",
+                                    color: Colors.black,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  Icon(Icons.keyboard_arrow_right_outlined)
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      })),
+                ),
+                Container(height: 20),
+                CustomDisplayText(
+                  label: "Amenities",
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                Container(height: 10),
+                SizedBox(
+                  height: 40,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: widget.amenitiesData.length,
+                      itemBuilder: ((context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 5.0),
+                          child: Container(
+                            padding: const EdgeInsets.only(
+                                top: 5, left: 8, right: 7, bottom: 5),
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(7),
+                              border: Border.all(
+                                color: Color(0xFFDFE7EF),
+                              ),
+                            ),
+                            child: Center(
+                              child: CustomDisplayText(
+                                label:
+                                    "${widget.amenitiesData[index]["parking_amenity_desc"]}",
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        );
+                      })),
+                ),
+                Container(height: 10),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomDisplayText(
+                      label: "Parking Slot",
+                      color: Colors.black,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      maxLines: 1,
+                    ),
+                    Container(height: 10),
+                    if (widget.areaData[0]["park_size"] == null)
+                      CustomDisplayText(
+                        label: "No data yet",
+                        color: const Color(0xFF8D8D8D),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        maxLines: 2,
+                      ),
+                    if (widget.areaData[0]["park_size"] != null)
+                      CustomDisplayText(
+                        label: widget.areaData[0]["park_size"] == null
+                            ? "Unknown"
+                            : "${widget.areaData[0]["park_size"]}",
+                        color: const Color(0xFF8D8D8D),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        maxLines: 2,
+                      ),
+                    Container(height: 5),
+                    if (widget.areaData[0]["park_size"] != null)
+                      CustomDisplayText(
+                        label: widget.areaData[0]["park_size"] == null
+                            ? "Unknown"
+                            : "${widget.areaData[0]["park_orientation"]}",
+                        color: const Color(0xFF8D8D8D),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        maxLines: 2,
+                      ),
+                  ],
+                ),
+              ],
+            ))
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget details(String label, value) {
+    return Padding(
+      padding: const EdgeInsets.all(3.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: CustomDisplayText(
+              label: "$value",
+              color: AppColor.primaryColor,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(width: 10),
+          Container(
+            color: Colors.grey,
+            width: 2,
+            height: 8,
+          ),
+          SizedBox(width: 10),
+          Expanded(
+            flex: 5,
+            child: CustomDisplayText(
+              label: label,
+              color: Colors.black87.withOpacity(.8),
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
       ),
     );
   }

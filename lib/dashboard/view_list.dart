@@ -1,15 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
-import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/custom_widget/snackbar_dialog.dart';
-import 'package:luvpark/dashboard/view_area_details.dart';
+import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
+import 'package:luvpark/dashboard/dashboard3.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ViewList extends StatefulWidget {
   final List nearestData;
@@ -99,123 +93,34 @@ class _ListItemsState extends State<ListItems> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      getRateData();
-    });
-  }
-
-  getRateData() async {
-    final prefs = await SharedPreferences.getInstance();
-    double? avgRate = prefs.getDouble("Average");
-
-    setState(() {
-      averageData = jsonDecode(avgRate!.toString());
-      isLoadingPage = false;
-    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return isLoadingPage
-        ? Container()
-        : ListView.builder(
-            padding: EdgeInsets.zero,
-            itemCount: widget.data.length,
-            itemBuilder: (context, index) {
-              return _listItem(widget.data[index], index);
-            });
-  }
+    return ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: widget.data.length,
+        itemBuilder: (context, index) {
+          String getDistanceString() {
+            if (widget.data[index]["distance"] >= 1000) {
+              double distanceInKilometers =
+                  widget.data[index]["distance"] / 1000;
+              return '${distanceInKilometers.toStringAsFixed(2)} km';
+            } else {
+              return '${widget.data[index]["distance"].toStringAsFixed(2)} m';
+            }
+          }
 
-  Widget _listItem(data, index) {
-    return GestureDetector(
-      onTap: () {
-        if (widget.userbal < widget.minBalance) {
-          showAlertDialog(
-              context,
-              "Attention",
-              "Your balance is below the required minimum for this feature. "
-                  "Please ensure a minimum balance of ${widget.minBalance} tokens to access the requested service.",
-              () {
-            Navigator.of(context).pop();
-          });
-          return;
-        }
-        Variables.pageTrans(ViewDetails(areaData: [data]), context);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(bottom: 12.0),
-        child: Container(
-          decoration: BoxDecoration(
-            color: Color(0xFFFFFFFF),
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: Color(0xFFDFE7EF),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(28.0, 15, 10, 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomDisplayText(
-                            label: "${data["park_area_name"]}",
-                            fontSize: 16,
-                            maxLines: 1,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF131313),
-                          ),
-                          CustomDisplayText(
-                            label: "${data["address"]}",
-                            fontSize: 14,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.textSecondaryColor,
-                          ),
-                        ],
-                      ),
-                    ),
-                    Container(width: 10),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      color: Color(0xFF232323),
-                    )
-                  ],
-                ),
-                Container(height: 7),
-                Row(
-                  children: [
-                    CustomDisplayText(
-                      label: averageData.toString(),
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                    Container(width: 5),
-                    RatingBarIndicator(
-                      rating: double.parse(averageData.toString()),
-                      itemBuilder: (context, index) => Icon(
-                        Icons.star,
-                        color: AppColor.primaryColor,
-                      ),
-                      itemCount: 5,
-                      itemSize: 20.0,
-                      itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-                      unratedColor: AppColor.primaryColor.withAlpha(50),
-                      direction: Axis.horizontal,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+          String finalSttime =
+              "${widget.data[index]["start_time"].toString().substring(0, 2)}:${widget.data[index]["start_time"].toString().substring(2)}";
+          String finalEndtime =
+              "${widget.data[index]["end_time"].toString().substring(0, 2)}:${widget.data[index]["end_time"].toString().substring(2)}";
+          bool isOpen =
+              DashboardComponent.checkAvailability(finalSttime, finalEndtime);
+          return NearestList(
+              nearestData: widget.data[index],
+              isOpen: isOpen,
+              distance: getDistanceString());
+        });
   }
 }

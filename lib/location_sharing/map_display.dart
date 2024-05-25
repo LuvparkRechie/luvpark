@@ -227,6 +227,14 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                             zoom: 14.4746,
                           ),
                           markers: Set<Marker>.of(markers),
+                          onMapCreated: (GoogleMapController controller) {
+                            // DefaultAssetBundle.of(context)
+                            //     .loadString(
+                            //         'assets/custom_map_style/map_style.json')
+                            //     .then((String style) {
+                            //   controller.setMapStyle(style);
+                            // });
+                          },
                         ),
                         Positioned(
                           bottom: 10,
@@ -313,6 +321,8 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                     label: "Sharing location with",
                                     fontSize: 20,
                                     fontWeight: FontWeight.bold,
+                                    minFontsize: 1,
+                                    maxLines: 1,
                                   ),
                                 ),
                                 InkWell(
@@ -354,6 +364,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                           fontSize: 12,
                                           color: Colors.orange,
                                           fontWeight: FontWeight.w600,
+                                          minFontsize: 1,
                                           maxLines: 1,
                                         ),
                                       ),

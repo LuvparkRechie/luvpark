@@ -425,6 +425,58 @@ class DashboardComponent {
     }
   }
 
+  static Future<List> fetchETAList(LatLng origin, LatLng destination) async {
+    try {
+      final String apiUrl =
+          'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=${Variables.mapApiKey}';
+
+      final response = await http.get(Uri.parse(apiUrl));
+
+      if (response.statusCode == 200) {
+        final Map<String, dynamic> data = json.decode(response.body);
+
+        if (data['status'] == 'OK') {
+          final List<dynamic> routes = data['routes'];
+
+          if (routes.isNotEmpty) {
+            final Map<String, dynamic> route = routes.first;
+            final Map<String, dynamic> leg = route['legs'].first;
+            final String etaText = leg['duration']['text'];
+            final String distanceText = leg['distance']['text'];
+            if (data['routes'][0]['overview_polyline'] != null &&
+                data['routes'][0]['overview_polyline']['points'] != null) {
+              String points = data['routes'][0]['overview_polyline']['points'];
+              List<LatLng> polylineCoordinates =
+                  DashboardComponent.decodePolyline(points);
+
+              return [
+                {
+                  "distance": distanceText.toString(),
+                  "time": etaText,
+                  'poly_line': polylineCoordinates
+                }
+              ];
+            } else {
+              return [
+                {
+                  "distance": distanceText.toString(),
+                  "time": etaText,
+                }
+              ];
+            }
+          }
+        } else {
+          return [];
+        }
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+    return [];
+  }
+
   static bool checkAvailability(String startTimeStr, String endTimeStr) {
     // Get the current time
     DateTime currentTime = DateTime.now();
