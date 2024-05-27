@@ -9,12 +9,14 @@ class CustomButton extends StatefulWidget {
   final Color? textColor;
   final Function onTap;
   final double? btnHeight;
+  final Color? bordercolor;
   const CustomButton(
       {super.key,
       required this.label,
       required this.onTap,
       this.color,
       this.btnHeight,
+      this.bordercolor,
       this.textColor});
 
   @override
@@ -31,7 +33,10 @@ class _CustomButtonState extends State<CustomButton> {
       child: Container(
         decoration: BoxDecoration(
           color: widget.color ?? AppColor.primaryColor,
-          borderRadius: BorderRadius.circular(7),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: widget.bordercolor ?? Colors.transparent,
+          ),
         ),
         child: Center(
           child: Padding(

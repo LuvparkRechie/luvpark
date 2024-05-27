@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
@@ -91,15 +92,11 @@ class _BookingNoticeState extends State<BookingNotice> {
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
         child: Wrap(
           children: [
             Container(
               decoration: const BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(15),
-                ),
               ),
               width: MediaQuery.of(context).size.width,
               child: RefreshIndicator(
@@ -111,45 +108,41 @@ class _BookingNoticeState extends State<BookingNotice> {
                         : SingleChildScrollView(
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Container(
                                   width: 10,
                                 ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
+                                Column(
                                   children: [
                                     // const Image(
-                                    //   height: 40,
-                                    //   width: 40,
+                                    //   fit: BoxFit.cover,
                                     //   image: AssetImage(
-                                    //       "assets/images/information_icon.png"),
+                                    //       "assets/images/dialog.png"),
                                     // ),
-                                    Container(
-                                      width: 10,
-                                    ),
-                                    CustomDisplayText(
-                                      label: noticeData[0]["msg_title"]
-                                          .toString()
-                                          .toUpperCase(),
-                                      color: AppColor.textMainColor,
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w900,
-                                      maxLines: 1,
-                                    ),
                                   ],
                                 ),
-                                const Divider(),
                                 CustomDisplayText(
-                                  label: noticeData[0]["msg"],
-                                  fontWeight: FontWeight.w500,
-                                  color: const Color.fromRGBO(0, 0, 0, 1),
-                                  fontSize: 14,
-                                  alignment: TextAlign.center,
+                                  label: noticeData[0]["msg_title"].toString(),
+                                  color: AppColor.textMainColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w900,
+                                  maxLines: 1,
+                                  alignment: TextAlign.start,
                                 ),
                                 Container(
                                   height: 10,
                                 ),
-                                Divider(),
+                                CustomDisplayText(
+                                  label: noticeData[0]["msg"],
+                                  fontWeight: FontWeight.w400,
+                                  color: const Color.fromRGBO(0, 0, 0, 1),
+                                  fontSize: 14,
+                                  alignment: TextAlign.justify,
+                                ),
+                                Container(
+                                  height: 29,
+                                ),
                                 Row(
                                   children: [
                                     Expanded(
@@ -163,13 +156,8 @@ class _BookingNoticeState extends State<BookingNotice> {
                                           }
                                         },
                                         child: Center(
-                                          // child: CustomDisplayText(
-                                          //   label: "Cancel",
-                                          //   fontWeight: FontWeight.w600,
-                                          //   color: Colors.black,
-                                          //   fontSize: 14,
-                                          // ),
                                           child: CustomButton(
+                                              bordercolor: Colors.black12,
                                               btnHeight: 10,
                                               label: "Cancel",
                                               textColor: Colors.black,
@@ -178,9 +166,6 @@ class _BookingNoticeState extends State<BookingNotice> {
                                                 FocusScope.of(context)
                                                     .requestFocus(FocusNode());
                                                 Navigator.pop(context);
-                                                if (Navigator.canPop(context)) {
-                                                  Navigator.pop(context);
-                                                }
                                               }),
                                         ),
                                       ),

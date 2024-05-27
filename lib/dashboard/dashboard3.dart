@@ -1077,10 +1077,10 @@ class NearestList extends StatelessWidget {
                     ),
                     CustomDisplayText(
                       label:
-                          "$distance  ●  ${nearestData["parking_schedule"]}  ●  ${isOpen ? "open" : "close"}",
+                          "$distance  ●  ${nearestData["parking_schedule"]}  ●  ${isOpen ? "Open" : "Close"}",
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey,
+                      color: isOpen ? Colors.green : Colors.red,
                     ),
                   ],
                 ),

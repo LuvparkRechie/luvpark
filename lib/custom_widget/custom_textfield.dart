@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
+import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
@@ -14,6 +15,7 @@ class CustomTextField extends StatefulWidget {
   final Widget? prefix;
   final bool isObscure;
   final Color? filledColor;
+  final String? title;
 
   final TextEditingController controller;
   final ValueChanged<String>? onChange;
@@ -30,6 +32,7 @@ class CustomTextField extends StatefulWidget {
 
   const CustomTextField(
       {super.key,
+      this.title,
       required this.labelText,
       required this.controller,
       this.fontweight,
@@ -74,6 +77,15 @@ class _CustomTextFieldState extends State<CustomTextField> {
               widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
+            labelText: widget.title,
+            labelStyle: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.w500,
+            ),
+            floatingLabelStyle: TextStyle(
+              color: AppColor.primaryColor,
+              fontWeight: FontWeight.w500,
+            ),
             filled: widget.isFilled != null && widget.isFilled!
                 ? widget.isFilled!
                 : null,
@@ -117,12 +129,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     fontFamily: "SFProTextReg",
                   ),
 
-            contentPadding: const EdgeInsets.all(17),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(
-                width: 1,
-                color: Colors.black.withOpacity(0.15000000596046448),
-              ),
+            contentPadding: const EdgeInsets.only(left: 17, right: 17),
+            focusedBorder: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(7)),
+              borderSide: BorderSide(color: Colors.blue),
             ),
             border: OutlineInputBorder(
               borderSide: BorderSide(
@@ -141,12 +151,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ? GoogleFonts.dmSans(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
-                  fontSize: 15,
+                  fontSize: 14,
                 )
               : TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontFamily: "SFProTextReg",
                 ),
           onChanged: (value) {
@@ -200,82 +210,79 @@ class CustomMobileNumber extends StatefulWidget {
   final String labelText;
   final bool? isReadOnly;
   final Widget? prefix;
-  //final bool? isObscure;
   final TextEditingController controller;
   final ValueChanged<String>? onChange;
   final List<TextInputFormatter>? inputFormatters;
-  final Function? onTap;
+  final void Function()? onTap; // Change the type to match void Function()?
   final TextInputType? keyboardType;
   final Icon? prefixIcon;
-  const CustomMobileNumber(
-      {super.key,
-      required this.labelText,
-      required this.controller,
-      this.onChange,
-      this.prefixIcon,
-      // this.isObscure,
-      this.isReadOnly = false,
-      this.inputFormatters,
-      this.prefix = const Text(""),
-      this.keyboardType = TextInputType.text,
-      this.onTap});
+  final bool isEnabled;
+
+  const CustomMobileNumber({
+    super.key,
+    required this.labelText,
+    required this.controller,
+    this.onChange,
+    this.prefixIcon,
+    this.isReadOnly = false,
+    this.inputFormatters,
+    this.prefix = const Text(""),
+    this.keyboardType = TextInputType.text,
+    this.onTap,
+    this.isEnabled = true,
+  });
 
   @override
   State<CustomMobileNumber> createState() => _CustomMobileNumberState();
 }
 
 class _CustomMobileNumberState extends State<CustomMobileNumber> {
-  final numericRegex = RegExp(r'[0-9]');
-  final upperCaseRegex = RegExp(r'[A-Z]');
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10),
       child: IntrinsicHeight(
         child: TextFormField(
-          // obscureText: widget.isObscure!,
           autofocus: false,
           inputFormatters: widget.inputFormatters,
           controller: widget.controller,
           textInputAction: TextInputAction.done,
-          readOnly: widget.isReadOnly!,
+          readOnly: !widget.isEnabled || widget.isReadOnly!,
           textAlign: TextAlign.left,
-
+          enabled: widget.isEnabled,
           keyboardType: TextInputType.number,
           decoration: InputDecoration(
-            // filled: true,
-            // fillColor: Colors.white,
+            floatingLabelAlignment: FloatingLabelAlignment.start,
+            labelText: 'Mobile Number',
             prefixIcon: Container(
-              padding: const EdgeInsets.only(
-                left: 10,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(7),
+                  bottomLeft: Radius.circular(7),
+                ),
               ),
+              padding: const EdgeInsets.only(left: 10),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    height: 15,
+                  Container(height: 15),
+                  Text(
+                    '+63',
+                    style: Platform.isAndroid
+                        ? GoogleFonts.dmSans(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          )
+                        : TextStyle(
+                            fontFamily: "SFProTextReg",
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
                   ),
-                  // CustomDisplayText(
-                  //   label: '+63',
-                  //   color: Colors.black,
-                  //   fontWeight: FontWeight.normal,
-                  //   fontSize: 15,
-                  // ),
-                  Text('+63',
-                      style: Platform.isAndroid
-                          ? GoogleFonts.dmSans(
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 15,
-                            )
-                          : TextStyle(
-                              fontFamily: "SFProTextReg",
-                              color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 15,
-                            )), // Your label
                 ],
-              ), //
+              ),
             ),
             hintText: "10 digit mobile number",
             hintStyle: Platform.isAndroid
@@ -290,7 +297,10 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
                     fontSize: 14,
                     fontFamily: "SFProTextReg",
                   ),
-            contentPadding: const EdgeInsets.all(10),
+            contentPadding: const EdgeInsets.only(
+              left: 10,
+              right: 10,
+            ),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(color: Colors.blue),
@@ -308,20 +318,18 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               ? GoogleFonts.dmSans(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
-                  fontSize: 15,
+                  fontSize: 14,
                 )
               : TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
-                  fontSize: 15,
+                  fontSize: 14,
                   fontFamily: "SFProTextReg",
                 ),
-          onChanged: (value) {
-            widget.onChange!(value);
-          },
-          onTap: () {
-            widget.onTap!();
-          },
+          onChanged: widget.isEnabled ? widget.onChange : null,
+          onTap: widget.isEnabled
+              ? widget.onTap
+              : null, // Updated onTap assignment
           validator: (value) {
             if (widget.labelText == "Mobile No" ||
                 widget.labelText == "10 digit mobile number") {

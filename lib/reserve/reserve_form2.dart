@@ -608,7 +608,8 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                       vehicleData:
                                                           objData["data"],
                                                       vehicleTypeId:
-                                                          vehicleTypeValue!,
+                                                          vehicleTypeValue ??
+                                                              "",
                                                       onTap: (cbData) {
                                                         setState(() {
                                                           isLoadingBtn = true;

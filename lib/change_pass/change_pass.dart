@@ -139,9 +139,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               Container(
                 height: 30,
               ),
-              LabelText(text: "Old Password"),
               CustomTextField(
-                labelText: "Password",
+                title: "Old Password",
+                labelText: "Enter old Password",
                 controller: oldPass,
                 isObscure: isObscureOld,
                 suffixIcon:
@@ -152,9 +152,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   });
                 },
               ),
-              LabelText(text: "New Password"),
               CustomTextField(
-                labelText: "Password",
+                title: "New Password",
+                labelText: "Enter new Password",
                 controller: newPass,
                 isObscure: isObscureNew,
                 suffixIcon:
@@ -170,9 +170,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   });
                 },
               ),
-              LabelText(text: "Confirm Password"),
               CustomTextField(
-                labelText: "Password",
+                title: "Confirm Password",
+                labelText: "Enter new Password again",
                 controller: confirmPass,
                 isObscure: isObscureConfirm,
                 suffixIcon:
