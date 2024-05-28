@@ -153,39 +153,38 @@ class _VehicleOptionState extends State<VehicleOption> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              CustomDisplayText(
-                                                label:
-                                                    "What's your plate number?",
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                              ),
                                               CustomTextField(
-                                                labelText: "Plate No.",
+                                                title: "Plate No.",
+                                                labelText: "Enter Plate No.",
                                                 controller: plateNumber,
                                                 fontsize: 15,
                                                 fontweight: FontWeight.w400,
                                                 onChange: (value) {
                                                   if (value.isNotEmpty) {
+                                                    final capitalizedText =
+                                                        Variables
+                                                            .capitalizeAllWord(
+                                                                value);
                                                     plateNumber.value =
                                                         TextEditingValue(
-                                                            text: Variables
-                                                                .capitalizeAllWord(
-                                                                    value),
-                                                            selection:
-                                                                plateNumber
-                                                                    .selection);
+                                                      text: capitalizedText,
+                                                      selection: TextSelection
+                                                          .collapsed(
+                                                              offset:
+                                                                  capitalizedText
+                                                                      .length),
+                                                    );
                                                   }
                                                 },
-                                              ),
-                                              CustomDisplayText(
-                                                label: "Choose vehicle type?",
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
                                               ),
                                               Container(height: 10),
                                               DropdownButtonFormField(
                                                 dropdownColor: Colors.white,
                                                 decoration: InputDecoration(
+                                                  labelText: 'Vehicle Type',
+                                                  labelStyle: TextStyle(
+                                                      color: AppColor
+                                                          .primaryColor),
                                                   constraints:
                                                       const BoxConstraints
                                                           .tightFor(height: 50),
