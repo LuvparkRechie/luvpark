@@ -597,8 +597,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                     ["park_area_id"],
                                                 (objData) {
                                               if (objData["msg"] == "Success") {
-                                                print(
-                                                    "area data ${widget.areaData}");
                                                 Variables.customBottomSheet(
                                                   context,
                                                   VehicleOption(
