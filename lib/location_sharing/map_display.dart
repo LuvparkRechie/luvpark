@@ -184,7 +184,9 @@ class MapSharingScreenState extends State<MapSharingScreen> {
         data: MediaQuery.of(context)
             .copyWith(textScaler: const TextScaler.linear(1)),
         child: CustomParentWidget(
-          appbarColor: AppColor.primaryColor,
+          appbarColor: Colors.transparent,
+          extendedBody: true,
+          bodyColor: AppColor.bodyColor,
           child: Container(
             color: AppColor.bodyColor,
             width: Variables.screenSize.width,
@@ -197,268 +199,260 @@ class MapSharingScreenState extends State<MapSharingScreen> {
   }
 
   Widget mapDisplay() {
-    return SafeArea(
-      top: true,
-      child: Container(
-        color: AppColor.bodyColor,
-        width: Variables.screenSize.width,
-        height: Variables.screenSize.width,
-        child: iyahangLocation == null
-            ? const Center(
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            : Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        GoogleMap(
-                          compassEnabled: false,
-                          mapToolbarEnabled: false,
-                          zoomControlsEnabled: false,
-                          mapType: _currentMapType,
-                          initialCameraPosition: CameraPosition(
-                            target: LatLng(iyahangLocation!.latitude,
-                                iyahangLocation!.longitude),
-                            zoom: 14.4746,
-                          ),
-                          markers: Set<Marker>.of(markers),
-                          onMapCreated: (GoogleMapController controller) {
-                            // DefaultAssetBundle.of(context)
-                            //     .loadString(
-                            //         'assets/custom_map_style/map_style.json')
-                            //     .then((String style) {
-                            //   controller.setMapStyle(style);
-                            // });
+    return iyahangLocation == null
+        ? const Center(
+            child: SizedBox(
+              width: 50,
+              height: 50,
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : Column(
+            children: <Widget>[
+              Expanded(
+                child: Stack(
+                  children: [
+                    GoogleMap(
+                      compassEnabled: false,
+                      mapToolbarEnabled: false,
+                      zoomControlsEnabled: false,
+                      mapType: _currentMapType,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(iyahangLocation!.latitude,
+                            iyahangLocation!.longitude),
+                        zoom: 14.4746,
+                      ),
+                      markers: Set<Marker>.of(markers),
+                      onMapCreated: (GoogleMapController controller) {
+                        // DefaultAssetBundle.of(context)
+                        //     .loadString(
+                        //         'assets/custom_map_style/map_style.json')
+                        //     .then((String style) {
+                        //   controller.setMapStyle(style);
+                        // });
+                      },
+                    ),
+                    Positioned(
+                      bottom: 10,
+                      right: 20,
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: FloatingActionButton(
+                          backgroundColor: AppColor.primaryColor,
+                          onPressed: () {
+                            _showMapTypeSelector(context);
                           },
-                        ),
-                        Positioned(
-                          bottom: 10,
-                          right: 20,
-                          child: SizedBox(
-                            width: 45,
-                            height: 45,
-                            child: FloatingActionButton(
-                              backgroundColor: AppColor.primaryColor,
-                              onPressed: () {
-                                _showMapTypeSelector(context);
-                              },
-                              child: Icon(
-                                Icons.layers,
-                                color: Colors.white,
-                              ),
-                            ),
+                          child: Icon(
+                            Icons.layers,
+                            color: Colors.white,
                           ),
                         ),
-                        Positioned(
-                          right: 20,
-                          top: 20,
-                          child: SizedBox(
-                            width: 45,
-                            height: 45,
-                            child: FloatingActionButton(
-                              backgroundColor: AppColor.primaryColor,
-                              onPressed: () {
-                                showModalConfirmation(
-                                  context,
-                                  "Confirmation",
-                                  "Are you sure you want close this page?",
-                                  "",
-                                  "Yes",
-                                  () {
-                                    Navigator.of(context).pop();
-                                  },
-                                  () async {
-                                    setState(() {
-                                      timers!.cancel();
-                                    });
-                                    Navigator.of(context).pop();
-                                    Variables.pageTrans(
-                                        MainLandingScreen(), context);
-                                  },
-                                );
+                      ),
+                    ),
+                    Positioned(
+                      right: 20,
+                      top: 30,
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: FloatingActionButton(
+                          backgroundColor: AppColor.primaryColor,
+                          onPressed: () {
+                            showModalConfirmation(
+                              context,
+                              "Confirmation",
+                              "Are you sure you want close this page?",
+                              "",
+                              "Yes",
+                              () {
+                                Navigator.of(context).pop();
                               },
-                              child: Icon(
-                                Icons.close,
-                                color: Colors.white,
-                              ),
-                            ),
+                              () async {
+                                setState(() {
+                                  timers!.cancel();
+                                });
+                                Navigator.of(context).pop();
+                                Variables.pageTrans(
+                                    MainLandingScreen(), context);
+                              },
+                            );
+                          },
+                          child: Icon(
+                            Icons.close,
+                            color: Colors.white,
                           ),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onVerticalDragUpdate: _onVerticalDragUpdate,
+                child: AnimatedContainer(
+                  duration: Duration(microseconds: 0),
+                  height: _panelHeight,
+                  width: Variables.screenSize.width,
+                  color: Colors.white,
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Center(
+                          child: Container(
+                            width: 80,
+                            height: 10,
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                color: Colors.grey.shade200),
+                          ),
+                        ),
+                        Container(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: CustomDisplayText(
+                                label: "Sharing location with",
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                minFontsize: 1,
+                                maxLines: 1,
+                              ),
+                            ),
+                            InkWell(
+                              onTap: () async {
+                                Variables.customBottomSheet(
+                                    context,
+                                    VerifyUserAcct(
+                                      isInvite: false,
+                                    ));
+                              },
+                              child: CircleAvatar(
+                                radius: 20,
+                                backgroundColor: AppColor.primaryColor,
+                                child: Icon(Icons.person_add,
+                                    color: AppColor.bodyColor),
+                              ),
+                            )
+                          ],
+                        ),
+                        Expanded(
+                            child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(height: 10),
+                              Container(
+                                width: 110,
+                                decoration: BoxDecoration(
+                                  color:
+                                      const Color.fromARGB(255, 243, 228, 206),
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 5, vertical: 3),
+                                  child: Center(
+                                    child: CustomDisplayText(
+                                      label: "Pending Invitation",
+                                      fontSize: 12,
+                                      color: Colors.orange,
+                                      fontWeight: FontWeight.w600,
+                                      minFontsize: 1,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Column(
+                                children: invitedWidget,
+                              )
+                            ],
+                          ),
+                        ))
                       ],
                     ),
                   ),
-                  GestureDetector(
-                    onVerticalDragUpdate: _onVerticalDragUpdate,
-                    child: AnimatedContainer(
-                      duration: Duration(microseconds: 0),
-                      height: _panelHeight,
-                      width: Variables.screenSize.width,
-                      color: Colors.white,
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Center(
-                              child: Container(
-                                width: 80,
-                                height: 10,
-                                decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10),
-                                    color: Colors.grey.shade200),
-                              ),
-                            ),
-                            Container(height: 10),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomDisplayText(
-                                    label: "Sharing location with",
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
-                                    minFontsize: 1,
-                                    maxLines: 1,
-                                  ),
-                                ),
-                                InkWell(
-                                  onTap: () async {
-                                    Variables.customBottomSheet(
-                                        context,
-                                        VerifyUserAcct(
-                                          isInvite: false,
-                                        ));
-                                  },
-                                  child: CircleAvatar(
-                                    radius: 22,
-                                    backgroundColor: AppColor.primaryColor,
-                                    child: Icon(Icons.person_add,
-                                        color: AppColor.bodyColor),
-                                  ),
-                                )
-                              ],
-                            ),
-                            Expanded(
-                                child: SingleChildScrollView(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(height: 10),
-                                  Container(
-                                    width: 110,
-                                    decoration: BoxDecoration(
-                                      color: const Color.fromARGB(
-                                          255, 243, 228, 206),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 5, vertical: 3),
-                                      child: Center(
-                                        child: CustomDisplayText(
-                                          label: "Pending Invitation",
-                                          fontSize: 12,
-                                          color: Colors.orange,
-                                          fontWeight: FontWeight.w600,
-                                          minFontsize: 1,
-                                          maxLines: 1,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    children: invitedWidget,
-                                  )
-                                ],
-                              ),
-                            ))
-                          ],
-                        ),
-                      ),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.grey.shade50,
                     ),
                   ),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      border: Border(
-                        top: BorderSide(
-                          color: Colors.grey.shade50,
-                        ),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(20, 5, 20, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Iconsax.location,
-                                color: Colors.black54,
-                              ),
-                              Container(width: 10),
-                              Expanded(
-                                child: CustomDisplayText(
-                                  label: userAddress,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w500,
-                                  maxLines: 2,
-                                ),
-                              ),
-                            ],
+                          Icon(
+                            Iconsax.location,
+                            color: Colors.black54,
                           ),
-                          Container(height: 20),
-                          CustomButton(
-                              label: "End Sharing",
-                              onTap: () async {
-                                showModalConfirmation(
-                                    context,
-                                    "Share Location",
-                                    "Are you sure you want to end sharing?",
-                                    "",
-                                    "Yes", () {
-                                  Navigator.of(context).pop();
-                                }, () async {
-                                  Navigator.pop(context);
-                                  CustomModal(context: context).loader();
-
-                                  Functions.endSharing((cb) async {
-                                    Navigator.pop(context);
-                                    if (cb == "Success") {
-                                      SharedPreferences prefs =
-                                          await SharedPreferences.getInstance();
-
-                                      prefs.remove("geo_share_id");
-                                      prefs.remove("geo_connect_id");
-                                      if (mounted) {
-                                        setState(() {
-                                          timers!.cancel();
-                                        });
-                                      }
-                                      showAlertDialog(context, "Success",
-                                          "Live sharing successfully ended.",
-                                          () async {
-                                        Navigator.of(context).pop();
-                                        ForegroundNotif.onStop();
-                                        Navigator.of(context).pushNamed('/');
-                                      });
-                                    }
-                                  });
-                                });
-                              }),
+                          Container(width: 10),
+                          Expanded(
+                            child: CustomDisplayText(
+                              label: userAddress,
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              maxLines: 2,
+                            ),
+                          ),
                         ],
                       ),
-                    ),
-                  )
-                ],
-              ),
-      ),
-    );
+                      Container(height: 20),
+                      CustomButton(
+                          label: "End Sharing",
+                          onTap: () async {
+                            showModalConfirmation(
+                                context,
+                                "Share Location",
+                                "Are you sure you want to end sharing?",
+                                "",
+                                "Yes", () {
+                              Navigator.of(context).pop();
+                            }, () async {
+                              Navigator.pop(context);
+                              CustomModal(context: context).loader();
+
+                              Functions.endSharing((cb) async {
+                                Navigator.pop(context);
+                                if (cb == "Success") {
+                                  SharedPreferences prefs =
+                                      await SharedPreferences.getInstance();
+
+                                  prefs.remove("geo_share_id");
+                                  prefs.remove("geo_connect_id");
+                                  if (mounted) {
+                                    setState(() {
+                                      timers!.cancel();
+                                    });
+                                  }
+                                  showAlertDialog(context, "Success",
+                                      "Live sharing successfully ended.",
+                                      () async {
+                                    Navigator.of(context).pop();
+                                    ForegroundNotif.onStop();
+                                    Navigator.of(context).pushNamed('/');
+                                  });
+                                }
+                              });
+                            });
+                          }),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          );
   }
 
   void _showMapTypeSelector(BuildContext context) {

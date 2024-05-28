@@ -19,12 +19,10 @@ class DashboardComponent {
   static getNearest(context, String parkType, radius, lat, long, vhId, amenity,
       isAllowOverNight, Function callBack) async {
     var params =
-        "is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
+        "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
     print("params nearest $params");
     try {
-      var returnData = await HttpRequest(
-              api: "${ApiKeys.gApiSubFolderGetNearestSpace}?$params")
-          .get();
+      var returnData = await HttpRequest(api: params).get();
 
       if (returnData == "No Internet") {
         showAlertDialog(context, "Error",

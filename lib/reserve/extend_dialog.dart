@@ -133,7 +133,7 @@ class _CustomDialogState extends State<CustomDialog> {
                               fontSize: 40,
                             ),
                             CustomDisplayText(
-                              label: counter.toString() == 1 ? "Hour" : "Hours",
+                              label: counter == 1 ? "Hour" : "Hours",
                               fontWeight: FontWeight.w500,
                               color: AppColor.textSubColor,
                               letterSpacing: .5,

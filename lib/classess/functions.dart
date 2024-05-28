@@ -478,8 +478,6 @@ class Functions {
 
 //with park_area id param
   static void getVehicleTypesData(context, areaId, Function cb) {
-    print(
-        "ApiKeys.gApiLuvParkDDVehicleTypes2 ${ApiKeys.gApiLuvParkDDVehicleTypes2}");
     HttpRequest(
             api: "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=$areaId")
         .get()
@@ -517,8 +515,6 @@ class Functions {
   }
 
   static void getVehicleAllTypesData(context, areaId, Function cb) {
-    print(
-        "ApiKeys.gApiLuvParkDDVehicleTypes2 ${ApiKeys.gApiLuvParkDDVehicleTypes}");
     HttpRequest(api: ApiKeys.gApiLuvParkDDVehicleTypes)
         .get()
         .then((returnData) async {

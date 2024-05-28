@@ -217,7 +217,7 @@ class _Dashboard3State extends State<Dashboard3> {
             LatLng(double.parse(lat.toString()), double.parse(lng.toString()));
         initialCameraPosition = CameraPosition(
           target: startLocation!,
-          zoom: subDataNearest.isEmpty ? 16 : 16,
+          zoom: subDataNearest.isEmpty ? 14 : 18,
           tilt: 0,
           bearing: 0,
         );
@@ -234,7 +234,7 @@ class _Dashboard3State extends State<Dashboard3> {
                 CameraPosition(
                     target: LatLng(double.parse(lat.toString()),
                         double.parse(lng.toString())),
-                    zoom: nearestData.isEmpty ? 16 : 16),
+                    zoom: nearestData.isEmpty ? 14 : 18),
               ),
             );
           }
@@ -244,6 +244,7 @@ class _Dashboard3State extends State<Dashboard3> {
         isLoadingMap = false;
       });
     }
+    print("subDataNearest $subDataNearest");
     if (nearestData.isNotEmpty &&
         userBal >= double.parse(logData["min_wallet_bal"].toString())) {
       for (var i = 0; i < nearestData.length; i++) {
@@ -256,7 +257,6 @@ class _Dashboard3State extends State<Dashboard3> {
                 "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}"),
             80,
             true);
-        print("markerIcon $markerIcon");
         if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
           markers.add(
             Marker(
@@ -285,7 +285,6 @@ class _Dashboard3State extends State<Dashboard3> {
                   } else {
                     CustomModal(context: context).loader();
                     func.Functions.getAmenities(context, "", (cb) {
-                      print("cb $cb");
                       if (cb["msg"] == "Success") {
                         Navigator.of(context).pop();
                         if (cb["data"].isNotEmpty) {
@@ -318,7 +317,6 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   void getFilteredData(data) {
-    print("data filter $data");
     if (mounted) {
       setState(() {
         isLoadingPage = true;
@@ -334,7 +332,6 @@ class _Dashboard3State extends State<Dashboard3> {
         data["vh_type"],
         data["amen"],
         data["is_allow_overnight"], (nearestData) {
-      print("nearestData $nearestData");
       if (nearestData == "No Internet") {
         setState(() {
           hasInternetBal = false;
@@ -399,7 +396,7 @@ class _Dashboard3State extends State<Dashboard3> {
               )
             : userBal < double.parse(logData["min_wallet_bal"].toString())
                 ? noMapDisplay()
-                : mapDisplay();
+                : mapDisplay(subDataNearest);
   }
 
   Widget noMapDisplay() {
@@ -468,7 +465,7 @@ class _Dashboard3State extends State<Dashboard3> {
     );
   }
 
-  Widget mapDisplay() {
+  Widget mapDisplay(nearestData) {
     return SlidingUpPanel(
       maxHeight: Variables.screenSize.height * 0.50,
       minHeight: 50,
@@ -495,7 +492,8 @@ class _Dashboard3State extends State<Dashboard3> {
           )
         ],
       ),
-      panel: _panel(),
+      panel: _panel(nearestData),
+      backdropColor: Colors.green,
     );
   }
 
@@ -620,7 +618,7 @@ class _Dashboard3State extends State<Dashboard3> {
                   radius: 20,
                   backgroundColor: Colors.white,
                   child: Image.asset(
-                    "assets/images/nearest.png",
+                    "assets/images/my_marker.png",
                     width: 20.013092041015625,
                     height: 19.998329162597656,
                   ),
@@ -633,9 +631,9 @@ class _Dashboard3State extends State<Dashboard3> {
     );
   }
 
-  Widget _panel() {
+  Widget _panel(data) {
     return Padding(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 2),
       child: Column(
         children: [
           Container(
@@ -662,7 +660,7 @@ class _Dashboard3State extends State<Dashboard3> {
                 ),
                 CustomDisplayText(
                   label:
-                      "Parking ${subDataNearest.length >= 5 ? "areas" : "area"} near you",
+                      "Parking ${data.length >= 5 ? "areas" : "area"} near you",
                   fontWeight: FontWeight.w500,
                   fontSize: 14,
                   maxFontsize: 1,
@@ -675,7 +673,8 @@ class _Dashboard3State extends State<Dashboard3> {
           ),
           Expanded(
               child: HorizontalListView(
-                  nearestData: subDataNearest, startLocation: startLocation!)),
+                  abnormal: data.take(5).toList(),
+                  startLocation: startLocation!)),
         ],
       ),
     );
@@ -873,12 +872,12 @@ class _Dashboard3State extends State<Dashboard3> {
 }
 
 class HorizontalListView extends StatefulWidget {
-  final List nearestData;
+  final List abnormal;
   final LatLng startLocation;
   const HorizontalListView({
     super.key,
     required this.startLocation,
-    required this.nearestData,
+    required this.abnormal,
   });
 
   @override
@@ -886,16 +885,14 @@ class HorizontalListView extends StatefulWidget {
 }
 
 class _HorizontalListViewState extends State<HorizontalListView> {
-  List dataFiltered = [];
   @override
   void initState() {
-    dataFiltered = widget.nearestData.take(5).toList();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return widget.nearestData.isEmpty
+    return widget.abnormal.isEmpty
         ? const NoDataFound(
             size: 70,
             textText:
@@ -903,37 +900,31 @@ class _HorizontalListViewState extends State<HorizontalListView> {
           )
         : ListView.builder(
             padding: EdgeInsets.zero,
-            itemCount: dataFiltered.length, // Set your desired item count
+            itemCount: widget.abnormal.length, // Set your desired item count
             itemBuilder: (context, index) {
-              print("dataFiltered ${dataFiltered[index]}");
-              double distance = Geolocator.distanceBetween(
-                widget.startLocation.latitude,
-                widget.startLocation.longitude,
-                dataFiltered[index]["pa_latitude"],
-                dataFiltered[index]["pa_longitude"],
-              );
-              String getDistanceString(sss) {
-                if (sss >= 1000) {
+              String getDistanceString() {
+                if (widget.abnormal[index]["distance"] >= 1000) {
                   // If the distance is greater than or equal to 1000 meters, display in kilometers
-                  double distanceInKilometers = sss / 1000;
+                  double distanceInKilometers =
+                      widget.abnormal[index]["distance"] / 1000;
                   return '${distanceInKilometers.toStringAsFixed(2)} km';
                 } else {
                   // Otherwise, display in meters
-                  return '${sss.toStringAsFixed(2)} m';
+                  return '${widget.abnormal[index]["distance"].toStringAsFixed(2)} m';
                 }
               }
 
               String finalSttime =
-                  "${dataFiltered[index]["start_time"].toString().substring(0, 2)}:${dataFiltered[index]["start_time"].toString().substring(2)}";
+                  "${widget.abnormal[index]["start_time"].toString().substring(0, 2)}:${widget.abnormal[index]["start_time"].toString().substring(2)}";
               String finalEndtime =
-                  "${dataFiltered[index]["end_time"].toString().substring(0, 2)}:${dataFiltered[index]["end_time"].toString().substring(2)}";
+                  "${widget.abnormal[index]["end_time"].toString().substring(0, 2)}:${widget.abnormal[index]["end_time"].toString().substring(2)}";
               bool isOpen = DashboardComponent.checkAvailability(
                   finalSttime, finalEndtime);
 
               return NearestList(
-                  nearestData: dataFiltered[index],
+                  nearestData: widget.abnormal[index],
                   isOpen: isOpen,
-                  distance: getDistanceString(distance));
+                  distance: getDistanceString());
             },
           );
   }
@@ -1041,7 +1032,6 @@ class NearestList extends StatelessWidget {
         onTap: () {
           CustomModal(context: context).loader();
           func.Functions.getAmenities(context, "", (cb) {
-            print("cb $cb");
             if (cb["msg"] == "Success") {
               Navigator.of(context).pop();
               if (cb["data"].isNotEmpty) {
@@ -1056,7 +1046,6 @@ class NearestList extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           width: Variables.screenSize.width * .88,
-          height: 74,
           decoration: BoxDecoration(
             border: Border.all(
               color: Colors.grey.shade200,
@@ -1074,13 +1063,23 @@ class NearestList extends StatelessWidget {
                       label: nearestData["park_area_name"],
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      maxLines: 1,
                     ),
+                    CustomDisplayText(
+                      label: nearestData["address"],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.grey,
+                      maxLines: 2,
+                    ),
+                    Container(height: 10),
                     CustomDisplayText(
                       label:
                           "$distance  ●  ${nearestData["parking_schedule"]}  ●  ${isOpen ? "Open" : "Close"}",
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
                       color: isOpen ? Colors.green : Colors.red,
+                      maxLines: 2,
                     ),
                   ],
                 ),

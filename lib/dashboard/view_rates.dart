@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
@@ -11,12 +10,10 @@ import 'package:sizer/sizer.dart';
 
 class ViewRates extends StatefulWidget {
   final List data;
-  final List amenData;
 
   const ViewRates({
     Key? key,
     required this.data,
-    required this.amenData,
   }) : super(key: key);
 
   @override
@@ -28,15 +25,6 @@ class _ViewRatesState extends State<ViewRates>
   late TabController _tabController;
   bool isLoading = false;
   bool hasInternet = true;
-
-  Map<String, IconData> amenityIcons = {
-    "WITH CCTV": FontAwesomeIcons.camera,
-    "CONCRETE FLOOR": FontAwesomeIcons.road,
-    "WITH SECURITY": FontAwesomeIcons.personMilitaryPointing,
-    "COVERED / SHADED": FontAwesomeIcons.warehouse,
-    "GRASS AREA": FontAwesomeIcons.leaf,
-    "ASPHALT FLOOR": FontAwesomeIcons.road
-  };
 
   @override
   void initState() {
@@ -62,231 +50,165 @@ class _ViewRatesState extends State<ViewRates>
             appBarIconClick: () {
               Navigator.pop(context);
             },
-            appBarheaderText: "More Info",
-            child: Column(
-              children: [
-                TabBar(
-                  controller: _tabController,
-                  indicatorColor: AppColor.primaryColor,
-                  labelColor: Colors.black,
-                  // onTap: (index) {
-                  //   if (index == 1) {
-                  //     getAmenities();
-                  //   }
-                  // },
-                  tabs: [
-                    Tab(text: 'Vehicle Rates'),
-                    Tab(text: 'Amenities'),
-                  ],
-                ),
-                Expanded(
-                  child: TabBarView(
-                    controller: _tabController,
-                    children: [
-                      isLoading
-                          ? Center(child: CircularProgressIndicator())
-                          : ListView.builder(
-                              padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
-                              itemCount: widget.data.length,
-                              itemBuilder: ((context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: AppColor.bodyColor,
-                                      border: Border.all(
-                                        color: Colors.grey.shade200,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CustomDisplayText(
-                                            label: "Vehicle",
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 17,
-                                          ),
-                                          Container(height: 5),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: IntrinsicHeight(
-                                                child: Row(
-                                                  children: [
-                                                    Icon(
-                                                      widget.data[index][
-                                                                  "vehicle_type"]
-                                                              .toString()
-                                                              .toLowerCase()
-                                                              .contains(
-                                                                  "motorcycle")
-                                                          ? Icons.motorcycle
-                                                          : Icons.time_to_leave,
-                                                      size: 30,
-                                                      color:
-                                                          AppColor.primaryColor,
-                                                    ),
-                                                    SizedBox(width: 10),
-                                                    Text(
-                                                      "TYPE",
-                                                      style: Platform.isAndroid
-                                                          ? GoogleFonts.dmSans(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            )
-                                                          : TextStyle(
-                                                              color: Colors
-                                                                  .black54,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontFamily:
-                                                                  "SFProTextReg",
-                                                            ),
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                    Container(
-                                                      width: 3,
-                                                      height: 15,
-                                                      color: AppColor.mainColor,
-                                                    ),
-                                                    SizedBox(width: 5),
-                                                    Expanded(
-                                                      child: Text(
-                                                        "${widget.data[index]["vehicle_type"]}",
-                                                        style:
-                                                            Platform.isAndroid
-                                                                ? GoogleFonts
-                                                                    .dmSans(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                  )
-                                                                : TextStyle(
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontFamily:
-                                                                        "SFProTextReg",
-                                                                  ),
-                                                      ),
-                                                    ),
-                                                  ],
+            appBarheaderText: "Parking Rates",
+            child: isLoading
+                ? Center(child: CircularProgressIndicator())
+                : ListView.builder(
+                    padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    itemCount: widget.data.length,
+                    itemBuilder: ((context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10),
+                            color: AppColor.bodyColor,
+                            border: Border.all(
+                              color: Colors.grey.shade200,
+                            ),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomDisplayText(
+                                  label: "Vehicle",
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 17,
+                                ),
+                                Container(height: 5),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          widget.data[index]["vehicle_type"]
+                                                  .toString()
+                                                  .toLowerCase()
+                                                  .contains("motorcycle")
+                                              ? Icons.motorcycle
+                                              : Icons.time_to_leave,
+                                          size: 30,
+                                          color: AppColor.primaryColor,
+                                        ),
+                                        SizedBox(width: 10),
+                                        Text(
+                                          "TYPE",
+                                          style: Platform.isAndroid
+                                              ? GoogleFonts.dmSans(
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w600,
+                                                )
+                                              : TextStyle(
+                                                  color: Colors.black54,
+                                                  fontWeight: FontWeight.w600,
+                                                  fontFamily: "SFProTextReg",
                                                 ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                          CustomDisplayText(
-                                            label: "Rates",
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 16,
-                                          ),
-                                          SizedBox(height: 5),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              border: Border.all(
-                                                color: Colors.grey.shade200,
-                                              ),
-                                              color: Colors.white,
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                children: [
-                                                  details(
-                                                      "Base Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index]
-                                                              ["base_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                  details(
-                                                    "Base Hours",
-                                                    "${widget.data[index]['base_hours']} ${int.parse(widget.data[index]['base_hours'].toString()) > 1 ? "hrs" : "hr"}",
-                                                  ),
-                                                  details(
-                                                      "Succeeding Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index][
-                                                              "succeeding_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                  details(
-                                                      "Overnight Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index]
-                                                              ["overnight_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                  details(
-                                                      "Daily Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index]
-                                                              ["daily_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                  details(
-                                                      "Daily Penalty Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index][
-                                                              "daily_penalty_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                  details(
-                                                      "First Hour Penalty Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index][
-                                                              "first_hr_penalty_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                  details(
-                                                      "Succeeding Penalty Rate",
-                                                      toCurrencyString(widget
-                                                          .data[index][
-                                                              "succeeding_hr_penalty_rate"]
-                                                          .toString()
-                                                          .trim())),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(height: 10),
-                                        ],
-                                      ),
+                                        ),
+                                        SizedBox(width: 5),
+                                        Container(
+                                          width: 3,
+                                          height: 15,
+                                          color: AppColor.mainColor,
+                                        ),
+                                        SizedBox(width: 5),
+                                        Expanded(
+                                            child: CustomDisplayText(
+                                          label:
+                                              "${widget.data[index]["vehicle_type"]}",
+                                          maxLines: 1,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        )),
+                                      ],
                                     ),
                                   ),
-                                );
-                              }),
+                                ),
+                                SizedBox(height: 10),
+                                CustomDisplayText(
+                                  label: "Rates",
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                ),
+                                SizedBox(height: 5),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey.shade200,
+                                    ),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        details(
+                                            "Base Rate",
+                                            toCurrencyString(widget.data[index]
+                                                    ["base_rate"]
+                                                .toString()
+                                                .trim())),
+                                        details(
+                                          "Base Hours",
+                                          "${widget.data[index]['base_hours']} ${int.parse(widget.data[index]['base_hours'].toString()) > 1 ? "hrs" : "hr"}",
+                                        ),
+                                        details(
+                                            "Succeeding Rate",
+                                            toCurrencyString(widget.data[index]
+                                                    ["succeeding_rate"]
+                                                .toString()
+                                                .trim())),
+                                        details(
+                                            "Overnight Rate",
+                                            toCurrencyString(widget.data[index]
+                                                    ["overnight_rate"]
+                                                .toString()
+                                                .trim())),
+                                        details(
+                                            "Daily Rate",
+                                            toCurrencyString(widget.data[index]
+                                                    ["daily_rate"]
+                                                .toString()
+                                                .trim())),
+                                        details(
+                                            "Daily Penalty Rate",
+                                            toCurrencyString(widget.data[index]
+                                                    ["daily_penalty_rate"]
+                                                .toString()
+                                                .trim())),
+                                        details(
+                                            "First Hour Penalty Rate",
+                                            toCurrencyString(widget.data[index]
+                                                    ["first_hr_penalty_rate"]
+                                                .toString()
+                                                .trim())),
+                                        details(
+                                            "Succeeding Penalty Rate",
+                                            toCurrencyString(widget.data[index][
+                                                    "succeeding_hr_penalty_rate"]
+                                                .toString()
+                                                .trim())),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10),
+                              ],
                             ),
-                      Tab2(amenData: widget.amenData)
-                    ],
+                          ),
+                        ),
+                      );
+                    }),
                   ),
-                ),
-              ],
-            ),
           ),
         );
       },
@@ -304,112 +226,6 @@ class _ViewRatesState extends State<ViewRates>
               label: "$value",
               color: AppColor.primaryColor,
               fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(width: 10),
-          Container(
-            color: Colors.grey,
-            width: 2,
-            height: 8,
-          ),
-          SizedBox(width: 10),
-          Expanded(
-            flex: 5,
-            child: CustomDisplayText(
-              label: label,
-              color: Colors.black87.withOpacity(.8),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class Tab2 extends StatefulWidget {
-  final List amenData;
-  const Tab2({super.key, required this.amenData});
-
-  @override
-  State<Tab2> createState() => _Tab2State();
-}
-
-class _Tab2State extends State<Tab2> {
-  bool isLoading = false;
-  bool hasInternet = true;
-
-  Map<String, IconData> amenityIcons = {
-    "WITH CCTV": FontAwesomeIcons.camera,
-    "CONCRETE FLOOR": FontAwesomeIcons.road,
-    "WITH SECURITY": FontAwesomeIcons.personMilitaryPointing,
-    "COVERED / SHADED": FontAwesomeIcons.warehouse,
-    "GRASS AREA": FontAwesomeIcons.leaf,
-    "ASPHALT FLOOR": FontAwesomeIcons.road
-  };
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return widget.amenData.isEmpty
-        ? Center(
-            child: CustomDisplayText(
-              label: 'No Amenities Available',
-              color: Colors.black,
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
-          )
-        : ListView.builder(
-            itemCount: widget.amenData.length,
-            itemBuilder: (context, index) {
-              return Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.grey.shade200,
-                    ),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      children: [
-                        amenitiesDetails(
-                          widget.amenData[index]["parking_amenity_desc"],
-                          amenityIcons.containsKey(widget.amenData[index]
-                                  ["parking_amenity_desc"])
-                              ? Icon(amenityIcons[widget.amenData[index]
-                                  ["parking_amenity_desc"]])
-                              : Icon(
-                                  FontAwesomeIcons.squareParking,
-                                ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            },
-          );
-  }
-
-  Widget amenitiesDetails(String label, Widget icon) {
-    return Padding(
-      padding: const EdgeInsets.all(3.0),
-      child: Row(
-        children: [
-          Expanded(
-            flex: 2,
-            child: IconTheme(
-              data: IconThemeData(color: AppColor.primaryColor),
-              child: icon,
             ),
           ),
           SizedBox(width: 10),

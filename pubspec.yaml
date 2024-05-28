@@ -64,17 +64,14 @@ dependencies:
   sqflite: ^2.3.0 
   timezone: ^0.9.2 
   device_info_plus: ^9.1.1 
-  email_validator: ^2.1.17  
-  # flutter_background_service: ^5.0.1
-  # flutter_background_service_ios: ^5.0.0
+  email_validator: ^2.1.17   
   flutter_rating_bar: ^4.0.1
   flutter_xlider: ^3.5.0
   path_provider: ^2.1.1
   dart_ping: ^9.0.1
   dart_ping_ios: ^4.0.2
   google_maps_webservice: ^0.0.20-nullsafety.5
-  flutter_polyline_points: ^1.0.0
-  # location: ^5.0.3
+  flutter_polyline_points: ^1.0.0 
   get: ^4.6.6
   flutter_dotenv: ^5.1.0
  

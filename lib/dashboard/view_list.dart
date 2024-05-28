@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
@@ -24,9 +27,12 @@ class ViewList extends StatefulWidget {
 class _ViewListState extends State<ViewList> {
   bool isLoadingBtn = false;
   int selectedButtonIndex = -1;
+  List searchedZone = [];
+  final TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
+    searchedZone = widget.nearestData;
     super.initState();
   }
 
@@ -52,6 +58,60 @@ class _ViewListState extends State<ViewList> {
                     ? Variables.screenSize.height * .20
                     : 0,
               ),
+              if (widget.nearestData.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(top: 5, bottom: 10),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade100,
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    height: 50,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                      ),
+                      child: TextField(
+                        controller: searchController,
+                        decoration: InputDecoration(
+                          hintText: "Search parking zone/address",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.only(left: 10),
+                          hintStyle: Platform.isAndroid
+                              ? GoogleFonts.dmSans(
+                                  color: Color(0x993C3C43),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w400,
+                                  height: 0.08,
+                                  letterSpacing: -0.41,
+                                )
+                              : TextStyle(
+                                  color: Color(0x993C3C43),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w400,
+                                  height: 0.08,
+                                  letterSpacing: -0.41,
+                                ),
+                        ),
+                        onChanged: (String value) async {
+                          setState(() {
+                            searchedZone = widget.nearestData;
+                            searchedZone = widget.nearestData.where((e) {
+                              return e["park_area_name"]
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(value.toLowerCase()) ||
+                                  e["address"]
+                                      .toString()
+                                      .toLowerCase()
+                                      .contains(value.toLowerCase());
+                            }).toList();
+                          });
+                        },
+                      ),
+                    ),
+                  ),
+                ),
               widget.nearestData.isEmpty
                   ? const NoDataFound(
                       size: 130,
@@ -60,7 +120,7 @@ class _ViewListState extends State<ViewList> {
                     )
                   : Expanded(
                       child: ListItems(
-                        data: widget.nearestData,
+                        data: searchedZone,
                         userbal: widget.balance,
                         minBalance: widget.minBalance,
                       ),

@@ -6,10 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
-import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
@@ -21,6 +19,7 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
+import 'package:luvpark/dashboard/view_rates.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -166,6 +165,7 @@ class _ViewDetailsState extends State<ViewDetails> {
       child: CustomParentWidget(
           appbarColor: Colors.transparent,
           extendedBody: true,
+          bodyColor: AppColor.bodyColor,
           child: currentLocation == null
               ? const Center(
                   child: SizedBox(
@@ -226,7 +226,7 @@ class _ViewDetailsState extends State<ViewDetails> {
 
                   mapController.animateCamera(CameraUpdate.newLatLngBounds(
                     bounds,
-                    50, // Adjust padding as needed
+                    80, // Adjust padding as needed
                   ));
                 }
               },
@@ -272,92 +272,6 @@ class _ViewDetailsState extends State<ViewDetails> {
                     ),
                   ),
                 )),
-            Visibility(
-              visible: !isViewDetails,
-              child: Positioned(
-                top: 80,
-                left: 20,
-                right: 20,
-                child: Container(
-                    clipBehavior: Clip.antiAlias,
-                    padding: EdgeInsets.all(10),
-                    decoration: ShapeDecoration(
-                      color: Color(0xFFFFFFFF),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(11),
-                      ),
-                      shadows: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          spreadRadius: 0,
-                          blurRadius: 1,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    width: Variables.screenSize.width,
-                    child: Row(
-                      children: <Widget>[
-                        Column(
-                          children: <Widget>[
-                            Icon(
-                              Icons.radio_button_checked,
-                              color: Colors.orange,
-                            ),
-                            Dash(
-                                direction: Axis.vertical,
-                                length: 40,
-                                dashLength: 5,
-                                dashThickness: 3.0,
-                                dashColor: Colors.grey.shade400),
-                            Image(
-                              image: AssetImage("assets/images/my_marker.png"),
-                              height: 20,
-                              width: 20,
-                            ),
-                          ],
-                        ),
-                        Container(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              CustomDisplayText(
-                                label: "Current Location",
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              CustomDisplayText(
-                                label: currAdd,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                overflow: TextOverflow.ellipsis,
-                                color: Colors.grey,
-                              ),
-                              Divider(),
-                              CustomDisplayText(
-                                label: widget.areaData[0]["park_area_name"],
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              CustomDisplayText(
-                                label: widget.areaData[0]["address"],
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.grey,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    )),
-              ),
-            ),
             Positioned(
                 bottom: 20,
                 right: 10,
@@ -415,6 +329,80 @@ class _ViewDetailsState extends State<ViewDetails> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.fromLTRB(20, 15, 20, 5),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                              width: Variables.screenSize.width,
+                              child: Row(
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.radio_button_checked,
+                                        color: Colors.orange,
+                                      ),
+                                      Dash(
+                                          direction: Axis.vertical,
+                                          length: 40,
+                                          dashLength: 5,
+                                          dashThickness: 3.0,
+                                          dashColor: Colors.grey.shade400),
+                                      Image(
+                                        image: AssetImage(
+                                            "assets/images/my_marker.png"),
+                                        height: 20,
+                                        width: 20,
+                                      ),
+                                    ],
+                                  ),
+                                  Container(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        CustomDisplayText(
+                                          label: "Current Location",
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        CustomDisplayText(
+                                          label: currAdd,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          overflow: TextOverflow.ellipsis,
+                                          color: Colors.grey,
+                                        ),
+                                        Divider(),
+                                        CustomDisplayText(
+                                          label: widget.areaData[0]
+                                              ["park_area_name"],
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                        CustomDisplayText(
+                                          label: widget.areaData[0]["address"],
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ],
+                      ),
+                    ),
+                    Divider(),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -578,7 +566,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                             child: Row(
                               children: [
                                 CustomDisplayText(
-                                  label: "Parking details",
+                                  label: "More details",
                                   fontSize: 14,
                                   color: AppColor.primaryColor,
                                   fontWeight: FontWeight.w600,
@@ -737,11 +725,12 @@ class _ViewDetailsState extends State<ViewDetails> {
     return Container(
       // Custom content of the bottom sheet
       width: Variables.screenSize.width,
-      height: Variables.screenSize.height * 0.50,
+
       color: Color(0xFFf8f8f8),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             GestureDetector(
               onTap: () {
@@ -766,9 +755,8 @@ class _ViewDetailsState extends State<ViewDetails> {
               ),
             ),
             Container(height: 20),
-            Expanded(
-                child: ListView(
-              padding: EdgeInsets.zero,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 CustomDisplayText(
                   label: "Vehicles",
@@ -776,269 +764,143 @@ class _ViewDetailsState extends State<ViewDetails> {
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
-                Container(height: 10),
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: ratesData.length,
-                      itemBuilder: ((context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selected = index;
-                            });
-                            print("ratesData ${ratesData[index]}");
-                            showDialog(
-                                context: context,
-                                builder: ((context) {
-                                  return Center(
-                                    child: Wrap(
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(10),
-                                              color: AppColor.bodyColor,
-                                              border: Border.all(
-                                                color: Colors.grey.shade200,
-                                              ),
-                                            ),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      CustomDisplayText(
-                                                        label: "Rates",
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 20,
-                                                      ),
-                                                      GestureDetector(
-                                                        onTap: () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        },
-                                                        child: Icon(Iconsax
-                                                            .close_circle),
-                                                      )
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 5),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            8.0),
-                                                    child: Column(
-                                                      children: [
-                                                        details(
-                                                            "Base Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "base_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                        details(
-                                                          "Base Hours",
-                                                          "${ratesData[index]['base_hours']} ${int.parse(ratesData[index]['base_hours'].toString()) > 1 ? "hrs" : "hr"}",
-                                                        ),
-                                                        details(
-                                                            "Succeeding Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "succeeding_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                        details(
-                                                            "Overnight Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "overnight_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                        details(
-                                                            "Daily Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "daily_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                        details(
-                                                            "Daily Penalty Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "daily_penalty_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                        details(
-                                                            "First Hour Penalty Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "first_hr_penalty_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                        details(
-                                                            "Succeeding Penalty Rate",
-                                                            toCurrencyString(
-                                                                ratesData[index]
-                                                                        [
-                                                                        "succeeding_hr_penalty_rate"]
-                                                                    .toString()
-                                                                    .trim())),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 10),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }));
-                          },
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 5.0),
-                            child: Container(
-                              padding: const EdgeInsets.only(
-                                  top: 5, left: 8, right: 7, bottom: 5),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(7),
-                                border: Border.all(
-                                  color: selected == index
-                                      ? Colors.blue
-                                      : Color(0xFFDFE7EF),
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomDisplayText(
-                                    label:
-                                        "${ratesData[index]["vehicle_type"]}",
-                                    color: Colors.black,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  Icon(Icons.keyboard_arrow_right_outlined)
-                                ],
-                              ),
-                            ),
-                          ),
-                        );
-                      })),
-                ),
-                Container(height: 20),
-                CustomDisplayText(
-                  label: "Amenities",
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                Container(height: 10),
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: widget.amenitiesData.length,
-                      itemBuilder: ((context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 5.0),
-                          child: Container(
-                            padding: const EdgeInsets.only(
-                                top: 5, left: 8, right: 7, bottom: 5),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(7),
-                              border: Border.all(
-                                color: Color(0xFFDFE7EF),
-                              ),
-                            ),
-                            child: Center(
-                              child: CustomDisplayText(
-                                label:
-                                    "${widget.amenitiesData[index]["parking_amenity_desc"]}",
-                                color: Colors.black,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ),
-                        );
-                      })),
-                ),
-                Container(height: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomDisplayText(
-                      label: "Parking Slot",
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      maxLines: 1,
-                    ),
-                    Container(height: 10),
-                    if (widget.areaData[0]["park_size"] == null)
-                      CustomDisplayText(
-                        label: "No data yet",
-                        color: const Color(0xFF8D8D8D),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        maxLines: 2,
-                      ),
-                    if (widget.areaData[0]["park_size"] != null)
-                      CustomDisplayText(
-                        label: widget.areaData[0]["park_size"] == null
-                            ? "Unknown"
-                            : "${widget.areaData[0]["park_size"]}",
-                        color: const Color(0xFF8D8D8D),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        maxLines: 2,
-                      ),
-                    Container(height: 5),
-                    if (widget.areaData[0]["park_size"] != null)
-                      CustomDisplayText(
-                        label: widget.areaData[0]["park_size"] == null
-                            ? "Unknown"
-                            : "${widget.areaData[0]["park_orientation"]}",
-                        color: const Color(0xFF8D8D8D),
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        maxLines: 2,
-                      ),
-                  ],
+                InkWell(
+                  onTap: () {
+                    Variables.pageTrans(ViewRates(data: ratesData), context);
+                  },
+                  child: CustomDisplayText(
+                    label: "View rates",
+                    color: AppColor.primaryColor,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    maxLines: 1,
+                  ),
                 ),
               ],
-            ))
+            ),
+            Container(height: 10),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.areaData[0]["vehicle_types_list"]
+                      .toString()
+                      .split("|")
+                      .length,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 5, left: 8, right: 7, bottom: 5),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(7),
+                          border: Border.all(
+                            color: Color(0xFFDFE7EF),
+                          ),
+                        ),
+                        child: Center(
+                          child: CustomDisplayText(
+                            label:
+                                "${widget.areaData[0]["vehicle_types_list"].toString().split("|")[index]}",
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    );
+                  })),
+            ),
+            Container(height: 20),
+            CustomDisplayText(
+              label: "Amenities",
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            Container(height: 10),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.amenitiesData.length,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 5, left: 8, right: 7, bottom: 5),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(7),
+                          border: Border.all(
+                            color: Color(0xFFDFE7EF),
+                          ),
+                        ),
+                        child: Center(
+                          child: CustomDisplayText(
+                            label:
+                                "${widget.amenitiesData[index]["parking_amenity_desc"]}",
+                            color: Colors.black,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+                    );
+                  })),
+            ),
+            Container(height: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomDisplayText(
+                  label: "Parking Slot",
+                  color: Colors.black,
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  maxLines: 1,
+                ),
+                Container(height: 10),
+                if (widget.areaData[0]["park_size"] == null)
+                  CustomDisplayText(
+                    label: "No data yet",
+                    color: const Color(0xFF8D8D8D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    maxLines: 2,
+                  ),
+                if (widget.areaData[0]["park_size"] != null)
+                  CustomDisplayText(
+                    label: widget.areaData[0]["park_size"] == null
+                        ? "Unknown"
+                        : "${widget.areaData[0]["park_size"]}",
+                    color: const Color(0xFF8D8D8D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    maxLines: 2,
+                  ),
+                Container(height: 5),
+                if (widget.areaData[0]["park_size"] != null)
+                  CustomDisplayText(
+                    label: widget.areaData[0]["park_size"] == null
+                        ? "Unknown"
+                        : "${widget.areaData[0]["park_orientation"]}",
+                    color: const Color(0xFF8D8D8D),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    maxLines: 2,
+                  ),
+              ],
+            )
           ],
         ),
       ),
