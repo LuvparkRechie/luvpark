@@ -15,12 +15,8 @@ import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
-import 'package:luvpark/forget_pass/forget_pass1.dart';
 import 'package:luvpark/forget_pass/forget_password.dart';
-import 'package:luvpark/forget_pass/forget_password_success.dart';
-import 'package:luvpark/forget_pass/forgot_passVerified.dart';
 import 'package:luvpark/login/class/login_class.dart';
 import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/sqlite/vehicle_brands_model.dart';
@@ -100,26 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     Image(
                       height: MediaQuery.of(context).size.height * 0.10,
-                      width: MediaQuery.of(context).size.width * .20,
-                      image: const AssetImage("assets/images/luvparklogo.png"),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        CustomDisplayText(
-                          label: 'luvpark',
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          color: AppColor.primaryColor,
-                        ),
-                        CustomDisplayText(
-                          label: 'Find Book Park',
-                          fontSize: 10,
-                          fontWeight: FontWeight.normal,
-                          color: Colors.grey.shade700,
-                          alignment: TextAlign.end,
-                        ),
-                      ],
+                      width: MediaQuery.of(context).size.width * .50,
+                      image: const AssetImage("assets/images/login_logo.png"),
                     ),
                   ],
                 ),
@@ -147,6 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   inputFormatters: [Variables.maskFormatter],
                 ),
                 CustomTextField(
+                  title: "Password",
                   labelText: "Enter your password",
                   controller: password,
                   isObscure: isShowPass,

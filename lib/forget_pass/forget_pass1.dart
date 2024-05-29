@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -10,7 +9,6 @@ import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/password_indicator.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/forget_pass/forget_password_success.dart';
@@ -95,9 +93,9 @@ class _ForgetPass1State extends State<ForgetPass1> {
               Container(
                 height: 40,
               ),
-              LabelText(text: "New Password"),
               CustomTextField(
-                labelText: "Password",
+                title: "New Password",
+                labelText: "Enter New Password",
                 controller: password,
                 isObscure: isObscureNew,
                 suffixIcon:
@@ -120,9 +118,9 @@ class _ForgetPass1State extends State<ForgetPass1> {
                   });
                 },
               ),
-              LabelText(text: "Confirm Password"),
               CustomTextField(
-                labelText: "Password",
+                title: "Confirm Password",
+                labelText: "Enter Confirm Password",
                 controller: confirmpassword,
                 isObscure: isObscureConfirm,
                 suffixIcon:

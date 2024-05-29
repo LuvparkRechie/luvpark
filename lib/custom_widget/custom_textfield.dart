@@ -29,6 +29,7 @@ class CustomTextField extends StatefulWidget {
   final double? fontsize;
   final FontWeight? fontweight;
   final TextAlign? textAlign;
+  final TextCapitalization textCapitalization;
 
   const CustomTextField(
       {super.key,
@@ -50,6 +51,7 @@ class CustomTextField extends StatefulWidget {
       this.filledColor,
       this.isFilled,
       this.keyboardType = TextInputType.text,
+      this.textCapitalization = TextCapitalization.none,
       this.onTap});
 
   @override
@@ -66,6 +68,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       padding: const EdgeInsets.only(top: 10.0, bottom: 20),
       child: IntrinsicHeight(
         child: TextFormField(
+          textCapitalization: widget.textCapitalization,
           obscureText: widget.isObscure,
           autofocus: false,
           inputFormatters: widget.inputFormatters,

@@ -1,14 +1,19 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
 import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
+import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
+import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
@@ -50,12 +55,394 @@ class _SettingsPageState extends State<SettingsPage> {
   bool hasInternetPage = true;
   bool? isActiveMpin;
   bool isAllowMPIN = false;
+  List regionDatas = [];
+  List cityData = [];
+  List provinceData = [];
+  List brgyData = [];
+  String province = "Not specified";
+  String municipality = "Not specified";
+  String brgy = "Not specified";
+  String gender = "Not specified";
+  String civilStatus = "Not specified";
+
+  String zipCode = "Not specified";
+  String bday = "Not specified";
+  String referralcode = "09x21eR";
   String myProfilePic = "";
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       refresh();
+    });
+  }
+
+  void getAccountData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    akongP = prefs.getString(
+      'userData',
+    );
+    var myPicData = prefs.getString(
+      'myProfilePic',
+    );
+    setState(() {
+      myProfilePic = jsonDecode(myPicData!).toString();
+    });
+
+    if (jsonDecode(akongP!)['first_name'] != null) {
+      if (mounted) {
+        setState(() {
+          fullName =
+              "${jsonDecode(akongP!)['first_name'].toString()} ${jsonDecode(akongP!)['middle_name'].toString() == "null" ? "" : jsonDecode(akongP!)['middle_name'].toString()[0]} ${jsonDecode(akongP!)['last_name'].toString()}";
+          if (jsonDecode(akongP!)['gender'].toString().isNotEmpty) {
+            if (jsonDecode(akongP!)['gender'].toString() == "M") {
+              gender = "Male";
+            } else {
+              gender = "Female";
+            }
+          }
+          if (jsonDecode(akongP!)['civil_status'].toString().isNotEmpty) {
+            if (jsonDecode(akongP!)['civil_status'].toString() == "M") {
+              civilStatus = "Married";
+            }
+            if (jsonDecode(akongP!)['civil_status'].toString() == "S") {
+              civilStatus = "Single";
+            }
+            if (jsonDecode(akongP!)['civil_status'].toString() == "W") {
+              civilStatus = "Widowed";
+            }
+            if (jsonDecode(akongP!)['civil_status'].toString() == "D") {
+              civilStatus = "Divorced";
+            }
+          }
+          if (jsonDecode(akongP!)['email'].toString().isNotEmpty) {
+            email = jsonDecode(akongP!)['email'].toString();
+          }
+          if (jsonDecode(akongP!)['zip_code'].toString().isNotEmpty) {
+            zipCode = jsonDecode(akongP!)['zip_code'].toString();
+          }
+          if (jsonDecode(akongP!)['birthday'].toString().isNotEmpty) {
+            bday = Variables.converDate(
+                jsonDecode(akongP!)['birthday'].toString().split("T")[0]);
+          }
+          loading = false;
+        });
+      }
+      getAccountStatusEdit();
+    }
+    setState(() {
+      loading = false;
+    });
+  }
+
+  final ImagePicker _picker = ImagePicker();
+  String? imageBase64;
+  AppState? state;
+  File? imageFile;
+
+  void showBottomSheetCamera() {
+    showCupertinoModalPopup(
+        context: context,
+        builder: (BuildContext cont) {
+          return CupertinoActionSheet(
+            actions: [
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  takePhoto(ImageSource.camera);
+                },
+                child: const Text('Use Camera'),
+              ),
+              CupertinoActionSheetAction(
+                onPressed: () {
+                  Navigator.pop(context);
+                  takePhoto(ImageSource.gallery);
+                },
+                child: const Text('Upload from files'),
+              ),
+            ],
+            cancelButton: CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+            ),
+          );
+        });
+  }
+
+  void takePhoto(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(
+      source: source,
+      imageQuality: 25,
+      maxHeight: 480,
+      maxWidth: 640,
+    );
+
+    setState(() {
+      imageFile = pickedFile != null ? File(pickedFile.path) : null;
+    });
+
+    if (imageFile != null) {
+      setState(() {
+        state = AppState.picked;
+        imageFile!.readAsBytes().then((data) {
+          imageBase64 = base64.encode(data);
+          submitInfo();
+        });
+      });
+    } else {
+      imageBase64 = null;
+    }
+  }
+
+  void submitInfo() async {
+    CustomModal(context: context).loader();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    var objInfoData = prefs.getString(
+      'userData',
+    );
+
+    var myData = jsonDecode(objInfoData!);
+    Map<String, dynamic> parameters = {
+      "mobile_no": myData["mobile_no"],
+      "last_name": myData["last_name"],
+      "first_name": myData["first_name"],
+      "middle_name": myData["middle_name"],
+      "birthday": myData["birthday"].toString() == 'null'
+          ? ''
+          : myData["birthday"].toString().split("T")[0],
+      "gender": myData["gender"],
+      "civil_status": myData["civil_status"],
+      "address1": myData["address1"],
+      "address2": myData["address2"],
+      "brgy_id": myData["brgy_id"] ?? "",
+      "city_id": myData["city_id"] ?? "",
+      "province_id": myData["province_id"] ?? "",
+      "region_id": myData["region_id"] ?? "",
+      "zip_code": myData["zip_code"] ?? "",
+      "email": myData["email"],
+      "secq_id1": myData["secq_id1"] ?? "",
+      "secq_id2": myData["secq_id2"] ?? "",
+      "secq_id3": myData["secq_id3"] ?? "",
+      "seca1": myData["seca1"],
+      "seca2": myData["seca2"],
+      "seca3": myData["seca3"],
+      "image_base64": imageBase64!.toString(),
+    };
+
+    HttpRequest(api: ApiKeys.gApiSubFolderPutUpdateProf, parameters: parameters)
+        .put()
+        .then((res) async {
+      if (res == "No Internet") {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            'Please check your internet connection and try again.', () {
+          Navigator.pop(context);
+        });
+
+        return;
+      }
+      if (res == null) {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+      } else {
+        if (res["success"] == "Y") {
+          Navigator.pop(context);
+          await prefs.remove('myProfilePic');
+          await prefs.setString('myProfilePic', jsonEncode(imageBase64!));
+          setState(() {
+            myImage = imageBase64!;
+          });
+          getAccountData();
+        } else {
+          Navigator.of(context).pop();
+          showAlertDialog(context, "Error", res["msg"], () {
+            Navigator.of(context).pop();
+          });
+
+          return;
+        }
+      }
+    });
+  }
+
+  void getAccountStatusEdit() async {
+    setState(() {
+      loading = false;
+      hasInternetPage = true;
+    });
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    akongP = prefs.getString(
+      'userData',
+    );
+
+    if (int.parse(jsonDecode(akongP!)['region_id'].toString()) != 0) {
+      // ignore: use_build_context_synchronously
+      CustomModal(context: context).loader();
+      getLoadAddress(
+          jsonDecode(akongP!)['region_id'], ApiKeys.gApiSubFolderGetProvince,
+          (returnProvince) {
+        if (int.parse(returnProvince.toString()) == 0) {
+          return;
+        }
+
+        getLoadAddress(
+            jsonDecode(akongP!)['province_id'], ApiKeys.gApiSubFolderGetCity,
+            (returnCity) {
+          if (returnCity == 0) {
+            return;
+          }
+          getLoadAddress(
+              jsonDecode(akongP!)['city_id'], ApiKeys.gApiSubFolderGetBrgy,
+              (returnBrgy) {
+            Navigator.pop(context);
+          });
+        });
+      });
+    } else {
+      setState(() {
+        prefs.setString('provinceData', "null");
+        prefs.setString('brgyData', "null");
+        prefs.setString('cityData', "null");
+      });
+      // ignore: use_build_context_synchronously
+    }
+  }
+
+//GetLoadData
+  void getLoadAddress(int id, folder, Function cb) async {
+    // ignore: prefer_typing_uninitialized_variables
+    String subApi = "";
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (folder == ApiKeys.gApiSubFolderGetProvince) {
+      if (mounted) {
+        setState(() {
+          provinceData = [];
+          subApi = "$folder?p_region_id=$id";
+        });
+      }
+    } else if (folder == ApiKeys.gApiSubFolderGetCity) {
+      if (mounted) {
+        setState(() {
+          cityData = [];
+          subApi = "$folder?p_province_id=$id";
+        });
+      }
+    } else {
+      if (mounted) {
+        setState(() {
+          subApi = "$folder?p_city_id=$id";
+          prefs.remove('brgyData');
+        });
+      }
+    }
+    // ignore: prefer_typing_uninitialized_variables
+
+    FocusManager.instance.primaryFocus!.unfocus();
+
+    HttpRequest(api: subApi).get().then((returnData) async {
+      if (returnData == "No Internet") {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            'Please check your internet connection and try again.', () {
+          Navigator.pop(context);
+        });
+        cb(0);
+        return;
+      }
+      if (returnData == null) {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please contact support.", () {
+          Navigator.of(context).pop();
+        });
+        cb(0);
+        return;
+      } else {
+        if (returnData["items"].length == 0) {
+          Navigator.pop(context);
+          showAlertDialog(context, "Error", "No data found.", () {
+            Navigator.of(context).pop();
+          });
+          cb(0);
+          return;
+        } else {
+          if (folder == ApiKeys.gApiSubFolderGetProvince) {
+            provinceData = [];
+            for (var provRow in returnData["items"]) {
+              provinceData.add(
+                  {'value': provRow["value"], 'province': provRow["text"]});
+            }
+
+            if (mounted) {
+              setState(() {
+                prefs.setString('provinceData', jsonEncode(provinceData));
+                province = provinceData
+                    .where((element) {
+                      return element["value"].toString() ==
+                          jsonDecode(akongP!)['province_id'].toString();
+                    })
+                    .toList()[0]["province"]
+                    .toString();
+              });
+            }
+            cb(1);
+            return;
+          }
+          if (folder == ApiKeys.gApiSubFolderGetCity) {
+            cityData = [];
+
+            for (var provRow in returnData["items"]) {
+              cityData
+                  .add({'value': provRow["value"], 'city': provRow["text"]});
+            }
+            if (mounted) {
+              setState(() {
+                prefs.setString('cityData', jsonEncode(cityData));
+                municipality = cityData
+                    .where((element) {
+                      return element["value"].toString() ==
+                          jsonDecode(akongP!)['city_id'].toString();
+                    })
+                    .toList()[0]["city"]
+                    .toString();
+              });
+            }
+            cb(2);
+            return;
+          }
+          if (folder == ApiKeys.gApiSubFolderGetBrgy) {
+            brgyData = [];
+            for (var provRow in returnData["items"]) {
+              brgyData
+                  .add({'value': provRow["value"], 'brgy': provRow["text"]});
+            }
+
+            if (jsonDecode(akongP!)['brgy_id'].toString() != "0") {
+              if (mounted) {
+                setState(() {
+                  prefs.setString('brgyData', jsonEncode(brgyData));
+                  brgy = brgyData
+                      .where((element) {
+                        return element["value"].toString() ==
+                            jsonDecode(akongP!)['brgy_id'].toString();
+                      })
+                      .toList()[0]["brgy"]
+                      .toString();
+                });
+              }
+            }
+
+            cb(3);
+            return;
+          }
+        }
+      }
     });
   }
 
@@ -228,7 +615,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 onTap: () {
                                   Variables.pageTrans(ProfileDetails(
                                     callBack: () {
-                                      getAccountStatus();
+                                      getAccountStatusEdit();
                                     },
                                   ), context);
                                 },
@@ -314,10 +701,104 @@ class _SettingsPageState extends State<SettingsPage> {
                                             ],
                                           ),
                                         ),
-                                        const Icon(
-                                          Icons.keyboard_arrow_right,
-                                          color: Colors.black54,
-                                        ),
+                                        GestureDetector(
+                                          onTap: () async {
+                                            SharedPreferences prefs =
+                                                await SharedPreferences
+                                                    .getInstance();
+                                            if (int.parse(jsonDecode(
+                                                        akongP!)['region_id']
+                                                    .toString()) !=
+                                                0) {
+                                              // ignore: use_build_context_synchronously
+                                              CustomModal(context: context)
+                                                  .loader();
+                                              getLoadAddress(
+                                                  jsonDecode(
+                                                      akongP!)['region_id'],
+                                                  ApiKeys
+                                                      .gApiSubFolderGetProvince,
+                                                  (returnProvince) {
+                                                if (int.parse(returnProvince
+                                                        .toString()) ==
+                                                    0) {
+                                                  return;
+                                                }
+
+                                                getLoadAddress(
+                                                    jsonDecode(
+                                                        akongP!)['province_id'],
+                                                    ApiKeys
+                                                        .gApiSubFolderGetCity,
+                                                    (returnCity) {
+                                                  if (returnCity == 0) {
+                                                    return;
+                                                  }
+                                                  getLoadAddress(
+                                                      jsonDecode(
+                                                          akongP!)['city_id'],
+                                                      ApiKeys
+                                                          .gApiSubFolderGetBrgy,
+                                                      (returnBrgy) {
+                                                    Navigator.pop(context);
+                                                    Variables.pageTrans(
+                                                        const UpdateProfile(),
+                                                        context);
+                                                  });
+                                                });
+                                              });
+                                            } else {
+                                              setState(() {
+                                                prefs.setString(
+                                                    'provinceData', "null");
+                                                prefs.setString(
+                                                    'brgyData', "null");
+                                                prefs.setString(
+                                                    'cityData', "null");
+                                              });
+                                              // ignore: use_build_context_synchronously
+                                              Variables.pageTrans(
+                                                  const UpdateProfile(),
+                                                  context);
+                                            }
+                                          },
+                                          child: Container(
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                    color:
+                                                        AppColor.primaryColor),
+                                                color: AppColor.primaryColor,
+                                                borderRadius: BorderRadius.all(
+                                                  Radius.circular(20),
+                                                ),
+                                              ),
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 8.0,
+                                                  vertical: 4,
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.edit,
+                                                      size: 15,
+                                                      color: Colors.white,
+                                                    ),
+                                                    Container(
+                                                      width: 5,
+                                                    ),
+                                                    CustomDisplayText(
+                                                      label: 'Edit',
+                                                      fontSize: 12,
+                                                      color: Colors.white,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    )
+                                                  ],
+                                                ),
+                                              )),
+                                        )
                                       ],
                                     ),
                                   ),
@@ -363,10 +844,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                                   child: Image.asset(
                                                       height: 34,
                                                       width: 34,
-                                                      'assets/images/parking_history.png'),
+                                                      'assets/images/parkhistorynew.png'),
                                                 ),
                                                 onTap: () async {
-                                                  print("nyawaaa");
                                                   Variables.pageTrans(
                                                       ParkingHistory(),
                                                       context);
@@ -565,9 +1045,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                         Image.asset(
                                           'assets/images/lock-open.png',
                                         ),
-                                        Color(0xFF0078FF).withOpacity(0.1),
+                                        Colors.transparent,
                                         "Change Password",
-                                        'Make changes to your account',
+                                        'Secure your account',
                                         () {
                                           Variables.pageTrans(
                                               const ChangePasswordScreen(),
@@ -581,7 +1061,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                         Image.asset(
                                           'assets/images/log-out.png',
                                         ),
-                                        Color(0xFFFF2828).withOpacity(0.1),
+                                        Colors.transparent,
                                         "Log out",
                                         '',
                                         () {

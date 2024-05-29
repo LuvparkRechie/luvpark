@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:luvpark/buy_token/buy_token.dart';
@@ -38,7 +37,6 @@ class _MyWalletState extends State<MyWallet>
   double ptsBal = 0.0;
   String fromDate = "";
   String toDate = "";
-  final CarouselController _carouselController = CarouselController();
 
   //History Trans param
   bool hasInternetHist = true;

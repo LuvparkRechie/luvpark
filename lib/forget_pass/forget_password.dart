@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -9,13 +7,10 @@ import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
-import 'package:luvpark/custom_widget/password_indicator.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/forget_pass/forget_pass1.dart';
 import 'package:luvpark/forget_pass/forgot_passVerified.dart';
 import 'package:luvpark/http_request/http_request_model.dart';
-import 'package:luvpark/transfer/otp_transfer.dart';
 
 class ForgetPassword extends StatefulWidget {
   const ForgetPassword({
@@ -85,11 +80,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
               ),
               Container(
                 height: 50,
-              ),
-              Row(
-                children: [
-                  LabelText(text: "Mobile Number"),
-                ],
               ),
               CustomMobileNumber(
                 labelText: "10 digit mobile number",

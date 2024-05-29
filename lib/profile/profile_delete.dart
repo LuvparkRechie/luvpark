@@ -116,21 +116,21 @@ class _ProfileDeleteState extends State<ProfileDelete> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Divider(
-          color: Colors.black,
-        ),
-        SizedBox(
-          height: 15,
-        ),
-        CustomButton(
-          btnHeight: 10,
-          color: Colors.red.shade700,
-          label: 'Delete Account',
-          onTap: () => postDeleteAccount(context),
-        ),
-      ],
+    return Expanded(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          SizedBox(
+            height: 15,
+          ),
+          CustomButton(
+            btnHeight: 10,
+            color: Colors.red.shade700,
+            label: 'Delete Account',
+            onTap: () => postDeleteAccount(context),
+          ),
+        ],
+      ),
     );
   }
 }

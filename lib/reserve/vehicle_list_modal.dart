@@ -160,23 +160,9 @@ class _VehicleOptionState extends State<VehicleOption> {
                                                 controller: plateNumber,
                                                 fontsize: 15,
                                                 fontweight: FontWeight.w400,
-                                                onChange: (value) {
-                                                  if (value.isNotEmpty) {
-                                                    final capitalizedText =
-                                                        Variables
-                                                            .capitalizeAllWord(
-                                                                value);
-                                                    plateNumber.value =
-                                                        TextEditingValue(
-                                                      text: capitalizedText,
-                                                      selection: TextSelection
-                                                          .collapsed(
-                                                              offset:
-                                                                  capitalizedText
-                                                                      .length),
-                                                    );
-                                                  }
-                                                },
+                                                textCapitalization:
+                                                    TextCapitalization
+                                                        .characters,
                                               ),
                                               Container(height: 10),
                                               DropdownButtonFormField(
