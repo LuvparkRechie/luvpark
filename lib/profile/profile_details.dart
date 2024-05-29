@@ -567,28 +567,25 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Stack(
-                          alignment: Alignment.centerRight,
+                        Row(
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomDisplayText(
-                                  label: 'Account Name',
-                                  fontWeight: FontWeight.bold,
-                                ),
-                                Row(
-                                  children: [
-                                    CustomDisplayText(
-                                      label: fullName,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w400,
-                                      color: Colors.black54,
-                                      maxLines: 1,
-                                    ),
-                                  ],
-                                ),
-                              ],
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomDisplayText(
+                                    label: 'Account Name',
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  CustomDisplayText(
+                                    label: fullName,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.black54,
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
                             ),
                             isActive == 'Y'
                                 ? Row(
