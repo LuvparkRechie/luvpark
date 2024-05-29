@@ -177,7 +177,7 @@ class LoginComponent {
                         "Inactive Account",
                         "Your account is currently inactive. Would you like to activate it now?",
                         "",
-                        "Not now", () {
+                        "Yes", () {
                       Navigator.of(context).pop();
                       cb([false, "No"]);
                     }, () async {

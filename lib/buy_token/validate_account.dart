@@ -307,7 +307,6 @@ class _ValidateNumberPageState extends State<ValidateNumberPage> {
   Widget bodyniya() {
     return CustomParent1Widget(
         canPop: true,
-        bodyColor: AppColor.bodyColor,
         appBarheaderText: "Load",
         appBarIconClick: () {
           Navigator.of(context).pop();

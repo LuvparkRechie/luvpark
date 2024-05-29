@@ -294,7 +294,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                   duration: Duration(microseconds: 0),
                   height: _panelHeight,
                   width: Variables.screenSize.width,
-                  color: Colors.white,
+                  color: Color(0xFFF8F8F8),
                   child: Padding(
                     padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                     child: Column(
@@ -535,6 +535,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
         for (dynamic dataRow in pendingInviteData["items"]) {
           invitedWidget.add(Container(
             decoration: BoxDecoration(
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(color: Colors.grey.shade100)),
             margin: const EdgeInsets.fromLTRB(0, 5, 0, 0),

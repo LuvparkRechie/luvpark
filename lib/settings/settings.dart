@@ -485,9 +485,9 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
-        appbarColor: AppColor.primaryColor,
+        appbarColor: AppColor.bodyColor,
         child: Container(
-          color: Color.fromARGB(255, 249, 248, 248),
+          color: Color(0xFFF8F8F8),
           child: loading
               ? const Center(
                   child: CircularProgressIndicator(),
@@ -516,7 +516,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                   child: verifyAccountList(
                                     'Verify your account',
                                     'Complete your profile to unlock all features!',
-                                    () {
+                                    () async {
+                                      SharedPreferences prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.remove("provinceData");
+                                      prefs.remove("brgyData");
+                                      prefs.remove("cityData");
                                       Variables.pageTrans(
                                           const UpdateProfile(), context);
                                     },
@@ -706,6 +711,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                             SharedPreferences prefs =
                                                 await SharedPreferences
                                                     .getInstance();
+
                                             if (int.parse(jsonDecode(
                                                         akongP!)['region_id']
                                                     .toString()) !=
@@ -748,15 +754,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 });
                                               });
                                             } else {
-                                              setState(() {
-                                                prefs.setString(
-                                                    'provinceData', "null");
-                                                prefs.setString(
-                                                    'brgyData', "null");
-                                                prefs.setString(
-                                                    'cityData', "null");
-                                              });
-                                              // ignore: use_build_context_synchronously
+                                              prefs.remove("provinceData");
+                                              prefs.remove("brgyData");
+                                              prefs.remove("cityData");
                                               Variables.pageTrans(
                                                   const UpdateProfile(),
                                                   context);

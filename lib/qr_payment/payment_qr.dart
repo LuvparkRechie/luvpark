@@ -235,6 +235,7 @@ class _QRPayState extends State<QRPay> {
                               Container(
                                 decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(28),
+                                    color: Colors.white,
                                     border: Border.all(
                                         width: 2,
                                         color: const Color.fromRGBO(
@@ -245,7 +246,7 @@ class _QRPayState extends State<QRPay> {
                                     data: paymentHashKey,
                                     version: QrVersions.auto,
                                     gapless: false,
-                                    backgroundColor: AppColor.bodyColor,
+                                    //   backgroundColor: Ap,
                                   ),
                                 ),
                               ),
@@ -338,6 +339,7 @@ class _QRPayState extends State<QRPay> {
                                     padding: const EdgeInsets.fromLTRB(
                                         12, 12, 12, 12), // Padding values
                                     decoration: BoxDecoration(
+                                      color: Colors.white,
                                       border: Border.all(
                                         color: const Color.fromRGBO(0, 0, 0,
                                             0.08), // Color with rgba values

@@ -399,7 +399,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
           ),
           Container(
             width: Variables.screenSize.width,
-            color: const Color(0xFFf5f5f5),
+            color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
               child: Row(

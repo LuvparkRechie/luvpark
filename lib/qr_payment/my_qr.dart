@@ -114,6 +114,7 @@ class _MyQrPageState extends State<MyQrPage> {
                         children: [
                           Container(
                             decoration: BoxDecoration(
+                                color: Colors.white,
                                 borderRadius: BorderRadius.circular(28),
                                 border: Border.all(
                                     width: 2,
@@ -125,7 +126,6 @@ class _MyQrPageState extends State<MyQrPage> {
                                 data: jsonDecode(akongP!)['user_qr'].toString(),
                                 version: QrVersions.auto,
                                 gapless: false,
-                                backgroundColor: AppColor.bodyColor,
                               ),
                             ),
                           ),

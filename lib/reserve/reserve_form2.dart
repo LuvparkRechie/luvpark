@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -798,13 +797,15 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                     alignment:
                                                         Alignment.centerRight,
                                                     child: CustomDisplayText(
-                                                      label: widget.userBal
-                                                          .toString(),
+                                                      label: toCurrencyString(
+                                                          widget.userBal
+                                                              .toString()).toString(),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color:
                                                           AppColor.primaryColor,
+                                                      maxLines: 1,
                                                     ),
                                                   ),
                                                   Container(height: 3),
@@ -816,6 +817,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                       fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w600,
+                                                      maxLines: 1,
                                                       color: Colors.black,
                                                     ),
                                                   )
@@ -1198,24 +1200,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
     );
   }
 
-  void showMyDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return PopScope(
-          canPop: false,
-          child: AlertDialog(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            content: FadeInDown(
-                duration: const Duration(seconds: 1),
-                child: BookingNotice(callBack: () {})),
-          ),
-        );
-      },
-    );
-  }
-
   void getVehicleTypeData() async {
     var dataVehicle = [];
 
@@ -1265,7 +1249,19 @@ class _ReserveForm2State extends State<ReserveForm2> {
           hasInternet = true;
           _updateMaskFormatter(vehicleTypeData[0]["format"]);
         });
-        showMyDialog(myContext!);
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return PopScope(
+              canPop: false,
+              child: AlertDialog(
+                backgroundColor: Colors.white,
+                surfaceTintColor: Colors.white,
+                content: BookingNotice(callBack: () {}),
+              ),
+            );
+          },
+        );
       } else {
         setState(() {
           isLoadingPage = false;

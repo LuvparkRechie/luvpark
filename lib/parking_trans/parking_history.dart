@@ -126,7 +126,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
           ? NoInternetConnected(onTap: refresh)
           : Column(
               children: [
-                Container(),
+                Container(height: 20),
                 Expanded(
                   child: isLoading
                       ? ListView.builder(
@@ -277,7 +277,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
               border: Border.all(color: Colors.grey.shade200, width: 1)),
           child: Padding(
             padding: const EdgeInsets.only(
-                bottom: 10.0, left: 10, right: 10, top: 0),
+                bottom: 10.0, left: 10, right: 10, top: 10),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [

@@ -205,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   "Inactive Account",
                                   "Your account is currently inactive. Would you like to activate it now?",
                                   "",
-                                  "Not now", () {
+                                  "Yes", () {
                                 Navigator.of(context).pop();
                                 setState(() {
                                   isLoading = false;

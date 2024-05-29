@@ -60,10 +60,10 @@ class _ViewListState extends State<ViewList> {
               ),
               if (widget.nearestData.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.only(top: 5, bottom: 10),
+                  padding: const EdgeInsets.only(top: 10, bottom: 10),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
+                      color: Colors.grey.shade200,
                       borderRadius: BorderRadius.circular(16.0),
                     ),
                     height: 50,

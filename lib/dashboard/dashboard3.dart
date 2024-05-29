@@ -493,7 +493,7 @@ class _Dashboard3State extends State<Dashboard3> {
         ],
       ),
       panel: _panel(nearestData),
-      backdropColor: Colors.green,
+      color: Color(0xFFF8F8F8),
     );
   }
 
@@ -928,90 +928,6 @@ class _HorizontalListViewState extends State<HorizontalListView> {
             },
           );
   }
-
-  Widget bottomListDetails(String icon, String label) {
-    return Expanded(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Image(
-          width: 15,
-          height: 15,
-          fit: BoxFit.fill,
-          image: AssetImage("assets/images/$icon.png"),
-        ),
-        Container(
-          width: 5,
-        ),
-        Expanded(
-          child: CustomDisplayText(
-            label: label,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            maxLines: 1,
-          ),
-        )
-      ],
-    ));
-  }
-
-  Widget bottomListDetails2(String icon, String label) {
-    return Expanded(
-        child: Padding(
-      padding: const EdgeInsets.only(right: 8.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image(
-            width: 15,
-            height: 15,
-            fit: BoxFit.fill,
-            image: AssetImage("assets/images/$icon.png"),
-          ),
-          Container(
-            width: 5,
-          ),
-          Expanded(
-            child: CustomDisplayText(
-              label: label,
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
-              maxLines: 1,
-            ),
-          ),
-        ],
-      ),
-    ));
-  }
-
-  Widget bottomListDetails3(String icon, String label) {
-    return Expanded(
-        child: Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        Image(
-          width: 15,
-          height: 15,
-          fit: BoxFit.fill,
-          image: AssetImage("assets/images/$icon.png"),
-        ),
-        Container(
-          width: 5,
-        ),
-        Expanded(
-          child: CustomDisplayText(
-            label: label,
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            maxLines: 1,
-          ),
-        )
-      ],
-    ));
-  }
 }
 
 class NearestList extends StatelessWidget {
@@ -1047,6 +963,7 @@ class NearestList extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
           width: Variables.screenSize.width * .88,
           decoration: BoxDecoration(
+            color: Colors.white,
             border: Border.all(
               color: Colors.grey.shade200,
             ),
@@ -1069,17 +986,32 @@ class NearestList extends StatelessWidget {
                       label: nearestData["address"],
                       fontSize: 14,
                       fontWeight: FontWeight.w500,
-                      color: Colors.grey,
+                      color: Colors.black54,
                       maxLines: 2,
                     ),
                     Container(height: 10),
-                    CustomDisplayText(
-                      label:
-                          "$distance  ●  ${nearestData["parking_schedule"]}  ●  ${isOpen ? "Open" : "Close"}",
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: isOpen ? Colors.green : Colors.red,
-                      maxLines: 2,
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text:
+                                "$distance  ●  ${nearestData["parking_schedule"]}  ●  ",
+                            style: GoogleFonts.varela(
+                              color: Colors.grey,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          TextSpan(
+                            text: "${isOpen ? "OPEN" : "CLOSE"}",
+                            style: GoogleFonts.dmSans(
+                              fontWeight: FontWeight.w500,
+                              color: isOpen ? Colors.green : Colors.red,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),

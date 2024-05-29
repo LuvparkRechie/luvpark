@@ -238,295 +238,241 @@ class _RegistrationFormState extends State<UpdateProfile> {
   @override
   Widget build(BuildContext context) {
     bool isShowKeyboard = MediaQuery.of(context).viewInsets.bottom == 0;
-    return MediaQuery(
-      data: MediaQuery.of(context)
-          .copyWith(textScaler: const TextScaler.linear(1)),
-      child: Scaffold(
-        appBar: AppbarWidget(
-          appbarColor: AppColor.bodyColor,
-        ),
-        body: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // CustomButtonClose(
-                    //   onTap: () {
-                    //     Navigator.of(context).pop();
-                    //   },
-                    // ),
-                    InkWell(
-                      onTap: () {
-                        if (_currentPage == 0) {
-                          Navigator.pop(context);
-                        } else {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          _pageController.previousPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut);
-                        }
-                      },
-                      child: const Row(
-                        children: [
-                          Icon(Icons.arrow_back),
-                          CustomDisplayText(
-                            label: "Back",
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                            fontSize: 14,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const CustomDisplayText(
-                      label: "Update Profile",
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      fontSize: 16,
-                    ),
-
-                    Container(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 30,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    CircleAvatar(
-                      radius: 10,
-                      backgroundColor: _currentPage == 0 ||
+    return CustomParent1Widget(
+      appBarheaderText: "Update Profile",
+      hasPadding: false,
+      appBarIconClick: () {
+        if (_currentPage == 0) {
+          Navigator.pop(context);
+        } else {
+          FocusScope.of(context).requestFocus(FocusNode());
+          _pageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut);
+        }
+      },
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  radius: 10,
+                  backgroundColor: _currentPage == 0 ||
+                          _currentPage == 1 ||
+                          _currentPage == 2
+                      ? AppColor.primaryColor
+                      : const Color.fromARGB(255, 206, 231, 252),
+                  child: Center(
+                    child: Icon(
+                      _currentPage == 0 ||
                               _currentPage == 1 ||
                               _currentPage == 2
-                          ? AppColor.primaryColor
-                          : const Color.fromARGB(255, 206, 231, 252),
-                      child: Center(
-                        child: Icon(
-                          _currentPage == 0 ||
-                                  _currentPage == 1 ||
-                                  _currentPage == 2
-                              ? Icons.check
-                              : Icons.circle,
-                          color: _currentPage == 0 ||
-                                  _currentPage == 1 ||
-                                  _currentPage == 2
-                              ? Colors.white
-                              : AppColor.primaryColor,
-                          size: 13,
-                        ),
-                      ),
+                          ? Icons.check
+                          : Icons.circle,
+                      color: _currentPage == 0 ||
+                              _currentPage == 1 ||
+                              _currentPage == 2
+                          ? Colors.white
+                          : AppColor.primaryColor,
+                      size: 13,
                     ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 3,
-                        color: _currentPage == 1 || _currentPage == 2
-                            ? AppColor.primaryColor
-                            : const Color.fromARGB(255, 206, 231, 252),
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 10,
-                      backgroundColor: _currentPage == 1 || _currentPage == 2
-                          ? AppColor.primaryColor
-                          : const Color.fromARGB(255, 206, 231, 252),
-                      child: Center(
-                        child: Icon(
-                          _currentPage == 1 || _currentPage == 2
-                              ? Icons.check
-                              : Icons.circle,
-                          color: _currentPage == 1 || _currentPage == 2
-                              ? Colors.white
-                              : AppColor.primaryColor,
-                          size: 13,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        thickness: 3,
-                        color: _currentPage == 2
-                            ? AppColor.primaryColor
-                            : const Color.fromARGB(255, 206, 231, 252),
-                      ),
-                    ),
-                    CircleAvatar(
-                      radius: 10,
-                      backgroundColor: _currentPage == 2
-                          ? AppColor.primaryColor
-                          : const Color.fromARGB(255, 206, 231, 252),
-                      child: Center(
-                        child: Icon(
-                          _currentPage == 2 ? Icons.check : Icons.circle,
-                          color: _currentPage == 2
-                              ? Colors.white
-                              : AppColor.primaryColor,
-                          size: 13,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 20,
-              ),
-              Expanded(
-                child: PageView(
-                  physics: const NeverScrollableScrollPhysics(),
-                  controller: _pageController,
-                  onPageChanged: (page) {
-                    setState(() {
-                      _currentPage = page;
-                    });
-                  },
-                  children: <Widget>[
-                    // Page 1
-                    UpdateProfStep1(
-                      firstName: firstName,
-                      middleName: middleName,
-                      lastName: lastName,
-                      bday: birthday,
-                      email: email,
-                      gender: gender,
-                      civil: civilStatus,
-                      formKey: page1Key,
-                      onNextPage: () {
-                        _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
-                      },
-                    ),
-
-                    // Page 2
-                    UpdateProfStep2(
-                      ddParamProvince: ddParamProvince,
-                      location: location,
-                      provinceId: provinceId,
-                      regionId: regionId,
-                      cityId: cityId,
-                      brgyId: brgyId,
-                      address1: address1,
-                      address2: address2,
-                      zipCode: zipCode,
-                      formKey: page2Key,
-                      searchAddress: searchAddress,
-                      onPreviousPage: () {
-                        _pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
-                      },
-                      onNextPage: () {
-                        _pageController.nextPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
-                      },
-                    ),
-                    // Page 3
-                    UpdateProfStep3(
-                      secA1: secA1,
-                      secA2: secA2,
-                      secA3: secA3,
-                      secId1: secId1,
-                      secId2: secId2,
-                      secId3: secId3,
-                      formKey: page3Key,
-                      onPreviousPage: () {
-                        _pageController.previousPage(
-                            duration: const Duration(milliseconds: 300),
-                            curve: Curves.easeInOut);
-                      },
-                    ),
-                    //  RegistrationPage3(data: dataPI),
-                  ],
-                ),
-              ),
-              if (isShowKeyboard) const SizedBox(height: 20.0),
-              if (isShowKeyboard)
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  child: CustomButton(
-                    label: _currentPage == 2 ? "Submit" : "Continue",
-                    onTap: () async {
-                      FocusScope.of(context).requestFocus(FocusNode());
-                      if (_currentPage == 0) {
-                        if (page1Key.currentState!.validate()) {
-                          _pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut);
-                        }
-                      }
-
-                      if (_currentPage == 1) {
-                        if (page2Key.currentState!.validate()) {
-                          _pageController.nextPage(
-                              duration: const Duration(milliseconds: 300),
-                              curve: Curves.easeInOut);
-                        }
-                      } else {
-                        if (page3Key.currentState!.validate()) {
-                          Map<String, dynamic> parameters = {
-                            "mobile_no":
-                                jsonDecode(akongP!)["mobile_no"].toString(),
-                            "last_name": lastName.text,
-                            "first_name": firstName.text,
-                            "middle_name": middleName.text,
-                            "birthday": birthday.text,
-                            "gender": gender.text,
-                            "civil_status": civilStatus.text,
-                            "address1": address1.text,
-                            "address2": address2.text,
-                            "brgy_id": brgyId.text.toString(),
-                            "city_id": cityId.text.toString(),
-                            "province_id": provinceId.text.toString(),
-                            "region_id": regionId.text.toString(),
-                            "zip_code": zipCode.text,
-                            "email": email.text,
-                            "secq_id1": secId1.text.toString(),
-                            "secq_id2": secId2.text.toString(),
-                            "secq_id3": secId3.text.toString(),
-                            "seca1": secA1.text,
-                            "seca2": secA2.text,
-                            "seca3": secA3.text,
-                            "image_base64": "",
-                          };
-
-                          showModalConfirmation(
-                              context,
-                              "Confirmation",
-                              "Are you sure you want to proceed?",
-                              "",
-                              "Yes", () {
-                            Navigator.of(context).pop();
-                          }, () async {
-                            Navigator.of(context).pop();
-                            sendOtp(parameters);
-                          });
-                        }
-                      }
-                    },
                   ),
                 ),
-              if (Platform.isIOS) const SizedBox(height: 20.0),
-            ],
+                Expanded(
+                  child: Divider(
+                    thickness: 3,
+                    color: _currentPage == 1 || _currentPage == 2
+                        ? AppColor.primaryColor
+                        : const Color.fromARGB(255, 206, 231, 252),
+                  ),
+                ),
+                CircleAvatar(
+                  radius: 10,
+                  backgroundColor: _currentPage == 1 || _currentPage == 2
+                      ? AppColor.primaryColor
+                      : const Color.fromARGB(255, 206, 231, 252),
+                  child: Center(
+                    child: Icon(
+                      _currentPage == 1 || _currentPage == 2
+                          ? Icons.check
+                          : Icons.circle,
+                      color: _currentPage == 1 || _currentPage == 2
+                          ? Colors.white
+                          : AppColor.primaryColor,
+                      size: 13,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Divider(
+                    thickness: 3,
+                    color: _currentPage == 2
+                        ? AppColor.primaryColor
+                        : const Color.fromARGB(255, 206, 231, 252),
+                  ),
+                ),
+                CircleAvatar(
+                  radius: 10,
+                  backgroundColor: _currentPage == 2
+                      ? AppColor.primaryColor
+                      : const Color.fromARGB(255, 206, 231, 252),
+                  child: Center(
+                    child: Icon(
+                      _currentPage == 2 ? Icons.check : Icons.circle,
+                      color: _currentPage == 2
+                          ? Colors.white
+                          : AppColor.primaryColor,
+                      size: 13,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+          Container(
+            height: 20,
+          ),
+          Expanded(
+            child: PageView(
+              physics: const NeverScrollableScrollPhysics(),
+              controller: _pageController,
+              onPageChanged: (page) {
+                setState(() {
+                  _currentPage = page;
+                });
+              },
+              children: <Widget>[
+                // Page 1
+                UpdateProfStep1(
+                  firstName: firstName,
+                  middleName: middleName,
+                  lastName: lastName,
+                  bday: birthday,
+                  email: email,
+                  gender: gender,
+                  civil: civilStatus,
+                  formKey: page1Key,
+                  onNextPage: () {
+                    _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  },
+                ),
+
+                // Page 2
+                UpdateProfStep2(
+                  ddParamProvince: ddParamProvince,
+                  location: location,
+                  provinceId: provinceId,
+                  regionId: regionId,
+                  cityId: cityId,
+                  brgyId: brgyId,
+                  address1: address1,
+                  address2: address2,
+                  zipCode: zipCode,
+                  formKey: page2Key,
+                  searchAddress: searchAddress,
+                  onPreviousPage: () {
+                    _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  },
+                  onNextPage: () {
+                    _pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  },
+                ),
+                // Page 3
+                UpdateProfStep3(
+                  secA1: secA1,
+                  secA2: secA2,
+                  secA3: secA3,
+                  secId1: secId1,
+                  secId2: secId2,
+                  secId3: secId3,
+                  formKey: page3Key,
+                  onPreviousPage: () {
+                    _pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut);
+                  },
+                ),
+                //  RegistrationPage3(data: dataPI),
+              ],
+            ),
+          ),
+          if (isShowKeyboard) const SizedBox(height: 20.0),
+          if (isShowKeyboard)
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
+              child: CustomButton(
+                label: _currentPage == 2 ? "Submit" : "Continue",
+                onTap: () async {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  if (_currentPage == 0) {
+                    if (page1Key.currentState!.validate()) {
+                      _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                    }
+                  }
+
+                  if (_currentPage == 1) {
+                    if (page2Key.currentState!.validate()) {
+                      _pageController.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut);
+                    }
+                  } else {
+                    if (page3Key.currentState!.validate()) {
+                      Map<String, dynamic> parameters = {
+                        "mobile_no":
+                            jsonDecode(akongP!)["mobile_no"].toString(),
+                        "last_name": lastName.text,
+                        "first_name": firstName.text,
+                        "middle_name": middleName.text,
+                        "birthday": birthday.text,
+                        "gender": gender.text,
+                        "civil_status": civilStatus.text,
+                        "address1": address1.text,
+                        "address2": address2.text,
+                        "brgy_id": brgyId.text.toString(),
+                        "city_id": cityId.text.toString(),
+                        "province_id": provinceId.text.toString(),
+                        "region_id": regionId.text.toString(),
+                        "zip_code": zipCode.text,
+                        "email": email.text,
+                        "secq_id1": secId1.text.toString(),
+                        "secq_id2": secId2.text.toString(),
+                        "secq_id3": secId3.text.toString(),
+                        "seca1": secA1.text,
+                        "seca2": secA2.text,
+                        "seca3": secA3.text,
+                        "image_base64": "",
+                      };
+
+                      showModalConfirmation(context, "Confirmation",
+                          "Are you sure you want to proceed?", "", "Yes", () {
+                        Navigator.of(context).pop();
+                      }, () async {
+                        Navigator.of(context).pop();
+                        sendOtp(parameters);
+                      });
+                    }
+                  }
+                },
+              ),
+            ),
+          SizedBox(height: Platform.isIOS ? 20.0 : 10),
+        ],
       ),
     );
   }

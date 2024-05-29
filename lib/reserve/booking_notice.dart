@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
@@ -24,6 +23,7 @@ class _BookingNoticeState extends State<BookingNotice> {
   @override
   void initState() {
     super.initState();
+    print("ne sulod dre ang inatay");
     getNotice();
   }
 
@@ -146,29 +146,19 @@ class _BookingNoticeState extends State<BookingNotice> {
                                 Row(
                                   children: [
                                     Expanded(
-                                      child: InkWell(
-                                        onTap: () {
-                                          FocusScope.of(context)
-                                              .requestFocus(FocusNode());
-                                          Navigator.pop(context);
-                                          if (Navigator.canPop(context)) {
+                                      child: CustomButton(
+                                          bordercolor: Colors.black12,
+                                          btnHeight: 10,
+                                          label: "Cancel",
+                                          textColor: Colors.black,
+                                          color: Colors.transparent,
+                                          onTap: () async {
                                             Navigator.pop(context);
-                                          }
-                                        },
-                                        child: Center(
-                                          child: CustomButton(
-                                              bordercolor: Colors.black12,
-                                              btnHeight: 10,
-                                              label: "Cancel",
-                                              textColor: Colors.black,
-                                              color: Colors.transparent,
-                                              onTap: () async {
-                                                FocusScope.of(context)
-                                                    .requestFocus(FocusNode());
-                                                Navigator.pop(context);
-                                              }),
-                                        ),
-                                      ),
+                                            if (Navigator.of(context)
+                                                .canPop()) {
+                                              Navigator.pop(context);
+                                            }
+                                          }),
                                     ),
                                     Container(
                                       width: 10,

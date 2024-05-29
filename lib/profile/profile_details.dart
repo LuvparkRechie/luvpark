@@ -441,300 +441,211 @@ class _ProfileDetailsState extends State<ProfileDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomParentWidgetV2(
-        appBarHeaderText: 'My Profile',
+    return CustomParent1Widget(
+        appBarheaderText: 'My Profile',
         appBarIconClick: () {
           Navigator.pop(context);
         },
-        child: Container(
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          color: AppColor.bodyColor,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Row(
-              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //   children: [
-              //     InkWell(
-              //       onTap: () {
-              //         Navigator.pop(context);
-              //       },
-              //       child: Container(
-              //         child: const Padding(
-              //           padding: EdgeInsets.only(top: 5.0, bottom: 5),
-              //           child: Icon(
-              //             Icons.arrow_back,
-              //             size: 20,
-              //           ),
-              //         ),
-              //       ),
-              //     ),
-              //     CustomDisplayText(
-              //         label: "My Profile",
-              //         fontSize: 16,
-              //         fontWeight: FontWeight.bold,
-              //         color: Colors.black),
-              //     Container(
-              //       width: 10,
-              //     ),
-              //   ],
-              // ),
-              Container(
-                height: 10,
-              ),
-              Center(
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: myProfilePic != 'null'
-                          ? CircleAvatar(
-                              radius: 28,
-                              backgroundColor: const Color(0xFFffffff),
-                              backgroundImage: MemoryImage(
-                                const Base64Decoder()
-                                    .convert(myProfilePic.toString()),
-                              ),
-                            )
-                          : CircleAvatar(
-                              radius: 28,
-                              backgroundColor: AppColor.primaryColor,
-                              child: Center(
-                                child: CustomDisplayText(
-                                  label: loading
-                                      ? ""
-                                      : jsonDecode(akongP!)['first_name']
-                                                  .toString() ==
-                                              'null'
-                                          ? "N/A"
-                                          : "${jsonDecode(akongP!)['first_name'].toString()[0]}${jsonDecode(akongP!)['last_name'].toString()[0]}",
-                                  color: Colors.white,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w700,
-                                  height: 0,
-                                  letterSpacing: -0.32,
-                                ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 10,
+            ),
+            Center(
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                    ),
+                    child: myProfilePic != 'null'
+                        ? CircleAvatar(
+                            radius: 28,
+                            backgroundColor: const Color(0xFFffffff),
+                            backgroundImage: MemoryImage(
+                              const Base64Decoder()
+                                  .convert(myProfilePic.toString()),
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 28,
+                            backgroundColor: AppColor.primaryColor,
+                            child: Center(
+                              child: CustomDisplayText(
+                                label: loading
+                                    ? ""
+                                    : jsonDecode(akongP!)['first_name']
+                                                .toString() ==
+                                            'null'
+                                        ? "N/A"
+                                        : "${jsonDecode(akongP!)['first_name'].toString()[0]}${jsonDecode(akongP!)['last_name'].toString()[0]}",
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                height: 0,
+                                letterSpacing: -0.32,
                               ),
                             ),
-                    ),
-                    // Positioned(
-                    //   bottom: -10,
-                    //   right: -10,
-                    //   child: InkWell(
-                    //     onTap: () {
-                    //       showBottomSheetCamera();
-                    //     },
-                    //     child: Padding(
-                    //       padding: const EdgeInsets.all(3.0),
-                    //       child: Icon(
-                    //         Icons.camera_alt,
-                    //         color: AppColor.primaryColor,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 10,
-              ),
-              Center(
-                child: InkWell(
-                  child: CustomDisplayText(
-                    label: 'Edit Image',
-                    color: AppColor.primaryColor,
-                    fontWeight: FontWeight.w400,
+                          ),
                   ),
-                  onTap: () {
-                    showBottomSheetCamera();
-                  },
+                  // Positioned(
+                  //   bottom: -10,
+                  //   right: -10,
+                  //   child: InkWell(
+                  //     onTap: () {
+                  //       showBottomSheetCamera();
+                  //     },
+                  //     child: Padding(
+                  //       padding: const EdgeInsets.all(3.0),
+                  //       child: Icon(
+                  //         Icons.camera_alt,
+                  //         color: AppColor.primaryColor,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                ],
+              ),
+            ),
+            Container(
+              height: 10,
+            ),
+            Center(
+              child: InkWell(
+                child: CustomDisplayText(
+                  label: 'Edit Image',
+                  color: AppColor.primaryColor,
+                  fontWeight: FontWeight.w400,
                 ),
+                onTap: () {
+                  showBottomSheetCamera();
+                },
               ),
-              Container(
-                height: 5,
-              ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40),
-                  child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomDisplayText(
-                          label: fullName,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: const Color.fromARGB(255, 63, 63, 64),
-                        ),
-                        CustomDisplayText(
-                          label: mobile_num,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.black54,
-                        ),
-                      ]),
-                ),
-              ),
-              // Center(
-              //   child: InkWell(
-              //     onTap: () async {
-              //       SharedPreferences prefs =
-              //           await SharedPreferences.getInstance();
-              //       if (int.parse(
-              //               jsonDecode(akongP!)['region_id'].toString()) !=
-              //           0) {
-              //         // ignore: use_build_context_synchronously
-              //         CustomModal(context: context).loader();
-              //         getLoadAddress(jsonDecode(akongP!)['region_id'],
-              //             ApiKeys.gApiSubFolderGetProvince, (returnProvince) {
-              //           if (int.parse(returnProvince.toString()) == 0) {
-              //             return;
-              //           }
-
-              //           getLoadAddress(jsonDecode(akongP!)['province_id'],
-              //               ApiKeys.gApiSubFolderGetCity, (returnCity) {
-              //             if (returnCity == 0) {
-              //               return;
-              //             }
-              //             getLoadAddress(jsonDecode(akongP!)['city_id'],
-              //                 ApiKeys.gApiSubFolderGetBrgy, (returnBrgy) {
-              //               Navigator.pop(context);
-              //               Variables.pageTrans(
-              //                   const UpdateProfile(), context);
-              //             });
-              //           });
-              //         });
-              //       } else {
-              //         setState(() {
-              //           prefs.setString('provinceData', "null");
-              //           prefs.setString('brgyData', "null");
-              //           prefs.setString('cityData', "null");
-              //         });
-              //         // ignore: use_build_context_synchronously
-              //         Variables.pageTrans(const UpdateProfile(), context);
-              //       }
-              //     },
-              //     child: Container(
-              //       decoration: BoxDecoration(
-              //         borderRadius: BorderRadius.circular(10),
-              //         color: AppColor.primaryColor,
-              //       ),
-              //       child: Padding(
-              //         padding: const EdgeInsets.symmetric(
-              //             horizontal: 20, vertical: 8.0),
-              //         child: CustomDisplayText(
-              //           label: "Update Profile",
-              //           fontSize: 14,
-              //           fontWeight: FontWeight.w600,
-              //           color: Colors.white,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              Container(height: 20),
-              CustomDisplayText(
-                label: 'Personal Details',
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-              ),
-              Container(
-                height: 10,
-              ),
-              Expanded(
+            ),
+            Container(
+              height: 5,
+            ),
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding:
-                          const EdgeInsets.only(top: 10.0, left: 10, right: 10),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            alignment: Alignment.centerRight,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomDisplayText(
-                                    label: 'Account Name',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CustomDisplayText(
+                        label: fullName,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 63, 63, 64),
+                      ),
+                      CustomDisplayText(
+                        label: mobile_num,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black54,
+                      ),
+                    ]),
+              ),
+            ),
+            Container(height: 20),
+            CustomDisplayText(
+              label: 'Personal Details',
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+            Container(
+              height: 10,
+            ),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding:
+                        const EdgeInsets.only(top: 10.0, left: 10, right: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Stack(
+                          alignment: Alignment.centerRight,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomDisplayText(
+                                  label: 'Account Name',
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                Row(
+                                  children: [
+                                    CustomDisplayText(
+                                      label: fullName,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black54,
+                                      maxLines: 1,
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            isActive == 'Y'
+                                ? Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       CustomDisplayText(
-                                        label: fullName,
+                                        label: 'Verified',
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.black54,
-                                        maxLines: 1,
+                                        color: Colors.green,
+                                      ),
+                                      Container(
+                                        width: 5,
+                                      ),
+                                      Icon(
+                                        Icons.check,
+                                        color: Colors.green,
+                                        size: 15,
                                       ),
                                     ],
-                                  ),
-                                ],
-                              ),
-                              isActive == 'Y'
-                                  ? Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        CustomDisplayText(
-                                          label: 'Verified',
-                                          fontSize: 14,
-                                          color: Colors.green,
-                                        ),
-                                        Container(
-                                          width: 5,
-                                        ),
-                                        Icon(
-                                          Icons.check,
-                                          color: Colors.green,
-                                          size: 15,
-                                        ),
-                                      ],
-                                    )
-                                  : Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        CustomDisplayText(
-                                          label: 'Not Verified',
-                                          fontSize: 14,
-                                          color: Colors.red,
-                                        ),
-                                        Container(
-                                          width: 5,
-                                        ),
-                                        Icon(
-                                          Icons.close,
-                                          color: Colors.red,
-                                          size: 15,
-                                        ),
-                                      ],
-                                    )
-                            ],
-                          ),
-                        ],
-                      ),
+                                  )
+                                : Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      CustomDisplayText(
+                                        label: 'Not Verified',
+                                        fontSize: 14,
+                                        color: Colors.red,
+                                      ),
+                                      Container(
+                                        width: 5,
+                                      ),
+                                      Icon(
+                                        Icons.close,
+                                        color: Colors.red,
+                                        size: 15,
+                                      ),
+                                    ],
+                                  )
+                          ],
+                        ),
+                      ],
                     ),
-                    Divider(color: Colors.black),
-                    info("Gender", gender),
-                    info("Civil Status", civilStatus),
-                    info("Birthday", bday),
-                    info("Address", "$brgy $municipality"),
-                    info("Province", province),
-                    info("Zip Code", zipCode),
-                    SizedBox(height: 10),
-                    ProfileDelete(),
-                    SizedBox(height: 10),
-                  ],
-                ),
+                  ),
+                  Divider(color: Colors.black),
+                  info("Gender", gender),
+                  info("Civil Status", civilStatus),
+                  info("Birthday", bday),
+                  info("Address", "$brgy $municipality"),
+                  info("Province", province),
+                  info("Zip Code", zipCode),
+                  SizedBox(height: 10),
+                  ProfileDelete(),
+                  SizedBox(height: 10),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ));
   }
 

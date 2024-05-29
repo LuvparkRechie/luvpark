@@ -82,10 +82,13 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
     akongP = prefs.getString(
       'userData',
     );
+
     akongP = jsonDecode(akongP!);
+    print("akongP $akongP");
     var myProvinceData = prefs.getString(
       'provinceData',
     );
+    print("myProvinceData $myProvinceData");
     var myCityData = prefs.getString(
       'cityData',
     );

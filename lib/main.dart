@@ -337,7 +337,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
-      appbarColor: AppColor.bodyColor,
+      appbarColor: Colors.white,
       onPop: false,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20),

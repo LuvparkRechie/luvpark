@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
@@ -14,25 +13,18 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
-import 'package:luvpark/class/get_user_bal.dart';
-import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/functions.dart';
-import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
-import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/rating/rate.dart';
-import 'package:luvpark/reserve/extend_dialog.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
@@ -323,227 +315,6 @@ class _ReserveReceiptState extends State<ReserveReceipt>
             Container(
               height: 10,
             ),
-            // Padding(
-            //   padding:
-            //       const EdgeInsets.symmetric(horizontal: 10.0, vertical: 10),
-            //   child: Row(
-            //     children: [
-            //       Expanded(
-            //         child: Column(
-            //           crossAxisAlignment: CrossAxisAlignment.start,
-            //           children: [
-            //             CustomDisplayText(
-            //               label: widget.parkArea,
-            //               color: Colors.black,
-            //               fontSize: 16,
-            //               fontWeight: FontWeight.bold,
-            //               maxLines: 1,
-            //             ),
-            //             Container(height: 5),
-            //             CustomDisplayText(
-            //               label: widget.address,
-            //               color: const Color(0xFF8D8D8D),
-            //               fontSize: 14,
-            //               fontWeight: FontWeight.w600,
-            //             ),
-            //           ],
-            //         ),
-            //       ),
-            //       Container(
-            //         width: 10,
-            //       ),
-            //       InkWell(
-            //         onTap: () async {
-            //           var permissionStatus = await Geolocator.checkPermission();
-
-            //           if ((permissionStatus == LocationPermission.whileInUse ||
-            //                   permissionStatus == LocationPermission.always) &&
-            //               await Geolocator.isLocationServiceEnabled()) {
-            //             getCurrentLocation();
-            //           } else {
-            //             locatePosition();
-            //           }
-            //         },
-            //         child: Container(
-            //           width: 30,
-            //           height: 30,
-            //           decoration: ShapeDecoration(
-            //             color: const Color(0x160078FF),
-            //             shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(
-            //                 12,
-            //               ),
-            //             ),
-            //           ),
-            //           child: Icon(
-            //             Icons.directions,
-            //             size: 20,
-            //             color: AppColor.primaryColor,
-            //           ),
-            //         ),
-            //       )
-            //     ],
-            //   ),
-            // ),
-            // Container(
-            //   height: 20,
-            // ),
-            if (widget.isReserved && int.parse(widget.tab.toString()) == 0)
-              CustomButton(
-                  label: "Check-in",
-                  onTap: () async {
-                    CustomModal(context: context).loader();
-                    Functions.getUserBalance((data) async {
-                      if (data != "null" || data != "No Internet") {
-                        Functions.computeDistanceResorChckIN(
-                            context, LatLng(widget.lat, widget.long),
-                            (success) {
-                          if (success["success"]) {
-                            if (success["can_checkIn"]) {
-                              Functions.checkIn(
-                                  widget.ticketId, widget.lat, widget.long,
-                                  (cbData) {
-                                Navigator.pop(context);
-                                if (cbData == "Success") {
-                                  showAlertDialog(context, "Success",
-                                      "Successfully checked-in.", () {
-                                    Navigator.of(context).pop();
-                                    Variables.pageTrans(
-                                        const MainLandingScreen(
-                                          index: 1,
-                                        ),
-                                        context);
-                                  });
-                                }
-                              });
-                            } else {
-                              Navigator.pop(context);
-                              showAlertDialog(
-                                  context, "LuvPark", success["message"], () {
-                                Navigator.of(context).pop();
-                              });
-                            }
-                          } else {
-                            Navigator.pop(context);
-                          }
-                        });
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    });
-                  }),
-            if (widget.isReserved &&
-                int.parse(widget.tab.toString()) == 1 &&
-                widget.isAutoExtend == "N")
-              CustomButton(
-                label: "Extend Parking",
-                onTap: () async {
-                  FocusManager.instance.primaryFocus!.unfocus();
-                  // ignore: prefer_typing_uninitialized_variables
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-
-                  var akongP = prefs.getString(
-                    'userData',
-                  );
-
-                  // ignore: use_build_context_synchronously
-                  CustomModal(context: context).loader();
-                  // ignore: use_build_context_synchronously
-                  UserAccount.getUserBal(
-                      context, jsonDecode(akongP!)['user_id'].toString(),
-                      (userBal) {
-                    Navigator.pop(context);
-                    if (double.parse(userBal[0]["amount_bal"].toString()) >
-                        20) {
-                      showModalBottomSheet(
-                        context: context,
-                        isDismissible: false,
-                        enableDrag: false,
-                        isScrollControlled: true,
-                        backgroundColor: AppColor.bodyColor,
-                        // This makes the sheet full screen
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.vertical(
-                            top: Radius.circular(
-                                15.0), // Adjust the radius as needed
-                          ),
-                        ),
-                        builder: (BuildContext context) {
-                          return CustomDialog(
-                            amountBal: double.parse(
-                                userBal[0]["amount_bal"].toString()),
-                            paramsCalc: widget.paramsCalc,
-                            dtOut: widget.dtOut.toString(),
-                            referenceNo: widget.refno,
-                            icon: Icons.abc,
-                            detailContext: context,
-                          );
-                        },
-                      );
-                    } else {
-                      showAlertDialog(context, "Attention",
-                          "You don't have enough balance to proceed", () {
-                        Navigator.of(context).pop();
-                      });
-                    }
-                  });
-                },
-              ),
-            if (widget.isReserved &&
-                int.parse(widget.tab.toString()) == 1 &&
-                widget.isAutoExtend == "Y")
-              CustomButton(
-                label: "Cancel Auto Extend",
-                onTap: () async {
-                  FocusManager.instance.primaryFocus!.unfocus();
-
-                  // ignore: use_build_context_synchronously
-                  CustomModal(context: context).loader();
-                  // ignore: use_build_context_synchronously
-                  HttpRequest(
-                          api: ApiKeys.gApiLuvPayPutCancelAutoExtend,
-                          parameters: {"reservation_id": widget.reservationId})
-                      .put()
-                      .then((objData) {
-                    if (objData == "No Internet") {
-                      Navigator.pop(context);
-                      showAlertDialog(context, "Error",
-                          "Please check your internet connection and try again.",
-                          () {
-                        Navigator.pop(context);
-                      });
-                      return;
-                    }
-                    if (objData == null) {
-                      Navigator.pop(context);
-                      showAlertDialog(context, "Error",
-                          "Error while connecting to server, Please try again.",
-                          () {
-                        Navigator.of(context).pop();
-                      });
-                    }
-                    if (objData["success"] == "Y") {
-                      Navigator.pop(context);
-                      showAlertDialog(context, "Success",
-                          "Auto extend successfully cancelled.", () async {
-                        Navigator.of(context).pop();
-                        Navigator.of(context).pop();
-                        widget.onTap!();
-                      });
-                    } else {
-                      Navigator.pop(context);
-
-                      showAlertDialog(context, "LuvPark", objData["msg"], () {
-                        Navigator.of(context).pop();
-                      });
-                    }
-                  });
-                },
-              ),
-            Container(
-              height: 20,
-            ),
             IntrinsicHeight(
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -818,7 +589,7 @@ class ReceiptBody extends StatelessWidget {
     return Container(
       clipBehavior: Clip.antiAlias,
       decoration: ShapeDecoration(
-        color: const Color(0xFFF8F8F8),
+        color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
       ),
       child: Padding(

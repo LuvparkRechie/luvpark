@@ -214,9 +214,10 @@ class _ParkingActivityState extends State<ParkingActivity>
             appBarheaderText: "",
             appBarTabBar: TabBar(
               controller: _tabController,
-              indicatorColor: AppColor.primaryColor,
               indicatorSize: TabBarIndicatorSize.tab,
-              indicatorWeight: 3,
+              indicatorColor: AppColor.mainColor, // Indicator color
+              indicatorWeight: 4, // Indicator thickness
+
               onTap: (value) {
                 if (currentTab == value) return;
                 setState(() {
@@ -293,12 +294,14 @@ class _ParkingActivityState extends State<ParkingActivity>
                                     : RefreshIndicator(
                                         onRefresh: onRefresh,
                                         child: ListView.separated(
-                                            padding: const EdgeInsets.all(10),
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 10),
                                             itemBuilder: (context, index) {
                                               return Container(
                                                 width:
                                                     Variables.screenSize.width,
                                                 decoration: BoxDecoration(
+                                                    color: Colors.white,
                                                     border: Border.all(
                                                       color:
                                                           Colors.grey.shade200,

@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/api_keys.dart';
@@ -19,7 +20,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
-import 'package:luvpark/dashboard/view_rates.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
@@ -43,6 +43,7 @@ class _ViewDetailsState extends State<ViewDetails> {
   List<String> digitPairs = [];
   List etaData = [];
   List ratesData = [];
+  List selectedRates = [];
   bool hasNet = true;
   bool isViewDetails = false;
   bool isLoadingBtn = false;
@@ -55,6 +56,14 @@ class _ViewDetailsState extends State<ViewDetails> {
 
   List<Marker> markers = <Marker>[];
   List<String> vehicles = [];
+  Map<String, IconData> amenityIcons = {
+    "WITH CCTV": FontAwesomeIcons.camera,
+    "CONCRETE FLOOR": FontAwesomeIcons.road,
+    "WITH SECURITY": FontAwesomeIcons.personMilitaryPointing,
+    "COVERED / SHADED": FontAwesomeIcons.warehouse,
+    "GRASS AREA": FontAwesomeIcons.leaf,
+    "ASPHALT FLOOR": FontAwesomeIcons.road
+  };
 
   @override
   void initState() {
@@ -71,6 +80,7 @@ class _ViewDetailsState extends State<ViewDetails> {
         "${widget.areaData[0]["end_time"].toString().substring(0, 2)}:${widget.areaData[0]["end_time"].toString().substring(2)}";
     isOpen = DashboardComponent.checkAvailability(finalSttime, finalEndtime);
     vehicles = widget.areaData[0]["vehicle_types_list"].toString().split("|");
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       fetchData();
     });
@@ -226,7 +236,7 @@ class _ViewDetailsState extends State<ViewDetails> {
 
                   mapController.animateCamera(CameraUpdate.newLatLngBounds(
                     bounds,
-                    80, // Adjust padding as needed
+                    130, // Adjust padding as needed
                   ));
                 }
               },
@@ -257,6 +267,12 @@ class _ViewDetailsState extends State<ViewDetails> {
                 left: 20,
                 child: InkWell(
                   onTap: () {
+                    if (isViewDetails) {
+                      setState(() {
+                        isViewDetails = !isViewDetails;
+                      });
+                      return;
+                    }
                     Navigator.of(context).pop();
                   },
                   child: CircleAvatar(
@@ -272,6 +288,95 @@ class _ViewDetailsState extends State<ViewDetails> {
                     ),
                   ),
                 )),
+            Visibility(
+              visible: !isViewDetails,
+              child: Positioned(
+                top: 80,
+                left: 20,
+                right: 20,
+                child: Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(.9),
+                      border: Border.all(
+                        color: Color(0xFFDFE7EF),
+                      ),
+                      borderRadius: BorderRadius.circular(7)),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                            width: Variables.screenSize.width,
+                            child: Row(
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.radio_button_checked,
+                                      color: Colors.orange,
+                                    ),
+                                    Dash(
+                                        direction: Axis.vertical,
+                                        length: 40,
+                                        dashLength: 5,
+                                        dashThickness: 3.0,
+                                        dashColor: Colors.grey.shade400),
+                                    Image(
+                                      image: AssetImage(
+                                          "assets/images/my_marker.png"),
+                                      height: 20,
+                                      width: 20,
+                                    ),
+                                  ],
+                                ),
+                                Container(
+                                  width: 10,
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      CustomDisplayText(
+                                        label: "Current Location",
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      CustomDisplayText(
+                                        label: currAdd,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        overflow: TextOverflow.ellipsis,
+                                        color: Colors.grey,
+                                      ),
+                                      Divider(),
+                                      CustomDisplayText(
+                                        label: widget.areaData[0]
+                                            ["park_area_name"],
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      CustomDisplayText(
+                                        label: widget.areaData[0]["address"],
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
             Positioned(
                 bottom: 20,
                 right: 10,
@@ -328,81 +433,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 15, 20, 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                              width: Variables.screenSize.width,
-                              child: Row(
-                                children: <Widget>[
-                                  Column(
-                                    children: <Widget>[
-                                      Icon(
-                                        Icons.radio_button_checked,
-                                        color: Colors.orange,
-                                      ),
-                                      Dash(
-                                          direction: Axis.vertical,
-                                          length: 40,
-                                          dashLength: 5,
-                                          dashThickness: 3.0,
-                                          dashColor: Colors.grey.shade400),
-                                      Image(
-                                        image: AssetImage(
-                                            "assets/images/my_marker.png"),
-                                        height: 20,
-                                        width: 20,
-                                      ),
-                                    ],
-                                  ),
-                                  Container(
-                                    width: 10,
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        CustomDisplayText(
-                                          label: "Current Location",
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        CustomDisplayText(
-                                          label: currAdd,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          overflow: TextOverflow.ellipsis,
-                                          color: Colors.grey,
-                                        ),
-                                        Divider(),
-                                        CustomDisplayText(
-                                          label: widget.areaData[0]
-                                              ["park_area_name"],
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        CustomDisplayText(
-                                          label: widget.areaData[0]["address"],
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.grey,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ],
-                      ),
-                    ),
-                    Divider(),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 0, 20, 5),
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -552,6 +583,23 @@ class _ViewDetailsState extends State<ViewDetails> {
                                   setState(() {
                                     ratesData = returnData["items"];
                                     isViewDetails = true;
+                                    selectedRates = ratesData.where((e) {
+                                      String element1 = e["vehicle_type"]
+                                          .toString()
+                                          .replaceFirst(
+                                              RegExp(r'\s*\(.*\)'), '')
+                                          .trim()
+                                          .toLowerCase();
+                                      String element2 = vehicles[0]
+                                          .toString()
+                                          .replaceFirst(
+                                              RegExp(r'\s*\(.*\)'), '')
+                                          .trim()
+                                          .toLowerCase();
+
+                                      return element1.contains(element2);
+                                    }).toList();
+                                    print("selectedRates $selectedRates");
                                   });
                                 } else {
                                   Navigator.of(context).pop();
@@ -755,110 +803,6 @@ class _ViewDetailsState extends State<ViewDetails> {
               ),
             ),
             Container(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomDisplayText(
-                  label: "Vehicles",
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black,
-                ),
-                InkWell(
-                  onTap: () {
-                    Variables.pageTrans(ViewRates(data: ratesData), context);
-                  },
-                  child: CustomDisplayText(
-                    label: "View rates",
-                    color: AppColor.primaryColor,
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    maxLines: 1,
-                  ),
-                ),
-              ],
-            ),
-            Container(height: 10),
-            SizedBox(
-              height: 40,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.areaData[0]["vehicle_types_list"]
-                      .toString()
-                      .split("|")
-                      .length,
-                  itemBuilder: ((context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 5, left: 8, right: 7, bottom: 5),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(7),
-                          border: Border.all(
-                            color: Color(0xFFDFE7EF),
-                          ),
-                        ),
-                        child: Center(
-                          child: CustomDisplayText(
-                            label:
-                                "${widget.areaData[0]["vehicle_types_list"].toString().split("|")[index]}",
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    );
-                  })),
-            ),
-            Container(height: 20),
-            CustomDisplayText(
-              label: "Amenities",
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            Container(height: 10),
-            SizedBox(
-              height: 40,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.amenitiesData.length,
-                  itemBuilder: ((context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 5, left: 8, right: 7, bottom: 5),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(7),
-                          border: Border.all(
-                            color: Color(0xFFDFE7EF),
-                          ),
-                        ),
-                        child: Center(
-                          child: CustomDisplayText(
-                            label:
-                                "${widget.amenitiesData[index]["parking_amenity_desc"]}",
-                            color: Colors.black,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                      ),
-                    );
-                  })),
-            ),
-            Container(height: 10),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -900,10 +844,241 @@ class _ViewDetailsState extends State<ViewDetails> {
                     maxLines: 2,
                   ),
               ],
+            ),
+            Container(height: 10),
+            CustomDisplayText(
+              label: "Vehicles",
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            Container(height: 10),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: vehicles.length,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            selected = index;
+                            selectedRates = ratesData.where((e) {
+                              String element1 = e["vehicle_type"]
+                                  .toString()
+                                  .replaceFirst(RegExp(r'\s*\(.*\)'), '')
+                                  .trim()
+                                  .toLowerCase();
+                              String element2 = vehicles[index]
+                                  .toString()
+                                  .replaceFirst(RegExp(r'\s*\(.*\)'), '')
+                                  .trim()
+                                  .toLowerCase();
+
+                              return element1.contains(element2);
+                            }).toList();
+                            print("selectedRates $selectedRates");
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.only(
+                              top: 5, left: 8, right: 7, bottom: 5),
+                          clipBehavior: Clip.antiAlias,
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(7),
+                            border: Border.all(
+                              color: selected == index
+                                  ? AppColor.primaryColor
+                                  : Color(0xFFDFE7EF),
+                            ),
+                          ),
+                          child: Center(
+                            child: CustomDisplayText(
+                              label: "${vehicles[index]}",
+                              color: selected == index
+                                  ? AppColor.primaryColor
+                                  : Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  })),
+            ),
+            Container(height: 20),
+            CustomDisplayText(
+              label: "Amenities",
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            Container(height: 10),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.amenitiesData.length,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 5, left: 8, right: 7, bottom: 5),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(7),
+                          border: Border.all(
+                            color: Color(0xFFDFE7EF),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            //amenityIcons["WITH CCTV"]
+                            amenityIcons.containsKey(widget.amenitiesData[index]
+                                    ["parking_amenity_desc"])
+                                ? Icon(amenityIcons[widget.amenitiesData[index]
+                                    ["parking_amenity_desc"]])
+                                : Icon(
+                                    FontAwesomeIcons.squareParking,
+                                  ),
+
+                            Container(width: 10),
+                            CustomDisplayText(
+                              label:
+                                  "${widget.amenitiesData[index]["parking_amenity_desc"]}",
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  })),
+            ),
+            Container(height: 10),
+            CustomDisplayText(
+              label: "Parking rates",
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            Container(height: 10),
+            Container(
+              height: 200,
+              width: Variables.screenSize.width,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    selectedRatesDisplay(
+                        "Base rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["base_rate"].toString()),
+                    selectedRatesDisplay(
+                        "Base hours",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["base_hours"].toString()),
+                    selectedRatesDisplay(
+                        "Succeeding rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["succeeding_rate"].toString()),
+                    selectedRatesDisplay(
+                        "Overnight rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["overnight_rate"].toString()),
+                    selectedRatesDisplay(
+                        "Daily rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["daily_rate"].toString()),
+                    selectedRatesDisplay(
+                        "Daily penalty rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["daily_penalty_rate"]
+                                .toString()),
+                    selectedRatesDisplay(
+                        "First hour penalty rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["first_hr_penalty_rate"]
+                                .toString()),
+                    selectedRatesDisplay(
+                        "Succeeding penalty rate",
+                        selectedRates.isEmpty
+                            ? ""
+                            : selectedRates[0]["succeeding_hr_penalty_rate"]
+                                .toString()),
+                  ],
+                ),
+              ),
             )
           ],
         ),
       ),
+    );
+  }
+
+  Widget selectedRatesDisplay(String text1, String text2) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        Expanded(
+          child: Container(
+            height: 45,
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              border: Border.all(color: Color(0xFFDFE7EF)),
+              color: Colors.white,
+            ),
+            child: Center(
+              child: CustomDisplayText(
+                label: text1,
+                fontSize: 14,
+                alignment: TextAlign.center,
+                maxLines: 1,
+                color: Colors.grey,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: Container(
+            height: 45,
+            decoration: BoxDecoration(
+              border: Border.all(color: Color(0xFFDFE7EF)),
+              color: Colors.white,
+            ),
+            padding: EdgeInsets.all(5),
+            child: Center(
+              child: CustomDisplayText(
+                label: text2,
+                fontSize: 14,
+                alignment: TextAlign.center,
+                maxLines: 1,
+                color: Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 

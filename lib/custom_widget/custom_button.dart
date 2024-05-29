@@ -84,7 +84,7 @@ class _CustomButtonCancelState extends State<CustomButtonCancel> {
       child: Container(
         decoration: BoxDecoration(
             color: widget.color!,
-            borderRadius: BorderRadius.circular(7),
+            borderRadius: BorderRadius.circular(20),
             border: widget.borderColor == null
                 ? null
                 : Border.all(color: widget.borderColor!)),
@@ -136,7 +136,7 @@ class _CustomButtonRegistrationState extends State<CustomButtonRegistration> {
       child: Container(
         decoration: BoxDecoration(
           color: widget.color ?? AppColor.mainColor,
-          borderRadius: BorderRadius.circular(7),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(color: Colors.white),
         ),
         child: Center(

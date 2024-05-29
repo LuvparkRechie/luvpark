@@ -93,7 +93,7 @@ class _CustomParentWidgetState extends State<CustomParentWidget> {
 
   Widget safeArea() {
     return Container(
-      color: widget.bodyColor == null ? AppColor.bodyColor : widget.bodyColor,
+      color: widget.bodyColor == null ? Color(0xFFF8F8F8) : widget.bodyColor,
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
       child: widget.child,
@@ -163,7 +163,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
       canPop: widget.canPop!,
       child: SafeArea(
         child: Container(
-          color: widget.bodyColor ?? AppColor.bodyColor,
+          color: widget.bodyColor ?? Color(0xFFF8F8F8),
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: !widget.hasPadding!
@@ -319,7 +319,7 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
       canPop: widget.canPop!,
       child: SafeArea(
         child: Container(
-          color: widget.bodyColor ?? AppColor.bodyColor,
+          color: widget.bodyColor ?? Color(0xFFF8F8F8),
           height: MediaQuery.of(context).size.height,
           width: MediaQuery.of(context).size.width,
           child: !widget.hasPadding!
