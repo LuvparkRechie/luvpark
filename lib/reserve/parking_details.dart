@@ -179,13 +179,14 @@ class _ParkingDetailsState extends State<ParkingDetails>
                                         label: widget.returnData[0]["address"]
                                             .toString(),
                                         fontSize: 14,
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColor.textSecondaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black54,
                                         maxLines: 2,
                                       )
                                     ],
                                   ),
                                 ),
+                                Container(width: 5),
                                 InkWell(
                                   onTap: () async {
                                     var permissionStatus =
