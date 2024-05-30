@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
-import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
@@ -123,11 +122,65 @@ class _ProfileDeleteState extends State<ProfileDelete> {
           SizedBox(
             height: 15,
           ),
-          CustomButton(
-            btnHeight: 10,
-            color: Colors.red.shade700,
-            label: 'Delete Account',
+          GestureDetector(
             onTap: () => postDeleteAccount(context),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 20,
+              ),
+              child: Container(
+                height: 50,
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Colors.white,
+                  ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(7),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 4,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.delete_forever_outlined,
+                        color: Colors.red,
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                      CustomDisplayText(
+                        label: 'Delete My Account',
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(
+                              Icons.chevron_right,
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),

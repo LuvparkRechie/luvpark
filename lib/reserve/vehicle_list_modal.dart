@@ -169,9 +169,13 @@ class _VehicleOptionState extends State<VehicleOption> {
                                                 dropdownColor: Colors.white,
                                                 decoration: InputDecoration(
                                                   labelText: 'Vehicle Type',
-                                                  labelStyle: TextStyle(
+                                                  floatingLabelStyle: TextStyle(
                                                       color: AppColor
                                                           .primaryColor),
+                                                  labelStyle: TextStyle(
+                                                    fontSize: 14,
+                                                    color: Colors.black,
+                                                  ),
                                                   constraints:
                                                       const BoxConstraints
                                                           .tightFor(height: 50),
