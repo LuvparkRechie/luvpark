@@ -131,8 +131,9 @@ class _LockScreenState extends State<LockScreen> {
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
-      child: WillPopScope(
-        onWillPop: () async => false,
+      child: PopScope(
+        // onPopInvoked: () async => false,
+        onPopInvoked: (didPop) async => false,
         child: SafeArea(
           child: Scaffold(
             body: Container(
