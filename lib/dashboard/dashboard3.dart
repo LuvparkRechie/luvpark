@@ -538,89 +538,101 @@ class _Dashboard3State extends State<Dashboard3> {
           right: 20,
           child: Row(
             children: [
-              InkWell(
-                onTap: () {
-                  Variables.pageTrans(
-                      ViewList(
-                        nearestData: subDataNearest,
-                        balance: userBal,
-                        minBalance:
-                            double.parse(logData["min_wallet_bal"].toString()),
-                        onTap: () {},
-                      ),
-                      context);
-                },
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.white,
-                  child: Image.asset(
-                    "assets/images/vh_list.png",
-                    width: 20.013092041015625,
-                    height: 19.998329162597656,
+              Tooltip(
+                preferBelow: false,
+                message: 'Parking Areas',
+                child: InkWell(
+                  onTap: () {
+                    Variables.pageTrans(
+                        ViewList(
+                          nearestData: subDataNearest,
+                          balance: userBal,
+                          minBalance: double.parse(
+                              logData["min_wallet_bal"].toString()),
+                          onTap: () {},
+                        ),
+                        context);
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      "assets/images/vh_list.png",
+                      width: 20.013092041015625,
+                      height: 19.998329162597656,
+                    ),
                   ),
                 ),
               ),
               Container(width: 10),
-              InkWell(
-                onTap: () async {
-                  SharedPreferences prefs =
-                      await SharedPreferences.getInstance();
-                  String? geoShareId = prefs.getString('geo_share_id');
-                  if (geoShareId == null) {
-                    showModalConfirmation(
-                        context,
-                        "luvpark Notice",
-                        "This functionality involves utilizing a background process to continuously obtain and update the current location. "
-                            "The background process will automatically deactivate once the location sharing has ended.",
-                        "Cancel",
-                        "Continue", () {
-                      Navigator.of(context).pop();
-                    }, () async {
-                      Navigator.of(context).pop();
-                      Variables.customBottomSheet(
+              Tooltip(
+                preferBelow: false,
+                message: 'Location Sharing',
+                child: InkWell(
+                  onTap: () async {
+                    SharedPreferences prefs =
+                        await SharedPreferences.getInstance();
+                    String? geoShareId = prefs.getString('geo_share_id');
+                    if (geoShareId == null) {
+                      showModalConfirmation(
                           context,
-                          VerifyUserAcct(
-                            isInvite: true,
-                          ));
-                    });
-                  } else {
-                    showAlertDialog(
-                        context, "LuvPark", "You still have active sharing.",
-                        () {
-                      Navigator.of(context).pop();
-                    });
-                  }
-                },
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.white,
-                  child: Image.asset(
-                    "assets/images/navigation.png",
-                    width: 20.013092041015625,
-                    height: 19.998329162597656,
+                          "luvpark Notice",
+                          "This functionality involves utilizing a background process to continuously obtain and update the current location. "
+                              "The background process will automatically deactivate once the location sharing has ended.",
+                          "Cancel",
+                          "Continue", () {
+                        Navigator.of(context).pop();
+                      }, () async {
+                        Navigator.of(context).pop();
+                        Variables.customBottomSheet(
+                            context,
+                            VerifyUserAcct(
+                              isInvite: true,
+                            ));
+                      });
+                    } else {
+                      showAlertDialog(
+                          context, "LuvPark", "You still have active sharing.",
+                          () {
+                        Navigator.of(context).pop();
+                      });
+                    }
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      "assets/images/navigation.png",
+                      width: 20.013092041015625,
+                      height: 19.998329162597656,
+                    ),
                   ),
                 ),
               ),
               Container(width: 10),
-              InkWell(
-                onTap: () {
-                  if (isClicked) return;
-                  setState(() {
-                    isClicked = true;
-                    hasInternetBal = true;
-                    isLoadingMap = true;
-                    searchController.clear();
-                    onSearchAdd = false;
-                  });
-                  getUsersData();
-                },
-                child: CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.white,
-                  child: Image.asset(
-                    "assets/images/my_marker.png",
-                    width: 20.013092041015625,
-                    height: 19.998329162597656,
+              Tooltip(
+                preferBelow: false,
+                message: 'Current Location',
+                child: InkWell(
+                  onTap: () {
+                    if (isClicked) return;
+                    setState(() {
+                      isClicked = true;
+                      hasInternetBal = true;
+                      isLoadingMap = true;
+                      searchController.clear();
+                      onSearchAdd = false;
+                    });
+                    getUsersData();
+                  },
+                  child: CircleAvatar(
+                    radius: 20,
+                    backgroundColor: Colors.white,
+                    child: Image.asset(
+                      "assets/images/my_marker.png",
+                      width: 20.013092041015625,
+                      height: 19.998329162597656,
+                    ),
                   ),
                 ),
               ),

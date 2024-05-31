@@ -27,7 +27,6 @@ import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/parking_trans/parking_history.dart';
 import 'package:luvpark/profile/profile_details.dart';
 import 'package:luvpark/profile/update_profile.dart';
-import 'package:luvpark/settings/referralcode.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -553,69 +552,70 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Visibility(
-                                visible: fullName != "Not specified",
-                                child: Padding(
-                                  padding: const EdgeInsets.only(bottom: 20.0),
-                                  child: InkWell(
-                                    onTap: () {
-                                      Variables.pageTrans(
-                                          ReferralCode(), context);
-                                    },
-                                    child: Container(
-                                      clipBehavior: Clip.antiAlias,
-                                      decoration: ShapeDecoration(
-                                        color: Color(0xFFFFCE29),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(11),
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 11),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                  color: Colors.black12,
-                                                  width: 2,
-                                                ),
-                                              ),
-                                              child: CircleAvatar(
-                                                backgroundColor:
-                                                    Colors.transparent,
-                                                child: Image.asset(
-                                                  "assets/images/gift.png",
-                                                  scale: 5,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: 10,
-                                            ),
-                                            Expanded(
-                                              child: CustomDisplayText(
-                                                label:
-                                                    "Refer and earn free rewards",
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                letterSpacing: -0.32,
-                                              ),
-                                            ),
-                                            const Icon(
-                                              Icons.keyboard_arrow_right,
-                                              color: Colors.black54,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
+                              // Visibility(
+                              //   visible: fullName != "Not specified",
+                              //   child: Padding(
+                              //     padding: const EdgeInsets.only(bottom: 20.0),
+                              //     child: InkWell(
+                              //       onTap: () {
+                              //         Variables.pageTrans(
+                              //             ReferralCode(), context);
+                              //       },
+                              //       child: Container(
+                              //         clipBehavior: Clip.antiAlias,
+                              //         decoration: ShapeDecoration(
+                              //           color: Color(0xFFFFCE29),
+                              //           shape: RoundedRectangleBorder(
+                              //             borderRadius:
+                              //                 BorderRadius.circular(11),
+                              //           ),
+                              //         ),
+                              //         child: Padding(
+                              //           padding: const EdgeInsets.symmetric(
+                              //               horizontal: 10, vertical: 11),
+                              //           child: Row(
+                              //             children: [
+                              //               Container(
+                              //                 decoration: BoxDecoration(
+                              //                   shape: BoxShape.circle,
+                              //                   border: Border.all(
+                              //                     color: Colors.black12,
+                              //                     width: 2,
+                              //                   ),
+                              //                 ),
+                              //                 child: CircleAvatar(
+                              //                   backgroundColor:
+                              //                       Colors.transparent,
+                              //                   child: Image.asset(
+                              //                     "assets/images/gift.png",
+                              //                     scale: 5,
+                              //                   ),
+                              //                 ),
+                              //               ),
+                              //               Container(
+                              //                 width: 10,
+                              //               ),
+                              //               Expanded(
+                              //                 child: CustomDisplayText(
+                              //                   label:
+                              //                       "Refer and earn free rewards",
+                              //                   fontSize: 16,
+                              //                   fontWeight: FontWeight.w700,
+                              //                   letterSpacing: -0.32,
+                              //                 ),
+                              //               ),
+                              //               const Icon(
+                              //                 Icons.keyboard_arrow_right,
+                              //                 color: Colors.black54,
+                              //               ),
+                              //             ],
+                              //           ),
+                              //         ),
+                              //       ),
+                              //     ),
+                              //   ),
+                              // ),
+
                               InkWell(
                                 onTap: () {
                                   Variables.pageTrans(ProfileDetails(
