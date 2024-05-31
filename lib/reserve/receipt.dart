@@ -14,8 +14,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
+import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -228,6 +230,7 @@ class _ReserveReceiptState extends State<ReserveReceipt>
     return CustomParent1Widget(
       canPop: true,
       appBarheaderText: "Parking Ticket",
+      hasPadding: false,
       appBarIconClick: () {
         Variables.pageTrans(
             const MainLandingScreen(
@@ -235,169 +238,234 @@ class _ReserveReceiptState extends State<ReserveReceipt>
             ),
             context);
       },
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: 20,
-            ),
-            widget.tab == 1
-                ? Container()
-                : Center(
-                    child: Container(
-                      width: 150,
-                      height: 150,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                              width: 2, color: Color(0x162563EB)),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: QrImageView(
-                          data: widget.refno,
-                          version: QrVersions.auto,
-                          gapless: false,
-                        ),
-                      ),
-                    ),
-                  ),
-            widget.tab == 1
-                ? Container()
-                : Container(
-                    height: 10,
-                  ),
-            widget.tab == 1
-                ? Container()
-                : Center(
-                    child: CustomDisplayText(
-                      label: "Scan QR code",
-                      color: const Color(0xFF353536),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      height: 0,
-                      letterSpacing: -0.36,
-                    ),
-                  ),
-            widget.tab == 1
-                ? Container()
-                : Container(
-                    height: 5,
-                  ),
-            widget.tab == 1
-                ? Container()
-                : CustomDisplayText(
-                    label: "Scan this code to check-in",
-                    color: const Color(0xFF353536),
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    height: 0,
-                    letterSpacing: -0.28,
-                  ),
-            widget.tab == 1
-                ? Container()
-                : Container(
-                    height: 38,
-                  ),
-            ReceiptBody(
-              amount: widget.amount,
-              plateNo: widget.plateNo,
-              startDate: widget.startDate,
-              startTime: widget.startTime,
-              endTime: widget.endTime,
-              hours: widget.hours,
-              parkArea: widget.parkArea,
-              refno: widget.refno,
-            ),
-            Container(
-              height: 10,
-            ),
-            IntrinsicHeight(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        _shareQrCode();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.ios_share_outlined,
-                              color: Colors.black,
-                              size: 25,
+                  Container(
+                    height: 20,
+                  ),
+                  widget.tab == 1
+                      ? Container()
+                      : Center(
+                          child: Container(
+                            width: 150,
+                            height: 150,
+                            decoration: ShapeDecoration(
+                              shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    width: 2, color: Color(0x162563EB)),
+                                borderRadius: BorderRadius.circular(28),
+                              ),
                             ),
-                            Text("Share",
-                                style: Platform.isAndroid
-                                    ? GoogleFonts.dmSans(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1,
-                                        fontSize: 14)
-                                    : TextStyle(
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w600,
-                                        letterSpacing: 1,
-                                        fontSize: 14,
-                                        fontFamily: "SFProTextReg",
-                                      )),
-                          ],
+                            child: Padding(
+                              padding: const EdgeInsets.all(15.0),
+                              child: QrImageView(
+                                data: widget.refno,
+                                version: QrVersions.auto,
+                                gapless: false,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
+                  widget.tab == 1
+                      ? Container()
+                      : Container(
+                          height: 10,
+                        ),
+                  widget.tab == 1
+                      ? Container()
+                      : Center(
+                          child: CustomDisplayText(
+                            label: "Scan QR code",
+                            color: const Color(0xFF353536),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                            height: 0,
+                            letterSpacing: -0.36,
+                          ),
+                        ),
+                  widget.tab == 1
+                      ? Container()
+                      : Container(
+                          height: 5,
+                        ),
+                  widget.tab == 1
+                      ? Container()
+                      : CustomDisplayText(
+                          label: "Scan this code to check-in",
+                          color: const Color(0xFF353536),
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          height: 0,
+                          letterSpacing: -0.28,
+                        ),
+                  widget.tab == 1
+                      ? Container()
+                      : Container(
+                          height: 38,
+                        ),
+                  ReceiptBody(
+                    amount: widget.amount,
+                    plateNo: widget.plateNo,
+                    startDate: widget.startDate,
+                    startTime: widget.startTime,
+                    endTime: widget.endTime,
+                    hours: widget.hours,
+                    parkArea: widget.parkArea,
+                    refno: widget.refno,
                   ),
                   Container(
-                    width: 1,
-                    color: const Color.fromRGBO(30, 33, 41, 0.08),
+                    height: 10,
                   ),
-                  Expanded(
-                    child: InkWell(
-                      onTap: () {
-                        saveToGallery();
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.download_outlined,
-                              color: Colors.black,
-                              size: 25,
+                  IntrinsicHeight(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              _shareQrCode();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.ios_share_outlined,
+                                    color: Colors.black,
+                                    size: 25,
+                                  ),
+                                  Text("Share",
+                                      style: Platform.isAndroid
+                                          ? GoogleFonts.dmSans(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1,
+                                              fontSize: 14)
+                                          : TextStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1,
+                                              fontSize: 14,
+                                              fontFamily: "SFProTextReg",
+                                            )),
+                                ],
+                              ),
                             ),
-                            Text(
-                              "Save",
-                              style: Platform.isAndroid
-                                  ? GoogleFonts.dmSans(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1,
-                                      fontSize: 14)
-                                  : TextStyle(
-                                      color: Colors.black,
-                                      fontWeight: FontWeight.w600,
-                                      letterSpacing: 1,
-                                      fontSize: 14,
-                                      fontFamily: "SFProTextReg",
-                                    ),
-                            ),
-                          ],
+                          ),
                         ),
-                      ),
+                        Container(
+                          width: 1,
+                          color: const Color.fromRGBO(30, 33, 41, 0.08),
+                        ),
+                        Expanded(
+                          child: InkWell(
+                            onTap: () {
+                              saveToGallery();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(
+                                    Icons.download_outlined,
+                                    color: Colors.black,
+                                    size: 25,
+                                  ),
+                                  Text(
+                                    "Save",
+                                    style: Platform.isAndroid
+                                        ? GoogleFonts.dmSans(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 1,
+                                            fontSize: 14)
+                                        : TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w600,
+                                            letterSpacing: 1,
+                                            fontSize: 14,
+                                            fontFamily: "SFProTextReg",
+                                          ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          if (widget.isReserved && int.parse(widget.tab.toString()) == 0)
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(20),
+                ),
+                color: Colors.white,
+              ),
+              width: Variables.screenSize.width,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+                child: CustomButton(
+                    label: "Check-in",
+                    onTap: () async {
+                      CustomModal(context: context).loader();
+                      Functions.getUserBalance((data) async {
+                        if (data != "null" || data != "No Internet") {
+                          Functions.computeDistanceResorChckIN(
+                              context, LatLng(widget.lat, widget.long),
+                              (success) {
+                            if (success["success"]) {
+                              if (success["can_checkIn"]) {
+                                Functions.checkIn(
+                                    widget.ticketId, widget.lat, widget.long,
+                                    (cbData) {
+                                  Navigator.pop(context);
+                                  if (cbData == "Success") {
+                                    showAlertDialog(context, "Success",
+                                        "Successfully checked-in.", () {
+                                      Navigator.of(context).pop();
+                                      Variables.pageTrans(
+                                          const MainLandingScreen(
+                                            index: 1,
+                                          ),
+                                          context);
+                                    });
+                                  }
+                                });
+                              } else {
+                                Navigator.pop(context);
+                                showAlertDialog(
+                                    context, "LuvPark", success["message"], () {
+                                  Navigator.of(context).pop();
+                                });
+                              }
+                            } else {
+                              Navigator.pop(context);
+                            }
+                          });
+                        } else {
+                          Navigator.pop(context);
+                        }
+                      });
+                    }),
+              ),
+            ),
+        ],
       ),
     );
   }

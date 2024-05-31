@@ -6,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dash/flutter_dash.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/api_keys.dart';
@@ -56,13 +55,13 @@ class _ViewDetailsState extends State<ViewDetails> {
 
   List<Marker> markers = <Marker>[];
   List<String> vehicles = [];
-  Map<String, IconData> amenityIcons = {
-    "WITH CCTV": FontAwesomeIcons.camera,
-    "CONCRETE FLOOR": FontAwesomeIcons.road,
-    "WITH SECURITY": FontAwesomeIcons.personMilitaryPointing,
-    "COVERED / SHADED": FontAwesomeIcons.warehouse,
-    "GRASS AREA": FontAwesomeIcons.leaf,
-    "ASPHALT FLOOR": FontAwesomeIcons.road
+  Map<String, String> amenityIcons = {
+    "WITH CCTV": "amenities_cctv.png",
+    "CONCRETE FLOOR": "amenities_concreate_floor.png",
+    "WITH SECURITY": "amenities_security.png",
+    "COVERED / SHADED": "amenities_covered.png",
+    "GRASS  AREA": "amenities_grass_area.png",
+    "ASPHALT FLOOR": "amenities_asphalt_floor.png"
   };
 
   @override
@@ -847,6 +846,61 @@ class _ViewDetailsState extends State<ViewDetails> {
             ),
             Container(height: 10),
             CustomDisplayText(
+              label: "Amenities",
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            Container(height: 10),
+            SizedBox(
+              height: 40,
+              child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: widget.amenitiesData.length,
+                  itemBuilder: ((context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(right: 5.0),
+                      child: Container(
+                        padding: const EdgeInsets.only(
+                            top: 5, left: 8, right: 7, bottom: 5),
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(7),
+                          border: Border.all(
+                            color: Color(0xFFDFE7EF),
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            //amenityIcons["WITH CCTV"]
+                            Image(
+                              width: 40,
+                              height: 40,
+                              image: AssetImage(
+                                "assets/images/${!amenityIcons.containsKey(widget.amenitiesData[index]["parking_amenity_desc"].toString().trim()) ? "amenities_square_parking.png" : amenityIcons[widget.amenitiesData[index]["parking_amenity_desc"]]}",
+                              ),
+                            ),
+
+                            Container(width: 5),
+                            CustomDisplayText(
+                              label:
+                                  "${widget.amenitiesData[index]["parking_amenity_desc"]}",
+                              color: Colors.black,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  })),
+            ),
+            Container(height: 10),
+            CustomDisplayText(
               label: "Vehicles",
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -907,61 +961,6 @@ class _ViewDetailsState extends State<ViewDetails> {
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
-                        ),
-                      ),
-                    );
-                  })),
-            ),
-            Container(height: 20),
-            CustomDisplayText(
-              label: "Amenities",
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            Container(height: 10),
-            SizedBox(
-              height: 40,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemCount: widget.amenitiesData.length,
-                  itemBuilder: ((context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(right: 5.0),
-                      child: Container(
-                        padding: const EdgeInsets.only(
-                            top: 5, left: 8, right: 7, bottom: 5),
-                        clipBehavior: Clip.antiAlias,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(7),
-                          border: Border.all(
-                            color: Color(0xFFDFE7EF),
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            //amenityIcons["WITH CCTV"]
-                            amenityIcons.containsKey(widget.amenitiesData[index]
-                                    ["parking_amenity_desc"])
-                                ? Icon(amenityIcons[widget.amenitiesData[index]
-                                    ["parking_amenity_desc"]])
-                                : Icon(
-                                    FontAwesomeIcons.squareParking,
-                                  ),
-
-                            Container(width: 10),
-                            CustomDisplayText(
-                              label:
-                                  "${widget.amenitiesData[index]["parking_amenity_desc"]}",
-                              color: Colors.black,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
                         ),
                       ),
                     );
