@@ -452,6 +452,7 @@ class NotificationController {
 Future<void> updateLocation(LatLng position) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var geoConId = prefs.getString('geo_connect_id');
+  print("geoConId afdsaf $geoConId");
   if (geoConId == null) return;
   var jsonParam = {
     "geo_connect_id": geoConId,
@@ -493,17 +494,7 @@ Future<void> getSharingData(ctr) async {
             .readNotificationByMateId(dataRow["geo_connect_id"],
                 dataRow["updated_on"] == null ? "" : dataRow["updated_on"])
             .then((returnData) async {
-          DateTime pdt = DateTime.parse(
-              dataRow["created_on"].toString().replaceAll("/", "-"));
-          DateTime targetDate =
-              DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
-
-          if (!Variables.withinOneHourRange(targetDate)) {
-            ShareLocationDatabase.instance.deleteMessageById(
-                int.parse(dataRow["geo_connect_id"].toString()));
-            return;
-          }
-          if (returnData == null) {
+          execCode() async {
             var resData = {
               ShareLocationDataFields.connectMateId:
                   int.parse(dataRow["geo_connect_id"].toString()),
@@ -511,7 +502,6 @@ Future<void> getSharingData(ctr) async {
                   ? ""
                   : dataRow["updated_on"].toString()
             };
-
             await ShareLocationDatabase.instance
                 .insertUpdate(resData)
                 .then((updateProcess) {
@@ -531,6 +521,22 @@ Future<void> getSharingData(ctr) async {
                   "Someone wants to share their location with you",
                   "sharing_location");
             });
+          }
+
+          if (returnData == null) {
+            if (dataRow["updated_on"] == null) {
+              execCode();
+            } else {
+              DateTime pdt = DateTime.parse(
+                  dataRow["updated_on"].toString().replaceAll("/", "-"));
+
+              DateTime targetDate =
+                  DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
+              print("targetDate $targetDate");
+              if (Variables.withinOneHourRange(targetDate)) {
+                execCode();
+              }
+            }
           }
         });
       }
