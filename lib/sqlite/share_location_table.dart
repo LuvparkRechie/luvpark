@@ -124,6 +124,13 @@ class ShareLocationDatabase {
     return result;
   }
 
+  Future<int> deleteMessageById(int id) async {
+    final db = await database;
+
+    return await db!.delete(Variables.shareLocTable,
+        where: 'geo_connect_mate_id = ?', whereArgs: [id]);
+  }
+
   Future deleteAll() async {
     final db = await instance.database;
 

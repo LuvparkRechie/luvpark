@@ -21,6 +21,7 @@ import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
 import 'package:luvpark/pa_message/pa_message.dart';
+import 'package:luvpark/sqlite/map_sharing_table.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -105,7 +106,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    //ForegroundNotifTask.setContext(context);
     backgroundFunc();
   }
 
@@ -329,6 +329,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
     await NotificationDatabase.instance.deleteAll();
     await PaMessageDatabase.instance.deleteAll();
     await ShareLocationDatabase.instance.deleteAll();
+    await MapSharingTable.instance.deleteAll();
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear(); // This clears all data in SharedPreferences.

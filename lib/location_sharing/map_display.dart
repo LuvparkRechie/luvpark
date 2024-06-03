@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:iconsax/iconsax.dart';
@@ -19,6 +19,9 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
+import 'package:luvpark/sqlite/map_sharing_table.dart';
+import 'package:luvpark/sqlite/share_location_table.dart';
+import 'package:luvpark/sqlite/sharing_data_model.dart';
 import 'package:luvpark/verify_user/verify_user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,14 +42,15 @@ class MapSharingScreenState extends State<MapSharingScreen> {
   String userAddress = "";
 
   MapType _currentMapType = MapType.normal;
-  List<Marker> markers = <Marker>[];
   List<String> images = ['assets/images/profIcon.png'];
   double _panelHeightClosed = 80.0;
   double _panelHeightOpen = 300.0;
   double _panelHeight = 90.0;
   bool hasInternet = true;
   var invitedWidget = <Widget>[];
+  List mapData = [];
   int ctr = 0;
+  Set<Marker> markers = {};
 
   @override
   void initState() {
@@ -74,7 +78,6 @@ class MapSharingScreenState extends State<MapSharingScreen> {
         if (mounted) {
           setState(() {
             hasInternet = false;
-            markers = <Marker>[];
           });
         }
         return;
@@ -85,46 +88,83 @@ class MapSharingScreenState extends State<MapSharingScreen> {
           });
         }
         if (sharedData["data"].isNotEmpty) {
-          if (mounted) {
-            markers = <Marker>[];
-            for (var markerData in sharedData["data"]) {
-              ctr++;
-              iyahangLocation =
-                  LatLng(markerData["latitude"], markerData["longitude"]);
-
-              if (markerData['profile_pic'] == null) {
-                final Uint8List availabeMarkIcons = await DashboardComponent()
-                    .getImages(images[0],
-                        (MediaQuery.of(context).devicePixelRatio * 50).round());
-                markers.add(Marker(
-                  markerId: MarkerId('${markerData["user_name"]}'),
-                  infoWindow: InfoWindow(title: "${markerData["user_name"]}"),
-                  position: LatLng(
-                      double.parse(markerData["latitude"].toString()),
-                      double.parse(markerData["longitude"].toString())),
-                  icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
-                ));
-              } else {
-                Uint8List iconBytes = await Variables.getMarkerIcon(
-                    context, markerData['profile_pic'], 50);
-                BitmapDescriptor icon = BitmapDescriptor.fromBytes(iconBytes);
-                markers.add(Marker(
-                  markerId: MarkerId('${markerData["user_name"]}'),
-                  infoWindow: InfoWindow(title: "${markerData["user_name"]}"),
-                  position: LatLng(
-                      double.parse(markerData["latitude"].toString()),
-                      double.parse(markerData["longitude"].toString())),
-                  icon: icon,
-                ));
+          for (var markerData in sharedData["data"]) {
+            Object mapShareLocData = {
+              MapSharingDataFields.geoconId: markerData["geo_connect_id"],
+              MapSharingDataFields.userId: markerData["user_id"],
+              MapSharingDataFields.geoShareId: markerData["geo_share_id"],
+              MapSharingDataFields.latitude: markerData["latitude"],
+              MapSharingDataFields.longitude: markerData["longitude"],
+              MapSharingDataFields.createdDate: markerData["created_on"],
+              MapSharingDataFields.userName: markerData["user_name"],
+              MapSharingDataFields.image: markerData["profile_pic"],
+            };
+            await MapSharingTable.instance
+                .readAllMapShareData()
+                .then((objData) async {
+              setState(() {
+                mapData = objData;
+              });
+              if (objData.isNotEmpty) {
+                List databaseData = sharedData["data"];
+                for (var dataShare in objData) {
+                  bool found = databaseData.any((entry) =>
+                      entry['geo_connect_id'] == dataShare['geo_connect_id']);
+                  if (!found) {
+                    await MapSharingTable.instance.deleteDataById(
+                        int.parse(dataShare['geo_connect_id'].toString()));
+                  }
+                }
               }
+              MapSharingTable.instance.insertUpdate(mapShareLocData);
+            });
+
+            Set<Marker> updatedMarkers = {};
+
+            for (dynamic fotcha in mapData) {
+              Marker marker = await _createMarker(fotcha);
+              updatedMarkers.add(marker);
             }
-            if (mounted) {
-              setState(() {});
-            }
+
+            markers = updatedMarkers;
+
+            ctr++;
+            iyahangLocation =
+                LatLng(markerData["latitude"], markerData["longitude"]);
+          }
+          if (mounted) {
+            setState(() {});
           }
         }
       }
     });
+  }
+
+  Future<Marker> _createMarker(obj) async {
+    var icon;
+    if (obj['profile_pic'] == null) {
+      final Uint8List availableMarkIcons = await DashboardComponent().getImages(
+        images[0],
+        (MediaQuery.of(context).devicePixelRatio * 50).round(),
+      );
+      icon = availableMarkIcons;
+    } else {
+      String encodedData =
+          MapSharingTable.instance.decodeAndDecompress(obj["profile_pic"]);
+      Uint8List iconBytes =
+          await Variables.getMarkerIcon(context, encodedData, 50);
+
+      icon = iconBytes;
+    }
+    return Marker(
+      markerId: MarkerId('${obj["user_name"]}'),
+      infoWindow: InfoWindow(title: "${obj["user_name"]}"),
+      position: LatLng(
+        double.parse(obj["latitude"].toString()),
+        double.parse(obj["longitude"].toString()),
+      ),
+      icon: BitmapDescriptor.fromBytes(icon!),
+    );
   }
 
   Future<void> getUserLocation() async {
@@ -165,7 +205,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
   }
 
   Future<void> fetchDataPeriodically() async {
-    timers = Timer.periodic(Duration(seconds: 5), (timer) async {
+    timers = Timer.periodic(Duration(seconds: 2), (timer) async {
       await fetchData();
       await getUserLocation();
       await fetchPendingInviteData();
@@ -222,7 +262,7 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                             iyahangLocation!.longitude),
                         zoom: 14.4746,
                       ),
-                      markers: Set<Marker>.of(markers),
+                      markers: markers,
                       onMapCreated: (GoogleMapController controller) {
                         // DefaultAssetBundle.of(context)
                         //     .loadString(
@@ -431,6 +471,9 @@ class MapSharingScreenState extends State<MapSharingScreen> {
 
                                   prefs.remove("geo_share_id");
                                   prefs.remove("geo_connect_id");
+                                  await ShareLocationDatabase.instance
+                                      .deleteAll();
+                                  await MapSharingTable.instance.deleteAll();
                                   if (mounted) {
                                     setState(() {
                                       timers!.cancel();

@@ -184,6 +184,7 @@ class Variables {
 
   static String paMessageTable = 'pa_message';
   static String vhBrands = 'vehicle_brands';
+  static String locSharing = 'location_sharing_table';
   static String notifTable = 'notification_table';
   static String shareLocTable = 'share_location_table';
   static EncryptedSharedPreferences encryptedSharedPreferences =

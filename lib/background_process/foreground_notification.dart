@@ -35,15 +35,11 @@ class ForegroundNotif {
         await updateUI(data);
       },
     );
-    print('Initializing...');
     await BackgroundLocator.initialize();
 
-    print('Initialization done');
     final _isRunning = await BackgroundLocator.isServiceRunning();
 
     isRunning = _isRunning;
-
-    print('Running ${isRunning.toString()}');
   }
 
   static Future<void> updateUI(dynamic data) async {
@@ -130,9 +126,7 @@ class LocationCallbackHandler {
   }
 
   @pragma('vm:entry-point')
-  static Future<void> notificationCallback() async {
-    print('***notificationCallback');
-  }
+  static Future<void> notificationCallback() async {}
 }
 
 class LocationServiceRepository {

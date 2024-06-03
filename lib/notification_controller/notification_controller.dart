@@ -358,9 +358,6 @@ class NotificationController {
       ReceivedAction receivedAction) async {
     BuildContext context = MyApp.navigatorKey.currentState!.context;
 
-    print("receivedAction $receivedAction");
-    print("button keypressed ${receivedAction.buttonKeyPressed}");
-
     void redirect() async {
       MyApp.navigatorKey.currentState?.pushNamedAndRemoveUntil(
         '/${receivedAction.payload!["notificationId"]}',
@@ -498,10 +495,14 @@ Future<void> getSharingData(ctr) async {
             .then((returnData) async {
           DateTime pdt = DateTime.parse(
               dataRow["created_on"].toString().replaceAll("/", "-"));
-
           DateTime targetDate =
               DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
-          if (!Variables.withinOneHourRange(targetDate)) return;
+
+          if (!Variables.withinOneHourRange(targetDate)) {
+            ShareLocationDatabase.instance.deleteMessageById(
+                int.parse(dataRow["geo_connect_id"].toString()));
+            return;
+          }
           if (returnData == null) {
             var resData = {
               ShareLocationDataFields.connectMateId:
