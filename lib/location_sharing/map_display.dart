@@ -158,7 +158,11 @@ class MapSharingScreenState extends State<MapSharingScreen> {
     }
     return Marker(
       markerId: MarkerId('${obj["user_name"]}'),
-      infoWindow: InfoWindow(title: "${obj["user_name"]}"),
+      anchor: Offset(0.5, 1.0),
+      infoWindow: InfoWindow(
+        title: "${obj["user_name"]}",
+        anchor: Offset(0.5, 0.0),
+      ),
       position: LatLng(
         double.parse(obj["latitude"].toString()),
         double.parse(obj["longitude"].toString()),
@@ -349,40 +353,41 @@ class MapSharingScreenState extends State<MapSharingScreen> {
                                 color: Colors.grey.shade200),
                           ),
                         ),
-                        Container(height: 10),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: CustomDisplayText(
-                                label: "Sharing location with",
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                minFontsize: 1,
-                                maxLines: 1,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () async {
-                                Variables.customBottomSheet(
-                                    context,
-                                    VerifyUserAcct(
-                                      isInvite: false,
-                                    ));
-                              },
-                              child: CircleAvatar(
-                                radius: 20,
-                                backgroundColor: AppColor.primaryColor,
-                                child: Icon(Icons.person_add,
-                                    color: AppColor.bodyColor),
-                              ),
-                            )
-                          ],
-                        ),
+                        Container(height: 5),
                         Expanded(
                             child: SingleChildScrollView(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Container(height: 10),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: CustomDisplayText(
+                                      label: "Location Sharing",
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      minFontsize: 1,
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  InkWell(
+                                    onTap: () async {
+                                      Variables.customBottomSheet(
+                                          context,
+                                          VerifyUserAcct(
+                                            isInvite: false,
+                                          ));
+                                    },
+                                    child: CircleAvatar(
+                                      radius: 20,
+                                      backgroundColor: AppColor.primaryColor,
+                                      child: Icon(Icons.person_add,
+                                          color: AppColor.bodyColor),
+                                    ),
+                                  )
+                                ],
+                              ),
                               Container(height: 10),
                               Container(
                                 width: 110,

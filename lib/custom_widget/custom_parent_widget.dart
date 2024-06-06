@@ -296,6 +296,7 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
             canPop: widget.canPop!,
             child: widget.floatingButton == null
                 ? Scaffold(
+                    resizeToAvoidBottomInset: false,
                     appBar: PreferredSize(
                       preferredSize: const Size.fromHeight(kToolbarHeight),
                       child: _buildAppBar(),
@@ -303,6 +304,7 @@ class _CustomParentWidgetV2State extends State<CustomParentWidgetV2> {
                     body: _buildChild(),
                   )
                 : Scaffold(
+                    resizeToAvoidBottomInset: false,
                     floatingActionButton: widget.floatingButton!,
                     appBar: PreferredSize(
                       preferredSize: const Size.fromHeight(kToolbarHeight),

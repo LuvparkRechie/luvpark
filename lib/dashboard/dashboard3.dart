@@ -72,7 +72,7 @@ class _Dashboard3State extends State<Dashboard3> {
     super.initState();
     ddRadius = "10000";
     searchController.addListener(() {});
-    getUsersData();
+    getUsersData("Current Location");
   }
 
   @override
@@ -109,7 +109,7 @@ class _Dashboard3State extends State<Dashboard3> {
     );
   }
 
-  Future<void> getUsersData() async {
+  Future<void> getUsersData(locTitle) async {
     final prefs = await SharedPreferences.getInstance();
     myData = prefs.getString(
       'userData',
@@ -197,16 +197,17 @@ class _Dashboard3State extends State<Dashboard3> {
                 hasInternetBal = false;
               });
             }
-            displayMapData(nearestData, position.latitude, position.longitude);
+            displayMapData(
+                nearestData, position.latitude, position.longitude, locTitle);
           });
         });
       });
     }
   }
 
-  displayMapData(nearestData, lat, lng) async {
+  displayMapData(nearestData, lat, lng, locTitle) async {
     final Uint8List availabeMarkIcons =
-        await DashboardComponent().getSearchMarker(searchImage[0], 120);
+        await DashboardComponent().getSearchMarker(searchImage[0], 100);
     int ctr = 0;
 
     if (mounted) {
@@ -222,6 +223,7 @@ class _Dashboard3State extends State<Dashboard3> {
           bearing: 0,
         );
         markers.add(Marker(
+          infoWindow: InfoWindow(title: "$locTitle"),
           markerId: const MarkerId('current_location'),
           position: LatLng(
               double.parse(lat.toString()), double.parse(lng.toString())),
@@ -244,7 +246,7 @@ class _Dashboard3State extends State<Dashboard3> {
         isLoadingMap = false;
       });
     }
-    print("subDataNearest $subDataNearest");
+
     if (nearestData.isNotEmpty &&
         userBal >= double.parse(logData["min_wallet_bal"].toString())) {
       for (var i = 0; i < nearestData.length; i++) {
@@ -344,11 +346,8 @@ class _Dashboard3State extends State<Dashboard3> {
         vtypeId = data["vh_type"];
         isAllowOverNight = data["is_allow_overnight"];
       });
-      displayMapData(
-        nearestData,
-        startLocation!.latitude,
-        startLocation!.longitude,
-      );
+      displayMapData(nearestData, startLocation!.latitude,
+          startLocation!.longitude, "Searched Location");
     });
   }
 
@@ -363,7 +362,7 @@ class _Dashboard3State extends State<Dashboard3> {
               isClicked = true;
               hasInternetBal = true;
             });
-            getUsersData();
+            getUsersData("Current Location");
           })
         : isLoadingMap
             ? SizedBox(
@@ -623,7 +622,7 @@ class _Dashboard3State extends State<Dashboard3> {
                       searchController.clear();
                       onSearchAdd = false;
                     });
-                    getUsersData();
+                    getUsersData("Current Location");
                   },
                   child: CircleAvatar(
                     radius: 20,
@@ -789,7 +788,8 @@ class _Dashboard3State extends State<Dashboard3> {
                                         .toString()),
                                     double.parse(searchedObj["searchedData"][0]
                                             ["long"]
-                                        .toString()));
+                                        .toString()),
+                                    "Searched Location");
                               });
                         });
                   },

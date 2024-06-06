@@ -72,6 +72,7 @@ class _ViewListState extends State<ViewList> {
                         horizontal: 14,
                       ),
                       child: TextField(
+                        autofocus: false,
                         controller: searchController,
                         decoration: InputDecoration(
                           hintText: "Search parking zone/address",

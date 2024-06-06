@@ -695,7 +695,7 @@ class ReceiptBody extends StatelessWidget {
             Container(
               height: 10,
             ),
-            confirmDetails("Vehicle", plateNo),
+            confirmDetails("Vehicle", plateNo.toUpperCase()),
             Container(
               height: 10,
             ),

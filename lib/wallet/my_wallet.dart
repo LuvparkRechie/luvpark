@@ -231,7 +231,7 @@ class _MyWalletState extends State<MyWallet>
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
-        appbarColor: AppColor.primaryColor,
+        appbarColor: Colors.white,
         bodyColor: Color.fromARGB(255, 249, 248, 248),
         child: RefreshIndicator(
           onRefresh: getPreferences,

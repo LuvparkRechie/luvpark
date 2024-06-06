@@ -98,7 +98,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
   @override
   void initState() {
     super.initState();
-
     _updateMaskFormatter("");
     int endNumber = int.parse(widget.areaData[0]["res_max_hours"].toString());
 
@@ -356,17 +355,10 @@ class _ReserveForm2State extends State<ReserveForm2> {
                               Container(height: 10),
                               InkWell(
                                 onTap: () async {
-                                  showModalBottomSheet(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.only(
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                      ),
-                                    ),
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return TimeList(
+                                  Variables.customBottomSheet(
+                                    context,
+                                    SafeArea(
+                                      child: TimeList(
                                         numbersList: numbersList,
                                         maxHours: widget.areaData[0]
                                                 ["res_max_hours"]
@@ -387,9 +379,10 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                             isLoadingBtn = false;
                                           });
                                         },
-                                      );
-                                    },
+                                      ),
+                                    ),
                                   );
+ 
                                 },
                                 child: Container(
                                   height: 71,
@@ -625,9 +618,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                             });
                                                             routeToComputation();
                                                           } else {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
                                                             showAlertDialog(
                                                                 myContext!,
                                                                 "Error",
@@ -798,8 +788,9 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                         Alignment.centerRight,
                                                     child: CustomDisplayText(
                                                       label: toCurrencyString(
-                                                          widget.userBal
-                                                              .toString()).toString(),
+                                                              widget.userBal
+                                                                  .toString())
+                                                          .toString(),
                                                       fontSize: 16,
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -936,7 +927,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                 var dateOut = dateIn.add(
                                                     Duration(
                                                         hours: numberOfhours));
-                                                // routeToComputation();
+
                                                 void bongGo() {
                                                   Map<String, dynamic>
                                                       parameters = {
@@ -1123,6 +1114,33 @@ class _ReserveForm2State extends State<ReserveForm2> {
     );
   }
 
+  Form _addProcedureForm() {
+    return Form(
+      child: Column(
+        children: <Widget>[
+          TextFormField(
+              validator: (value) {
+                return null;
+              },
+              decoration: InputDecoration(
+                  labelText: 'Name',
+                  hintText: "Specific/applicable procedure",
+                  icon: Icon(Icons.edit, color: Colors.deepPurple))),
+          TextFormField(
+              validator: (value) {
+                return null;
+              },
+              maxLines: null,
+              keyboardType: TextInputType.multiline,
+              decoration: InputDecoration(
+                  labelText: 'Description',
+                  hintText: "Applicable procedure description.",
+                  icon: Icon(Icons.notes, color: Colors.deepPurple))),
+        ],
+      ),
+    );
+  }
+
   Future<void> refresh() async {
     getVehicleTypeData();
   }
@@ -1305,6 +1323,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
             api: ApiKeys.gApiSubFolderPostReserveCalc, parameters: parameters)
         .post()
         .then((returnPost) async {
+      print("returnPost $returnPost");
       if (returnPost == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
@@ -1340,6 +1359,8 @@ class _ReserveForm2State extends State<ReserveForm2> {
             setState(() {
               hasInternet = true;
               isLoadingBtn = false;
+              callBackData = [];
+              vehicleText = "Tap to add vehicle";
             });
           });
         }
