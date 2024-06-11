@@ -634,146 +634,138 @@ class _DetailsState extends State<Details> {
   }
 
   Widget _myWidget() {
-    return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(15),
+    return MediaQuery(
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(1)),
+      child: Container(
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(15),
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(height: 50),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: CustomDisplayText(
-                label: widget.param["park_area"].toString(),
-                color: const Color(0xFF353536),
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                height: 0,
-                letterSpacing: -0.32,
-              ),
-            ),
-            Container(
-              height: 5,
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: CustomDisplayText(
-                  label: "Parking Area",
-                  fontSize: 12,
-                  color: const Color.fromARGB(255, 137, 140, 148),
-                  fontWeight: FontWeight.w600),
-            ),
-            Container(
-              height: 30,
-            ),
-            // confirmDetails(
-            //     "Date In/Out",
-            //     DateFormat('dd-MM-yyyy hh:mm a')
-            //         .format(DateTime.parse(widget.param["dt_in"].toString()))
-            //         .toString()),
-            // confirmDetails("Time In/Out",
-            //     "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.param["startTime"].toString()))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.param["endTime"].toString()))}"),
-            // confirmDetails("Reference No", widget.param["ref_no"].toString()),
-            confirmDetails("Vehicle", widget.param["plate_no"].toString()),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Date In-Out", widget.param["dt_in"].toString()),
-            Container(
-              height: 10,
-            ),
-            confirmDetails("Time In-Out",
-                "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.param["startTime"].toString()))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.param["endTime"].toString()))}"),
-            Container(
-              height: 10,
-            ),
-            // confirmDetails("Duration",
-            //     "${widget.hours} ${int.parse(widget.hours) > 1 ? "hrs" : "hr"}"),
-            // Container(
-            //   height: 10,
-            // ),
-            confirmDetails("Reference", widget.param["ref_no"].toString()),
-            Container(
-              height: 18,
-            ),
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: const Color.fromARGB(255, 245, 250, 254),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(9)),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(13),
-                child: Row(
-                  children: [
-                    const Image(
-                      width: 25,
-                      height: 25,
-                      image:
-                          AssetImage("assets/images/luvpark_transparent.png"),
-                    ),
-                    Container(
-                      width: 10,
-                    ),
-                    Expanded(
-                      child: CustomDisplayText(
-                        label: "Total Paid",
-                        color: const Color(0xFF353536),
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        height: 0,
-                        letterSpacing: -0.32,
-                        maxLines: 1,
-                      ),
-                    ),
-                    Container(
-                      width: 20,
-                    ),
-                    Expanded(
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: CustomDisplayText(
-                                label: toCurrencyString(
-                                    widget.param["amount"].toString()),
-                                color: const Color(0xFF353536),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.32,
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: CustomDisplayText(
-                                label: "Token",
-                                color: const Color.fromARGB(255, 137, 140, 148),
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                height: 0,
-                                letterSpacing: -0.20,
-                                maxLines: 1,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    )
-                  ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(height: 50),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: CustomDisplayText(
+                  label: widget.param["park_area"].toString(),
+                  color: const Color(0xFF353536),
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  height: 0,
+                  letterSpacing: -0.32,
                 ),
               ),
-            ),
-          ],
+              Container(
+                height: 5,
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: CustomDisplayText(
+                    label: "Parking Area",
+                    fontSize: 12,
+                    color: const Color.fromARGB(255, 137, 140, 148),
+                    fontWeight: FontWeight.w600),
+              ),
+              Container(
+                height: 30,
+              ),
+              confirmDetails("Vehicle", widget.param["plate_no"].toString()),
+              Container(
+                height: 10,
+              ),
+              confirmDetails("Date In-Out", widget.param["dt_in"].toString()),
+              Container(
+                height: 10,
+              ),
+              confirmDetails("Time In-Out",
+                  "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.param["startTime"].toString()))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.param["endTime"].toString()))}"),
+              Container(
+                height: 10,
+              ),
+              confirmDetails("Reference", widget.param["ref_no"].toString()),
+              Container(
+                height: 18,
+              ),
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: ShapeDecoration(
+                  color: const Color.fromARGB(255, 245, 250, 254),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(9)),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(13),
+                  child: Row(
+                    children: [
+                      const Image(
+                        width: 25,
+                        height: 25,
+                        image:
+                            AssetImage("assets/images/luvpark_transparent.png"),
+                      ),
+                      Container(
+                        width: 10,
+                      ),
+                      Expanded(
+                        child: CustomDisplayText(
+                          label: "Total Paid",
+                          color: const Color(0xFF353536),
+                          fontSize: 15,
+                          fontWeight: FontWeight.w700,
+                          height: 0,
+                          letterSpacing: -0.32,
+                          maxLines: 1,
+                        ),
+                      ),
+                      Container(
+                        width: 20,
+                      ),
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: CustomDisplayText(
+                                  label: toCurrencyString(
+                                      widget.param["amount"].toString()),
+                                  color: const Color(0xFF353536),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.32,
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: CustomDisplayText(
+                                  label: "Token",
+                                  color:
+                                      const Color.fromARGB(255, 137, 140, 148),
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.w600,
+                                  height: 0,
+                                  letterSpacing: -0.20,
+                                  maxLines: 1,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -524,18 +524,18 @@ Future<void> getSharingData(ctr) async {
           }
 
           if (returnData == null) {
-            if (dataRow["updated_on"] == null) {
-              execCode();
-            } else {
-              DateTime pdt = DateTime.parse(
-                  dataRow["updated_on"].toString().replaceAll("/", "-"));
+            // if (dataRow["updated_on"] == null) {
+            //   execCode();
+            // } else {
 
-              DateTime targetDate =
-                  DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
-              print("targetDate $targetDate");
-              if (Variables.withinOneHourRange(targetDate)) {
-                execCode();
-              }
+            // }
+            DateTime pdt = DateTime.parse(
+                dataRow["created_on"].toString().replaceAll("/", "-"));
+
+            DateTime targetDate =
+                DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
+            if (Variables.withinOneHourRange(targetDate)) {
+              execCode();
             }
           }
         });

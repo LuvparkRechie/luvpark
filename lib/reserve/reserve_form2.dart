@@ -267,20 +267,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                                             FontWeight.w400,
                                                         maxLines: 2,
                                                       ),
-                                                      // CustomDisplayText(
-                                                      //   label:
-                                                      //       widget.areaData[0]
-                                                      //           ["address"],
-                                                      //   style: TextStyle(
-                                                      //     color: Colors.white,
-                                                      //     fontWeight:
-                                                      //         FontWeight.w500,
-                                                      //   ),
-                                                      //   minFontSize: 12,
-                                                      //   maxFontSize:
-                                                      //       double.infinity,
-                                                      //   maxLines: 2,
-                                                      // ),
                                                     ),
                                             ],
                                           ),
@@ -382,7 +368,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                                       ),
                                     ),
                                   );
- 
                                 },
                                 child: Container(
                                   height: 71,

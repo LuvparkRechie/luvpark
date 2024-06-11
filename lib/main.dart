@@ -9,14 +9,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 import 'package:luvpark/Registration/registration.dart';
-import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
@@ -68,7 +66,7 @@ void main() async {
   NotificationController.initializeLocalNotifications();
   NotificationController.initializeIsolateReceivePort();
 
-  ForegroundNotif.initializeForeground();
+  // ForegroundNotif.initializeForeground();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
@@ -155,10 +153,10 @@ class _MyAppState extends State<MyApp> {
               return MaterialPageRoute(builder: (context) {
                 return const PaMessage();
               });
-            case '/sharing_location':
-              return MaterialPageRoute(builder: (context) {
-                return MapSharingScreen();
-              });
+            // case '/sharing_location':
+            //   return MaterialPageRoute(builder: (context) {
+            //     return MapSharingScreen();
+            //   });
 
             default:
               assert(false, 'Page ${settings.name} not found');

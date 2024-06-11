@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: "none"  
 
-version: 1.23.30+31
+version: 1.23.33+34
 # updated version
 
 environment:
@@ -88,7 +88,7 @@ dependencies:
   colorful_safe_area: ^1.0.0
   wave_divider: ^0.0.3   
   calendar_date_picker2: ^0.5.5  
-  background_locator_2: ^2.0.6
+  # background_locator_2: ^2.0.6
   font_awesome_flutter: ^10.7.0
   clipboard: ^0.1.3
   carousel_slider: ^4.2.1
@@ -97,11 +97,10 @@ dependencies:
   label_marker: ^1.0.1
   flutter_timezone: ^1.0.8
   flutter_dash: ^1.0.0
-  flutter_image_compress: ^2.3.0
+  flutter_image_compress: ^2.3.0 
    
   
   
-
 dev_dependencies:
   flutter_test:
     sdk: flutter 

@@ -11,7 +11,6 @@ import 'package:luvpark/custom_widget/custom_textfield.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/http_request/http_request_model.dart';
-import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class VerifyUserAcct extends StatefulWidget {
@@ -176,7 +175,7 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
             }, () async {
               Navigator.pop(context);
               Navigator.pop(context);
-              Variables.pageTrans(MapSharingScreen(), context);
+              // Variables.pageTrans(MapSharingScreen(), context);
             });
           } else {
             Navigator.of(context).pop();

@@ -77,7 +77,8 @@ class _TimeListState extends State<TimeList> {
               ),
             ),
             CustomDisplayText(
-              label: 'Please choose or enter your desired parking duration.',
+              label:
+                  'Please ${int.parse(widget.maxHours.toString()) != 0 ? "choose or " : ""} enter your desired parking duration.',
               color: Colors.grey,
               fontWeight: FontWeight.normal,
               fontSize: 16,
@@ -195,7 +196,7 @@ class _TimeListState extends State<TimeList> {
           onTap: () {
             setState(() {
               _selectedNumber = data[index];
-              inputType.text = "";
+              inputType.text = _selectedNumber.toString();
             });
           },
           child: Container(

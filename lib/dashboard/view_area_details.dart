@@ -105,12 +105,12 @@ class _ViewDetailsState extends State<ViewDetails> {
       newMarkers.add(
         Marker(
           markerId: MarkerId(ctr == 1
-              ? "MyLocation"
+              ? "CurrentLocation"
               : widget.areaData[0]["park_area_name"]
                   .toString()), // Use unique marker ids
           infoWindow: InfoWindow(
               title: ctr == 1
-                  ? "My Location"
+                  ? "Current Location"
                   : widget.areaData[0]["park_area_name"].toString()),
           position: ctr == 1 ? currentLocation! : destLocation!,
           icon: BitmapDescriptor.fromBytes(bytessss),

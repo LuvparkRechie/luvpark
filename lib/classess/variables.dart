@@ -449,16 +449,12 @@ class Variables {
 
   static Future<Uint8List> getMarkerIcon(
       BuildContext context, String base64String, int width) async {
-    //tawga ne
+    // tawga ne
     // Uint8List iconBytes =  await _getMarkerIcon(dataRow['profile_pic'], 50);
     //   BitmapDescriptor icon = BitmapDescriptor.fromBytes(iconBytes);
     Uint8List bytes = base64Decode(base64String);
     double targetWidth = MediaQuery.of(context).devicePixelRatio * width;
-
-    // Decode the image as a ui.Image
     ui.Image image = await decodeImageFromList(bytes);
-
-    // Create a circular canvas with the target width
     ui.PictureRecorder recorder = ui.PictureRecorder();
     Canvas canvas = Canvas(recorder);
     canvas.clipRRect(RRect.fromRectAndRadius(
@@ -471,7 +467,6 @@ class Variables {
         Rect.fromLTWH(0, 0, targetWidth, targetWidth),
         Paint());
 
-    // Encode the circular image as PNG
     ui.Picture picture = recorder.endRecording();
     ui.Image encodedImage =
         await picture.toImage(targetWidth.round(), targetWidth.round());

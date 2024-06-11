@@ -20,12 +20,12 @@ import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/dashboard/filter_map_v2.dart';
+import 'package:luvpark/dashboard/nearest_list.dart';
 import 'package:luvpark/dashboard/search_place.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/permission/permission_handler.dart';
-import 'package:luvpark/verify_user/verify_user_account.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
@@ -502,6 +502,26 @@ class _Dashboard3State extends State<Dashboard3> {
       children: [
         GoogleMap(
           mapType: MapType.normal,
+          zoomGesturesEnabled: true,
+          initialCameraPosition: initialCameraPosition!,
+          mapToolbarEnabled: false,
+          zoomControlsEnabled: false,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          compassEnabled: false,
+          buildingsEnabled: false,
+          tiltGesturesEnabled: true,
+          markers: Set<Marker>.of(markers),
+          // circles: Set.from([
+          //   Circle(
+          //     circleId: CircleId("circle_1"),
+          //     center: startLocation!,
+          //     radius: double.parse(ddRadius!), // in meters
+          //     fillColor: Colors.blue.withOpacity(0.5),
+          //     strokeWidth: 3,
+          //     strokeColor: Colors.blue,
+          //   ),
+          // ]),
           onMapCreated: (GoogleMapController controller) {
             if (mounted) {
               setState(() {
@@ -513,23 +533,7 @@ class _Dashboard3State extends State<Dashboard3> {
                 });
               });
             }
-
-            // mapController.animateCamera(
-            //   CameraUpdate.newCameraPosition(
-            //     CameraPosition(target: startLocation!, zoom: 13),
-            //   ),
-            // );
           },
-          zoomGesturesEnabled: true,
-          initialCameraPosition: initialCameraPosition!,
-          mapToolbarEnabled: false,
-          zoomControlsEnabled: false,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          compassEnabled: false,
-          buildingsEnabled: false,
-          tiltGesturesEnabled: true,
-          markers: Set<Marker>.of(markers),
         ),
         SafeArea(child: searchBar(false)),
         Positioned(
@@ -564,51 +568,51 @@ class _Dashboard3State extends State<Dashboard3> {
                 ),
               ),
               Container(width: 10),
-              Tooltip(
-                preferBelow: false,
-                message: 'Location Sharing',
-                child: InkWell(
-                  onTap: () async {
-                    SharedPreferences prefs =
-                        await SharedPreferences.getInstance();
-                    String? geoShareId = prefs.getString('geo_share_id');
-                    if (geoShareId == null) {
-                      showModalConfirmation(
-                          context,
-                          "luvpark Notice",
-                          "This functionality involves utilizing a background process to continuously obtain and update the current location. "
-                              "The background process will automatically deactivate once the location sharing has ended.",
-                          "Cancel",
-                          "Continue", () {
-                        Navigator.of(context).pop();
-                      }, () async {
-                        Navigator.of(context).pop();
-                        Variables.customBottomSheet(
-                            context,
-                            VerifyUserAcct(
-                              isInvite: true,
-                            ));
-                      });
-                    } else {
-                      showAlertDialog(
-                          context, "LuvPark", "You still have active sharing.",
-                          () {
-                        Navigator.of(context).pop();
-                      });
-                    }
-                  },
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Image.asset(
-                      "assets/images/navigation.png",
-                      width: 20.013092041015625,
-                      height: 19.998329162597656,
-                    ),
-                  ),
-                ),
-              ),
-              Container(width: 10),
+              // Tooltip(
+              //   preferBelow: false,
+              //   message: 'Location Sharing',
+              //   child: InkWell(
+              //     onTap: () async {
+              //       SharedPreferences prefs =
+              //           await SharedPreferences.getInstance();
+              //       String? geoShareId = prefs.getString('geo_share_id');
+              //       if (geoShareId == null) {
+              //         showModalConfirmation(
+              //             context,
+              //             "luvpark Notice",
+              //             "This functionality involves utilizing a background process to continuously obtain and update the current location. "
+              //                 "The background process will automatically deactivate once the location sharing has ended.",
+              //             "Cancel",
+              //             "Continue", () {
+              //           Navigator.of(context).pop();
+              //         }, () async {
+              //           Navigator.of(context).pop();
+              //           Variables.customBottomSheet(
+              //               context,
+              //               VerifyUserAcct(
+              //                 isInvite: true,
+              //               ));
+              //         });
+              //       } else {
+              //         showAlertDialog(
+              //             context, "LuvPark", "You still have active sharing.",
+              //             () {
+              //           Navigator.of(context).pop();
+              //         });
+              //       }
+              //     },
+              //     child: CircleAvatar(
+              //       radius: 20,
+              //       backgroundColor: Colors.white,
+              //       child: Image.asset(
+              //         "assets/images/navigation.png",
+              //         width: 20.013092041015625,
+              //         height: 19.998329162597656,
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              // Container(width: 10),
               Tooltip(
                 preferBelow: false,
                 message: 'Current Location',
@@ -697,7 +701,7 @@ class _Dashboard3State extends State<Dashboard3> {
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.grey.shade100,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(16.0),
         ),
         height: 50,
@@ -939,103 +943,5 @@ class _HorizontalListViewState extends State<HorizontalListView> {
                   distance: getDistanceString());
             },
           );
-  }
-}
-
-class NearestList extends StatelessWidget {
-  final dynamic nearestData;
-  final bool isOpen;
-  final String distance;
-  const NearestList(
-      {super.key,
-      required this.nearestData,
-      required this.isOpen,
-      required this.distance});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 5),
-      child: InkWell(
-        onTap: () {
-          CustomModal(context: context).loader();
-          func.Functions.getAmenities(context, "", (cb) {
-            if (cb["msg"] == "Success") {
-              Navigator.of(context).pop();
-              if (cb["data"].isNotEmpty) {
-                Variables.pageTrans(
-                    ViewDetails(
-                        areaData: [nearestData], amenitiesData: cb["data"]),
-                    context);
-              }
-            }
-          });
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          width: Variables.screenSize.width * .88,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: Colors.grey.shade200,
-            ),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CustomDisplayText(
-                      label: nearestData["park_area_name"],
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      maxLines: 1,
-                    ),
-                    CustomDisplayText(
-                      label: nearestData["address"],
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black54,
-                      maxLines: 2,
-                    ),
-                    Container(height: 10),
-                    RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text:
-                                "$distance  ●  ${nearestData["parking_schedule"]}  ●  ",
-                            style: GoogleFonts.varela(
-                              color: Colors.grey,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          TextSpan(
-                            text: "${isOpen ? "OPEN" : "CLOSE"}",
-                            style: GoogleFonts.dmSans(
-                              fontWeight: FontWeight.w500,
-                              color: isOpen ? Colors.green : Colors.red,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.keyboard_arrow_right_outlined,
-                color: AppColor.primaryColor,
-              )
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

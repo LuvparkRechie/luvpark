@@ -7,12 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_background_service/flutter_background_service.dart';
 import 'package:luvpark/about_luvpark/about_us.dart';
-import 'package:luvpark/background_process/foreground_notification.dart';
 import 'package:luvpark/change_pass/change_pass.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -20,7 +18,6 @@ import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/faq/faq.dart';
-import 'package:luvpark/location_sharing/map_display.dart';
 import 'package:luvpark/login/login.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/notification_controller/notification_controller.dart';
@@ -545,77 +542,11 @@ class _SettingsPageState extends State<SettingsPage> {
                           ),
                         ),
                         Expanded(
-                            child: SingleChildScrollView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Visibility(
-                              //   visible: fullName != "Not specified",
-                              //   child: Padding(
-                              //     padding: const EdgeInsets.only(bottom: 20.0),
-                              //     child: InkWell(
-                              //       onTap: () {
-                              //         Variables.pageTrans(
-                              //             ReferralCode(), context);
-                              //       },
-                              //       child: Container(
-                              //         clipBehavior: Clip.antiAlias,
-                              //         decoration: ShapeDecoration(
-                              //           color: Color(0xFFFFCE29),
-                              //           shape: RoundedRectangleBorder(
-                              //             borderRadius:
-                              //                 BorderRadius.circular(11),
-                              //           ),
-                              //         ),
-                              //         child: Padding(
-                              //           padding: const EdgeInsets.symmetric(
-                              //               horizontal: 10, vertical: 11),
-                              //           child: Row(
-                              //             children: [
-                              //               Container(
-                              //                 decoration: BoxDecoration(
-                              //                   shape: BoxShape.circle,
-                              //                   border: Border.all(
-                              //                     color: Colors.black12,
-                              //                     width: 2,
-                              //                   ),
-                              //                 ),
-                              //                 child: CircleAvatar(
-                              //                   backgroundColor:
-                              //                       Colors.transparent,
-                              //                   child: Image.asset(
-                              //                     "assets/images/gift.png",
-                              //                     scale: 5,
-                              //                   ),
-                              //                 ),
-                              //               ),
-                              //               Container(
-                              //                 width: 10,
-                              //               ),
-                              //               Expanded(
-                              //                 child: CustomDisplayText(
-                              //                   label:
-                              //                       "Refer and earn free rewards",
-                              //                   fontSize: 16,
-                              //                   fontWeight: FontWeight.w700,
-                              //                   letterSpacing: -0.32,
-                              //                 ),
-                              //               ),
-                              //               const Icon(
-                              //                 Icons.keyboard_arrow_right,
-                              //                 color: Colors.black54,
-                              //               ),
-                              //             ],
-                              //           ),
-                              //         ),
-                              //       ),
-                              //     ),
-                              //   ),
-                              // ),
-
+                            child: ListView(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 20,
+                                ),
+                                children: [
                               InkWell(
                                 onTap: () {
                                   Variables.pageTrans(ProfileDetails(
@@ -916,84 +847,91 @@ class _SettingsPageState extends State<SettingsPage> {
                                                       'assets/images/sharelocation.png'),
                                                 ),
                                                 onTap: () async {
-                                                  CustomModal(context: context)
-                                                      .loader();
-                                                  String id = await Variables
-                                                      .getUserId();
-                                                  SharedPreferences prefs =
-                                                      await SharedPreferences
-                                                          .getInstance();
-                                                  await Functions.getSharedData(
-                                                      id, (sharedData) async {
+                                                  showAlertDialog(
+                                                      context,
+                                                      "LuvPark",
+                                                      "This feature is not yet available.",
+                                                      () {
                                                     Navigator.pop(context);
-
-                                                    if (sharedData["data"]
-                                                            .isEmpty &&
-                                                        sharedData["msg"] ==
-                                                            "No Internet") {
-                                                      showAlertDialog(
-                                                          context,
-                                                          "Error",
-                                                          "Please check your internet connection and try again",
-                                                          () {
-                                                        Navigator.pop(context);
-                                                      });
-                                                    } else {
-                                                      if (sharedData["data"]
-                                                          .isNotEmpty) {
-                                                        List myData =
-                                                            sharedData["data"];
-                                                        int existDataLength =
-                                                            myData
-                                                                .where(
-                                                                    (element) {
-                                                                  return int.parse(
-                                                                          element["user_id"]
-                                                                              .toString()) ==
-                                                                      int.parse(
-                                                                          id.toString());
-                                                                })
-                                                                .toList()
-                                                                .length;
-
-                                                        if (existDataLength >
-                                                            0) {
-                                                          ForegroundNotif
-                                                              .onStop();
-                                                          Variables.pageTrans(
-                                                              const MapSharingScreen(),
-                                                              context);
-                                                        } else {
-                                                          prefs.remove(
-                                                              "geo_share_id");
-                                                          prefs.remove(
-                                                              "geo_connect_id");
-                                                          showAlertDialog(
-                                                              context,
-                                                              "LuvPark",
-                                                              "You don't have active sharing.",
-                                                              () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                          });
-                                                        }
-                                                      } else {
-                                                        prefs.remove(
-                                                            "geo_share_id");
-                                                        prefs.remove(
-                                                            "geo_connect_id");
-                                                        showAlertDialog(
-                                                            context,
-                                                            "LuvPark",
-                                                            "You don't have active sharing.",
-                                                            () {
-                                                          Navigator.of(context)
-                                                              .pop();
-                                                        });
-                                                      }
-                                                    }
                                                   });
+                                                  // CustomModal(context: context)
+                                                  //     .loader();
+                                                  // String id = await Variables
+                                                  //     .getUserId();
+                                                  // SharedPreferences prefs =
+                                                  //     await SharedPreferences
+                                                  //         .getInstance();
+                                                  // await Functions.getSharedData(
+                                                  //     id, (sharedData) async {
+                                                  //   Navigator.pop(context);
+
+                                                  //   if (sharedData["data"]
+                                                  //           .isEmpty &&
+                                                  //       sharedData["msg"] ==
+                                                  //           "No Internet") {
+                                                  //     showAlertDialog(
+                                                  //         context,
+                                                  //         "Error",
+                                                  //         "Please check your internet connection and try again",
+                                                  //         () {
+                                                  //       Navigator.pop(context);
+                                                  //     });
+                                                  //   } else {
+                                                  //     if (sharedData["data"]
+                                                  //         .isNotEmpty) {
+                                                  //       List myData =
+                                                  //           sharedData["data"];
+                                                  //       int existDataLength =
+                                                  //           myData
+                                                  //               .where(
+                                                  //                   (element) {
+                                                  //                 return int.parse(
+                                                  //                         element["user_id"]
+                                                  //                             .toString()) ==
+                                                  //                     int.parse(
+                                                  //                         id.toString());
+                                                  //               })
+                                                  //               .toList()
+                                                  //               .length;
+
+                                                  //       if (existDataLength >
+                                                  //           0) {
+                                                  //         ForegroundNotif
+                                                  //             .onStop();
+                                                  //         Variables.pageTrans(
+                                                  //             const MapSharingScreen(),
+                                                  //             context);
+                                                  //       } else {
+                                                  //         prefs.remove(
+                                                  //             "geo_share_id");
+                                                  //         prefs.remove(
+                                                  //             "geo_connect_id");
+                                                  //         showAlertDialog(
+                                                  //             context,
+                                                  //             "LuvPark",
+                                                  //             "You don't have active sharing.",
+                                                  //             () {
+                                                  //           Navigator.of(
+                                                  //                   context)
+                                                  //               .pop();
+                                                  //         });
+                                                  //       }
+                                                  //     } else {
+                                                  //       prefs.remove(
+                                                  //           "geo_share_id");
+                                                  //       prefs.remove(
+                                                  //           "geo_connect_id");
+                                                  //       showAlertDialog(
+                                                  //           context,
+                                                  //           "LuvPark",
+                                                  //           "You don't have active sharing.",
+                                                  //           () {
+                                                  //         Navigator.of(context)
+                                                  //             .pop();
+                                                  //       });
+                                                  //     }
+                                                  //   }
+                                                  // });
                                                 },
                                               ),
                                               Container(height: 5),
@@ -1113,7 +1051,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                                     .deleteAll();
                                                 NotificationController
                                                     .cancelNotifications();
-                                                ForegroundNotif.onStop();
+                                                //  ForegroundNotif.onStop();
                                                 BiometricLogin()
                                                     .clearPassword();
                                                 Timer(
@@ -1234,9 +1172,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               Container(
                                 height: 20,
                               ),
-                            ],
-                          ),
-                        )),
+                            ])),
                       ],
                     ),
         ));
