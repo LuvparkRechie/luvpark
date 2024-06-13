@@ -107,7 +107,8 @@ class _TimeListState extends State<TimeList> {
                   });
                 }
                 setState(() {
-                  _selectedNumber = int.parse(inputType.text);
+                  _selectedNumber =
+                      inputType.text.isEmpty ? null : int.parse(inputType.text);
                 });
               },
             ),

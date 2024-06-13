@@ -152,7 +152,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
       child: isLoadingPage
           ? const Center(
               child: SizedBox(
-                  height: 30, width: 30, child: CircularProgressIndicator()),
+                  height: 40, width: 40, child: CircularProgressIndicator()),
             )
           : !hasInternet
               ? NoInternetConnected(onTap: () {

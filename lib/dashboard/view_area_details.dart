@@ -178,8 +178,8 @@ class _ViewDetailsState extends State<ViewDetails> {
           child: currentLocation == null
               ? const Center(
                   child: SizedBox(
-                    width: 50,
-                    height: 50,
+                    width: 40,
+                    height: 40,
                     child: CircularProgressIndicator(),
                   ),
                 )

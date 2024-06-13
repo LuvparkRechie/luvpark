@@ -142,7 +142,12 @@ class _VehicleOptionState extends State<VehicleOption> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: Icon(Icons.arrow_back_ios_new_outlined),
+                              child: CircleAvatar(
+                                  backgroundColor: Colors.grey.shade100,
+                                  child: Icon(
+                                    Icons.arrow_back_ios_new_outlined,
+                                    color: Colors.grey,
+                                  )),
                             ),
                             Container(height: 20),
                             Expanded(
@@ -367,57 +372,61 @@ class _VehicleListState extends State<VehicleList> {
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
-      child: Scrollbar(
-        child: ListView.separated(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          itemCount: widget.vehicles.length,
-          itemBuilder: (context, index) {
-            return ListTile(
-              title: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomDisplayText(
-                    label: widget.vehicles[index]["vehicle_plate_no"],
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ],
+      child: widget.vehicles.length == 0
+          ? NoDataFound(
+              textText: "No registered vehicle",
+            )
+          : Scrollbar(
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                itemCount: widget.vehicles.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomDisplayText(
+                          label: widget.vehicles[index]["vehicle_plate_no"],
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ],
+                    ),
+                    subtitle: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        CustomDisplayText(
+                          label: widget.vehicles[index]["vehicle_brand_name"],
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.textSubColor,
+                          fontSize: 12,
+                        ),
+                      ],
+                    ),
+                    leading: Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Icon(
+                        int.parse(widget.vehicles[index]["vehicle_type_id"]
+                                    .toString()) ==
+                                1
+                            ? Icons.motorcycle_outlined
+                            : Icons.time_to_leave,
+                      ),
+                    ),
+                    trailing: Icon(Icons.keyboard_arrow_right),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      widget.ontap([widget.vehicles[index]]);
+                    },
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) {
+                  return Divider(
+                    color: Colors.grey,
+                  );
+                },
               ),
-              subtitle: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  CustomDisplayText(
-                    label: widget.vehicles[index]["vehicle_brand_name"],
-                    fontWeight: FontWeight.w500,
-                    color: AppColor.textSubColor,
-                    fontSize: 12,
-                  ),
-                ],
-              ),
-              leading: Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: Icon(
-                  int.parse(widget.vehicles[index]["vehicle_type_id"]
-                              .toString()) ==
-                          1
-                      ? Icons.motorcycle_outlined
-                      : Icons.time_to_leave,
-                ),
-              ),
-              trailing: Icon(Icons.keyboard_arrow_right),
-              onTap: () {
-                Navigator.of(context).pop();
-                widget.ontap([widget.vehicles[index]]);
-              },
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) {
-            return Divider(
-              color: Colors.grey,
-            );
-          },
-        ),
-      ),
+            ),
     );
   }
 }
