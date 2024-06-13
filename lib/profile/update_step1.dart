@@ -97,8 +97,8 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                 title: "Your Information",
                 subTitle: "Kindly provide your details in the space below.",
               ),
-              LabelText(text: "First Name"),
               CustomTextField(
+                title: "First Name",
                 labelText: "First Name",
                 controller: widget.firstName,
                 onTap: () async {},
@@ -110,8 +110,8 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                   }
                 },
               ),
-              LabelText(text: "Middle Name"),
               CustomTextField(
+                title: "Middle Name",
                 labelText: "Middle Name (Optional)",
                 controller: widget.middleName,
                 onTap: () async {},
@@ -123,9 +123,9 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                   }
                 },
               ),
-              LabelText(text: "Last Name"),
               CustomTextField(
                 labelText: "Last Name",
+                title: "Last Name",
                 controller: widget.lastName,
                 onTap: () async {},
                 onChange: (value) {
@@ -136,8 +136,8 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                   }
                 },
               ),
-              LabelText(text: "Email"),
               CustomTextField(
+                title: "Email",
                 labelText: "Email",
                 controller: widget.email,
               ),
@@ -237,8 +237,8 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
               Container(
                 height: 20,
               ),
-              LabelText(text: "Birth Date"),
               CustomTextField(
+                title: "Birth Date",
                 labelText: "YYYY-MM-DD",
                 controller: widget.bday,
                 onTap: () async {
@@ -252,56 +252,113 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
               Container(
                 height: 10,
               ),
+              // Container(
+              //   decoration: BoxDecoration(
+              //     borderRadius: BorderRadius.circular(5),
+              //   ),
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(8.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         DropdownButtonFormField(
+              //           dropdownColor: Colors.white,
+              //           padding: EdgeInsets.zero,
+              //           decoration: const InputDecoration(
+              //             //   constraints: BoxConstraints.tightFor(height: 60),
+
+              //             constraints: BoxConstraints.tightFor(height: 50),
+
+              //             focusedBorder: InputBorder.none,
+              //             hintText: "Select your answer",
+              //             border: InputBorder.none,
+              //             enabledBorder: InputBorder.none,
+              //           ),
+              //           style: GoogleFonts.dmSans(
+              //             color: Colors.grey,
+              //             fontWeight: FontWeight.normal,
+              //           ),
+              //           value: ddCivil,
+              //           onChanged: (String? newValue) {
+              //             setState(() {
+              //               ddCivil = newValue!;
+              //               widget.civil.text = ddCivil!;
+              //             });
+              //           },
+              //           isExpanded: true,
+              //           items: civilStatusData.map((item) {
+              //             return DropdownMenuItem(
+              //                 value: item['value'].toString(),
+              //                 child: CustomDisplayText(
+              //                   label: item['status'],
+              //                   color: Colors.black,
+              //                   fontWeight: FontWeight.normal,
+              //                 ));
+              //           }).toList(),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
               Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5),
-                  color: Colors.grey.shade200,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      LabelText(text: "What's your civil status"),
-                      DropdownButtonFormField(
-                        dropdownColor: Colors.white,
-                        padding: EdgeInsets.zero,
-                        decoration: const InputDecoration(
-                          //   constraints: BoxConstraints.tightFor(height: 60),
-
-                          constraints: BoxConstraints.tightFor(height: 50),
-
-                          focusedBorder: InputBorder.none,
-                          hintText: "Select your answer",
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DropdownButtonFormField(
+                      dropdownColor: Colors.white,
+                      decoration: InputDecoration(
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 10,
                         ),
-                        style: GoogleFonts.dmSans(
-                          color: Colors.grey,
-                          fontWeight: FontWeight.normal,
+                        constraints: BoxConstraints.tightFor(height: 50),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black.withOpacity(0.15)),
+                          borderRadius: BorderRadius.circular(5),
                         ),
-                        value: ddCivil,
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            ddCivil = newValue!;
-                            widget.civil.text = ddCivil!;
-                          });
-                        },
-                        isExpanded: true,
-                        items: civilStatusData.map((item) {
-                          return DropdownMenuItem(
-                              value: item['value'].toString(),
-                              child: CustomDisplayText(
-                                label: item['status'],
-                                color: Colors.black,
-                                fontWeight: FontWeight.normal,
-                              ));
-                        }).toList(),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black.withOpacity(0.15)),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        border: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: Colors.black.withOpacity(0.15)),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                        hintText: "Select your answer",
                       ),
-                    ],
-                  ),
+                      style: GoogleFonts.dmSans(
+                        color: Colors.grey,
+                        fontWeight: FontWeight.normal,
+                        fontSize: 15,
+                      ),
+                      value: ddCivil,
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          ddCivil = newValue!;
+                          widget.civil.text = ddCivil!;
+                        });
+                      },
+                      isExpanded: true,
+                      items: civilStatusData.map((item) {
+                        return DropdownMenuItem(
+                          value: item['value'].toString(),
+                          child: Text(
+                            item['status'],
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.normal,
+                              fontSize: 15,
+                            ),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ),
+
               Container(
                 height: 10,
               ),
