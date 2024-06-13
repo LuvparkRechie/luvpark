@@ -9,6 +9,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:location/location.dart' as loc;
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -67,10 +68,14 @@ class _Dashboard3State extends State<Dashboard3> {
   double userBal = 0.0, avgRate = 0.0, maxPanelHeight = 0.0;
   bool isClicked = false;
 
+  //added
+  loc.Location locationSer = loc.Location();
+  bool? _serviceEnabled;
+
   @override
   void initState() {
     super.initState();
-    ddRadius = "10000";
+    ddRadius = "10";
     searchController.addListener(() {});
     getUsersData("Current Location");
   }
@@ -117,13 +122,11 @@ class _Dashboard3State extends State<Dashboard3> {
     bool servicestatus = await Geolocator.isLocationServiceEnabled();
     final statusReq = await Geolocator.checkPermission();
     if (!servicestatus) {
-      // ignore: use_build_context_synchronously
-      showAlertDialog(context, "Attention",
-          "To continue, turn on device location, which uses Google's location service.",
-          () {
-        Navigator.of(context).pop();
-      });
-      return;
+      _serviceEnabled = await locationSer.requestService();
+      if (!_serviceEnabled!) {
+        return;
+      }
+      getUsersData("Current Location");
     } else if (statusReq == LocationPermission.denied) {
       // ignore: use_build_context_synchronously
       Variables.pageTrans(
@@ -209,28 +212,27 @@ class _Dashboard3State extends State<Dashboard3> {
     final Uint8List availabeMarkIcons =
         await DashboardComponent().getSearchMarker(searchImage[0], 100);
     int ctr = 0;
-
-    if (mounted) {
-      setState(() {
-        markers = [];
-        subDataNearest = nearestData;
-        startLocation =
-            LatLng(double.parse(lat.toString()), double.parse(lng.toString()));
-        initialCameraPosition = CameraPosition(
-          target: startLocation!,
-          zoom: subDataNearest.isEmpty ? 14 : 18,
-          tilt: 0,
-          bearing: 0,
-        );
-        markers.add(Marker(
-          infoWindow: InfoWindow(title: "$locTitle"),
-          markerId: const MarkerId('current_location'),
-          position: LatLng(
-              double.parse(lat.toString()), double.parse(lng.toString())),
-          icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
-        ));
-        if (onSearchAdd) {
-          if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
+    if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
+      if (mounted) {
+        setState(() {
+          markers = [];
+          subDataNearest = nearestData;
+          startLocation = LatLng(
+              double.parse(lat.toString()), double.parse(lng.toString()));
+          initialCameraPosition = CameraPosition(
+            target: startLocation!,
+            zoom: subDataNearest.isEmpty ? 14 : 18,
+            tilt: 0,
+            bearing: 0,
+          );
+          markers.add(Marker(
+            infoWindow: InfoWindow(title: "$locTitle"),
+            markerId: const MarkerId('current_location'),
+            position: LatLng(
+                double.parse(lat.toString()), double.parse(lng.toString())),
+            icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+          ));
+          if (onSearchAdd) {
             mapController.animateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
@@ -240,26 +242,24 @@ class _Dashboard3State extends State<Dashboard3> {
               ),
             );
           }
-        }
-
+        });
+      }
+      setState(() {
         isLoadingPage = false;
         isLoadingMap = false;
       });
-    }
 
-    if (nearestData.isNotEmpty &&
-        userBal >= double.parse(logData["min_wallet_bal"].toString())) {
-      for (var i = 0; i < nearestData.length; i++) {
-        ctr++;
-        var items = nearestData[i];
-        items["index"] = i.toString();
-        final Uint8List markerIcon = await Variables.capturePng(
-            context,
-            printScreen(AppColor.bodyColor, "$i",
-                "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}"),
-            80,
-            true);
-        if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
+      if (nearestData.isNotEmpty) {
+        for (var i = 0; i < nearestData.length; i++) {
+          ctr++;
+          var items = nearestData[i];
+          items["index"] = i.toString();
+          final Uint8List markerIcon = await Variables.capturePng(
+              context,
+              printScreen(AppColor.bodyColor, "$i",
+                  "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}"),
+              80,
+              true);
           markers.add(
             Marker(
                 icon: BitmapDescriptor.fromBytes(markerIcon),
@@ -300,21 +300,23 @@ class _Dashboard3State extends State<Dashboard3> {
                   }
                 }),
           );
-        }
 
-        if (mounted) {
-          setState(() {});
+          if (mounted) {
+            setState(() {});
+          }
         }
       }
-    }
-  }
-
-  markerDisplay(canBook, items) {
-    if (items.length > 0) {
-      DashboardComponent.getAddress(
-              double.parse(items["pa_latitude"].toString()),
-              double.parse(items["pa_longitude"].toString()))
-          .then((address) {});
+    } else {
+      if (mounted) {
+        setState(() {
+          markers = [];
+          subDataNearest = nearestData;
+          startLocation = LatLng(
+              double.parse(lat.toString()), double.parse(lng.toString()));
+          isLoadingPage = false;
+          isLoadingMap = false;
+        });
+      }
     }
   }
 
@@ -512,16 +514,6 @@ class _Dashboard3State extends State<Dashboard3> {
           buildingsEnabled: false,
           tiltGesturesEnabled: true,
           markers: Set<Marker>.of(markers),
-          // circles: Set.from([
-          //   Circle(
-          //     circleId: CircleId("circle_1"),
-          //     center: startLocation!,
-          //     radius: double.parse(ddRadius!), // in meters
-          //     fillColor: Colors.blue.withOpacity(0.5),
-          //     strokeWidth: 3,
-          //     strokeColor: Colors.blue,
-          //   ),
-          // ]),
           onMapCreated: (GoogleMapController controller) {
             if (mounted) {
               setState(() {
@@ -535,7 +527,7 @@ class _Dashboard3State extends State<Dashboard3> {
             }
           },
         ),
-        SafeArea(child: searchBar(false)),
+        SafeArea(child: searchBar(true)),
         Positioned(
           bottom: 20,
           right: 20,
@@ -568,51 +560,6 @@ class _Dashboard3State extends State<Dashboard3> {
                 ),
               ),
               Container(width: 10),
-              // Tooltip(
-              //   preferBelow: false,
-              //   message: 'Location Sharing',
-              //   child: InkWell(
-              //     onTap: () async {
-              //       SharedPreferences prefs =
-              //           await SharedPreferences.getInstance();
-              //       String? geoShareId = prefs.getString('geo_share_id');
-              //       if (geoShareId == null) {
-              //         showModalConfirmation(
-              //             context,
-              //             "luvpark Notice",
-              //             "This functionality involves utilizing a background process to continuously obtain and update the current location. "
-              //                 "The background process will automatically deactivate once the location sharing has ended.",
-              //             "Cancel",
-              //             "Continue", () {
-              //           Navigator.of(context).pop();
-              //         }, () async {
-              //           Navigator.of(context).pop();
-              //           Variables.customBottomSheet(
-              //               context,
-              //               VerifyUserAcct(
-              //                 isInvite: true,
-              //               ));
-              //         });
-              //       } else {
-              //         showAlertDialog(
-              //             context, "LuvPark", "You still have active sharing.",
-              //             () {
-              //           Navigator.of(context).pop();
-              //         });
-              //       }
-              //     },
-              //     child: CircleAvatar(
-              //       radius: 20,
-              //       backgroundColor: Colors.white,
-              //       child: Image.asset(
-              //         "assets/images/navigation.png",
-              //         width: 20.013092041015625,
-              //         height: 19.998329162597656,
-              //       ),
-              //     ),
-              //   ),
-              // ),
-              // Container(width: 10),
               Tooltip(
                 preferBelow: false,
                 message: 'Current Location',
@@ -696,12 +643,12 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   //Search Child
-  Widget searchBar(isReadOnly) {
+  Widget searchBar(isMap) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isMap ? Colors.white : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(16.0),
         ),
         height: 50,

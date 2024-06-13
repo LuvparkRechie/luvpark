@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
@@ -52,9 +51,10 @@ class _ForgetPasswordSuccessState extends State<ForgetPasswordSuccess> {
               height: 40,
             ),
             CustomDisplayText(
-              label: 'Woo hooo!',
+              label: 'Success',
               color: AppColor.primaryColor,
               fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
             Container(
               height: 10,

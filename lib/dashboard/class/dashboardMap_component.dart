@@ -23,7 +23,7 @@ class DashboardComponent {
     print("params nearest $params");
     try {
       var returnData = await HttpRequest(api: params).get();
-
+      print("getNearest returnData $returnData");
       if (returnData == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
@@ -45,9 +45,10 @@ class DashboardComponent {
 
         return;
       } else {
-        if (returnData["items"].length == 0) {
+        if (returnData["items"].isEmpty) {
+          bool isDouble = radius.toString().contains(".");
           showAlertDialog(context, "Attention",
-              "No parking area found within \n${int.parse(radius.toString()) >= 1000 ? '${int.parse(radius.toString()) / 1000} Km' : '${radius.toString()} meters'}, please change location.",
+              "No parking area found within \n${(isDouble ? double.parse(radius.toString()) : int.parse(radius.toString())) >= 1 ? '${radius.toString()} Km' : '${double.parse(radius.toString()) * 1000} meters'}, please change location.",
               () {
             Navigator.of(context).pop();
 
@@ -211,31 +212,38 @@ class DashboardComponent {
   //PURE accurate
   static Future<void> searchPlaces(
       context, String query, Function callback) async {
+    print("query $query");
     Variables.hasInternetConnection((hasInternet) async {
       if (hasInternet) {
         try {
           final places = gmp.GoogleMapsPlaces(
-              apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
+              apiKey:
+                  'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'); // Replace with your API key
           gmp.PlacesSearchResponse response = await places.searchByText(query);
 
-          if (response.isOkay) {
+          if (response.isOkay && response.results.isNotEmpty) {
+            print("response is okay ${response.results[0].geometry!}");
             callback([
               response.results[0].geometry!.location.lat,
               response.results[0].geometry!.location.lng,
             ]);
+            return;
           } else {
+            print("No data found");
             callback([]);
             showAlertDialog(context, "Error", "No data found", () {
               Navigator.pop(context);
             });
           }
         } catch (e) {
+          print("Error: $e");
           callback([]);
-          showAlertDialog(context, "Error", "No data found", () {
+          showAlertDialog(context, "Error", "An error occurred", () {
             Navigator.pop(context);
           });
         }
       } else {
+        print("No internet connection");
         callback([]);
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again", () {
@@ -317,7 +325,7 @@ class DashboardComponent {
     try {
       var returnData =
           await const HttpRequest(api: ApiKeys.gApiSubFolderGetDDNearest).get();
-
+      print("returnData $returnData");
       if (returnData == "No Internet") {
         callBack("No Internet");
 

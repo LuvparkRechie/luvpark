@@ -215,7 +215,7 @@ class _ParkingActivityState extends State<ParkingActivity>
             appBarTabBar: TabBar(
               controller: _tabController,
               indicatorSize: TabBarIndicatorSize.tab,
-              indicatorColor: AppColor.mainColor, // Indicator color
+              indicatorColor: AppColor.primaryColor, // Indicator color
               indicatorWeight: 4, // Indicator thickness
 
               onTap: (value) {

@@ -478,6 +478,7 @@ class Functions {
 
 //with park_area id param
   static void getVehicleTypesData(context, areaId, Function cb) {
+    List dataV = [];
     HttpRequest(
             api: "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=$areaId")
         .get()
@@ -501,11 +502,18 @@ class Functions {
       }
 
       if (returnData["items"].length > 0) {
+        var items = returnData["items"];
+        var mappedData = items.map((item) {
+          return {
+            "text": item["vehicle_type_desc"],
+            "value": item["vehicle_type_id"]
+          };
+        }).toList();
         Navigator.of(context).pop();
-        cb({"msg": "Success", "data": returnData["items"]});
+        cb({"msg": "Success", "data": mappedData});
       } else {
         Navigator.of(context).pop();
-        cb({"msg": "Success", "data": returnData["items"]});
+        cb({"msg": "Error", "data": returnData["items"]});
         showAlertDialog(context, "Error", "No data found.", () {
           Navigator.of(context).pop();
         });

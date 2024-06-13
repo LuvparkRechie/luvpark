@@ -155,7 +155,7 @@ class ApiKeys {
 
   //Add vehicle
   static const gApiLuvParkAddVehicle = '/ords/$luvApi/fav/addVehicle';
-  //Delete vehicle
+  //Delete vehicle\
   static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/fav/delVehicle';
 
   //Get Parkspace app notice
@@ -179,7 +179,9 @@ class ApiKeys {
   //dd vehicle types
   static const gApiLuvParkDDVehicleTypes =
       '/ords/$parkSpaceApi/park/dd_vehicletypes';
-  static const gApiLuvParkDDVehicleTypes2 = '/ords/$parkSpaceApi/rf/zvt';
+  //Changed to zvt
+  static const gApiLuvParkDDVehicleTypes2 =
+      '/ords/$parkSpaceApi/zone/vehicleTypes';
 
   //Sharing Location API's
   static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';

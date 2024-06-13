@@ -84,7 +84,7 @@ class _TimeListState extends State<TimeList> {
               fontSize: 16,
             ),
             CustomTextField(
-              labelText: "Input no of hours",
+              labelText: "Input number of hours",
               controller: inputType,
               keyboardType: TextInputType.number,
               onChange: (value) {

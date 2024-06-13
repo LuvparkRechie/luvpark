@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 publish_to: "none"  
 
-version: 1.23.33+34
+version: 1.23.34+35
 # updated version
 
 environment:
@@ -98,6 +98,7 @@ dependencies:
   flutter_timezone: ^1.0.8
   flutter_dash: ^1.0.0
   flutter_image_compress: ^2.3.0 
+  location: ^6.0.2
    
   
   

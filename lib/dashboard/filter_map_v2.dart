@@ -155,21 +155,24 @@ class _FilterMapState extends State<FilterMap> {
 
         return;
       }
-      Navigator.of(context).pop();
+
+      setState(() {
+        radiusData = dataRadius;
+      });
+      if (radiusData.isNotEmpty) {
+        ddRadius = radiusData
+            .where((e) {
+              return e["value"].toString() == widget.radius.toString();
+            })
+            .toList()[0]["value"]
+            .toString();
+        setState(() {});
+      }
       setState(() {
         hasNetRadius = true;
         loadingRadius = false;
-        radiusData = dataRadius;
-        if (radiusData.isNotEmpty) {
-          ddRadius = radiusData
-              .where((e) {
-                return e["value"].toString() == widget.radius.toString();
-              })
-              .toList()[0]["value"]
-              .toString();
-        }
       });
-      print("dddd radius $ddRadius");
+      Navigator.of(context).pop();
     });
   }
 
@@ -220,7 +223,7 @@ class _FilterMapState extends State<FilterMap> {
                             : selectedVehicleType,
                         "amen": filterAmen.toString(),
                         "p_type": filterVtype.toString(),
-                        "radius": ddRadius == null ? 10000 : ddRadius,
+                        "radius": ddRadius == null ? 10 : ddRadius,
                         "is_allow_overnight": isAllowOverNight,
                       });
                       Navigator.of(context).pop();

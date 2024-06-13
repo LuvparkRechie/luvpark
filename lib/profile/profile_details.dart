@@ -250,6 +250,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           setState(() {
             myImage = imageBase64!;
           });
+          widget.callBack();
           getAccountData();
         } else {
           Navigator.of(context).pop();
@@ -490,22 +491,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                             ),
                           ),
                   ),
-                  // Positioned(
-                  //   bottom: -10,
-                  //   right: -10,
-                  //   child: InkWell(
-                  //     onTap: () {
-                  //       showBottomSheetCamera();
-                  //     },
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(3.0),
-                  //       child: Icon(
-                  //         Icons.camera_alt,
-                  //         color: AppColor.primaryColor,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
                 ],
               ),
             ),

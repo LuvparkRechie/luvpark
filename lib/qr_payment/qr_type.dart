@@ -42,7 +42,7 @@ class _QRTypeState extends State<QRType> with SingleTickerProviderStateMixin {
           Navigator.of(context).pop();
         },
         appBarTabBar: TabBar(
-          indicatorColor: AppColor.mainColor, // Indicator color
+          indicatorColor: AppColor.primaryColor, // Indicator color
           indicatorWeight: 4, // Indicator thickness
           controller: _tabController,
           onTap: (index) {

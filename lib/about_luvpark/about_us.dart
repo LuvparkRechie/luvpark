@@ -14,7 +14,7 @@ class AboutLuvPark extends StatelessWidget {
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
       child: CustomParent1Widget(
-        appBarheaderText: "About luvpark",
+        appBarheaderText: "About Us",
         canPop: true,
         appBarIconClick: () {
           Navigator.of(context).pop();
@@ -34,7 +34,7 @@ class AboutLuvPark extends StatelessWidget {
             ),
             CustomDisplayText(
               label: 'About luvpark',
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
             const SizedBox(height: 10),
@@ -48,7 +48,7 @@ class AboutLuvPark extends StatelessWidget {
             const SizedBox(height: 20),
             CustomDisplayText(
               label: 'Contact Us',
-              fontSize: 20,
+              fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
             const SizedBox(height: 10),

@@ -241,6 +241,7 @@ class _RegistrationFormState extends State<UpdateProfile> {
     return CustomParent1Widget(
       appBarheaderText: "Update Profile",
       hasPadding: false,
+      canPop: true,
       appBarIconClick: () {
         if (_currentPage == 0) {
           Navigator.pop(context);
