@@ -196,7 +196,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),
       child: GestureDetector(
-        onTap: () {
+        onTap: () async {
           CustomModal(context: context).loader();
           var param =
               "${ApiKeys.gApiSubFolderGetDirection}?ref_no=${data["reservation_ref_no"]}";
@@ -221,11 +221,10 @@ class _ParkingHistoryState extends State<ParkingHistory> {
             } else {
               if (returnData["items"].length == 0) {
                 Navigator.of(context).pop();
-                showAlertDialog(
-                    context, "Error", "No data found, Please change location.",
-                    () {
+                showAlertDialog(context, "Error", "No data found", () {
                   Navigator.of(context).pop();
                 });
+                return;
               } else {
                 Navigator.pop(context);
                 var dateInRelated = "";

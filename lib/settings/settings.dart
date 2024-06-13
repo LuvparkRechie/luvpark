@@ -841,6 +841,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                       myAccountList(
                                         Image.asset(
                                           'assets/images/lock-open.png',
+                                          height: 34,
+                                          width: 34,
                                         ),
                                         Colors.transparent,
                                         "Change Password",
@@ -856,7 +858,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                       ),
                                       myAccountList(
                                         Image.asset(
-                                          'assets/images/log-out.png',
+                                          'assets/images/logout.png',
+                                          height: 34,
+                                          width: 34,
                                         ),
                                         Colors.transparent,
                                         "Log out",

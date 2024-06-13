@@ -74,7 +74,7 @@ class _SearchPlacesState extends State<SearchPlaces> {
                     ),
                     Container(width: 10),
                     CustomDisplayText(
-                      label: "Search Parking Area",
+                      label: "Search Destination",
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
                       color: Colors.black,
@@ -100,7 +100,7 @@ class _SearchPlacesState extends State<SearchPlaces> {
                             controller: searchController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Search here',
+                              hintText: 'Where are you going?',
                             ),
                             onChanged: (String text) {
                               onChangeTrigger(text);

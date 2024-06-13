@@ -67,7 +67,6 @@ class _Dashboard3State extends State<Dashboard3> {
   bool onSearchAdd = false;
   double userBal = 0.0, avgRate = 0.0, maxPanelHeight = 0.0;
   bool isClicked = false;
-
   //added
   loc.Location locationSer = loc.Location();
   bool? _serviceEnabled;
@@ -122,6 +121,7 @@ class _Dashboard3State extends State<Dashboard3> {
     bool servicestatus = await Geolocator.isLocationServiceEnabled();
     final statusReq = await Geolocator.checkPermission();
     if (!servicestatus) {
+      print("sge ug sulod ;age");
       _serviceEnabled = await locationSer.requestService();
       if (!_serviceEnabled!) {
         return;
@@ -672,7 +672,7 @@ class _Dashboard3State extends State<Dashboard3> {
                   readOnly: true,
                   controller: searchController,
                   decoration: InputDecoration(
-                    hintText: "Search parking area",
+                    hintText: "Enter your destination here...",
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.only(left: 10),
                     hintStyle: Platform.isAndroid
