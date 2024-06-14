@@ -3,14 +3,6 @@ import UIKit
 import Flutter
 import GoogleMaps
 import awesome_notifications
-import background_locator_2  
-// Subclass FlutterAppDelegate to customize Flutter's app delegate
-func registerPlugins(registry: FlutterPluginRegistry) -> () {
-    if (!registry.hasPlugin("BackgroundLocatorPlugin")) {
-        GeneratedPluginRegistrant.register(with: registry)
-    } 
-}
-
 
 // Subclass FlutterAppDelegate to customize Flutter's app delegate
 @UIApplicationMain
@@ -30,8 +22,7 @@ func registerPlugins(registry: FlutterPluginRegistry) -> () {
             UNUserNotificationCenter.current().delegate = self as? UNUserNotificationCenterDelegate}
 
         GeneratedPluginRegistrant.register(with: self)  
-
-        BackgroundLocatorPlugin.setPluginRegistrantCallback(registerPlugins)
+ 
         
         SwiftAwesomeNotificationsPlugin.setPluginRegistrantCallback { registry in          
             SwiftAwesomeNotificationsPlugin.register(

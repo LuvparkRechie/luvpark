@@ -231,6 +231,10 @@ class _VehicleOptionState extends State<VehicleOption> {
                                                 ),
                                                 value: dropdownValue,
                                                 onChanged: (String? newValue) {
+                                                  FocusManager
+                                                      .instance.primaryFocus!
+                                                      .unfocus();
+
                                                   setState(() {
                                                     dropdownValue = newValue!;
                                                   });

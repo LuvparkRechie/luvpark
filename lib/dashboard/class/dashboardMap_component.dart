@@ -20,10 +20,9 @@ class DashboardComponent {
       isAllowOverNight, Function callBack) async {
     var params =
         "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
-    print("params nearest $params");
+
     try {
       var returnData = await HttpRequest(api: params).get();
-      print("getNearest returnData $returnData");
       if (returnData == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
@@ -314,12 +313,12 @@ class DashboardComponent {
     return 'Barangay information not available';
   }
 
-  static Future<Position> getPositionLatLong() async {
-    Position position = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    return position;
-  }
+  // static Future<Position> getPositionLatLong() async {
+  //   Position position = await Geolocator.getCurrentPosition(
+  //     desiredAccuracy: LocationAccuracy.high,
+  //   );
+  //   return position;
+  // }
 
   static getRadius(context, Function callBack) async {
     try {

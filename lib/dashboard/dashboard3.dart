@@ -12,8 +12,10 @@ import 'package:iconsax/iconsax.dart';
 import 'package:location/location.dart' as loc;
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
+import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart' as func;
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -27,9 +29,15 @@ import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/permission/permission_handler.dart';
+import 'package:luvpark/sqlite/pa_message_table.dart';
+import 'package:luvpark/sqlite/reserve_notification_table.dart';
+import 'package:luvpark/sqlite/share_location_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+
+import '../login/login.dart';
+import '../notification_controller/notification_controller.dart';
 
 class Dashboard3 extends StatefulWidget {
   const Dashboard3({super.key});
@@ -120,6 +128,7 @@ class _Dashboard3State extends State<Dashboard3> {
     );
     bool servicestatus = await Geolocator.isLocationServiceEnabled();
     final statusReq = await Geolocator.checkPermission();
+    _serviceEnabled = await locationSer.serviceEnabled();
     if (!servicestatus) {
       print("sge ug sulod ;age");
       _serviceEnabled = await locationSer.requestService();
@@ -137,11 +146,12 @@ class _Dashboard3State extends State<Dashboard3> {
           ),
           context);
     } else {
-      DashboardComponent.getPositionLatLong().then((position) {
+      Functions.getPositionLatLong((location) {
         String subApi =
             "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
         HttpRequest(api: subApi).get().then((returnBalance) async {
+          print("returnBalance $returnBalance");
           if (mounted) {
             setState(() {
               isClicked = false;
@@ -171,6 +181,40 @@ class _Dashboard3State extends State<Dashboard3> {
               }
             });
           }
+          if (returnBalance["items"].isEmpty) {
+            showAlertDialog(context, "Error",
+                "There ase some changes made in your account. please contact support.",
+                () async {
+              SharedPreferences pref = await SharedPreferences.getInstance();
+              Navigator.pop(context);
+              CustomModal(context: context).loader();
+              await NotificationDatabase.instance
+                  .readAllNotifications()
+                  .then((notifData) async {
+                if (notifData.isNotEmpty) {
+                  for (var nData in notifData) {
+                    NotificationController.cancelNotificationsById(
+                        nData["reserved_id"]);
+                  }
+                }
+                var logData = pref.getString('loginData');
+                var mappedLogData = [jsonDecode(logData!)];
+                mappedLogData[0]["is_active"] = "N";
+                pref.setString("loginData", jsonEncode(mappedLogData[0]!));
+                pref.remove('myId');
+                NotificationDatabase.instance.deleteAll();
+                PaMessageDatabase.instance.deleteAll();
+                ShareLocationDatabase.instance.deleteAll();
+                NotificationController.cancelNotifications();
+                //  ForegroundNotif.onStop();
+                BiometricLogin().clearPassword();
+                Timer(const Duration(seconds: 1), () {
+                  Navigator.of(context).pop(context);
+                  Variables.pageTrans(const LoginScreen(index: 1), context);
+                });
+              });
+            });
+          }
           if (mounted) {
             setState(() {
               userBal = double.parse(
@@ -182,12 +226,12 @@ class _Dashboard3State extends State<Dashboard3> {
           if (mounted) {
             setState(() {
               logData = jsonDecode(myData);
-              startLocation = LatLng(position.latitude, position.longitude);
+              startLocation = LatLng(location.latitude, location.longitude);
             });
           }
 
           DashboardComponent.getNearest(
-              ctxt,
+              context,
               pTypeCode,
               ddRadius,
               startLocation!.latitude,
@@ -201,7 +245,7 @@ class _Dashboard3State extends State<Dashboard3> {
               });
             }
             displayMapData(
-                nearestData, position.latitude, position.longitude, locTitle);
+                nearestData, location.latitude, location.longitude, locTitle);
           });
         });
       });
@@ -328,7 +372,7 @@ class _Dashboard3State extends State<Dashboard3> {
       });
     }
     DashboardComponent.getNearest(
-        ctxt,
+        context,
         data["p_type"],
         data["radius"],
         startLocation!.latitude,
@@ -355,8 +399,6 @@ class _Dashboard3State extends State<Dashboard3> {
 
   @override
   Widget build(BuildContext context) {
-    ctxt = context;
-
     return !hasInternetBal
         ? NoInternetConnected(onTap: () {
             if (isClicked) return;
@@ -469,7 +511,7 @@ class _Dashboard3State extends State<Dashboard3> {
   Widget mapDisplay(nearestData) {
     return SlidingUpPanel(
       maxHeight: Variables.screenSize.height * 0.50,
-      minHeight: 50,
+      minHeight: Variables.screenSize.height * 0.05,
       parallaxEnabled: true,
       parallaxOffset: .3,
       borderRadius: BorderRadius.only(
@@ -484,12 +526,13 @@ class _Dashboard3State extends State<Dashboard3> {
           ),
           Container(
             decoration: BoxDecoration(
+              color: Color(0xFFF8F8F8),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(24.0),
                 topRight: Radius.circular(24.0),
               ),
             ),
-            height: 110,
+            height: Variables.screenSize.height * 0.08,
           )
         ],
       ),
@@ -529,7 +572,7 @@ class _Dashboard3State extends State<Dashboard3> {
         ),
         SafeArea(child: searchBar(true)),
         Positioned(
-          bottom: 20,
+          bottom: Variables.screenSize.height * 0.11,
           right: 20,
           child: Row(
             children: [
@@ -671,6 +714,8 @@ class _Dashboard3State extends State<Dashboard3> {
                 child: TextField(
                   readOnly: true,
                   controller: searchController,
+                  textAlign: TextAlign.left,
+                  textDirection: TextDirection.ltr,
                   decoration: InputDecoration(
                     hintText: "Enter your destination here...",
                     border: InputBorder.none,

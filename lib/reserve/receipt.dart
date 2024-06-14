@@ -425,6 +425,18 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                     onTap: () async {
                       CustomModal(context: context).loader();
                       Functions.getUserBalance((data) async {
+                        if (data["user_bal"] < data["min_wal_bal"]) {
+                          Navigator.of(context).pop();
+                          showAlertDialog(
+                              context,
+                              "Attention",
+                              "Your balance is below the required minimum for this feature. "
+                                  "Please ensure a minimum balance of ${data["min_wal_bal"]} tokens to access the requested service.",
+                              () {
+                            Navigator.of(context).pop();
+                          });
+                          return;
+                        }
                         if (data != "null" || data != "No Internet") {
                           Functions.computeDistanceResorChckIN(
                               context, LatLng(widget.lat, widget.long),

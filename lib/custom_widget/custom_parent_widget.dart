@@ -209,14 +209,19 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
                 ),
               ),
             ),
-      title: AutoSizeText(
-        widget.appBarheaderText,
-        style: GoogleFonts.lato(
-          color: Colors.black,
-          fontSize: 16.0,
-          fontStyle: FontStyle.normal,
-          fontWeight: FontWeight.w600, // FontWeight.bold for a bolder text
-          height: 1.0, // line height (1.0 is the default)
+      title: InkWell(
+        onTap: () {
+          widget.appBarIconClick!();
+        },
+        child: AutoSizeText(
+          widget.appBarheaderText,
+          style: GoogleFonts.lato(
+            color: Colors.black,
+            fontSize: 16.0,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w600, // FontWeight.bold for a bolder text
+            height: 1.0, // line height (1.0 is the default)
+          ),
         ),
       ),
       centerTitle: false,

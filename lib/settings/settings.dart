@@ -858,7 +858,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                       ),
                                       myAccountList(
                                         Image.asset(
-                                          'assets/images/logout.png',
+                                          'assets/images/Logout.png',
                                           height: 34,
                                           width: 34,
                                         ),

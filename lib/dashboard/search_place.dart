@@ -76,7 +76,7 @@ class _SearchPlacesState extends State<SearchPlaces> {
                     CustomDisplayText(
                       label: "Search Destination",
                       fontSize: 20,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     )
                   ],

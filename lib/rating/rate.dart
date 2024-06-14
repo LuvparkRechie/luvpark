@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
+import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -178,7 +180,8 @@ class _RateUsState extends State<RateUs> {
                       minLines: 4,
                       maxLines: null,
                       controller: commentController,
-                      keyboardType: TextInputType.multiline,
+                      keyboardType: TextInputType.numberWithOptions(
+                          signed: true, decimal: false),
                       decoration: const InputDecoration(
                         alignLabelWithHint: true,
                         border: OutlineInputBorder(),

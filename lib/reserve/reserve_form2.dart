@@ -1131,8 +1131,9 @@ class _ReserveForm2State extends State<ReserveForm2> {
   }
 
   void _getCurrentLocation() async {
-    DashboardComponent.getPositionLatLong().then((position) {
-      LatLng origin = LatLng(position.latitude, position.longitude);
+    Functions.getPositionLatLong((location) async {
+      print("position lat $location");
+      LatLng origin = LatLng(location.latitude, location.longitude);
       LatLng destLocation = LatLng(
           double.parse(widget.areaData[0]["pa_latitude"].toString()),
           double.parse(widget.areaData[0]["pa_longitude"].toString()));
@@ -1140,6 +1141,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
         if (hasInternetMe) {
           DashboardComponent.fetchETA(origin, destLocation,
               (estimatedData) async {
+            print("  estimatedData $estimatedData");
             if (estimatedData == "No Internet") {
               setState(() {
                 isLoadingPage = false;
@@ -1461,9 +1463,9 @@ class _ReserveForm2State extends State<ReserveForm2> {
               } else {
                 if (returnPay["success"] == 'Y') {
                   if (widget.isCheckIn && isCheckIn) {
-                    DashboardComponent.getPositionLatLong().then((position) {
+                    Functions.getPositionLatLong((location) async {
                       Functions.checkIn(returnPost["ps_ticket_id"],
-                          position.latitude, position.longitude, (cbData) {
+                          location.latitude, location.longitude, (cbData) {
                         Navigator.pop(context);
                         if (cbData == "Success") {
                           Variables.pageTrans(

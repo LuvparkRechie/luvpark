@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -86,7 +89,13 @@ class _TimeListState extends State<TimeList> {
             CustomTextField(
               labelText: "Input number of hours",
               controller: inputType,
-              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+              ],
+              keyboardType: Platform.isAndroid
+                  ? TextInputType.number
+                  : TextInputType.numberWithOptions(
+                      signed: true, decimal: false),
               onChange: (value) {
                 inputType.text = value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
 

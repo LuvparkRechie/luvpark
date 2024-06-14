@@ -125,12 +125,12 @@ class _ViewDetailsState extends State<ViewDetails> {
 
   Future<void> fetchData() async {
     timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      DashboardComponent.getPositionLatLong().then((position) async {
+      Functions.getPositionLatLong((location) {
         if (mounted) {
           setState(() {
-            currentLocation = LatLng(position.latitude, position.longitude);
+            currentLocation = LatLng(location.latitude, location.longitude);
           });
-          DashboardComponent.getAddress(position.latitude, position.longitude)
+          DashboardComponent.getAddress(location.latitude, location.longitude)
               .then((address) {
             setState(() {
               currAdd = address!;
@@ -261,116 +261,121 @@ class _ViewDetailsState extends State<ViewDetails> {
                 ),
               },
             ),
-            Positioned(
-                top: 30,
-                left: 20,
-                child: InkWell(
-                  onTap: () {
-                    if (isViewDetails) {
-                      setState(() {
-                        isViewDetails = !isViewDetails;
-                      });
-                      return;
-                    }
-                    Navigator.of(context).pop();
-                  },
-                  child: CircleAvatar(
-                    radius: 16,
-                    backgroundColor: Colors.white,
-                    child: const Padding(
-                      padding: EdgeInsets.only(left: 6.0),
-                      child: Icon(
-                        Icons.arrow_back_ios,
-                        size: 16,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ),
-                )),
             Visibility(
               visible: !isViewDetails,
               child: Positioned(
-                top: 80,
-                left: 20,
-                right: 20,
-                child: Container(
-                  decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(.9),
-                      border: Border.all(
-                        color: Color(0xFFDFE7EF),
-                      ),
-                      borderRadius: BorderRadius.circular(7)),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                            width: Variables.screenSize.width,
-                            child: Row(
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.radio_button_checked,
-                                      color: Colors.orange,
-                                    ),
-                                    Dash(
-                                        direction: Axis.vertical,
-                                        length: 40,
-                                        dashLength: 5,
-                                        dashThickness: 3.0,
-                                        dashColor: Colors.grey.shade400),
-                                    Image(
-                                      image: AssetImage(
-                                          "assets/images/my_marker.png"),
-                                      height: 20,
-                                      width: 20,
-                                    ),
-                                  ],
-                                ),
+                left: 10,
+                right: 10,
+                child: SafeArea(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(.9),
+                        border: Border.all(
+                          color: Color(0xFFDFE7EF),
+                        ),
+                        borderRadius: BorderRadius.circular(7)),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 15, 20, 15),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              if (isViewDetails) {
+                                setState(() {
+                                  isViewDetails = !isViewDetails;
+                                });
+                                return;
+                              }
+                              Navigator.of(context).pop();
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.only(top: 5.0),
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 20,
+                                color: Colors.black,
+                                weight: 25,
+                              ),
+                            ),
+                          ),
+                          Container(width: 10),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
                                 Container(
-                                  width: 10,
-                                ),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: <Widget>[
-                                      CustomDisplayText(
-                                        label: "Current Location",
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      CustomDisplayText(
-                                        label: currAdd,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        overflow: TextOverflow.ellipsis,
-                                        color: Colors.grey,
-                                      ),
-                                      Divider(),
-                                      CustomDisplayText(
-                                        label: widget.areaData[0]
-                                            ["park_area_name"],
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      CustomDisplayText(
-                                        label: widget.areaData[0]["address"],
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ],
-                                  ),
-                                ),
+                                    width: Variables.screenSize.width,
+                                    child: Row(
+                                      children: <Widget>[
+                                        Column(
+                                          children: <Widget>[
+                                            Icon(
+                                              Icons.radio_button_checked,
+                                              color: Colors.orange,
+                                            ),
+                                            Dash(
+                                                direction: Axis.vertical,
+                                                length: 40,
+                                                dashLength: 5,
+                                                dashThickness: 3.0,
+                                                dashColor:
+                                                    Colors.grey.shade400),
+                                            Image(
+                                              image: AssetImage(
+                                                  "assets/images/my_marker.png"),
+                                              height: 20,
+                                              width: 20,
+                                            ),
+                                          ],
+                                        ),
+                                        Container(
+                                          width: 10,
+                                        ),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              CustomDisplayText(
+                                                label: "Current Location",
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              CustomDisplayText(
+                                                label: currAdd,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                overflow: TextOverflow.ellipsis,
+                                                color: Colors.grey,
+                                              ),
+                                              Divider(),
+                                              CustomDisplayText(
+                                                label: widget.areaData[0]
+                                                    ["park_area_name"],
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              CustomDisplayText(
+                                                label: widget.areaData[0]
+                                                    ["address"],
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.grey,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    )),
                               ],
-                            )),
-                      ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
@@ -657,26 +662,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                   onTap: () async {
                                     if (isLoadingBtn) return;
                                     CustomModal(context: context).loader();
-                                    SharedPreferences pref =
-                                        await SharedPreferences.getInstance();
 
-                                    if (widget.areaData[0]["vehicle_types_list"]
-                                        .toString()
-                                        .contains("|")) {
-                                      pref.setString(
-                                          'availableVehicle',
-                                          jsonEncode(widget.areaData[0]
-                                                  ["vehicle_types_list"]
-                                              .toString()
-                                              .toLowerCase()));
-                                    } else {
-                                      pref.setString(
-                                          'availableVehicle',
-                                          jsonEncode(widget.areaData[0]
-                                                  ["vehicle_types_list"]
-                                              .toString()
-                                              .toLowerCase()));
-                                    }
                                     if (mounted) {
                                       setState(() {
                                         isLoadingBtn = true;
@@ -684,6 +670,22 @@ class _ViewDetailsState extends State<ViewDetails> {
                                     }
                                     Functions.getUserBalance(
                                         (dataBalance) async {
+                                      if (dataBalance["user_bal"] <
+                                          dataBalance["min_wal_bal"]) {
+                                        setState(() {
+                                          isLoadingBtn = false;
+                                        });
+                                        Navigator.of(context).pop();
+                                        showAlertDialog(
+                                            context,
+                                            "Attention",
+                                            "Your balance is below the required minimum for this feature. "
+                                                "Please ensure a minimum balance of ${dataBalance["min_wal_bal"]} tokens to access the requested service.",
+                                            () {
+                                          Navigator.of(context).pop();
+                                        });
+                                        return;
+                                      }
                                       if (dataBalance != "null" ||
                                           dataBalance != "No Internet") {
                                         Functions.computeDistanceResorChckIN(
@@ -775,7 +777,7 @@ class _ViewDetailsState extends State<ViewDetails> {
 
       color: Color(0xFFf8f8f8),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
+        padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1026,7 +1028,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                   ],
                 ),
               ),
-            )
+            ),
+            Container(height: 10),
           ],
         ),
       ),

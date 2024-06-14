@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/api_keys.dart';
@@ -720,8 +721,12 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
           CustomTextField(
             labelText: 'Zip Code',
             controller: widget.zipCode,
-            keyboardType: TextInputType.number,
-            onChange: (value) {},
+            inputFormatters: <TextInputFormatter>[
+              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+            ],
+            keyboardType: Platform.isAndroid
+                ? TextInputType.number
+                : TextInputType.numberWithOptions(signed: true, decimal: false),
           ),
         ],
       ),

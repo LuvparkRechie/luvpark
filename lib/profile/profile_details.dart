@@ -133,22 +133,22 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   AppState? state;
   File? imageFile;
 
-  void showBottomSheetCamera() {
+  void showBottomSheetCamera(ctxt) {
     showCupertinoModalPopup(
-        context: context,
+        context: ctxt,
         builder: (BuildContext cont) {
           return CupertinoActionSheet(
             actions: [
               CupertinoActionSheetAction(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(cont);
                   takePhoto(ImageSource.camera);
                 },
                 child: const Text('Use Camera'),
               ),
               CupertinoActionSheetAction(
                 onPressed: () {
-                  Navigator.pop(context);
+                  Navigator.pop(cont);
                   takePhoto(ImageSource.gallery);
                 },
                 child: const Text('Upload from files'),
@@ -156,7 +156,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
             ],
             cancelButton: CupertinoActionSheetAction(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.pop(cont);
               },
               child: const Text('Cancel', style: TextStyle(color: Colors.red)),
             ),
@@ -505,7 +505,8 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   fontWeight: FontWeight.w400,
                 ),
                 onTap: () {
-                  showBottomSheetCamera();
+                  print("edit image");
+                  showBottomSheetCamera(context);
                 },
               ),
             ),

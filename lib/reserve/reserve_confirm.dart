@@ -202,6 +202,7 @@ class _PayParkingConfirmationState extends State<PayParkingConfirmation> {
                                         fontWeight: FontWeight.w700,
                                         height: 0,
                                         letterSpacing: -0.32,
+                                        maxLines: 1,
                                       ),
                                       CustomDisplayText(
                                         label:
@@ -413,6 +414,7 @@ class _PayParkingConfirmationState extends State<PayParkingConfirmation> {
             parameters: widget.paramExtend![0])
         .put()
         .then((returnPost) {
+      print("return posting $returnPost");
       if (returnPost == "No Internet") {
         Navigator.pop(context);
         showAlertDialog(context, "Error",
@@ -442,6 +444,7 @@ class _PayParkingConfirmationState extends State<PayParkingConfirmation> {
         HttpRequest(api: ApiKeys.gApiSubFolderPutExtendPay, parameters: param)
             .put()
             .then((returnPut) {
+          print("return putting $returnPut");
           if (returnPut == "No Internet") {
             Navigator.pop(context);
             showAlertDialog(context, "Error",

@@ -131,13 +131,13 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
   }
 
   Future<void> addFriend(friendId) async {
-    DashboardComponent.getPositionLatLong().then((position) async {
+    Functions.getPositionLatLong((location) async {
       String userId = await Variables.getUserId();
       Map<String, dynamic> parameters = {
         "user_id": userId,
         "to_user_id": friendId,
-        'longitude': position.longitude,
-        'latitude': position.latitude,
+        'longitude': location.longitude,
+        'latitude': location.latitude,
       };
 
       HttpRequest(api: ApiKeys.gApiLuvParkPutShareLoc, parameters: parameters)

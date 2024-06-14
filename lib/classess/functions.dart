@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:location/location.dart' as loc;
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -23,11 +25,11 @@ class Functions {
     var myData = prefs.getString(
       'userData',
     );
-
     String subApi =
         "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
+      print("returnBalance $returnBalance");
       if (returnBalance == "No Internet") {
         cb("No Internet");
         showAlertDialog(ctxt!, "Error",
@@ -45,7 +47,12 @@ class Functions {
         });
         return;
       } else {
-        cb(double.parse(returnBalance["items"][0]["amount_bal"].toString()));
+        cb({
+          "user_bal":
+              double.parse(returnBalance["items"][0]["amount_bal"].toString()),
+          "min_wal_bal": double.parse(
+              returnBalance["items"][0]["min_wallet_bal"].toString())
+        });
       }
     });
   }
@@ -128,12 +135,10 @@ class Functions {
 
   static Future<void> computeDistanceResorChckIN(
       context, LatLng dest, Function cb) async {
-    DashboardComponent.getPositionLatLong().then((position) {
-      LatLng origin = LatLng(position.latitude, position.longitude);
-
+    Functions.getPositionLatLong((location) {
       Variables.hasInternetConnection((hasInternet) async {
         if (hasInternet) {
-          DashboardComponent.fetchETA(origin, dest, (estimatedData) {
+          DashboardComponent.fetchETA(location, dest, (estimatedData) {
             if (estimatedData == "No Internet") {
               cb({"success": false});
 
@@ -311,113 +316,109 @@ class Functions {
     SharedPreferences prefs = await SharedPreferences.getInstance();
 
     String? geoShareId = prefs.getString('geo_share_id');
-    DashboardComponent.getPositionLatLong().then((position) async {
-      String userId = await Variables.getUserId();
-      Map<String, dynamic> parameters = {
-        "user_id": userId,
-        "to_user_id": friendId,
-        'geo_share_id': geoShareId,
-      };
+    String userId = await Variables.getUserId();
+    Map<String, dynamic> parameters = {
+      "user_id": userId,
+      "to_user_id": friendId,
+      'geo_share_id': geoShareId,
+    };
 
-      HttpRequest(
-              api: ApiKeys.gApiLuvParkPostAddUserMapSharing,
-              parameters: parameters)
-          .post()
-          .then((returnPost) async {
-        if (returnPost == "No Internet") {
+    HttpRequest(
+            api: ApiKeys.gApiLuvParkPostAddUserMapSharing,
+            parameters: parameters)
+        .post()
+        .then((returnPost) async {
+      if (returnPost == "No Internet") {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
           Navigator.pop(context);
-          showAlertDialog(context, "Error",
-              "Please check your internet connection and try again.", () {
-            Navigator.pop(context);
-          });
-          return;
-        }
-        if (returnPost == null) {
-          Navigator.pop(context);
-          showAlertDialog(context, "Error",
-              "Error while connecting to server, Please try again.", () {
+        });
+        return;
+      }
+      if (returnPost == null) {
+        Navigator.pop(context);
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+      } else {
+        Navigator.pop(context);
+        if (returnPost["success"] == "Y") {
+          showAlertDialog(context, "Success", "Successfully invited.", () {
             Navigator.of(context).pop();
+            if (!isPendingInvite) {
+              Navigator.of(context).pop();
+            }
           });
         } else {
-          Navigator.pop(context);
-          if (returnPost["success"] == "Y") {
-            showAlertDialog(context, "Success", "Successfully invited.", () {
-              Navigator.of(context).pop();
-              if (!isPendingInvite) {
-                Navigator.of(context).pop();
-              }
-            });
-          } else {
+          Navigator.of(context).pop();
+          showAlertDialog(context, "Error", returnPost["msg"], () {
             Navigator.of(context).pop();
-            showAlertDialog(context, "Error", returnPost["msg"], () {
-              Navigator.of(context).pop();
-            });
-          }
+          });
         }
-      });
+      }
     });
   }
 
   //End sharing
   static Future<void> endSharing(Function cb) async {
-    DashboardComponent.getPositionLatLong().then((position) async {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? geoConId = prefs.getString("geo_connect_id");
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? geoConId = prefs.getString("geo_connect_id");
 
-      var endParam = {"geo_connect_id": geoConId};
+    var endParam = {"geo_connect_id": geoConId};
 
-      HttpRequest(api: ApiKeys.gApiLuvParkPutEndSharing, parameters: endParam)
-          .put()
-          .then((returnData) async {
-        if (returnData == "No Internet") {
-          // Navigator.of(context).pop();
-          // showAlertDialog(context, "Error",
-          //     'Please check your internet connection and try again.', () {
-          //   Navigator.of(context).pop();
-          // });
-          cb("No Internet");
-          return;
-        }
-        if (returnData == null) {
-          // Navigator.of(context).pop();
-          // showAlertDialog(context, "Error",
-          //     "Error while connecting to server, Please try again.", () {
-          //   Navigator.of(context).pop();
-          // });
-          cb("Error");
-          return;
-        }
-        if (returnData["success"] == 'Y') {
-          cb("Success");
-          // Navigator.of(context).pop();
-          // SharedPreferences prefs = await SharedPreferences.getInstance();
+    HttpRequest(api: ApiKeys.gApiLuvParkPutEndSharing, parameters: endParam)
+        .put()
+        .then((returnData) async {
+      if (returnData == "No Internet") {
+        // Navigator.of(context).pop();
+        // showAlertDialog(context, "Error",
+        //     'Please check your internet connection and try again.', () {
+        //   Navigator.of(context).pop();
+        // });
+        cb("No Internet");
+        return;
+      }
+      if (returnData == null) {
+        // Navigator.of(context).pop();
+        // showAlertDialog(context, "Error",
+        //     "Error while connecting to server, Please try again.", () {
+        //   Navigator.of(context).pop();
+        // });
+        cb("Error");
+        return;
+      }
+      if (returnData["success"] == 'Y') {
+        cb("Success");
+        // Navigator.of(context).pop();
+        // SharedPreferences prefs = await SharedPreferences.getInstance();
 
-          // prefs.remove("geo_share_id");
-          // prefs.remove("geo_connect_id");
-          // AwesomeNotifications().cancel(0);
-          // AwesomeNotifications().dismiss(0);
+        // prefs.remove("geo_share_id");
+        // prefs.remove("geo_connect_id");
+        // AwesomeNotifications().cancel(0);
+        // AwesomeNotifications().dismiss(0);
 
-          // if (mounted) {
-          //   setState(() {
-          //     _dataStreamController.close();
-          //     _dataStreamController.done;
-          //     timers!.cancel();
-          //   });
-          // }
-          // showAlertDialog(
-          //     context, "Success", "Live sharing successfully ended.", () async {
-          //   Navigator.of(context).pop();
-          //   ForegroundNotifTask.stopForegroundTask();
-          // });
-        } else {
-          cb("Error");
-          // Navigator.of(context).pop();
-          // showAlertDialog(context, "Error",
-          //     "Invalid OTP code. Please try again.. Please try again.", () {
-          //   Navigator.of(context).pop();
-          // });
-        }
-      });
+        // if (mounted) {
+        //   setState(() {
+        //     _dataStreamController.close();
+        //     _dataStreamController.done;
+        //     timers!.cancel();
+        //   });
+        // }
+        // showAlertDialog(
+        //     context, "Success", "Live sharing successfully ended.", () async {
+        //   Navigator.of(context).pop();
+        //   ForegroundNotifTask.stopForegroundTask();
+        // });
+      } else {
+        cb("Error");
+        // Navigator.of(context).pop();
+        // showAlertDialog(context, "Error",
+        //     "Invalid OTP code. Please try again.. Please try again.", () {
+        //   Navigator.of(context).pop();
+        // });
+      }
     });
   }
 
@@ -478,7 +479,6 @@ class Functions {
 
 //with park_area id param
   static void getVehicleTypesData(context, areaId, Function cb) {
-    List dataV = [];
     HttpRequest(
             api: "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=$areaId")
         .get()
@@ -617,5 +617,14 @@ class Functions {
         cb({"msg": "Success", "data": avgData["items"]});
       }
     });
+  }
+
+  //get current location position
+  static Future<void> getPositionLatLong(Function cb) async {
+    print("dugaya naman lang hjud");
+    loc.Location location = loc.Location();
+    loc.LocationData currentLocation = await location.getLocation();
+    print("currentLocation ${currentLocation.latitude}");
+    cb(LatLng(currentLocation.latitude!, currentLocation.longitude!));
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -90,11 +91,14 @@ class _BuyTokenPageState extends State<BuyTokenPage> {
                     width: MediaQuery.of(context).size.width * 0.50,
                     child: TextFormField(
                       controller: tokenAmount,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(50),
-                        // ThousandsFormatter(allowFraction: true),
+                      inputFormatters: <TextInputFormatter>[
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d*$')),
                       ],
+                      keyboardType: Platform.isAndroid
+                          ? TextInputType.number
+                          : TextInputType.numberWithOptions(
+                              signed: true, decimal: false),
                       textInputAction: TextInputAction.done,
                       textAlign: TextAlign.center,
                       decoration: const InputDecoration(
