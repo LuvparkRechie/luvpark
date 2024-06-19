@@ -255,7 +255,7 @@ class _MyWalletState extends State<MyWallet>
                       label: 'My Wallet',
                       color: Colors.black,
                       fontWeight: FontWeight.w700,
-                      fontSize: 16,
+                      fontSize: 20,
                     ),
                     Container(height: 20),
                     Container(

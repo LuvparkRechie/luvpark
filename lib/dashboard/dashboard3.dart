@@ -151,7 +151,6 @@ class _Dashboard3State extends State<Dashboard3> {
             "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
         HttpRequest(api: subApi).get().then((returnBalance) async {
-          print("returnBalance $returnBalance");
           if (mounted) {
             setState(() {
               isClicked = false;
@@ -298,12 +297,14 @@ class _Dashboard3State extends State<Dashboard3> {
           ctr++;
           var items = nearestData[i];
           items["index"] = i.toString();
-          final Uint8List markerIcon = await Variables.capturePng(
-              context,
-              printScreen(AppColor.bodyColor, "$i",
-                  "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}"),
-              80,
-              true);
+          String rateDisplay = int.parse(items["min_base_rate"].toString()) ==
+                  int.parse(items["max_base_rate"].toString())
+              ? "${int.parse(items["max_base_rate"].toString())}"
+              : "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}";
+          print("rateDisplay $rateDisplay");
+
+          final Uint8List markerIcon = await Variables.capturePng(context,
+              printScreen(AppColor.bodyColor, "$i", rateDisplay), 80, true);
           markers.add(
             Marker(
                 icon: BitmapDescriptor.fromBytes(markerIcon),

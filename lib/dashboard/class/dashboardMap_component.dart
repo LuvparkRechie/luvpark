@@ -5,7 +5,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart' as gmp;
 import 'package:http/http.dart' as http;
@@ -20,7 +19,7 @@ class DashboardComponent {
       isAllowOverNight, Function callBack) async {
     var params =
         "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
-
+    print(params);
     try {
       var returnData = await HttpRequest(api: params).get();
       if (returnData == "No Internet") {
