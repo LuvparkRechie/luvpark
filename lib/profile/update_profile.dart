@@ -235,6 +235,16 @@ class _RegistrationFormState extends State<UpdateProfile> {
     });
   }
 
+  void backEvt() {
+    if (_currentPage == 0) {
+      Navigator.pop(context);
+    } else {
+      FocusScope.of(context).requestFocus(FocusNode());
+      _pageController.previousPage(
+          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     bool isShowKeyboard = MediaQuery.of(context).viewInsets.bottom == 0;
@@ -242,16 +252,8 @@ class _RegistrationFormState extends State<UpdateProfile> {
       appBarheaderText: "Update Profile",
       hasPadding: false,
       canPop: true,
-      appBarIconClick: () {
-        if (_currentPage == 0) {
-          Navigator.pop(context);
-        } else {
-          FocusScope.of(context).requestFocus(FocusNode());
-          _pageController.previousPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut);
-        }
-      },
+      onPopInvoked: backEvt,
+      appBarIconClick: backEvt,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

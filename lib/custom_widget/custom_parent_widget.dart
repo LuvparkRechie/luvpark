@@ -111,6 +111,7 @@ class CustomParent1Widget extends StatefulWidget {
   final bool? hasPadding;
   final Color? bodyColor;
   final bool? canPop;
+  final Function? onPopInvoked;
   const CustomParent1Widget(
       {super.key,
       required this.child,
@@ -121,6 +122,7 @@ class CustomParent1Widget extends StatefulWidget {
       this.bodyColor,
       this.canPop = false,
       this.prefSize,
+      this.onPopInvoked,
       this.appBarTabBar});
 
   @override
@@ -161,6 +163,11 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
   Widget childs() {
     return PopScope(
       canPop: widget.canPop!,
+      onPopInvoked: (dd) async {
+        if (widget.onPopInvoked != null) {
+          widget.onPopInvoked!(); // Call the provided function if not null
+        }
+      },
       child: SafeArea(
         child: Container(
           color: widget.bodyColor ?? Color(0xFFF8F8F8),
