@@ -14,7 +14,6 @@ import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/password_indicator.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/login/login.dart';
@@ -141,7 +140,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               CustomTextField(
                 title: "Old Password",
-                labelText: "Enter old Password",
+                labelText: "Enter old password",
                 controller: oldPass,
                 isObscure: isObscureOld,
                 suffixIcon:
@@ -154,7 +153,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               CustomTextField(
                 title: "New Password",
-                labelText: "Enter new Password",
+                labelText: "Enter new password",
                 controller: newPass,
                 isObscure: isObscureNew,
                 suffixIcon:
@@ -172,7 +171,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
               ),
               CustomTextField(
                 title: "Confirm Password",
-                labelText: "Enter new Password again",
+                labelText: "Enter new password again",
                 controller: confirmPass,
                 isObscure: isObscureConfirm,
                 suffixIcon:

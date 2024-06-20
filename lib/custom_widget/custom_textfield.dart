@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
@@ -82,7 +81,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           decoration: InputDecoration(
             labelText: widget.title,
             labelStyle: TextStyle(
-              color: Colors.black,
+              color: AppColor.textSubColor,
               fontWeight: FontWeight.w500,
             ),
             floatingLabelStyle: TextStyle(

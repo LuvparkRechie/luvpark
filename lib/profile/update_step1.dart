@@ -248,7 +248,6 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                 },
                 onChange: (value) {},
               ),
-              LabelText(text: "Civil Status"),
               Container(
                 height: 10,
               ),
@@ -307,6 +306,12 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                     DropdownButtonFormField(
                       dropdownColor: Colors.white,
                       decoration: InputDecoration(
+                        labelText: "Civil Status",
+                        labelStyle: TextStyle(
+                          color: AppColor.primaryColor,
+                          fontWeight: FontWeight.w400,
+                          fontSize: 14,
+                        ),
                         contentPadding: EdgeInsets.symmetric(
                           horizontal: 10,
                         ),

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/api_keys.dart';
+import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -338,12 +339,17 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          LabelText(text: "Region"),
           Padding(
             padding: const EdgeInsets.only(top: 10.0, bottom: 10),
             child: DropdownButtonFormField(
               dropdownColor: Colors.white,
               decoration: InputDecoration(
+                labelText: "Region",
+                labelStyle: TextStyle(
+                  color: AppColor.primaryColor,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 14,
+                ),
                 //   constraints: BoxConstraints.tightFor(height: 60),
 
                 // filled: true,
@@ -435,12 +441,17 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
               }).toList(),
             ),
           ),
-          LabelText(text: "Province"),
           Padding(
             padding: const EdgeInsets.only(top: 10.0, bottom: 10),
             child: DropdownButtonFormField(
               dropdownColor: Colors.white,
               decoration: InputDecoration(
+                labelText: "Province",
+                labelStyle: TextStyle(
+                  color: AppColor.primaryColor,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 14,
+                ),
                 //   constraints: BoxConstraints.tightFor(height: 60),
 
                 // filled: true,
@@ -528,12 +539,17 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
               }).toList(),
             ),
           ),
-          LabelText(text: "City"),
           Padding(
             padding: const EdgeInsets.only(top: 10.0, bottom: 10),
             child: DropdownButtonFormField(
               dropdownColor: Colors.white,
               decoration: InputDecoration(
+                labelText: "City",
+                labelStyle: TextStyle(
+                  color: AppColor.primaryColor,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 14,
+                ),
                 //   constraints: BoxConstraints.tightFor(height: 60),
 
                 // filled: true,
@@ -615,12 +631,17 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
               }).toList(),
             ),
           ),
-          LabelText(text: "Barangay"),
           Padding(
             padding: const EdgeInsets.only(top: 10.0, bottom: 10),
             child: DropdownButtonFormField(
               dropdownColor: Colors.white,
               decoration: InputDecoration(
+                labelText: "Barangay",
+                labelStyle: TextStyle(
+                  color: AppColor.primaryColor,
+                  fontWeight: FontWeight.w300,
+                  fontSize: 14,
+                ),
                 hintText: "",
                 hintStyle: Platform.isAndroid
                     ? GoogleFonts.dmSans(
@@ -691,8 +712,8 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
               }).toList(),
             ),
           ),
-          LabelText(text: "Address1"),
           CustomTextField(
+            title: "Address 1",
             labelText: 'House No./Bldg (optional)',
             controller: widget.address1,
             onChange: (value) {
@@ -704,8 +725,8 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
               setState(() {});
             },
           ),
-          LabelText(text: "Address2"),
           CustomTextField(
+            title: "Address 2",
             labelText: 'Street Name (optional)',
             controller: widget.address2,
             onChange: (value) {
@@ -717,8 +738,8 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
               setState(() {});
             },
           ),
-          LabelText(text: "Zip Code"),
           CustomTextField(
+            title: "Zip Code",
             labelText: 'Zip Code',
             controller: widget.zipCode,
             inputFormatters: <TextInputFormatter>[
