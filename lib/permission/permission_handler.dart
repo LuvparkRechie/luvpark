@@ -1,6 +1,6 @@
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
+import 'package:location/location.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
@@ -25,6 +25,7 @@ class PermissionHandlerScreen extends StatefulWidget {
 class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
     with WidgetsBindingObserver {
   bool isOpenSettings = false;
+  PermissionStatus? permissionGranted;
   int ctr = 0;
 
   @override
@@ -42,11 +43,13 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
   @override
   didChangeAppLifecycleState(AppLifecycleState state) async {
     if (state == AppLifecycleState.resumed) {
-      LocationPermission checkPermission = await Geolocator.checkPermission();
-      if (checkPermission == LocationPermission.always ||
-          checkPermission == LocationPermission.whileInUse) {
+      Location location = Location();
+      permissionGranted = await location.hasPermission();
+      if (permissionGranted! == PermissionStatus.granted) {
+        print("yawaon");
         Navigator.pop(context);
         Variables.pageTrans(widget.widget, context);
+        return;
       }
     }
   }
@@ -103,24 +106,37 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
                     !isOpenSettings ? "Continue Permission" : "Open Settings",
                 onTap: !isOpenSettings
                     ? () async {
-                        final statusReq = await Geolocator.checkPermission();
-
-                        if (statusReq == LocationPermission.denied) {
-                          await Geolocator.requestPermission();
+                        // final statusReq = await Geolocator.checkPermission();
+                        Location location = Location();
+                        permissionGranted = await location.hasPermission();
+                        print("permissionGranted $permissionGranted");
+                        if (permissionGranted == PermissionStatus.denied) {
                           setState(() {
-                            ctr++;
+                            location.requestPermission();
                           });
-                          if (ctr == 2) {
+                          if (permissionGranted != PermissionStatus.granted) {
                             setState(() {
                               isOpenSettings = true;
                             });
                           }
-                        } else if (statusReq ==
-                            LocationPermission.deniedForever) {
-                          setState(() {
-                            isOpenSettings = true;
-                          });
                         }
+
+                        // if (permissionGranted == PermissionStatus.denied) {
+                        //   await Geolocator.requestPermission();
+                        //   setState(() {
+                        //     ctr++;
+                        //   });
+                        //   if (ctr == 2) {
+                        //     setState(() {
+                        //       isOpenSettings = true;
+                        //     });
+                        //   }
+                        // } else if (statusReq ==
+                        //     LocationPermission.deniedForever) {
+                        //   setState(() {
+                        //     isOpenSettings = true;
+                        //   });
+                        // }
                       }
                     : () {
                         setState(() {

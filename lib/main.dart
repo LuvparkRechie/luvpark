@@ -377,12 +377,12 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
                         "Need help finding where you parked your vehicle? Worry no more – Luvpark has you covered. Our app can pinpoint your parked car from your current location by utilizing your active parking transaction.",
                     icon: "step4",
                   ),
-                  CustomSlider(
-                    title: "Share Location",
-                    subTitle:
-                        " Discover the convenience of our Share Location Feature, seamlessly integrated with Google Maps, empowering you to effortlessly share your current location with colleague, friend or family member.",
-                    icon: "step5",
-                  ),
+                  // CustomSlider(
+                  //   title: "Share Location",
+                  //   subTitle:
+                  //       " Discover the convenience of our Share Location Feature, seamlessly integrated with Google Maps, empowering you to effortlessly share your current location with colleague, friend or family member.",
+                  //   icon: "step5",
+                  // ),
                 ],
               ),
             ),

@@ -137,7 +137,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
         data: MediaQuery.of(context)
             .copyWith(textScaler: const TextScaler.linear(1)),
         child: PopScope(
-          canPop: true,
+          canPop: widget.canPop!,
           child: widget.floatingButton == null
               ? Scaffold(
                   appBar: PreferredSize(

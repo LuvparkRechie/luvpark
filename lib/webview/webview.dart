@@ -13,12 +13,14 @@ class WebviewPage extends StatefulWidget {
   final bool isBuyToken;
   final bool? hasAgree;
   final Function? onAgree;
+  final Function? callback;
   const WebviewPage(
       {super.key,
       required this.urlDirect,
       this.isBuyToken = true,
       this.hasAgree = false,
       this.onAgree,
+      this.callback,
       required this.label});
   @override
   State<WebviewPage> createState() => _WebviewPageState();
@@ -56,6 +58,11 @@ class _WebviewPageState extends State<WebviewPage> {
       canPop: true,
       appBarheaderText: widget.label,
       appBarIconClick: () {
+        if (widget.callback != null) {
+          Navigator.of(context).pop();
+          widget.callback!();
+          return;
+        }
         Navigator.of(context).pop();
       },
       hasPadding: false,

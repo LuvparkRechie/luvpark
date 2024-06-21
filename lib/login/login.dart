@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/Registration/registration.dart';
 import 'package:luvpark/activate_account/activate_account.dart';
@@ -18,7 +17,6 @@ import 'package:luvpark/custom_widget/custom_textfield.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/forget_pass/forget_password.dart';
 import 'package:luvpark/login/class/login_class.dart';
-import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/sqlite/vehicle_brands_model.dart';
 import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 
@@ -354,38 +352,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () async {
                                     if (isTappedReg) return;
-
-                                    bool serviceEnabled;
-                                    serviceEnabled = await Geolocator
-                                        .isLocationServiceEnabled();
                                     setState(() {
                                       isTappedReg = false;
                                     });
-                                    if (!serviceEnabled) {
-                                      showAlertDialog(context, "Attention",
-                                          "To continue, turn on device location which uses Google's location service.",
-                                          () {
-                                        Navigator.of(context).pop();
-                                      });
-                                    } else {
-                                      final statusReq =
-                                          await Geolocator.checkPermission();
-                                      if (statusReq ==
-                                          LocationPermission.denied) {
-                                        Variables.pageTrans(
-                                            PermissionHandlerScreen(
-                                              isLogin: true,
-                                              index: 1,
-                                              widget: widget,
-                                            ),
-                                            context);
-                                      }
-                                      if (statusReq ==
-                                          LocationPermission.whileInUse) {
-                                        Variables.pageTrans(
-                                            RegistrationPage(), context);
-                                      }
-                                    }
+
+                                    Variables.pageTrans(
+                                        RegistrationPage(), context);
                                   },
                               ),
                             ]),

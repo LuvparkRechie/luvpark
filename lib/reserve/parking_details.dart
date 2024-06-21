@@ -2,19 +2,17 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/class/get_user_bal.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
+import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
@@ -189,19 +187,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
                                 Container(width: 5),
                                 InkWell(
                                   onTap: () async {
-                                    var permissionStatus =
-                                        await Geolocator.checkPermission();
-
-                                    if ((permissionStatus ==
-                                                LocationPermission.whileInUse ||
-                                            permissionStatus ==
-                                                LocationPermission.always) &&
-                                        await Geolocator
-                                            .isLocationServiceEnabled()) {
-                                      getCurrentLocation();
-                                    } else {
-                                      locatePosition();
-                                    }
+                                    getCurrentLocation();
                                   },
                                   child: Container(
                                     width: 30,
@@ -711,88 +697,36 @@ class _ParkingDetailsState extends State<ParkingDetails>
   }
 
   getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-      );
+    LocationService.grantPermission(context, (isGranted) {
+      if (isGranted) {
+        LocationService.getLocation(context, (location) {
+          if (mounted) {
+            setState(() async {
+              String mapUrl = "";
+              String dest =
+                  "${widget.returnData[0]["park_space_latitude"].toString()},${widget.returnData[0]["park_space_longitude"]}";
+              print("dest $dest");
+              String origin =
+                  "${location.latitude.toString()},${location.longitude.toString()}";
 
-      setState(() async {
-        String mapUrl = "";
-        String dest =
-            "${widget.returnData[0]["park_space_latitude"].toString()},${widget.returnData[0]["park_space_longitude"]}";
-        print("dest $dest");
-        String origin =
-            "${position.latitude.toString()},${position.longitude.toString()}";
+              if (Platform.isIOS) {
+                mapUrl =
+                    'https://maps.apple.com/?daddr=${widget.returnData[0]["park_space_latitude"].toString()},${widget.returnData[0]["park_space_longitude"].toString()}';
+              } else {
+                mapUrl =
+                    "https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$dest&travelmode=driving&dir_action=navigate";
+              }
 
-        if (Platform.isIOS) {
-          mapUrl =
-              'https://maps.apple.com/?daddr=${widget.returnData[0]["park_space_latitude"].toString()},${widget.returnData[0]["park_space_longitude"].toString()}';
-        } else {
-          mapUrl =
-              "https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$dest&travelmode=driving&dir_action=navigate";
-        }
-
-        if (await canLaunchUrl(Uri.parse(mapUrl))) {
-          await launchUrl(Uri.parse(mapUrl),
-              mode: LaunchMode.externalApplication);
-        } else {
-          throw 'Something went wrong while opening map. Pleaase report problem';
-        }
-      });
-      // Use the position data
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-    }
-  }
-
-  Future<Position> locatePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    permission = await Geolocator.checkPermission();
-
-    if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
-      showPlatformDialog(
-        context: context,
-        builder: (_) => BasicDialogAlert(
-          title: const Text("Current Location Not Available"),
-          content: const Text(
-              "Your current location cannot be determined at this time."),
-          actions: <Widget>[
-            BasicDialogAction(
-              title: const Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-      return Future.error('Location services are disabled.');
-    } else if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      permission = await Geolocator.requestPermission();
-      // ignore: use_build_context_synchronously
-      showPlatformDialog(
-        context: context,
-        builder: (_) => BasicDialogAlert(
-          title: const Text("Permission Status"),
-          content: const Text(
-              "Location permissions are denied.\nWe need to request your permission to use google map"),
-          actions: <Widget>[
-            BasicDialogAction(
-              title: const Text("OK"),
-              onPressed: () {
-                AppSettings.openAppSettings();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-      return Future.error('Location permissions are denied');
-    }
-    return await Geolocator.getCurrentPosition();
+              if (await canLaunchUrl(Uri.parse(mapUrl))) {
+                await launchUrl(Uri.parse(mapUrl),
+                    mode: LaunchMode.externalApplication);
+              } else {
+                throw 'Something went wrong while opening map. Pleaase report problem';
+              }
+            });
+          }
+        });
+      }
+    });
   }
 }

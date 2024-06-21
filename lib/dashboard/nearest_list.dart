@@ -62,7 +62,7 @@ class NearestList extends StatelessWidget {
                     CustomDisplayText(
                       label: nearestData["address"],
                       fontSize: 14,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.w400,
                       color: Colors.black54,
                       maxLines: 2,
                     ),

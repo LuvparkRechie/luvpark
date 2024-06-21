@@ -90,6 +90,10 @@ class _ProfileDeleteState extends State<ProfileDelete> {
                           urlDirect: "https://luvpark.ph/account-deletion/",
                           label: "Account Deletion ",
                           isBuyToken: false,
+                          callback: () {
+                            CustomModal(context: context).loader();
+                            Navigator.of(context).pushNamed('/');
+                          },
                         ),
                       ),
                     );

@@ -271,6 +271,20 @@ class _FilterMapState extends State<FilterMap> {
             },
           ),
         ),
+        Container(
+          height: 30,
+          child: RadioListTile<String>(
+            contentPadding: EdgeInsets.zero,
+            title: CustomDisplayText(label: "All"),
+            value: "",
+            groupValue: isAllowOverNight,
+            onChanged: (String? value) {
+              setState(() {
+                isAllowOverNight = value!;
+              });
+            },
+          ),
+        ),
         SizedBox(height: 10.0),
       ],
     );

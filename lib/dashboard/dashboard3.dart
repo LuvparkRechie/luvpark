@@ -5,18 +5,16 @@ import 'dart:io';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:location/location.dart' as loc;
-import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart' as func;
-import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
+import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -28,7 +26,6 @@ import 'package:luvpark/dashboard/search_place.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
-import 'package:luvpark/permission/permission_handler.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -57,7 +54,7 @@ class _Dashboard3State extends State<Dashboard3> {
   String pTypeCode = "";
   String amenities = "";
   String vtypeId = "";
-  String isAllowOverNight = "N";
+  String isAllowOverNight = "";
   List filteredArea = [];
   CameraPosition? initialCameraPosition;
   bool isLoadingPage = true;
@@ -77,7 +74,6 @@ class _Dashboard3State extends State<Dashboard3> {
   bool isClicked = false;
   //added
   loc.Location locationSer = loc.Location();
-  bool? _serviceEnabled;
 
   @override
   void initState() {
@@ -126,129 +122,114 @@ class _Dashboard3State extends State<Dashboard3> {
     myData = prefs.getString(
       'userData',
     );
-    bool servicestatus = await Geolocator.isLocationServiceEnabled();
-    final statusReq = await Geolocator.checkPermission();
-    _serviceEnabled = await locationSer.serviceEnabled();
-    if (!servicestatus) {
-      print("sge ug sulod ;age");
-      _serviceEnabled = await locationSer.requestService();
-      if (!_serviceEnabled!) {
-        return;
-      }
-      getUsersData("Current Location");
-    } else if (statusReq == LocationPermission.denied) {
-      // ignore: use_build_context_synchronously
-      Variables.pageTrans(
-          PermissionHandlerScreen(
-            isLogin: true,
-            index: 1,
-            widget: MainLandingScreen(),
-          ),
-          context);
-    } else {
-      Functions.getPositionLatLong((location) {
-        String subApi =
-            "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
+    LocationService.grantPermission(context, (isGranted) {
+      if (isGranted) {
+        LocationService.getLocation(context, (location) {
+          String subApi =
+              "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
-        HttpRequest(api: subApi).get().then((returnBalance) async {
-          if (mounted) {
-            setState(() {
-              isClicked = false;
-            });
-          }
-          if (returnBalance == "No Internet") {
-            showAlertDialog(context, "Error",
-                "Please check your internet connection and try again.", () {
-              Navigator.of(context).pop();
-              if (mounted) {
+          HttpRequest(api: subApi).get().then((returnBalance) async {
+            if (mounted) {
+              setState(() {
+                isClicked = false;
+              });
+            }
+            if (returnBalance == "No Internet") {
+              showAlertDialog(context, "Error",
+                  "Please check your internet connection and try again.", () {
+                Navigator.of(context).pop();
+                if (mounted) {
+                  setState(() {
+                    hasInternetBal = false;
+                  });
+                }
+              });
+
+              return;
+            }
+            if (returnBalance == null) {
+              showAlertDialog(context, "Error",
+                  "Error while connecting to server, Please try again.", () {
+                Navigator.of(context).pop();
+                if (mounted) {
+                  setState(() {
+                    hasInternetBal = true;
+                  });
+                }
+              });
+            }
+            if (returnBalance["items"].isEmpty) {
+              showAlertDialog(context, "Error",
+                  "There ase some changes made in your account. please contact support.",
+                  () async {
+                SharedPreferences pref = await SharedPreferences.getInstance();
+                Navigator.pop(context);
+                CustomModal(context: context).loader();
+                await NotificationDatabase.instance
+                    .readAllNotifications()
+                    .then((notifData) async {
+                  if (notifData.isNotEmpty) {
+                    for (var nData in notifData) {
+                      NotificationController.cancelNotificationsById(
+                          nData["reserved_id"]);
+                    }
+                  }
+                  var logData = pref.getString('loginData');
+                  var mappedLogData = [jsonDecode(logData!)];
+                  mappedLogData[0]["is_active"] = "N";
+                  pref.setString("loginData", jsonEncode(mappedLogData[0]!));
+                  pref.remove('myId');
+                  NotificationDatabase.instance.deleteAll();
+                  PaMessageDatabase.instance.deleteAll();
+                  ShareLocationDatabase.instance.deleteAll();
+                  NotificationController.cancelNotifications();
+                  //  ForegroundNotif.onStop();
+                  BiometricLogin().clearPassword();
+                  Timer(const Duration(seconds: 1), () {
+                    Navigator.of(context).pop(context);
+                    Variables.pageTrans(const LoginScreen(index: 1), context);
+                  });
+                });
+              });
+            }
+            if (mounted) {
+              setState(() {
+                userBal = double.parse(
+                    returnBalance["items"][0]["amount_bal"].toString());
+                hasInternetBal = true;
+              });
+            }
+
+            if (mounted) {
+              setState(() {
+                logData = jsonDecode(myData);
+                startLocation = LatLng(location.latitude, location.longitude);
+              });
+            }
+
+            DashboardComponent.getNearest(
+                context,
+                pTypeCode,
+                ddRadius,
+                startLocation!.latitude,
+                startLocation!.longitude,
+                vtypeId,
+                amenities,
+                isAllowOverNight, (nearestData) {
+              if (nearestData == "No Internet") {
                 setState(() {
                   hasInternetBal = false;
                 });
               }
+              displayMapData(
+                  nearestData, location.latitude, location.longitude, locTitle);
             });
-
-            return;
-          }
-          if (returnBalance == null) {
-            showAlertDialog(context, "Error",
-                "Error while connecting to server, Please try again.", () {
-              Navigator.of(context).pop();
-              if (mounted) {
-                setState(() {
-                  hasInternetBal = true;
-                });
-              }
-            });
-          }
-          if (returnBalance["items"].isEmpty) {
-            showAlertDialog(context, "Error",
-                "There ase some changes made in your account. please contact support.",
-                () async {
-              SharedPreferences pref = await SharedPreferences.getInstance();
-              Navigator.pop(context);
-              CustomModal(context: context).loader();
-              await NotificationDatabase.instance
-                  .readAllNotifications()
-                  .then((notifData) async {
-                if (notifData.isNotEmpty) {
-                  for (var nData in notifData) {
-                    NotificationController.cancelNotificationsById(
-                        nData["reserved_id"]);
-                  }
-                }
-                var logData = pref.getString('loginData');
-                var mappedLogData = [jsonDecode(logData!)];
-                mappedLogData[0]["is_active"] = "N";
-                pref.setString("loginData", jsonEncode(mappedLogData[0]!));
-                pref.remove('myId');
-                NotificationDatabase.instance.deleteAll();
-                PaMessageDatabase.instance.deleteAll();
-                ShareLocationDatabase.instance.deleteAll();
-                NotificationController.cancelNotifications();
-                //  ForegroundNotif.onStop();
-                BiometricLogin().clearPassword();
-                Timer(const Duration(seconds: 1), () {
-                  Navigator.of(context).pop(context);
-                  Variables.pageTrans(const LoginScreen(index: 1), context);
-                });
-              });
-            });
-          }
-          if (mounted) {
-            setState(() {
-              userBal = double.parse(
-                  returnBalance["items"][0]["amount_bal"].toString());
-              hasInternetBal = true;
-            });
-          }
-
-          if (mounted) {
-            setState(() {
-              logData = jsonDecode(myData);
-              startLocation = LatLng(location.latitude, location.longitude);
-            });
-          }
-
-          DashboardComponent.getNearest(
-              context,
-              pTypeCode,
-              ddRadius,
-              startLocation!.latitude,
-              startLocation!.longitude,
-              vtypeId,
-              amenities,
-              isAllowOverNight, (nearestData) {
-            if (nearestData == "No Internet") {
-              setState(() {
-                hasInternetBal = false;
-              });
-            }
-            displayMapData(
-                nearestData, location.latitude, location.longitude, locTitle);
           });
         });
-      });
-    }
+      } else {
+        getUsersData("Current Location");
+      }
+    });
   }
 
   displayMapData(nearestData, lat, lng, locTitle) async {
@@ -301,7 +282,6 @@ class _Dashboard3State extends State<Dashboard3> {
                   int.parse(items["max_base_rate"].toString())
               ? "${int.parse(items["max_base_rate"].toString())}"
               : "${items["min_base_rate"].toString()}-${items["max_base_rate"].toString()}";
-          print("rateDisplay $rateDisplay");
 
           final Uint8List markerIcon = await Variables.capturePng(context,
               printScreen(AppColor.bodyColor, "$i", rateDisplay), 80, true);
@@ -660,7 +640,7 @@ class _Dashboard3State extends State<Dashboard3> {
                   label:
                       "${jsonDecode(myData!)['first_name'] == null ? "Welcome to luvpark" : "Hi, " + jsonDecode(myData!)['first_name']}",
                   fontWeight: FontWeight.w500,
-                  fontSize: 16,
+                  fontSize: 18,
                   maxFontsize: 1,
                   maxLines: 1,
                 ),
@@ -795,7 +775,7 @@ class _Dashboard3State extends State<Dashboard3> {
               Padding(
                 padding: const EdgeInsets.only(left: 10.0, right: 10),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () async {},
                   child: Icon(
                     Icons.search,
                     color: AppColor.primaryColor,

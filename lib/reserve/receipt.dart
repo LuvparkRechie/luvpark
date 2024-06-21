@@ -1,14 +1,11 @@
 import 'dart:io';
 
 import 'package:animate_do/animate_do.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dialogs/flutter_dialogs.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +24,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 // ignore: must_be_immutable
 class ReserveReceipt extends StatefulWidget {
@@ -98,10 +94,7 @@ class _ReserveReceiptState extends State<ReserveReceipt>
   String myAddress = "";
   BuildContext? mainContext;
   List<Marker> markers = <Marker>[];
-  LocationSettings locationSettings = const LocationSettings(
-    accuracy: LocationAccuracy.high,
-    distanceFilter: 100,
-  );
+
   List<String> images = [
     'assets/images/marker.png',
     'assets/images/red_marker.png'
@@ -116,89 +109,6 @@ class _ReserveReceiptState extends State<ReserveReceipt>
   @override
   dispose() {
     super.dispose();
-  }
-
-  getCurrentLocation() async {
-    try {
-      Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
-      );
-
-      setState(() async {
-        String mapUrl = "";
-        String dest = "${widget.lat},${widget.long}";
-        String origin =
-            "${position.latitude.toString()},${position.longitude.toString()}";
-
-        if (Platform.isIOS) {
-          mapUrl = 'https://maps.apple.com/?daddr=${widget.lat},${widget.long}';
-        } else {
-          mapUrl =
-              "https://www.google.com/maps/dir/?api=1&origin=$origin&destination=$dest&travelmode=driving&dir_action=navigate";
-        }
-
-        if (await canLaunchUrl(Uri.parse(mapUrl))) {
-          await launchUrl(Uri.parse(mapUrl),
-              mode: LaunchMode.externalApplication);
-        } else {
-          throw 'Something went wrong while opening map. Pleaase report problem';
-        }
-      });
-      // Use the position data
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-    }
-  }
-
-  Future<Position> locatePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    permission = await Geolocator.checkPermission();
-
-    if (!serviceEnabled) {
-      // ignore: use_build_context_synchronously
-      showPlatformDialog(
-        context: context,
-        builder: (_) => BasicDialogAlert(
-          title: const Text("Current Location Not Available"),
-          content: const Text(
-              "Your current location cannot be determined at this time."),
-          actions: <Widget>[
-            BasicDialogAction(
-              title: const Text("OK"),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-      return Future.error('Location services are disabled.');
-    } else if (permission == LocationPermission.denied ||
-        permission == LocationPermission.deniedForever) {
-      permission = await Geolocator.requestPermission();
-      // ignore: use_build_context_synchronously
-      showPlatformDialog(
-        context: context,
-        builder: (_) => BasicDialogAlert(
-          title: const Text("Permission Status"),
-          content: const Text(
-              "Location permissions are denied.\nWe need to request your permission to use google map"),
-          actions: <Widget>[
-            BasicDialogAction(
-              title: const Text("OK"),
-              onPressed: () {
-                AppSettings.openAppSettings();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-      );
-      return Future.error('Location permissions are denied');
-    }
-    return await Geolocator.getCurrentPosition();
   }
 
   void showRate() {

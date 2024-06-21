@@ -238,10 +238,12 @@ class _RegistrationFormState extends State<UpdateProfile> {
   void backEvt() {
     if (_currentPage == 0) {
       Navigator.pop(context);
+      return;
     } else {
       FocusScope.of(context).requestFocus(FocusNode());
       _pageController.previousPage(
           duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+      return;
     }
   }
 
@@ -251,7 +253,7 @@ class _RegistrationFormState extends State<UpdateProfile> {
     return CustomParent1Widget(
       appBarheaderText: "Update Profile",
       hasPadding: false,
-      canPop: true,
+      canPop: false,
       onPopInvoked: backEvt,
       appBarIconClick: backEvt,
       child: Column(

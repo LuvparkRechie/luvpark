@@ -7,11 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark/classess/api_keys.dart';
-import 'package:luvpark/classess/functions.dart';
+import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
-import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/http_request/http_request_model.dart';
 import 'package:luvpark/main.dart';
 import 'package:luvpark/sqlite/notification_model.dart';
@@ -94,7 +93,7 @@ class NotificationController {
   }
 
   static Future<void> declineSharing(int id, BuildContext context) async {
-    Functions.getPositionLatLong((location) async {
+    LocationService.getLocation(context, (location) async {
       var endParam = {"geo_connect_id": id};
 
       HttpRequest(api: ApiKeys.gApiLuvParkPutEndSharing, parameters: endParam)
@@ -153,65 +152,73 @@ class NotificationController {
   static Future<void> acceptSharing(
       int id, String shareId, BuildContext context, Function callBack) async {
     CustomModal(context: context).loader();
-    Functions.getPositionLatLong((location) async {
-      var updateParam = {
-        "geo_connect_id": id,
-        "latitude": location.latitude,
-        "longitude": location.longitude,
-      };
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setString('geo_connect_id', "$id");
-      prefs.setString('geo_share_id', "$shareId");
-      // Share ID
-      HttpRequest(
-        api: ApiKeys.gApiLuvParkPutAcceptShareLoc,
-        parameters: updateParam,
-      ).put().then((returnData) async {
-        if (returnData == "No Internet") {
-          Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-          showAlertDialog(
-            MyApp.navigatorKey.currentState!.context,
-            "Error",
-            'Please check your internet connection and try again.',
-            () {
-              ShareLocationDatabase.instance.deleteAll();
-              callBack(false);
+    LocationService.grantPermission(context, (isGranted) {
+      if (isGranted) {
+        LocationService.getLocation(context, (location) async {
+          var updateParam = {
+            "geo_connect_id": id,
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+          };
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          prefs.setString('geo_connect_id', "$id");
+          prefs.setString('geo_share_id', "$shareId");
+          // Share ID
+          HttpRequest(
+            api: ApiKeys.gApiLuvParkPutAcceptShareLoc,
+            parameters: updateParam,
+          ).put().then((returnData) async {
+            if (returnData == "No Internet") {
               Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-            },
-          );
-          return;
-        }
-        if (returnData == null) {
-          Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-          showAlertDialog(
-            MyApp.navigatorKey.currentState!.context,
-            "Error",
-            "Error while connecting to the server, Please try again.",
-            () {
-              ShareLocationDatabase.instance.deleteAll();
-              callBack(false);
+              showAlertDialog(
+                MyApp.navigatorKey.currentState!.context,
+                "Error",
+                'Please check your internet connection and try again.',
+                () {
+                  ShareLocationDatabase.instance.deleteAll();
+                  callBack(false);
+                  Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
+                },
+              );
+              return;
+            }
+            if (returnData == null) {
               Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-            },
-          );
-          return;
-        }
-        if (returnData["success"] == 'Y') {
-          Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-          callBack(true);
-        } else {
-          Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-          showAlertDialog(
-            MyApp.navigatorKey.currentState!.context,
-            "Error",
-            returnData["msg"],
-            () {
-              ShareLocationDatabase.instance.deleteAll();
+              showAlertDialog(
+                MyApp.navigatorKey.currentState!.context,
+                "Error",
+                "Error while connecting to the server, Please try again.",
+                () {
+                  ShareLocationDatabase.instance.deleteAll();
+                  callBack(false);
+                  Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
+                },
+              );
+              return;
+            }
+            if (returnData["success"] == 'Y') {
               Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
-              callBack(false);
-            },
-          );
-        }
-      });
+              callBack(true);
+            } else {
+              Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
+              showAlertDialog(
+                MyApp.navigatorKey.currentState!.context,
+                "Error",
+                returnData["msg"],
+                () {
+                  ShareLocationDatabase.instance.deleteAll();
+                  Navigator.of(MyApp.navigatorKey.currentState!.context).pop();
+                  callBack(false);
+                },
+              );
+            }
+          });
+        });
+      } else {
+        showAlertDialog(context, "LuvPark", "No permissions granted.", () {
+          Navigator.of(context).pop();
+        });
+      }
     });
   }
 

@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -12,6 +11,7 @@ import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
+import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -20,7 +20,6 @@ import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/reserve/reserve_form2.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -125,43 +124,52 @@ class _ViewDetailsState extends State<ViewDetails> {
 
   Future<void> fetchData() async {
     timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      Functions.getPositionLatLong((location) {
-        if (mounted) {
-          setState(() {
-            currentLocation = LatLng(location.latitude, location.longitude);
-          });
-          DashboardComponent.getAddress(location.latitude, location.longitude)
-              .then((address) {
-            setState(() {
-              currAdd = address!;
+      LocationService.grantPermission(context, (isGranted) {
+        if (isGranted) {
+          LocationService.getLocation(context, (location) {
+            if (mounted) {
+              setState(() {
+                currentLocation = LatLng(location.latitude, location.longitude);
+              });
+              DashboardComponent.getAddress(
+                      location.latitude, location.longitude)
+                  .then((address) {
+                setState(() {
+                  currAdd = address!;
+                });
+              });
+              getCustomMarker(["my_marker", "dest_marker"]);
+            }
+            DashboardComponent.fetchETA(currentLocation!, destLocation!,
+                (estimatedData) async {
+              if (estimatedData == "No Internet") {
+                if (mounted) {
+                  setState(() {
+                    hasNet = false;
+                  });
+                }
+              } else {
+                if (mounted) {
+                  setState(() {
+                    hasNet = true;
+                  });
+                }
+              }
+
+              try {
+                if (mounted) {
+                  setState(() {
+                    etaData = estimatedData;
+                  });
+                }
+              } catch (e) {}
             });
           });
-          getCustomMarker(["my_marker", "dest_marker"]);
+        } else {
+          showAlertDialog(context, "LuvPark", "No permissions granted.", () {
+            Navigator.of(context).pop();
+          });
         }
-        DashboardComponent.fetchETA(currentLocation!, destLocation!,
-            (estimatedData) async {
-          if (estimatedData == "No Internet") {
-            if (mounted) {
-              setState(() {
-                hasNet = false;
-              });
-            }
-          } else {
-            if (mounted) {
-              setState(() {
-                hasNet = true;
-              });
-            }
-          }
-
-          try {
-            if (mounted) {
-              setState(() {
-                etaData = estimatedData;
-              });
-            }
-          } catch (e) {}
-        });
       });
     });
   }

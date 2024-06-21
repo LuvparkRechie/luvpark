@@ -11,6 +11,7 @@ import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
+import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -1131,61 +1132,65 @@ class _ReserveForm2State extends State<ReserveForm2> {
   }
 
   void _getCurrentLocation() async {
-    Functions.getPositionLatLong((location) async {
-      print("position lat $location");
-      LatLng origin = LatLng(location.latitude, location.longitude);
-      LatLng destLocation = LatLng(
-          double.parse(widget.areaData[0]["pa_latitude"].toString()),
-          double.parse(widget.areaData[0]["pa_longitude"].toString()));
-      Variables.hasInternetConnection((hasInternetMe) async {
-        if (hasInternetMe) {
-          DashboardComponent.fetchETA(origin, destLocation,
-              (estimatedData) async {
-            print("  estimatedData $estimatedData");
-            if (estimatedData == "No Internet") {
+    LocationService.grantPermission(context, (isGranted) {
+      if (isGranted) {
+        LocationService.getLocation(context, (location) async {
+          LatLng origin = LatLng(location.latitude, location.longitude);
+          LatLng destLocation = LatLng(
+              double.parse(widget.areaData[0]["pa_latitude"].toString()),
+              double.parse(widget.areaData[0]["pa_longitude"].toString()));
+          Variables.hasInternetConnection((hasInternetMe) async {
+            if (hasInternetMe) {
+              DashboardComponent.fetchETA(origin, destLocation,
+                  (estimatedData) async {
+                if (estimatedData == "No Internet") {
+                  setState(() {
+                    isLoadingPage = false;
+                    distanceData = [];
+                    hasInternet = false;
+                  });
+                  showAlertDialog(context, "Attention",
+                      "Please check your internet connection and try again.",
+                      () {
+                    Navigator.of(context).pop();
+                  });
+                  return;
+                }
+                if (estimatedData.isEmpty) {
+                  setState(() {
+                    isLoadingPage = false;
+                    hasInternet = false;
+                    distanceData = [];
+                  });
+                  showAlertDialog(
+                      context, "LuvPark", Variables.popUpMessageOutsideArea,
+                      () {
+                    Navigator.of(context).pop();
+                  });
+                  return;
+                } else {
+                  setState(() {
+                    distanceData = estimatedData;
+                    print(estimatedData);
+                  });
+                  refresh();
+                }
+              });
+              return;
+            } else {
               setState(() {
                 isLoadingPage = false;
-                distanceData = [];
                 hasInternet = false;
               });
-              showAlertDialog(context, "Attention",
+              showAlertDialog(context, "Error",
                   "Please check your internet connection and try again.", () {
                 Navigator.of(context).pop();
               });
               return;
             }
-            if (estimatedData.isEmpty) {
-              setState(() {
-                isLoadingPage = false;
-                hasInternet = false;
-                distanceData = [];
-              });
-              showAlertDialog(
-                  context, "LuvPark", Variables.popUpMessageOutsideArea, () {
-                Navigator.of(context).pop();
-              });
-              return;
-            } else {
-              setState(() {
-                distanceData = estimatedData;
-                print(estimatedData);
-              });
-              refresh();
-            }
           });
-          return;
-        } else {
-          setState(() {
-            isLoadingPage = false;
-            hasInternet = false;
-          });
-          showAlertDialog(context, "Error",
-              "Please check your internet connection and try again.", () {
-            Navigator.of(context).pop();
-          });
-          return;
-        }
-      });
+        });
+      }
     });
   }
 
@@ -1463,50 +1468,14 @@ class _ReserveForm2State extends State<ReserveForm2> {
               } else {
                 if (returnPay["success"] == 'Y') {
                   if (widget.isCheckIn && isCheckIn) {
-                    Functions.getPositionLatLong((location) async {
-                      Functions.checkIn(returnPost["ps_ticket_id"],
-                          location.latitude, location.longitude, (cbData) {
-                        Navigator.pop(context);
-                        if (cbData == "Success") {
-                          Variables.pageTrans(
-                              ReserveReceipt(
-                                spaceName: returnPost['park_space_name'],
-                                parkArea: widget.areaData[0]["park_area_name"],
-                                startDate: params["dt_in"]
-                                            .toString()
-                                            .split(" ")[0] ==
-                                        params["dt_out"]
-                                            .toString()
-                                            .split(" ")[0]
-                                    ? params["dt_in"].toString().split(" ")[0]
-                                    : "${params["dt_in"].toString().split(" ")[0]} - ${params["dt_out"].toString().split(" ")[0]}",
-                                startTime: params["dt_in"]
-                                    .toString()
-                                    .split(" ")[1]
-                                    .toString(),
-                                endTime: params["dt_out"]
-                                    .toString()
-                                    .split(" ")[1]
-                                    .toString(),
-                                plateNo: params["vehicle_plate_no"].toString(),
-                                hours: params["no_hours"].toString(),
-                                amount: returnPay['applied_amt'].toString(),
-                                refno: returnPost["ps_ref_no"].toString(),
-                                lat: double.parse(
-                                    returnPost['pa_latitude'].toString()),
-                                long: double.parse(
-                                    returnPost['pa_longitude'].toString()),
-                                canReserved: false,
-                                isReserved: false,
-                                isVehicleSelected: isVsel,
-                                tab: 0,
-                                paramsCalc: params,
-                                address: "",
-                                isAutoExtend: "",
-                              ),
-                              context);
-                        }
-                      });
+                    LocationService.grantPermission(context, (isGranted) {
+                      if (isGranted) {
+                      } else {
+                        showAlertDialog(
+                            context, "LuvPark", "No permissions granted.", () {
+                          Navigator.of(context).pop();
+                        });
+                      }
                     });
                     return;
                   } else {
