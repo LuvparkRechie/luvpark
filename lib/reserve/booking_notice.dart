@@ -23,7 +23,7 @@ class _BookingNoticeState extends State<BookingNotice> {
   @override
   void initState() {
     super.initState();
-    print("ne sulod dre ang inatay");
+
     getNotice();
   }
 

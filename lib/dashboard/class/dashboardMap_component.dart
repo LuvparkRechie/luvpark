@@ -210,7 +210,6 @@ class DashboardComponent {
   //PURE accurate
   static Future<void> searchPlaces(
       context, String query, Function callback) async {
-    print("query $query");
     Variables.hasInternetConnection((hasInternet) async {
       if (hasInternet) {
         try {
@@ -220,28 +219,24 @@ class DashboardComponent {
           gmp.PlacesSearchResponse response = await places.searchByText(query);
 
           if (response.isOkay && response.results.isNotEmpty) {
-            print("response is okay ${response.results[0].geometry!}");
             callback([
               response.results[0].geometry!.location.lat,
               response.results[0].geometry!.location.lng,
             ]);
             return;
           } else {
-            print("No data found");
             callback([]);
             showAlertDialog(context, "Error", "No data found", () {
               Navigator.pop(context);
             });
           }
         } catch (e) {
-          print("Error: $e");
           callback([]);
           showAlertDialog(context, "Error", "An error occurred", () {
             Navigator.pop(context);
           });
         }
       } else {
-        print("No internet connection");
         callback([]);
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again", () {
@@ -323,7 +318,7 @@ class DashboardComponent {
     try {
       var returnData =
           await const HttpRequest(api: ApiKeys.gApiSubFolderGetDDNearest).get();
-      print("returnData $returnData");
+
       if (returnData == "No Internet") {
         callBack("No Internet");
 

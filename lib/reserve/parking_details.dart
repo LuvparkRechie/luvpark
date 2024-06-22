@@ -705,7 +705,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
               String mapUrl = "";
               String dest =
                   "${widget.returnData[0]["park_space_latitude"].toString()},${widget.returnData[0]["park_space_longitude"]}";
-              print("dest $dest");
+
               String origin =
                   "${location.latitude.toString()},${location.longitude.toString()}";
 

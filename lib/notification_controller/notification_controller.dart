@@ -460,7 +460,7 @@ class NotificationController {
 Future<void> updateLocation(LatLng position) async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   var geoConId = prefs.getString('geo_connect_id');
-  print("geoConId afdsaf $geoConId");
+
   if (geoConId == null) return;
   var jsonParam = {
     "geo_connect_id": geoConId,

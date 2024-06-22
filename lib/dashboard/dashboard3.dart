@@ -311,7 +311,8 @@ class _Dashboard3State extends State<Dashboard3> {
                     return;
                   } else {
                     CustomModal(context: context).loader();
-                    func.Functions.getAmenities(context, "", (cb) {
+                    func.Functions.getAmenities(context, items["park_area_id"],
+                        (cb) {
                       if (cb["msg"] == "Success") {
                         Navigator.of(context).pop();
                         if (cb["data"].isNotEmpty) {

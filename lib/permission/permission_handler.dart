@@ -46,7 +46,6 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
       Location location = Location();
       permissionGranted = await location.hasPermission();
       if (permissionGranted! == PermissionStatus.granted) {
-        print("yawaon");
         Navigator.pop(context);
         Variables.pageTrans(widget.widget, context);
         return;
@@ -109,7 +108,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
                         // final statusReq = await Geolocator.checkPermission();
                         Location location = Location();
                         permissionGranted = await location.hasPermission();
-                        print("permissionGranted $permissionGranted");
+
                         if (permissionGranted == PermissionStatus.denied) {
                           setState(() {
                             location.requestPermission();

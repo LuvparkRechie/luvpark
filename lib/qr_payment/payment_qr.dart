@@ -82,7 +82,6 @@ class _QRPayState extends State<QRPay> {
                 "${ApiKeys.gApiSubFolderPayments}${jsonDecode(akongP!)['user_id'].toString()}")
         .get()
         .then((paymentKey) {
-      print("paymentKey $paymentKey");
       if (paymentKey == "No Internet") {
         setState(() {
           hasInternet = false;

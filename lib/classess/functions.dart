@@ -28,7 +28,6 @@ class Functions {
         "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
-      print("returnBalance $returnBalance");
       if (returnBalance == "No Internet") {
         cb("No Internet");
         showAlertDialog(ctxt!, "Error",
@@ -574,6 +573,44 @@ class Functions {
   }
 
   static void getAmenities(context, areaId, Function cb) {
+    HttpRequest(
+            api: "${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=$areaId")
+        .get()
+        .then((returnData) async {
+      if (returnData == "No Internet") {
+        Navigator.of(context).pop();
+        cb({"msg": "Error", "data": []});
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+      if (returnData == null) {
+        Navigator.of(context).pop();
+        cb({"msg": "Error", "data": []});
+        showAlertDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Navigator.of(context).pop();
+        });
+      }
+
+      if (returnData["items"].length > 0) {
+        cb({"msg": "Success", "data": returnData["items"]});
+      } else {
+        Navigator.of(context).pop();
+        cb({"msg": "Error", "data": returnData["items"]});
+        showAlertDialog(context, "Error", "No data found.", () {
+          Navigator.of(context).pop();
+        });
+        return;
+      }
+    });
+  }
+
+  //Get All Parking Amenities
+
+  static void getAllAmenities(context, areaId, Function cb) {
     HttpRequest(api: ApiKeys.gApiSubFolderGetAllAmenities)
         .get()
         .then((returnData) async {

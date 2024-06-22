@@ -24,7 +24,7 @@ class NearestList extends StatelessWidget {
       child: InkWell(
         onTap: () {
           CustomModal(context: context).loader();
-          Functions.getAmenities(context, "", (cb) {
+          Functions.getAmenities(context, nearestData["park_area_id"], (cb) {
             if (cb["msg"] == "Success") {
               Navigator.of(context).pop();
               if (cb["data"].isNotEmpty) {

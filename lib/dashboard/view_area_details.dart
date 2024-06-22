@@ -611,7 +611,6 @@ class _ViewDetailsState extends State<ViewDetails> {
 
                                       return element1.contains(element2);
                                     }).toList();
-                                    print("selectedRates $selectedRates");
                                   });
                                 } else {
                                   Navigator.of(context).pop();
@@ -943,7 +942,6 @@ class _ViewDetailsState extends State<ViewDetails> {
 
                               return element1.contains(element2);
                             }).toList();
-                            print("selectedRates $selectedRates");
                           });
                         },
                         child: Container(

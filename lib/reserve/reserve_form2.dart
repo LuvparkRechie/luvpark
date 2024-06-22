@@ -1315,7 +1315,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
             api: ApiKeys.gApiSubFolderPostReserveCalc, parameters: parameters)
         .post()
         .then((returnPost) async {
-      print("returnPost $returnPost");
       if (returnPost == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {
@@ -1368,8 +1367,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var akongP = prefs.getString(
       'userData',
-    );
-
+    ); 
     HttpRequest(
             api: ApiKeys.gApiLuvParkGetResPayKey,
             parameters: {"user_id": jsonDecode(akongP!)['user_id'].toString()})

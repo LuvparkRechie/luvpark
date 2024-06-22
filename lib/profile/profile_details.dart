@@ -505,7 +505,6 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                   fontWeight: FontWeight.w400,
                 ),
                 onTap: () {
-                  print("edit image");
                   showBottomSheetCamera(context);
                 },
               ),

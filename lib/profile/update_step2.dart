@@ -86,11 +86,11 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
     );
 
     akongP = jsonDecode(akongP!);
-    print("akongP $akongP");
+
     var myProvinceData = prefs.getString(
       'provinceData',
     );
-    print("myProvinceData $myProvinceData");
+
     var myCityData = prefs.getString(
       'cityData',
     );
@@ -162,7 +162,6 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
   }
 
   void getRegionData() async {
-    print("ne sulod sa get region data");
     FocusManager.instance.primaryFocus!.unfocus();
     CustomModal(context: context).loader();
     const HttpRequest(api: ApiKeys.gApiSubFolderGetRegion)

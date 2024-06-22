@@ -284,7 +284,7 @@ class _ParkingActivityState extends State<ParkingActivity>
                                           setState(() {
                                             loadingResData = true;
                                           });
-                                          print(" nataya ");
+
                                           Future.delayed(
                                               const Duration(seconds: 1), () {
                                             getReservation();
