@@ -103,6 +103,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                 "${ApiKeys.gApiLuvParkGetAcctStat}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
                         .get()
                         .then((objData) {
+                      print("objData $objData");
                       if (objData == "No Internet") {
                         Navigator.pop(context);
                         setState(() {

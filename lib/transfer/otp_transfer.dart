@@ -100,7 +100,7 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
   void resendFunction() {
     CustomModal(context: context).loader();
     var otpData = {
-      "mobile_no": widget.mobileNo.toString(),
+      "mobile_no": "63${widget.mobileNo.toString()}",
       "reg_type": "REQUEST_OTP"
     };
     HttpRequest(api: ApiKeys.gApiSubFolderPutOTP, parameters: otpData)

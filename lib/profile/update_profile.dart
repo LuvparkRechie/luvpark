@@ -235,12 +235,12 @@ class _RegistrationFormState extends State<UpdateProfile> {
     });
   }
 
-  void backEvt() {
+  void backEvt(ctx) {
     if (_currentPage == 0) {
-      Navigator.pop(context);
+      Navigator.pop(ctx);
       return;
     } else {
-      FocusScope.of(context).requestFocus(FocusNode());
+      FocusScope.of(ctx).requestFocus(FocusNode());
       _pageController.previousPage(
           duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
       return;
@@ -254,8 +254,12 @@ class _RegistrationFormState extends State<UpdateProfile> {
       appBarheaderText: "Update Profile",
       hasPadding: false,
       canPop: false,
-      onPopInvoked: backEvt,
-      appBarIconClick: backEvt,
+      onPopInvoked: () {
+        backEvt(context);
+      },
+      appBarIconClick: () {
+        backEvt(context);
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

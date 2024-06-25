@@ -99,7 +99,7 @@ class _FilterMapState extends State<FilterMap> {
   }
 
   void getAmenities() {
-    Functions.getAmenities(context, "", (cb) {
+    Functions.getAllAmenities(context, "", (cb) {
       if (cb["msg"] == "No Internet") {
         setState(() {
           hasNetAmen = false;

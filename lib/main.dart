@@ -301,10 +301,36 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
     with WidgetsBindingObserver {
   bool isLoading = true;
   int currentPage = 0;
-  var bodyWidget = <Widget>[];
   bool isStarted = false;
-
   PageController? _pageController;
+  List sliderData = [
+    {
+      "title": "Find",
+      "subTitle":
+          "Looking for parking? Our app helps you find available parking spaces in real-time."
+              " Simply enter your destination, and we'll show you the nearest spot based on your current location.",
+      "icon": "step1",
+    },
+    {
+      "title": "Book",
+      "subTitle":
+          "No more driving around in circles! Once you find a spot you like, "
+              "you can book it right from our app.",
+      "icon": "step2",
+    },
+    {
+      "title": "Park",
+      "subTitle":
+          "Luvpark seamlessly integrates with Google Maps, enabling you to easily obtain directions and distance from your current location to your chosen parking spot, ensuring a smooth driving experience.",
+      "icon": "step3",
+    },
+    {
+      "title": "Find my Vehicle",
+      "subTitle":
+          "Need help finding where you parked your vehicle? Worry no more – Luvpark has you covered. Our app can pinpoint your parked car from your current location by utilizing your active parking transaction.",
+      "icon": "step4",
+    }
+  ];
 
   @override
   void initState() {
@@ -350,33 +376,13 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
                     currentPage = page;
                   });
                 },
-                children: const <Widget>[
-                  CustomSlider(
-                    title: "Find",
-                    subTitle:
-                        "Looking for parking? Our app helps you find available parking spaces in real-time."
-                        " Simply enter your destination, and we'll show you the nearest spot based on your current location.",
-                    icon: "step1",
-                  ),
-                  CustomSlider(
-                    title: "Book",
-                    subTitle:
-                        "No more driving around in circles! Once you find a spot you like, "
-                        "you can book it right from our app.",
-                    icon: "step2",
-                  ),
-                  CustomSlider(
-                    title: "Park",
-                    subTitle:
-                        "Luvpark seamlessly integrates with Google Maps, enabling you to easily obtain directions and distance from your current location to your chosen parking spot, ensuring a smooth driving experience.",
-                    icon: "step3",
-                  ),
-                  CustomSlider(
-                    title: "Find my Vehicle",
-                    subTitle:
-                        "Need help finding where you parked your vehicle? Worry no more – Luvpark has you covered. Our app can pinpoint your parked car from your current location by utilizing your active parking transaction.",
-                    icon: "step4",
-                  ),
+                children: <Widget>[
+                  for (int i = 0; i < sliderData.length; i++)
+                    CustomSlider(
+                      title: sliderData[i]["title"],
+                      subTitle: sliderData[i]["subTitle"],
+                      icon: sliderData[i]["icon"],
+                    ),
                   // CustomSlider(
                   //   title: "Share Location",
                   //   subTitle:
@@ -390,7 +396,7 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  5,
+                  sliderData.length,
                   (index) => buildDot(index, context),
                 ),
               ),

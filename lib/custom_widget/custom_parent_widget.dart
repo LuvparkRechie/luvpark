@@ -202,18 +202,13 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
               width: 0,
               height: 0,
             )
-          : GestureDetector(
-              onTap: () {
+          : IconButton(
+              onPressed: () {
                 widget.appBarIconClick!();
               },
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: const Icon(
-                  Icons.arrow_back_ios_new,
-                  weight: 1,
-                  color: Colors.black,
-                  size: 20,
-                ),
+              icon: Icon(
+                Icons.arrow_back_ios_new,
+                color: Colors.black,
               ),
             ),
       title: InkWell(

@@ -108,6 +108,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
       var forgotParam = {
         "mobile_no": widget.mobileNo,
       };
+
       HttpRequest(
               api: ApiKeys.gApiSubFolderPutForgotPass, parameters: forgotParam)
           .put()
@@ -146,7 +147,11 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
         }
       });
     } else {
-      var otpData = {"mobile_no": widget.mobileNo, "reg_type": "REQUEST_OTP"};
+      var otpData = {
+        "mobile_no": "63${widget.mobileNo}",
+        "reg_type": "REQUEST_OTP"
+      };
+      print("resemd $otpData");
       HttpRequest(api: ApiKeys.gApiSubFolderPutOTP, parameters: otpData)
           .put()
           .then((otpData) {
@@ -401,9 +406,10 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
 
                   CustomModal(context: context).loader();
                   if (widget.reqType.toString() == "RP") {
+                    //FOrgot password
                     if (widget.otp == int.parse(inputPin)) {
                       var resetParam = {
-                        "mobile_no": widget.mobileNo,
+                        "mobile_no": "63${widget.mobileNo}",
                         "new_pwd": widget.newPass,
                         "otp": int.parse(inputPin),
                       };
@@ -473,11 +479,11 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                     //ACCOUNT ACTIVATION
                     if (widget.otp == int.parse(inputPin)) {
                       var otpData = {
-                        "mobile_no": widget.mobileNo,
+                        "mobile_no": "63${widget.mobileNo}",
                         "reg_type": "VERIFY",
                         "otp": int.parse(inputPin)
                       };
-
+                      print("otpData $otpData");
                       HttpRequest(
                               api: ApiKeys.gApiSubFolderPutOTP,
                               parameters: otpData)
@@ -507,7 +513,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                           Navigator.of(context).pop();
                           Variables.pageTrans(
                               SuccessRegistration(
-                                mobile: widget.mobileNo!,
+                                mobile: "63${widget.mobileNo!}",
                                 acctStatusTxt: "Registered",
                               ),
                               context);

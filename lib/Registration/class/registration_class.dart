@@ -51,7 +51,7 @@ class SubmitData {
               MaterialPageRoute(
                 builder: ((context) => OTPScreen(
                       otp: int.parse(returnPost["otp"]),
-                      mobileNo: param["mobile_no"],
+                      mobileNo: param["mobile_no"].toString().substring(2),
                       reqType: "VERIFY",
                       seqId: 0,
                       seca: "",
