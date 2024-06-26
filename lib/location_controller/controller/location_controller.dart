@@ -8,6 +8,7 @@ class LocationController extends GetxController {
   final Rx<LocationData?> userLocation = Rx<LocationData?>(null);
 
   void updateIsAccessingLocation(bool b) {
+    print("b $b");
     isAccessingLocation.value = b;
   }
 
