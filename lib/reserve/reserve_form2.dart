@@ -169,7 +169,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
                     Expanded(
                       child: Padding(
                         padding: const EdgeInsets.only(
-                          top: 23,
                           left: 15,
                           right: 15,
                         ),
@@ -177,6 +176,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              Container(height: 20),
                               LabelText(text: "You are parking at"),
                               Container(height: 8),
                               Row(
@@ -1100,33 +1100,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
     );
   }
 
-  Form _addProcedureForm() {
-    return Form(
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-              validator: (value) {
-                return null;
-              },
-              decoration: InputDecoration(
-                  labelText: 'Name',
-                  hintText: "Specific/applicable procedure",
-                  icon: Icon(Icons.edit, color: Colors.deepPurple))),
-          TextFormField(
-              validator: (value) {
-                return null;
-              },
-              maxLines: null,
-              keyboardType: TextInputType.multiline,
-              decoration: InputDecoration(
-                  labelText: 'Description',
-                  hintText: "Applicable procedure description.",
-                  icon: Icon(Icons.notes, color: Colors.deepPurple))),
-        ],
-      ),
-    );
-  }
-
   Future<void> refresh() async {
     getVehicleTypeData();
   }
@@ -1134,7 +1107,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
   void _getCurrentLocation() async {
     LocationService.grantPermission(context, (isGranted) {
       if (isGranted) {
-        LocationService.getLocation(context, (location) async {
+        Functions.getLocation(context, (location) async {
           LatLng origin = LatLng(location.latitude, location.longitude);
           LatLng destLocation = LatLng(
               double.parse(widget.areaData[0]["pa_latitude"].toString()),
@@ -1367,7 +1340,7 @@ class _ReserveForm2State extends State<ReserveForm2> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     var akongP = prefs.getString(
       'userData',
-    ); 
+    );
     HttpRequest(
             api: ApiKeys.gApiLuvParkGetResPayKey,
             parameters: {"user_id": jsonDecode(akongP!)['user_id'].toString()})

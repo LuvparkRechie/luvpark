@@ -51,7 +51,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
   String referralcode = "09x21eR";
   String personName = "";
   String fullName = "Not specified";
-  String mobile_num = "Not specified";
+  String mobileNum = "Not specified";
   String myImage = "";
   String myProfilePic = "";
   bool? isActiveMpin;
@@ -113,7 +113,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                 jsonDecode(akongP!)['birthday'].toString().split("T")[0]);
           }
           if (jsonDecode(akongP!)['mobile_no'].toString().isNotEmpty) {
-            mobile_num = jsonDecode(akongP!)['mobile_no'].toString();
+            mobileNum = jsonDecode(akongP!)['mobile_no'].toString();
           }
           if (jsonDecode(akongP!)['is_active'].toString().isNotEmpty) {
             isActive = jsonDecode(akongP!)['is_active'].toString();
@@ -525,7 +525,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
                         color: const Color.fromARGB(255, 63, 63, 64),
                       ),
                       CustomDisplayText(
-                        label: mobile_num,
+                        label: mobileNum,
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         color: Colors.black54,

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark/classess/api_keys.dart';
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -93,7 +94,7 @@ class NotificationController {
   }
 
   static Future<void> declineSharing(int id, BuildContext context) async {
-    LocationService.getLocation(context, (location) async {
+    Functions.getLocation(context, (location) async {
       var endParam = {"geo_connect_id": id};
 
       HttpRequest(api: ApiKeys.gApiLuvParkPutEndSharing, parameters: endParam)
@@ -154,7 +155,7 @@ class NotificationController {
     CustomModal(context: context).loader();
     LocationService.grantPermission(context, (isGranted) {
       if (isGranted) {
-        LocationService.getLocation(context, (location) async {
+        Functions.getLocation(context, (location) async {
           var updateParam = {
             "geo_connect_id": id,
             "latitude": location.latitude,

@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:luvpark/class/get_user_bal.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/textstyle.dart';
@@ -699,7 +700,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
   getCurrentLocation() async {
     LocationService.grantPermission(context, (isGranted) {
       if (isGranted) {
-        LocationService.getLocation(context, (location) {
+        Functions.getLocation(context, (location) {
           if (mounted) {
             setState(() async {
               String mapUrl = "";

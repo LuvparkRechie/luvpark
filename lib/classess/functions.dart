@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/http_request.dart';
@@ -13,6 +14,7 @@ import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 BuildContext? ctxt;
+final GeolocatorPlatform _geolocatorPlatform = GeolocatorPlatform.instance;
 
 class Functions {
   static void init(BuildContext context) {
@@ -134,13 +136,15 @@ class Functions {
   static Future<void> computeDistanceResorChckIN(
       context, LatLng dest, Function cb) async {
     LocationService.grantPermission(context, (isGranted) {
+      print("granted $isGranted");
       if (isGranted) {
-        LocationService.getLocation(context, (location) {
+        Functions.getLocation(context, (location) {
+          LatLng ll = location;
+          print("location granted  $location");
           Variables.hasInternetConnection((hasInternet) async {
             if (hasInternet) {
               DashboardComponent.fetchETA(
-                  LatLng(location!.latitude, location!.longitude), dest,
-                  (estimatedData) {
+                  LatLng(ll.latitude, ll.longitude), dest, (estimatedData) {
                 if (estimatedData == "No Internet") {
                   cb({"success": false});
 
@@ -160,7 +164,6 @@ class Functions {
                   });
                   return;
                 }
-
                 const HttpRequest(api: ApiKeys.gApiLuvParkGetComputeDistance)
                     .get()
                     .then((returnData) async {
@@ -670,5 +673,32 @@ class Functions {
         cb({"msg": "Success", "data": avgData["items"]});
       }
     });
+  }
+
+  static Future<void> getLocation(BuildContext context, Function cb) async {
+    try {
+      List ltlng = await Functions.getCurrentPosition();
+      if (ltlng.isNotEmpty) {
+        Map<String, dynamic> firstItem = ltlng[0];
+        if (firstItem.containsKey('lat') && firstItem.containsKey('long')) {
+          double lat = double.parse(firstItem['lat'].toString());
+          double long = double.parse(firstItem['long'].toString());
+          cb(LatLng(lat, long));
+        } else {
+          cb(null);
+        }
+      } else {
+        cb(null);
+      }
+    } catch (e) {
+      cb(null);
+    }
+  }
+
+  static Future<List> getCurrentPosition() async {
+    final position = await _geolocatorPlatform.getCurrentPosition();
+    return [
+      {"lat": position.latitude, "long": position.longitude}
+    ];
   }
 }

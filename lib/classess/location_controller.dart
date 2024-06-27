@@ -44,7 +44,7 @@ class LocationService {
     }
   }
 
-  static Future<void> getLocation(BuildContext context, Function cb) async {
+  static Future<void> getLocations(BuildContext context, Function cb) async {
     LocationData? loc = await location.getLocation();
     if (loc.latitude != null) {
       cb(LatLng(loc.latitude!, loc.longitude!));

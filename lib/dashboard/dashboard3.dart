@@ -13,6 +13,7 @@ import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart' as func;
+import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -60,6 +61,8 @@ class _Dashboard3State extends State<Dashboard3> {
   bool isLoadingPage = true;
   bool isLoadingMap = true;
   bool hasInternetBal = true;
+  String mapStyle = "";
+
   List<String> images = [
     'assets/images/geo_tag.png',
   ];
@@ -124,7 +127,7 @@ class _Dashboard3State extends State<Dashboard3> {
     );
     LocationService.grantPermission(context, (isGranted) {
       if (isGranted) {
-        LocationService.getLocation(context, (location) {
+        Functions.getLocation(context, (location) {
           String subApi =
               "${ApiKeys.gApiSubFolderGetBalance}?user_id=${jsonDecode(myData!)['user_id'].toString()}";
 
@@ -254,7 +257,7 @@ class _Dashboard3State extends State<Dashboard3> {
             markerId: const MarkerId('current_location'),
             position: LatLng(
                 double.parse(lat.toString()), double.parse(lng.toString())),
-            icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+            icon: BitmapDescriptor.bytes(availabeMarkIcons),
           ));
           if (onSearchAdd) {
             mapController.animateCamera(
@@ -287,7 +290,7 @@ class _Dashboard3State extends State<Dashboard3> {
               printScreen(AppColor.bodyColor, "$i", rateDisplay), 80, true);
           markers.add(
             Marker(
-                icon: BitmapDescriptor.fromBytes(markerIcon),
+                icon: BitmapDescriptor.bytes(markerIcon),
                 markerId: MarkerId(ctr.toString()),
                 position: LatLng(double.parse(items["pa_latitude"].toString()),
                     double.parse(items["pa_longitude"].toString())),
@@ -547,6 +550,9 @@ class _Dashboard3State extends State<Dashboard3> {
                     .loadString('assets/custom_map_style/map_style.json')
                     .then((String style) {
                   controller.setMapStyle(style);
+                }).catchError((error) {
+                  print("Error loading map style: $error");
+                  // Handle the error gracefully (e.g., show a message to user)
                 });
               });
             }
@@ -675,6 +681,14 @@ class _Dashboard3State extends State<Dashboard3> {
         decoration: BoxDecoration(
           color: isMap ? Colors.white : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(16.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.3),
+              spreadRadius: 1,
+              blurRadius: 4,
+              offset: Offset(0, 2), // changes position of shadow
+            ),
+          ],
         ),
         height: 50,
         child: Padding(

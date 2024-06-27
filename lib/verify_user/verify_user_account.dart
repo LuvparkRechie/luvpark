@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
-import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
@@ -131,7 +130,7 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
   }
 
   Future<void> addFriend(friendId) async {
-    LocationService.getLocation(context, (location) async {
+    Functions.getLocation(context, (location) async {
       String userId = await Variables.getUserId();
       Map<String, dynamic> parameters = {
         "user_id": userId,
