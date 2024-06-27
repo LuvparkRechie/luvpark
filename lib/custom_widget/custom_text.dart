@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CustomDisplayText extends StatelessWidget {
@@ -13,7 +13,7 @@ class CustomDisplayText extends StatelessWidget {
   final FontWeight? fontWeight;
   final double? height;
   final TextDecoration? decoration;
-  final double? letterSpacing, minFontsize, maxFontsize;
+  final double? letterSpacing, minFontsize, maxFontsize, wordSpacing;
   final FontStyle? fontStyle;
   final TextAlign? alignment;
   final List<double>? presetFontSizes;
@@ -31,6 +31,7 @@ class CustomDisplayText extends StatelessWidget {
       this.alignment,
       this.presetFontSizes,
       this.minFontsize,
+      this.wordSpacing,
       this.maxFontsize,
       this.fontStyle});
 
@@ -43,29 +44,33 @@ class CustomDisplayText extends StatelessWidget {
         label,
         style: Platform.isAndroid
             ? GoogleFonts.dmSans(
-                color: color,
+                color:
+                    color ?? Colors.black, // Default to black if color is null
                 fontSize: fontSize ?? 14,
-                fontWeight: fontWeight,
+                fontWeight: fontWeight ?? FontWeight.normal,
                 height: height,
                 letterSpacing: letterSpacing,
-                decoration: decoration,
-                fontStyle: fontStyle)
+                decoration: decoration ?? TextDecoration.none,
+                fontStyle: fontStyle ?? FontStyle.normal,
+                wordSpacing: wordSpacing)
             : TextStyle(
-                color: color,
+                color:
+                    color ?? Colors.black, // Default to black if color is null
                 fontSize: fontSize ?? 14,
-                fontWeight: fontWeight,
-                fontFamily: "SFProTextReg",
+                fontWeight: fontWeight ?? FontWeight.normal,
                 height: height,
                 letterSpacing: letterSpacing,
-                decoration: decoration,
-                fontStyle: fontStyle,
-              ),
-        minFontSize: 1,
+                decoration: decoration ?? TextDecoration.none,
+                fontStyle: fontStyle ?? FontStyle.normal,
+                fontFamily: "SFProTextReg",
+                wordSpacing: wordSpacing),
         textAlign: alignment,
         maxLines: maxLines,
         overflow: overflow,
         presetFontSizes: presetFontSizes,
         softWrap: true,
+        minFontSize: 1,
+        wrapWords: true,
       ),
     );
   }

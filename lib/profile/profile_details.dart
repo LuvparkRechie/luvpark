@@ -447,6 +447,7 @@ class _ProfileDetailsState extends State<ProfileDetails> {
         appBarIconClick: () {
           Navigator.pop(context);
         },
+        canPop: true,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

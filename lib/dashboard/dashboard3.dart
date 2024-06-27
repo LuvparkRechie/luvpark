@@ -257,7 +257,7 @@ class _Dashboard3State extends State<Dashboard3> {
             markerId: const MarkerId('current_location'),
             position: LatLng(
                 double.parse(lat.toString()), double.parse(lng.toString())),
-            icon: BitmapDescriptor.bytes(availabeMarkIcons),
+            icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
           ));
           if (onSearchAdd) {
             mapController.animateCamera(
@@ -290,7 +290,7 @@ class _Dashboard3State extends State<Dashboard3> {
               printScreen(AppColor.bodyColor, "$i", rateDisplay), 80, true);
           markers.add(
             Marker(
-                icon: BitmapDescriptor.bytes(markerIcon),
+                icon: BitmapDescriptor.fromBytes(markerIcon),
                 markerId: MarkerId(ctr.toString()),
                 position: LatLng(double.parse(items["pa_latitude"].toString()),
                     double.parse(items["pa_longitude"].toString())),
@@ -497,7 +497,7 @@ class _Dashboard3State extends State<Dashboard3> {
     return SlidingUpPanel(
       maxHeight: Variables.screenSize.height * 0.50,
       minHeight: Variables.screenSize.height * 0.05,
-      parallaxEnabled: true,
+      parallaxEnabled: false,
       parallaxOffset: .3,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(24.0),
@@ -706,6 +706,7 @@ class _Dashboard3State extends State<Dashboard3> {
                   color: AppColor.primaryColor,
                 ),
               ),
+              Container(width: 10),
               Expanded(
                 child: TextField(
                   readOnly: true,
@@ -715,7 +716,6 @@ class _Dashboard3State extends State<Dashboard3> {
                   decoration: InputDecoration(
                     hintText: "Enter your destination here...",
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 10),
                     hintStyle: Platform.isAndroid
                         ? GoogleFonts.dmSans(
                             color: Color(0x993C3C43),
@@ -730,8 +730,21 @@ class _Dashboard3State extends State<Dashboard3> {
                             fontWeight: FontWeight.w400,
                             height: 0.08,
                             letterSpacing: -0.41,
+                            fontFamily: "SFProTextReg",
                           ),
                   ),
+                  style: Platform.isAndroid
+                      ? GoogleFonts.dmSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: -0.41,
+                        )
+                      : TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: -0.41,
+                          fontFamily: "SFProTextReg",
+                        ),
                   onTap: () {
                     showDialog(
                         context: context,
@@ -787,16 +800,6 @@ class _Dashboard3State extends State<Dashboard3> {
                   },
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 10),
-                child: InkWell(
-                  onTap: () async {},
-                  child: Icon(
-                    Icons.search,
-                    color: AppColor.primaryColor,
-                  ),
-                ),
-              )
             ],
           ),
         ),

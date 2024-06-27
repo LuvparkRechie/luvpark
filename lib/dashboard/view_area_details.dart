@@ -126,7 +126,7 @@ class _ViewDetailsState extends State<ViewDetails> {
     timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
       LocationService.grantPermission(context, (isGranted) {
         if (isGranted) {
-          LocationService.getLocation(context, (location) {
+          Functions.getLocation(context, (location) {
             if (mounted) {
               setState(() {
                 currentLocation = LatLng(location.latitude, location.longitude);
@@ -346,7 +346,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
                                               CustomDisplayText(
-                                                label: "Current Location",
+                                                label: "Current Location"
+                                                    .toUpperCase(),
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 overflow: TextOverflow.ellipsis,
@@ -354,14 +355,17 @@ class _ViewDetailsState extends State<ViewDetails> {
                                               CustomDisplayText(
                                                 label: currAdd,
                                                 fontSize: 14,
-                                                fontWeight: FontWeight.w500,
                                                 overflow: TextOverflow.ellipsis,
-                                                color: Colors.grey,
+                                                color: Color(0x993C3C43),
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: -0.41,
                                               ),
                                               Divider(),
                                               CustomDisplayText(
                                                 label: widget.areaData[0]
-                                                    ["park_area_name"],
+                                                        ["park_area_name"]
+                                                    .toString()
+                                                    .toUpperCase(),
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.bold,
                                                 overflow: TextOverflow.ellipsis,
@@ -370,9 +374,10 @@ class _ViewDetailsState extends State<ViewDetails> {
                                                 label: widget.areaData[0]
                                                     ["address"],
                                                 fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.grey,
                                                 overflow: TextOverflow.ellipsis,
+                                                color: Color(0x993C3C43),
+                                                fontWeight: FontWeight.w500,
+                                                letterSpacing: -0.41,
                                               ),
                                             ],
                                           ),

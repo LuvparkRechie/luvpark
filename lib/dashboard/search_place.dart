@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -74,10 +77,10 @@ class _SearchPlacesState extends State<SearchPlaces> {
                     ),
                     Container(width: 10),
                     CustomDisplayText(
-                      label: "Search Destination",
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+                      label: "Where do you want to park",
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      letterSpacing: -0.41,
                     )
                   ],
                 ),
@@ -86,21 +89,55 @@ class _SearchPlacesState extends State<SearchPlaces> {
                   width: Variables.screenSize.width,
                   height: 50,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.grey.shade100,
-                  ),
+                      borderRadius: BorderRadius.circular(30),
+                      color: Colors.grey.shade100,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.3),
+                          spreadRadius: 1,
+                          blurRadius: 4,
+                          offset: Offset(0, 2), // changes position of shadow
+                        ),
+                      ]),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        Icon(CupertinoIcons.search),
+                        Container(
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color.fromARGB(255, 248, 234, 233),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Icon(
+                              CupertinoIcons.search,
+                              color: Color.fromARGB(255, 216, 128, 122),
+                            ),
+                          ),
+                        ),
                         Container(width: 10),
                         Expanded(
                           child: TextField(
                             controller: searchController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
-                              hintText: 'Where are you going?',
+                              hintText: 'Search address, places or city',
+                              hintStyle: Platform.isAndroid
+                                  ? GoogleFonts.dmSans(
+                                      color: Color(0x993C3C43),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      height: 0.08,
+                                      letterSpacing: -0.41,
+                                    )
+                                  : TextStyle(
+                                      color: Color(0x993C3C43),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                      height: 0.08,
+                                      letterSpacing: -0.41,
+                                    ),
                             ),
                             onChanged: (String text) {
                               onChangeTrigger(text);
@@ -111,8 +148,18 @@ class _SearchPlacesState extends State<SearchPlaces> {
                     ),
                   ),
                 ),
-                Container(height: 15),
-                CustomDisplayText(label: "Results"),
+                Container(height: 20),
+                CustomDisplayText(
+                  label: "Results",
+                  color: Colors.black,
+                  fontSize: 16.0,
+                  fontWeight: FontWeight.w400,
+                  fontStyle: FontStyle.normal,
+                  letterSpacing: 0.5,
+                  wordSpacing: 1.0,
+                  height: 1.2,
+                  decoration: TextDecoration.none,
+                ),
                 Container(height: 5),
                 Expanded(
                   child: FadeInUp(
