@@ -731,6 +731,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                                                           "N"
                                                     }
                                                   ],
+                                                  currentLocation:
+                                                      currentLocation!,
                                                   areaData: dataItemParam,
                                                   isCheckIn:
                                                       success["can_checkIn"],

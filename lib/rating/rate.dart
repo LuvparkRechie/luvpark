@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
@@ -181,7 +182,7 @@ class _RateUsState extends State<RateUs> {
                       controller: commentController,
                       keyboardType: Platform.isIOS
                           ? TextInputType.numberWithOptions(
-                              signed: false, decimal: false)
+                              signed: true, decimal: false)
                           : TextInputType.text,
                       decoration: const InputDecoration(
                         alignLabelWithHint: true,
@@ -241,5 +242,13 @@ class _RateUsState extends State<RateUs> {
         ),
       ),
     );
+  }
+}
+
+class CustomTextInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return newValue;
   }
 }

@@ -26,6 +26,7 @@ import 'package:luvpark/dashboard/nearest_list.dart';
 import 'package:luvpark/dashboard/search_place.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
+import 'package:luvpark/location_controller/location_test.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
@@ -61,8 +62,6 @@ class _Dashboard3State extends State<Dashboard3> {
   bool isLoadingPage = true;
   bool isLoadingMap = true;
   bool hasInternetBal = true;
-  String mapStyle = "";
-
   List<String> images = [
     'assets/images/geo_tag.png',
   ];
@@ -126,6 +125,7 @@ class _Dashboard3State extends State<Dashboard3> {
       'userData',
     );
     LocationService.grantPermission(context, (isGranted) {
+      print("isGranted $isGranted");
       if (isGranted) {
         Functions.getLocation(context, (location) {
           String subApi =
@@ -497,7 +497,7 @@ class _Dashboard3State extends State<Dashboard3> {
     return SlidingUpPanel(
       maxHeight: Variables.screenSize.height * 0.50,
       minHeight: Variables.screenSize.height * 0.05,
-      parallaxEnabled: false,
+      parallaxEnabled: true,
       parallaxOffset: .3,
       borderRadius: BorderRadius.only(
         topLeft: Radius.circular(24.0),
@@ -550,9 +550,6 @@ class _Dashboard3State extends State<Dashboard3> {
                     .loadString('assets/custom_map_style/map_style.json')
                     .then((String style) {
                   controller.setMapStyle(style);
-                }).catchError((error) {
-                  print("Error loading map style: $error");
-                  // Handle the error gracefully (e.g., show a message to user)
                 });
               });
             }
@@ -578,6 +575,7 @@ class _Dashboard3State extends State<Dashboard3> {
                           onTap: () {},
                         ),
                         context);
+                    // Variables.pageTrans(LocationGetting(), context);
                   },
                   child: CircleAvatar(
                     radius: 20,
@@ -706,7 +704,6 @@ class _Dashboard3State extends State<Dashboard3> {
                   color: AppColor.primaryColor,
                 ),
               ),
-              Container(width: 10),
               Expanded(
                 child: TextField(
                   readOnly: true,
@@ -716,6 +713,7 @@ class _Dashboard3State extends State<Dashboard3> {
                   decoration: InputDecoration(
                     hintText: "Enter your destination here...",
                     border: InputBorder.none,
+                    contentPadding: EdgeInsets.only(left: 10),
                     hintStyle: Platform.isAndroid
                         ? GoogleFonts.dmSans(
                             color: Color(0x993C3C43),
@@ -730,21 +728,8 @@ class _Dashboard3State extends State<Dashboard3> {
                             fontWeight: FontWeight.w400,
                             height: 0.08,
                             letterSpacing: -0.41,
-                            fontFamily: "SFProTextReg",
                           ),
                   ),
-                  style: Platform.isAndroid
-                      ? GoogleFonts.dmSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: -0.41,
-                        )
-                      : TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          letterSpacing: -0.41,
-                          fontFamily: "SFProTextReg",
-                        ),
                   onTap: () {
                     showDialog(
                         context: context,
@@ -800,6 +785,16 @@ class _Dashboard3State extends State<Dashboard3> {
                   },
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10),
+                child: InkWell(
+                  onTap: () async {},
+                  child: Icon(
+                    Icons.search,
+                    color: AppColor.primaryColor,
+                  ),
+                ),
+              )
             ],
           ),
         ),

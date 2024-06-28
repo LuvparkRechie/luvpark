@@ -35,6 +35,7 @@ class ReserveForm2 extends StatefulWidget {
   final int pId;
   final String userBal;
   final bool isCheckIn;
+  final LatLng? currentLocation;
   const ReserveForm2({
     super.key,
     required this.queueChkIn,
@@ -42,6 +43,7 @@ class ReserveForm2 extends StatefulWidget {
     required this.userBal,
     required this.pId,
     required this.isCheckIn,
+    this.currentLocation,
   });
 
   @override
@@ -1105,64 +1107,59 @@ class _ReserveForm2State extends State<ReserveForm2> {
   }
 
   void _getCurrentLocation() async {
-    LocationService.grantPermission(context, (isGranted) {
-      if (isGranted) {
-        Functions.getLocation(context, (location) async {
-          LatLng origin = LatLng(location.latitude, location.longitude);
-          LatLng destLocation = LatLng(
-              double.parse(widget.areaData[0]["pa_latitude"].toString()),
-              double.parse(widget.areaData[0]["pa_longitude"].toString()));
-          Variables.hasInternetConnection((hasInternetMe) async {
-            if (hasInternetMe) {
-              DashboardComponent.fetchETA(origin, destLocation,
-                  (estimatedData) async {
-                if (estimatedData == "No Internet") {
-                  setState(() {
-                    isLoadingPage = false;
-                    distanceData = [];
-                    hasInternet = false;
-                  });
-                  showAlertDialog(context, "Attention",
-                      "Please check your internet connection and try again.",
-                      () {
-                    Navigator.of(context).pop();
-                  });
-                  return;
-                }
-                if (estimatedData.isEmpty) {
-                  setState(() {
-                    isLoadingPage = false;
-                    hasInternet = false;
-                    distanceData = [];
-                  });
-                  showAlertDialog(
-                      context, "LuvPark", Variables.popUpMessageOutsideArea,
-                      () {
-                    Navigator.of(context).pop();
-                  });
-                  return;
-                } else {
-                  setState(() {
-                    distanceData = estimatedData;
-                    print(estimatedData);
-                  });
-                  refresh();
-                }
-              });
-              return;
-            } else {
-              setState(() {
-                isLoadingPage = false;
-                hasInternet = false;
-              });
-              showAlertDialog(context, "Error",
-                  "Please check your internet connection and try again.", () {
-                Navigator.of(context).pop();
-              });
-              return;
-            }
-          });
+    LatLng destLocation = LatLng(
+        double.parse(widget.areaData[0]["pa_latitude"].toString()),
+        double.parse(widget.areaData[0]["pa_longitude"].toString()));
+    LatLng origin = LatLng(
+        double.parse(widget.currentLocation!.latitude.toString()),
+        double.parse(widget.currentLocation!.longitude.toString()));
+
+    Variables.hasInternetConnection((hasInternetMe) async {
+      if (hasInternetMe) {
+        DashboardComponent.fetchETA(origin, destLocation,
+            (estimatedData) async {
+          if (estimatedData == "No Internet") {
+            setState(() {
+              isLoadingPage = false;
+              distanceData = [];
+              hasInternet = false;
+            });
+            showAlertDialog(context, "Attention",
+                "Please check your internet connection and try again.", () {
+              Navigator.of(context).pop();
+            });
+            return;
+          }
+          if (estimatedData.isEmpty) {
+            setState(() {
+              isLoadingPage = false;
+              hasInternet = false;
+              distanceData = [];
+            });
+            showAlertDialog(
+                context, "LuvPark", Variables.popUpMessageOutsideArea, () {
+              Navigator.of(context).pop();
+            });
+            return;
+          } else {
+            setState(() {
+              distanceData = estimatedData;
+              print(estimatedData);
+            });
+            refresh();
+          }
         });
+        return;
+      } else {
+        setState(() {
+          isLoadingPage = false;
+          hasInternet = false;
+        });
+        showAlertDialog(context, "Error",
+            "Please check your internet connection and try again.", () {
+          Navigator.of(context).pop();
+        });
+        return;
       }
     });
   }
