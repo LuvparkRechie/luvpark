@@ -99,6 +99,7 @@ dependencies:
   flutter_dash: ^1.0.0
   flutter_image_compress: ^2.3.0 
   location: ^6.0.2
+  geolocator: ^12.0.0
    
   
   
