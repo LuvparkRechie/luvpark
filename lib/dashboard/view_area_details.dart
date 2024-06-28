@@ -123,54 +123,51 @@ class _ViewDetailsState extends State<ViewDetails> {
   }
 
   Future<void> fetchData() async {
-    timer = Timer.periodic(Duration(seconds: 5), (Timer timer) {
-      LocationService.grantPermission(context, (isGranted) {
-        if (isGranted) {
-          Functions.getLocation(context, (location) {
-            if (mounted) {
-              setState(() {
-                currentLocation = LatLng(location.latitude, location.longitude);
-              });
-              DashboardComponent.getAddress(
-                      location.latitude, location.longitude)
-                  .then((address) {
-                setState(() {
-                  currAdd = address!;
-                });
-              });
-              getCustomMarker(["my_marker", "dest_marker"]);
-            }
-            DashboardComponent.fetchETA(currentLocation!, destLocation!,
-                (estimatedData) async {
-              if (estimatedData == "No Internet") {
-                if (mounted) {
-                  setState(() {
-                    hasNet = false;
-                  });
-                }
-              } else {
-                if (mounted) {
-                  setState(() {
-                    hasNet = true;
-                  });
-                }
-              }
-
-              try {
-                if (mounted) {
-                  setState(() {
-                    etaData = estimatedData;
-                  });
-                }
-              } catch (e) {}
+    LocationService.grantPermission(context, (isGranted) {
+      if (isGranted) {
+        Functions.getLocation(context, (location) {
+          if (mounted) {
+            setState(() {
+              currentLocation = LatLng(location.latitude, location.longitude);
             });
+            DashboardComponent.getAddress(location.latitude, location.longitude)
+                .then((address) {
+              setState(() {
+                currAdd = address!;
+              });
+            });
+            getCustomMarker(["my_marker", "dest_marker"]);
+          }
+          DashboardComponent.fetchETA(currentLocation!, destLocation!,
+              (estimatedData) async {
+            if (estimatedData == "No Internet") {
+              if (mounted) {
+                setState(() {
+                  hasNet = false;
+                });
+              }
+            } else {
+              if (mounted) {
+                setState(() {
+                  hasNet = true;
+                });
+              }
+            }
+
+            try {
+              if (mounted) {
+                setState(() {
+                  etaData = estimatedData;
+                });
+              }
+            } catch (e) {}
           });
-        } else {
-          showAlertDialog(context, "LuvPark", "No permissions granted.", () {
-            Navigator.of(context).pop();
-          });
-        }
-      });
+        });
+      } else {
+        showAlertDialog(context, "LuvPark", "No permissions granted.", () {
+          Navigator.of(context).pop();
+        });
+      }
     });
   }
 
@@ -254,7 +251,7 @@ class _ViewDetailsState extends State<ViewDetails> {
               zoomGesturesEnabled: true,
               mapToolbarEnabled: false,
               zoomControlsEnabled: false,
-              myLocationEnabled: false,
+              myLocationEnabled: true,
               myLocationButtonEnabled: false,
               compassEnabled: false,
               buildingsEnabled: false,
@@ -719,6 +716,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                             });
 
                                             Navigator.pop(context);
+
                                             Variables.pageTrans(
                                                 ReserveForm2(
                                                   queueChkIn: [
