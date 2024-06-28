@@ -8,6 +8,7 @@ import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/bottom_tab/bottom_tab.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -151,14 +152,75 @@ class _ReserveReceiptState extends State<ReserveReceipt>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+            padding: const EdgeInsets.only(
+              top: 10.0,
+              left: 10.0,
+              right: 10,
+            ),
+            child: Container(
+              height: 76,
+              decoration: BoxDecoration(
+                color: AppColor.primaryColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+                borderRadius: BorderRadius.circular(15),
+              ),
+              child: Stack(
+                alignment: Alignment.centerRight,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Icon(
+                      Icons.check_circle_outline_rounded,
+                      color: Colors.white,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomDisplayText(
+                              label: 'Your booking is now confirmed!',
+                              fontWeight: FontWeight.bold,
+                              fontSize: 15,
+                              color: Colors.white,
+                            ),
+                            CustomDisplayText(
+                              label: 'Scan QR code below to check-in',
+                              fontWeight: FontWeight.w400,
+                              fontSize: 12,
+                              color: Colors.white,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
           Expanded(
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              padding: EdgeInsets.symmetric(
+                horizontal: 20,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Container(
-                    height: 20,
+                    height: 50,
                   ),
                   widget.tab == 1
                       ? Container()
@@ -167,6 +229,15 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                             width: 150,
                             height: 150,
                             decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shadows: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.2),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
                               shape: RoundedRectangleBorder(
                                 side: const BorderSide(
                                     width: 2, color: Color(0x162563EB)),
@@ -183,6 +254,7 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                             ),
                           ),
                         ),
+                  Container(height: 50),
                   widget.tab == 1
                       ? Container()
                       : Container(
@@ -190,35 +262,8 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                         ),
                   widget.tab == 1
                       ? Container()
-                      : Center(
-                          child: CustomDisplayText(
-                            label: "Scan QR code",
-                            color: const Color(0xFF353536),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            height: 0,
-                            letterSpacing: -0.36,
-                          ),
-                        ),
-                  widget.tab == 1
-                      ? Container()
                       : Container(
-                          height: 5,
-                        ),
-                  widget.tab == 1
-                      ? Container()
-                      : CustomDisplayText(
-                          label: "Scan this code to check-in",
-                          color: const Color(0xFF353536),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          height: 0,
-                          letterSpacing: -0.28,
-                        ),
-                  widget.tab == 1
-                      ? Container()
-                      : Container(
-                          height: 38,
+                          height: 10,
                         ),
                   ReceiptBody(
                     amount: widget.amount,
@@ -231,82 +276,104 @@ class _ReserveReceiptState extends State<ReserveReceipt>
                     refno: widget.refno,
                   ),
                   Container(
-                    height: 10,
+                    height: 20,
                   ),
                   IntrinsicHeight(
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              _shareQrCode();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.ios_share_outlined,
-                                    color: Colors.black,
-                                    size: 25,
-                                  ),
-                                  Text("Share",
-                                      style: Platform.isAndroid
-                                          ? GoogleFonts.dmSans(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 1,
-                                              fontSize: 14)
-                                          : TextStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w600,
-                                              letterSpacing: 1,
-                                              fontSize: 14,
-                                              fontFamily: "SFProTextReg",
-                                            )),
-                                ],
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColor.primaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                _shareQrCode();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // const Icon(
+                                    //   Icons.ios_share_outlined,
+                                    //   color: Colors.white,
+                                    //   size: 24,
+                                    // ),
+                                    Icon(
+                                      Iconsax.share,
+                                      size: 20,
+                                      color: Colors.white,
+                                    ),
+                                    Container(width: 5),
+                                    Text("Share",
+                                        style: Platform.isAndroid
+                                            ? GoogleFonts.dmSans(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 1,
+                                                fontSize: 14)
+                                            : TextStyle(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 1,
+                                                fontSize: 14,
+                                                fontFamily: "SFProTextReg",
+                                              )),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
                         ),
-                        Container(
-                          width: 1,
-                          color: const Color.fromRGBO(30, 33, 41, 0.08),
-                        ),
+                        Container(width: 20),
                         Expanded(
-                          child: InkWell(
-                            onTap: () {
-                              saveToGallery();
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  const Icon(
-                                    Icons.download_outlined,
-                                    color: Colors.black,
-                                    size: 25,
-                                  ),
-                                  Text(
-                                    "Save",
-                                    style: Platform.isAndroid
-                                        ? GoogleFonts.dmSans(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1,
-                                            fontSize: 14)
-                                        : TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1,
-                                            fontSize: 14,
-                                            fontFamily: "SFProTextReg",
-                                          ),
-                                  ),
-                                ],
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: AppColor.primaryColor,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: InkWell(
+                              onTap: () {
+                                saveToGallery();
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // const Icon(
+                                    //   Icons.download_outlined,
+                                    //   color: Colors.white,
+                                    //   size: 24,
+                                    // ),
+                                    Icon(
+                                      Iconsax.save_2,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                    Container(width: 5),
+                                    Text(
+                                      "Save",
+                                      style: Platform.isAndroid
+                                          ? GoogleFonts.dmSans(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1,
+                                              fontSize: 14)
+                                          : TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.w600,
+                                              letterSpacing: 1,
+                                              fontSize: 14,
+                                              fontFamily: "SFProTextReg",
+                                            ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -581,6 +648,14 @@ class ReceiptBody extends StatelessWidget {
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+        shadows: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.2),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
       child: Padding(
         padding: const EdgeInsets.all(18),
