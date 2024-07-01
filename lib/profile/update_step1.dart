@@ -312,9 +312,8 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                           fontWeight: FontWeight.w400,
                           fontSize: 14,
                         ),
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
+                        contentPadding:
+                            const EdgeInsets.only(left: 17, right: 17),
                         constraints: BoxConstraints.tightFor(height: 50),
                         focusedBorder: OutlineInputBorder(
                           borderSide:

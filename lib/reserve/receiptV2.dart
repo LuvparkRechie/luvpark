@@ -200,7 +200,7 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                               child: AutoSizeText(
                                 "Parking\nreceipt\ndetails",
                                 style: GoogleFonts.openSans(
-                                    fontWeight: FontWeight.w400,
+                                    fontWeight: FontWeight.w600,
                                     color: Color(0xFF1e1c2e),
                                     fontSize: 25,
                                     letterSpacing: .48),
@@ -344,8 +344,9 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                       CustomDisplayText(
                         label: "Booking Date",
                         alignment: TextAlign.left,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         fontSize: 18,
+                        letterSpacing: .4,
                         color: Color(0xFF1e1c2e),
                       ),
                       Container(height: 15),
@@ -364,8 +365,8 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                     ),
                                     Dash(
                                         direction: Axis.vertical,
-                                        length: 40,
-                                        dashLength: 4,
+                                        length: 30,
+                                        dashLength: 5,
                                         dashThickness: 2.0,
                                         dashColor: AppColor.primaryColor),
                                     CircleAvatar(
@@ -512,20 +513,25 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
               color: Colors.white,
               child: Padding(
                 padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                child: Column(
                   children: [
-                    CustomDisplayText(
-                      label: "Total",
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomDisplayText(
+                          label: "Total",
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                        CustomDisplayText(
+                          label: toCurrencyString(widget.amount),
+                          fontWeight: FontWeight.w600,
+                          alignment: TextAlign.left,
+                          fontSize: 16,
+                        ),
+                      ],
                     ),
-                    CustomDisplayText(
-                      label: widget.amount,
-                      fontWeight: FontWeight.w600,
-                      alignment: TextAlign.left,
-                      fontSize: 16,
-                    ),
+                    if (Platform.isIOS) Container(height: 20)
                   ],
                 ),
               ),

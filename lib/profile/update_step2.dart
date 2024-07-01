@@ -366,7 +366,7 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
                         fontSize: 14,
                         fontFamily: "SFProTextReg",
                       ),
-                contentPadding: const EdgeInsets.all(10),
+                contentPadding: const EdgeInsets.only(left: 17, right: 17),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 1,
@@ -468,7 +468,7 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
                         fontSize: 14,
                         fontFamily: "SFProTextReg",
                       ),
-                contentPadding: const EdgeInsets.all(10),
+                contentPadding: const EdgeInsets.only(left: 17, right: 17),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 1,
@@ -566,7 +566,7 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
                         fontSize: 14,
                         fontFamily: "SFProTextReg",
                       ),
-                contentPadding: const EdgeInsets.all(10),
+                contentPadding: const EdgeInsets.only(left: 17, right: 17),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 1,
@@ -654,7 +654,7 @@ class _RegistrationPage1State extends State<UpdateProfStep2> {
                         fontSize: 14,
                         fontFamily: "SFProTextReg",
                       ),
-                contentPadding: const EdgeInsets.all(10),
+                contentPadding: const EdgeInsets.only(left: 17, right: 17),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     width: 1,

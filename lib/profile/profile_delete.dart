@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -103,7 +104,7 @@ class _ProfileDeleteState extends State<ProfileDelete> {
                 Navigator.of(context).pop();
                 showAlertDialog(
                   context,
-                  "Error",
+                  "LuvPark",
                   returnData["msg"],
                   () {
                     Navigator.of(context).pop();
@@ -164,21 +165,16 @@ class _ProfileDeleteState extends State<ProfileDelete> {
                       Container(
                         width: 10,
                       ),
-                      CustomDisplayText(
-                        label: 'Delete My Account',
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                      ),
                       Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(
-                              Icons.chevron_right,
-                              color: Colors.red,
-                            ),
-                          ],
+                        child: CustomDisplayText(
+                          label: 'Delete My Account',
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
                         ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        color: Colors.red,
                       ),
                     ],
                   ),
@@ -205,33 +201,42 @@ void showModalConfirmation(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomDisplayText(
-              label: title,
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            )
-          ],
+        title: Center(
+            child: Text(
+          "$title",
+          style: TextStyle(
+            fontSize: 17,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
+        )),
+        content: Text(
+          "$msg",
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+          ),
+          textAlign: TextAlign.justify,
         ),
-        content: CustomDisplayText(
-          label: msg,
-          fontSize: 14,
-          fontWeight: FontWeight.normal,
-          alignment: TextAlign.justify,
-        ),
+        // CustomDisplayText(
+        //   label: msg,
+        //   fontSize: 14,
+        //   fontWeight: FontWeight.normal,
+        //   alignment: TextAlign.justify,
+        // ),
         actions: <Widget>[
           Center(
             child: ElevatedButton(
               onPressed: () {
                 pressCancel();
               },
-              child: CustomDisplayText(
-                label: cancelButtonLabel,
-                fontSize: 14,
-                alignment: TextAlign.center,
-                fontWeight: FontWeight.w600,
+              child: Text(
+                cancelButtonLabel,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
               ),
               style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
@@ -246,12 +251,14 @@ void showModalConfirmation(
               onPressed: () {
                 pressContinue();
               },
-              child: CustomDisplayText(
-                color: Colors.red,
-                label: continueButtonLabel,
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-                alignment: TextAlign.center,
+              child: Text(
+                continueButtonLabel,
+                style: TextStyle(
+                  color: Colors.red,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
+                textAlign: TextAlign.center,
               ),
             ),
           ),

@@ -286,6 +286,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
                             refno: widget.resData[0]["reservation_ref_no"]
                                 .toString(),
                           ),
+                          Container(height: 20),
                           Row(
                             children: [
                               QrImageView(
