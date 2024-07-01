@@ -235,15 +235,16 @@ class _RegistrationFormState extends State<UpdateProfile> {
     });
   }
 
-  void backEvt(ctx) {
+  void backEvt(BuildContext ctx) {
+    if (!mounted) return; // Ensure the widget is still in the tree
     if (_currentPage == 0) {
       Navigator.pop(ctx);
-      return;
     } else {
       FocusScope.of(ctx).requestFocus(FocusNode());
       _pageController.previousPage(
-          duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-      return;
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     }
   }
 
@@ -255,9 +256,11 @@ class _RegistrationFormState extends State<UpdateProfile> {
       hasPadding: false,
       canPop: false,
       onPopInvoked: () {
+        if (!mounted) return; // Ensure the widget is still in the tree
         backEvt(context);
       },
       appBarIconClick: () {
+        if (!mounted) return; // Ensure the widget is still in the tree
         backEvt(context);
       },
       child: Column(

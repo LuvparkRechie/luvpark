@@ -130,6 +130,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
   @override
   Widget build(BuildContext context) {
     return CustomParent1Widget(
+      canPop: true,
       appBarheaderText: "Parking Details",
       appBarIconClick: () {
         Navigator.of(context).pop();
