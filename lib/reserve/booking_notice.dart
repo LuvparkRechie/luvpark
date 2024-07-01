@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:luvpark/classess/api_keys.dart';
-import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
@@ -124,7 +123,7 @@ class _BookingNoticeState extends State<BookingNotice> {
                                 ),
                                 CustomDisplayText(
                                   label: noticeData[0]["msg_title"].toString(),
-                                  color: AppColor.textMainColor,
+                                  color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
                                   maxLines: 1,

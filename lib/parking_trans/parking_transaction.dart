@@ -15,7 +15,7 @@ import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/reserve/parking_details.dart';
-import 'package:luvpark/reserve/receipt.dart';
+import 'package:luvpark/reserve/receiptV2.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sizer/sizer.dart';
@@ -605,11 +605,21 @@ class _ParkingActivityState extends State<ParkingActivity>
                                                                               [
                                                                               "park_area_name"]
                                                                           .toString(),
-                                                                      startDate: dateInRelated.toString().split(" ")[0].toString() == dateOutRelated.toString().split(" ")[0].toString()
-                                                                          ? Variables.formatDate(dateInRelated
-                                                                              .toString()
-                                                                              .split(" ")[0])
-                                                                          : "${Variables.formatDate(dateInRelated.toString().split(" ")[0])} - ${Variables.formatDate(dateOutRelated.toString().split(" ")[0])}",
+                                                                      // startDate: dateInRelated.toString().split(" ")[0].toString() == dateOutRelated.toString().split(" ")[0].toString()
+                                                                      //     ? Variables.formatDate(dateInRelated
+                                                                      //         .toString()
+                                                                      //         .split(" ")[0])
+                                                                      //     : "${Variables.formatDate(dateInRelated.toString().split(" ")[0])} - ${Variables.formatDate(dateOutRelated.toString().split(" ")[0])}",
+
+                                                                      startDate: Variables.formatDate(dateInRelated
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[0]),
+                                                                      endDate: Variables.formatDate(dateOutRelated
+                                                                          .toString()
+                                                                          .split(
+                                                                              " ")[0]),
+
                                                                       startTime: dateInRelated
                                                                           .toString()
                                                                           .split(

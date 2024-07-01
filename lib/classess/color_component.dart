@@ -9,8 +9,9 @@ class AppColor {
   static Color iconColor = const Color(0xFF108FFD);
 
   //Text Color
-  static Color textMainColor = const Color(0xFF262626);
-  static Color textSubColor = const Color(0xBC262626);
+  static Color textMainColor = Colors.black;
+  static Color textSubColor = const Color.fromARGB(255, 82, 82, 82);
+
   static Color textHeaderLabelColor = const Color(0xFF2A2A2A);
   static Color textSecondaryColor = const Color.fromRGBO(0, 0, 0, 0.69);
 

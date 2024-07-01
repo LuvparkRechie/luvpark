@@ -487,7 +487,7 @@ class _CustomSliderState extends State<CustomSlider> {
         ),
         CustomDisplayText(
           label: widget.title,
-          color: AppColor.textMainColor,
+          color: Colors.black,
           fontSize: 20,
           fontWeight: FontWeight.w700,
           height: 0,

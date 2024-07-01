@@ -14,7 +14,6 @@ class SubmitData {
     };
 
     CustomModal(context: context).loader();
-
     HttpRequest(api: ApiKeys.gApiLuvParkPostReg, parameters: param)
         .post()
         .then((returnPost) async {

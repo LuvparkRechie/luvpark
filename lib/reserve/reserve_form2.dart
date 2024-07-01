@@ -11,7 +11,6 @@ import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/http_request.dart';
-import 'package:luvpark/classess/location_controller.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
@@ -22,7 +21,7 @@ import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/reserve/booking_notice.dart';
-import 'package:luvpark/reserve/receipt.dart';
+import 'package:luvpark/reserve/receiptV2.dart';
 import 'package:luvpark/reserve/time_list.dart';
 import 'package:luvpark/reserve/vehicle_list_modal.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -1435,64 +1434,67 @@ class _ReserveForm2State extends State<ReserveForm2> {
                 });
               } else {
                 if (returnPay["success"] == 'Y') {
-                  if (widget.isCheckIn && isCheckIn) {
-                    LocationService.grantPermission(context, (isGranted) {
-                      if (isGranted) {
-                      } else {
-                        showAlertDialog(
-                            context, "LuvPark", "No permissions granted.", () {
-                          Navigator.of(context).pop();
-                        });
-                      }
-                    });
-                    return;
-                  } else {
-                    Navigator.of(context).pop();
-                    Navigator.pop(context);
+                  // if (widget.isCheckIn && isCheckIn) {
+                  //   LocationService.grantPermission(context, (isGranted) {
+                  //     if (isGranted) {
+                  //     } else {
+                  //       showAlertDialog(
+                  //           context, "LuvPark", "No permissions granted.", () {
+                  //         Navigator.of(context).pop();
+                  //       });
+                  //     }
+                  //   });
+                  //   return;
+                  // } else {
 
-                    Variables.pageTrans(
-                        ReserveReceipt(
-                            spaceName: returnPost['park_space_name'],
-                            parkArea: widget.areaData[0]["park_area_name"],
-                            startDate: params["dt_in"]
-                                        .toString()
-                                        .split(" ")[0] ==
-                                    params["dt_out"].toString().split(" ")[0]
-                                ? Variables.formatDate(
-                                    params["dt_in"].toString().split(" ")[0])
-                                : "${Variables.formatDate(params["dt_in"].toString().split(" ")[0])} - ${Variables.formatDate(params["dt_out"].toString().split(" ")[0])}",
-                            startTime: params["dt_in"]
-                                .toString()
-                                .split(" ")[1]
-                                .toString(),
-                            endTime: params["dt_out"]
-                                .toString()
-                                .split(" ")[1]
-                                .toString(),
-                            plateNo: params["vehicle_plate_no"].toString(),
-                            hours: params["no_hours"].toString(),
-                            amount: returnPay['applied_amt'].toString(),
-                            refno: returnPost["ps_ref_no"].toString(),
-                            lat: double.parse(
-                                returnPost['ps_latitude'].toString()),
-                            long: double.parse(
-                                returnPost['ps_longitude'].toString()),
-                            canReserved: false,
-                            isReserved: false,
-                            isVehicleSelected: isVsel,
-                            tab: 2,
-                            isShowRate: true,
-                            reservationId:
-                                int.parse(returnPay["reservation_id"]),
-                            address: "",
-                            isAutoExtend: "",
-                            paramsCalc: params),
-                        context
+                  // }
 
-                        ///
-                        );
-                    return;
-                  }
+                  Navigator.of(context).pop();
+                  Navigator.pop(context);
+
+                  Variables.pageTrans(
+                      ReserveReceipt(
+                          spaceName: returnPost['park_space_name'],
+                          parkArea: widget.areaData[0]["park_area_name"],
+                          startDate: Variables.formatDate(
+                              params["dt_in"].toString().split(" ")[0]),
+                          //      params["dt_in"].toString().split(" ")[0] ==
+                          //     params["dt_out"].toString().split(" ")[0]
+                          // ? Variables.formatDate(
+                          //     params["dt_in"].toString().split(" ")[0])
+                          // : "${Variables.formatDate(params["dt_in"].toString().split(" ")[0])} - ${Variables.formatDate(params["dt_out"].toString().split(" ")[0])}",
+                          endDate: Variables.formatDate(
+                              params["dt_out"].toString().split(" ")[0]),
+                          startTime: params["dt_in"]
+                              .toString()
+                              .split(" ")[1]
+                              .toString(),
+                          endTime: params["dt_out"]
+                              .toString()
+                              .split(" ")[1]
+                              .toString(),
+                          plateNo: params["vehicle_plate_no"].toString(),
+                          hours: params["no_hours"].toString(),
+                          amount: returnPay['applied_amt'].toString(),
+                          refno: returnPost["ps_ref_no"].toString(),
+                          lat: double.parse(
+                              returnPost['ps_latitude'].toString()),
+                          long: double.parse(
+                              returnPost['ps_longitude'].toString()),
+                          canReserved: false,
+                          isReserved: false,
+                          isVehicleSelected: isVsel,
+                          tab: 2,
+                          isShowRate: true,
+                          reservationId: int.parse(returnPay["reservation_id"]),
+                          address: "",
+                          isAutoExtend: "",
+                          paramsCalc: params),
+                      context
+
+                      ///
+                      );
+                  return;
                 } else {
                   Navigator.pop(context);
                   showAlertDialog(context, "Error", returnPay['msg'], () {

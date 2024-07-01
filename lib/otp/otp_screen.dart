@@ -250,7 +250,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: " +${widget.mobileNo}",
+                            text: " +63${widget.mobileNo}",
                             style: GoogleFonts.inter(
                               fontWeight: FontWeight.w600,
                               color: AppColor.primaryColor,
