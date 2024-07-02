@@ -235,33 +235,28 @@ class _RegistrationFormState extends State<UpdateProfile> {
     });
   }
 
-  void backEvt(BuildContext ctx) {
-    if (!mounted) return; // Ensure the widget is still in the tree
-    if (_currentPage == 0) {
-      Navigator.pop(ctx);
-    } else {
-      FocusScope.of(ctx).requestFocus(FocusNode());
-      _pageController.previousPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     bool isShowKeyboard = MediaQuery.of(context).viewInsets.bottom == 0;
     return CustomParent1Widget(
       appBarheaderText: "Update Profile",
       hasPadding: false,
-      canPop: false,
-      onPopInvoked: () {
-        if (!mounted) return; // Ensure the widget is still in the tree
-        backEvt(context);
-      },
+      canPop: _currentPage == 0,
       appBarIconClick: () {
-        if (!mounted) return; // Ensure the widget is still in the tree
-        backEvt(context);
+        if (_currentPage == 0) {
+          Navigator.of(context).pop();
+        } else {
+          _pageController.previousPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        }
+      },
+      onPopInvoked: () {
+        _pageController.previousPage(
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -429,11 +424,14 @@ class _RegistrationFormState extends State<UpdateProfile> {
                 label: _currentPage == 2 ? "Submit" : "Continue",
                 onTap: () async {
                   FocusScope.of(context).requestFocus(FocusNode());
+
                   if (_currentPage == 0) {
-                    if (page1Key.currentState!.validate()) {
-                      _pageController.nextPage(
-                          duration: const Duration(milliseconds: 300),
-                          curve: Curves.easeInOut);
+                    if (page1Key.currentState != null) {
+                      if (page1Key.currentState!.validate()) {
+                        _pageController.nextPage(
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut);
+                      }
                     }
                   }
 

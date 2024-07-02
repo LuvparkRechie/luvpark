@@ -121,8 +121,6 @@ class _PaMessageState extends State<PaMessage> {
                                                         .put()
                                                         .then(
                                                             (updateData) async {
-                                                      print(
-                                                          "updateData $updateData");
                                                       if (updateData ==
                                                           "No Internet") {
                                                         Navigator.of(context)
@@ -167,8 +165,7 @@ class _PaMessageState extends State<PaMessage> {
                                                                 .instance
                                                                 .deleteMessageById(
                                                                     messageId);
-                                                        print(
-                                                            "rowsAffected $rowsAffected");
+
                                                         if (rowsAffected > 0) {
                                                           showAlertDialog(
                                                               context,

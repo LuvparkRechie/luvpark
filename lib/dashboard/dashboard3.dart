@@ -26,7 +26,6 @@ import 'package:luvpark/dashboard/nearest_list.dart';
 import 'package:luvpark/dashboard/search_place.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
-import 'package:luvpark/location_controller/location_test.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
@@ -125,7 +124,6 @@ class _Dashboard3State extends State<Dashboard3> {
       'userData',
     );
     LocationService.grantPermission(context, (isGranted) {
-      print("isGranted $isGranted");
       if (isGranted) {
         Functions.getLocation(context, (location) {
           String subApi =
@@ -575,7 +573,7 @@ class _Dashboard3State extends State<Dashboard3> {
                           onTap: () {},
                         ),
                         context);
-                    // Variables.pageTrans(LocationGetting(), context);
+                    // Variables.pageTrans(ReserveReceipt(), context);
                   },
                   child: CircleAvatar(
                     radius: 20,

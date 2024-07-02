@@ -1143,7 +1143,6 @@ class _ReserveForm2State extends State<ReserveForm2> {
           } else {
             setState(() {
               distanceData = estimatedData;
-              print(estimatedData);
             });
             refresh();
           }

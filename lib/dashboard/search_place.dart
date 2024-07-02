@@ -227,8 +227,6 @@ class _SearchPlacesState extends State<SearchPlaces> {
                                                             .split(
                                                                 "=Rechie=")[0],
                                                         (searchedPlace) {
-                                                  print(
-                                                      "searchedPlacessss $searchedPlace");
                                                   if (searchedPlace.isEmpty) {
                                                     Navigator.pop(context);
                                                     return;

@@ -97,7 +97,7 @@ class _VerifyUserAcctState extends State<VerifyUserAcct> {
                         dynamic akongP = prefs.getString(
                           'userData',
                         );
-                        print('mobileNoParam ${widget.mobileNoParam == null}');
+
                         if (jsonDecode(akongP!)['mobile_no'].toString() ==
                             "63${mobileNumber.text.replaceAll(" ", "")}") {
                           showAlertDialog(context, "Attention",

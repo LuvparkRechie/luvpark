@@ -54,7 +54,7 @@ class _RateUsState extends State<RateUs> {
       'rating': myRate.round(),
       'comments': commentController.text,
     };
-    print('hello: $param');
+
     HttpRequest(api: ApiKeys.gApiLuvParkPostRating, parameters: param)
         .post()
         .then((returnData) async {

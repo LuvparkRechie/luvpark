@@ -269,10 +269,17 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                       Container(
                         width: Variables.screenSize.width,
                         decoration: BoxDecoration(
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: Colors.grey.shade300,
-                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 0,
+                              blurRadius: 1,
+                              offset:
+                                  Offset(0, 0), // changes position of shadow
+                            ),
+                          ],
                         ),
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
@@ -455,10 +462,11 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                               ),
                               Container(height: 5),
                               CustomDisplayText(
-                                label: "Reference No",
+                                label: "Reference Number",
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
                                 color: Color(0xFF7d7e75),
+                                maxLines: 1,
                               ),
                             ],
                           ))

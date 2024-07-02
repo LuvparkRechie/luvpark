@@ -164,8 +164,6 @@ class _MyVehiclesState extends State<MyVehicles> {
                                                           parameters: params)
                                                       .deleteData()
                                                       .then((retDelete) {
-                                                    print(
-                                                        "retDelete $retDelete");
                                                     if (retDelete ==
                                                         "Success") {
                                                       Navigator.of(context)

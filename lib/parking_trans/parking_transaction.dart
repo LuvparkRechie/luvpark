@@ -490,8 +490,6 @@ class _ParkingActivityState extends State<ParkingActivity>
                                                             .get()
                                                             .then(
                                                                 (returnData) async {
-                                                          print(
-                                                              "resData ${returnData["items"]}");
                                                           if (returnData ==
                                                               "No Internet") {
                                                             Navigator.of(

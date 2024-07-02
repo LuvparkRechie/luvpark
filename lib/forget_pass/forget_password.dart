@@ -103,7 +103,6 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                                 "${ApiKeys.gApiLuvParkGetAcctStat}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
                         .get()
                         .then((objData) {
-                      print("objData $objData");
                       if (objData == "No Internet") {
                         Navigator.pop(context);
                         setState(() {
@@ -133,7 +132,7 @@ class _ForgetPasswordState extends State<ForgetPassword> {
                           isLoadingBtn = false;
                         });
                         Navigator.pop(context);
-                        print(objData);
+
                         if (objData["success"] == "Y") {
                           Navigator.of(context).pop();
                           if (objData["is_verified"] == "Y") {

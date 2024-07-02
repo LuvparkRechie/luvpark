@@ -151,7 +151,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
         "mobile_no": "63${widget.mobileNo}",
         "reg_type": "REQUEST_OTP"
       };
-      print("resemd $otpData");
+
       HttpRequest(api: ApiKeys.gApiSubFolderPutOTP, parameters: otpData)
           .put()
           .then((otpData) {
@@ -483,7 +483,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
                         "reg_type": "VERIFY",
                         "otp": int.parse(inputPin)
                       };
-                      print("otpData $otpData");
+
                       HttpRequest(
                               api: ApiKeys.gApiSubFolderPutOTP,
                               parameters: otpData)

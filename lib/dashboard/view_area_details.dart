@@ -709,8 +709,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                             var dataItemParam = [];
                                             dataItemParam
                                                 .add(widget.areaData[0]);
-                                            print(
-                                                "uss ${success["can_checkIn"]}");
+
                                             setState(() {
                                               isLoadingBtn = false;
                                             });
