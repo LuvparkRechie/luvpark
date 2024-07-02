@@ -136,11 +136,9 @@ class Functions {
   static Future<void> computeDistanceResorChckIN(
       context, LatLng dest, Function cb) async {
     LocationService.grantPermission(context, (isGranted) {
-      print("granted $isGranted");
       if (isGranted) {
         Functions.getLocation(context, (location) {
           LatLng ll = location;
-          print("location granted  $location");
           Variables.hasInternetConnection((hasInternet) async {
             if (hasInternet) {
               DashboardComponent.fetchETA(
@@ -677,35 +675,28 @@ class Functions {
 
   static Future<void> getLocation(BuildContext context, Function cb) async {
     try {
-      print("try ataya");
       List ltlng = await Functions.getCurrentPosition();
-      print("ltlng $ltlng");
+
       if (ltlng.isNotEmpty) {
-        print("if not empty latlng $ltlng");
         Map<String, dynamic> firstItem = ltlng[0];
         if (firstItem.containsKey('lat') && firstItem.containsKey('long')) {
-          print("contain key latlng");
           double lat = double.parse(firstItem['lat'].toString());
           double long = double.parse(firstItem['long'].toString());
           cb(LatLng(lat, long));
         } else {
-          print("null latlng");
           cb(null);
         }
       } else {
-        print("null latlng 2");
         cb(null);
       }
     } catch (e) {
-      print("null latlng 3");
       cb(null);
     }
   }
 
   static Future<List> getCurrentPosition() async {
-    print("gettting position");
     final position = await _geolocatorPlatform.getCurrentPosition();
-    print("gettting position $position");
+
     return [
       {"lat": position.latitude, "long": position.longitude}
     ];
