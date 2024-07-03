@@ -198,7 +198,7 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                               height: 100,
 
                               child: AutoSizeText(
-                                "Parking\nreceipt\ndetails",
+                                "Parking\nReceipt\nDetails",
                                 style: GoogleFonts.openSans(
                                     fontWeight: FontWeight.w600,
                                     color: Color(0xFF1e1c2e),
