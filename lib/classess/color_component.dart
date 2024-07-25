@@ -4,7 +4,7 @@ class AppColor {
   static Color primaryColor = const Color(0xFF0078FF);
   static Color secondaryColor = const Color(0xFF3863c2);
   static Color mainColor = const Color(0xFF01b9c5);
-  static Color bodyColor = const Color(0xFFffffff);
+  static Color bodyColor = const Color(0xFFF8F8F8);
 
   static Color iconColor = const Color(0xFF108FFD);
 
@@ -22,4 +22,5 @@ class AppColor {
 
   //Icon color
   static Color activeTextColor = const Color(0xFF666666);
+  static Color paragraphColor = const Color(0xFF666666);
 }

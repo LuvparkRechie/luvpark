@@ -76,6 +76,7 @@ class _RegistrationPageState extends State<RegistrationPage> {
     bool isShowKeyboard = MediaQuery.of(context).viewInsets.bottom == 0;
     return CustomParent1Widget(
         appBarheaderText: "Create Account",
+        canPop: true,
         appBarIconClick: () {
           FocusScope.of(context).requestFocus(FocusNode());
           if (mounted) {

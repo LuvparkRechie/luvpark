@@ -679,6 +679,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                     }
                                     Functions.getUserBalance(
                                         (dataBalance) async {
+                                      print(dataBalance);
                                       if (dataBalance["user_bal"] <
                                           dataBalance["min_wal_bal"]) {
                                         setState(() {
@@ -709,13 +710,15 @@ class _ViewDetailsState extends State<ViewDetails> {
                                             var dataItemParam = [];
                                             dataItemParam
                                                 .add(widget.areaData[0]);
-
+                                            print(
+                                                "uss ${success["can_checkIn"]}");
                                             setState(() {
                                               isLoadingBtn = false;
                                             });
 
                                             Navigator.pop(context);
-
+                                            print(
+                                                "databalance: ${dataBalance.toString()}");
                                             Variables.pageTrans(
                                                 ReserveForm2(
                                                   queueChkIn: [
@@ -735,8 +738,7 @@ class _ViewDetailsState extends State<ViewDetails> {
                                                       success["can_checkIn"],
                                                   pId: widget.areaData[0]
                                                       ["park_area_id"],
-                                                  userBal:
-                                                      dataBalance.toString(),
+                                                  userBal: [dataBalance],
                                                 ),
                                                 context);
                                           } else {

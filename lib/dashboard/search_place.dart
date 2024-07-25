@@ -1,6 +1,3 @@
-import 'dart:io';
-
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -58,62 +55,72 @@ class _SearchPlacesState extends State<SearchPlaces> {
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
-        appbarColor: AppColor.primaryColor,
+        appbarColor: AppColor.secondaryColor,
+        bodyColor: AppColor.secondaryColor,
         child: Container(
-          color: AppColor.bodyColor,
+          padding: const EdgeInsets.only(
+            top: 14,
+          ),
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(
+            color: Color(0xFFF8F8F8),
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(10),
+            ),
+          ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(height: 20),
-                Row(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: Icon(Icons.arrow_back_outlined),
-                    ),
-                    Container(width: 10),
-                    CustomDisplayText(
-                      label: "Where do you want to park",
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.41,
-                    )
-                  ],
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.chevron_left),
+                      CustomTitle(
+                        text: "Back",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.41,
+                      )
+                    ],
+                  ),
                 ),
-                Container(height: 20),
+                Container(height: 35),
+                CustomTitle(
+                  text: "Where do you want to park?",
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                  letterSpacing: -0.41,
+                  //  height: 0.06,
+                ),
+                Container(height: 15),
                 Container(
                   width: Variables.screenSize.width,
                   height: 50,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      color: Colors.grey.shade100,
+                      color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.grey.withOpacity(0.3),
+                          color: Colors.grey.withOpacity(0.1),
                           spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: Offset(0, 2), // changes position of shadow
+                          blurRadius: 1,
+                          offset: Offset(0, 1), // changes position of shadow
                         ),
                       ]),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color.fromARGB(255, 248, 234, 233),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Icon(
-                              CupertinoIcons.search,
-                              color: Color.fromARGB(255, 216, 128, 122),
-                            ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Icon(
+                            CupertinoIcons.search,
+                            color: Colors.black87,
                           ),
                         ),
                         Container(width: 10),
@@ -121,208 +128,230 @@ class _SearchPlacesState extends State<SearchPlaces> {
                           child: TextField(
                             controller: searchController,
                             decoration: InputDecoration(
-                              border: InputBorder.none,
-                              hintText: 'Search address, places or city',
-                              hintStyle: Platform.isAndroid
-                                  ? GoogleFonts.dmSans(
-                                      color: Color(0x993C3C43),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      height: 0.08,
-                                      letterSpacing: -0.41,
-                                    )
-                                  : TextStyle(
-                                      color: Color(0x993C3C43),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      height: 0.08,
-                                      letterSpacing: -0.41,
-                                    ),
-                            ),
+                                border: InputBorder.none,
+                                hintText: 'Search address, places or city',
+                                hintStyle: GoogleFonts.manrope(
+                                  color: Color(0x993C3C43),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  height: 0.08,
+                                  letterSpacing: -0.41,
+                                )),
                             onChanged: (String text) {
                               onChangeTrigger(text);
                             },
+                            style: GoogleFonts.manrope(
+                              fontWeight: FontWeight.w600,
+                              fontStyle: FontStyle.normal,
+                              letterSpacing: 0.0,
+                              color: AppColor.paragraphColor,
+                              wordSpacing: 2,
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
                 ),
-                Container(height: 20),
-                CustomDisplayText(
-                  label: "Results",
-                  color: Colors.black,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w400,
-                  fontStyle: FontStyle.normal,
-                  letterSpacing: 0.5,
-                  wordSpacing: 1.0,
-                  height: 1.2,
-                  decoration: TextDecoration.none,
+                Container(height: 33),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    widget.callback({
+                      "data": [],
+                      "latlng": LatLng(0.0, 0.0),
+                      "searchedData": []
+                    });
+                  },
+                  child: Row(
+                    children: [
+                      Image(
+                        image: AssetImage("assets/dashboard_icon/precise.png"),
+                        width: 48,
+                        height: 48,
+                      ),
+                      Container(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTitle(
+                              text: "Use my current location",
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
+                            CustomParagraph(
+                              text: "Within 10 kilometers of you",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              letterSpacing: -0.41,
+                            )
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_outlined,
+                        color: AppColor.primaryColor,
+                      ),
+                      Container(width: 10),
+                    ],
+                  ),
                 ),
-                Container(height: 5),
+                Container(height: 35),
+                CustomParagraph(
+                  text: "Parking areas near you",
+                  fontWeight: FontWeight.bold,
+                ),
+                Container(height: 10),
                 Expanded(
-                  child: FadeInUp(
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        height: MediaQuery.of(context).size.height,
-                        color: Colors.white,
-                        child: suggestions.isEmpty
-                            ? Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomDisplayText(
-                                      label: "No data",
-                                      fontWeight: FontWeight.normal,
-                                      color: AppColor.textSubColor,
-                                      fontSize: 16),
-                                  Container(
-                                    height: 10,
-                                  ),
-                                ],
-                              )
-                            : suggestions[0] == "No Internet"
-                                ? Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Image(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                .20,
-                                        width:
-                                            MediaQuery.of(context).size.width /
-                                                2,
-                                        image: const AssetImage(
-                                            "assets/images/no_internet.png"),
-                                      ),
-                                      Container(
-                                        height: 20,
-                                      ),
-                                      CustomDisplayText(
-                                          label:
-                                              "Please check your internet connection.",
-                                          fontWeight: FontWeight.normal,
-                                          color: AppColor.textSubColor,
-                                          fontSize: 12),
-                                      Container(
-                                        height: 10,
-                                      ),
-                                    ],
-                                  )
-                                : ListView.builder(
-                                    itemCount: suggestions.length,
-                                    itemBuilder: (context, index) {
-                                      return Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          InkWell(
-                                              onTap: () async {
-                                                CustomModal(context: context)
-                                                    .loader();
-                                                await DashboardComponent
-                                                    .searchPlaces(
-                                                        context,
-                                                        suggestions[index]
-                                                            .split(
-                                                                "=Rechie=")[0],
-                                                        (searchedPlace) {
-                                                  if (searchedPlace.isEmpty) {
-                                                    Navigator.pop(context);
-                                                    return;
-                                                  } else {
-                                                    List data = [
-                                                      {
-                                                        "lat": searchedPlace[0]
-                                                            .toString(),
-                                                        "long": searchedPlace[1]
-                                                            .toString(),
-                                                        "place": suggestions[
-                                                                index]
-                                                            .toString()
-                                                            .split(
-                                                                "=Rechie=")[0],
-                                                        "radius": widget.radius
-                                                            .toString(),
-                                                      }
-                                                    ];
+                  child: suggestions.isEmpty
+                      ? Center(
+                          child: CustomParagraph(text: "No data", fontSize: 16))
+                      : suggestions[0] == "No Internet"
+                          ? Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image(
+                                  height:
+                                      MediaQuery.of(context).size.height * .20,
+                                  width: MediaQuery.of(context).size.width / 2,
+                                  image: const AssetImage(
+                                      "assets/images/no_internet.png"),
+                                ),
+                                Container(
+                                  height: 20,
+                                ),
+                                CustomDisplayText(
+                                    label:
+                                        "Please check your internet connection.",
+                                    fontWeight: FontWeight.normal,
+                                    color: AppColor.textSubColor,
+                                    fontSize: 12),
+                                Container(
+                                  height: 10,
+                                ),
+                              ],
+                            )
+                          : ListView.builder(
+                              padding: EdgeInsets.zero,
+                              itemCount: suggestions.length,
+                              itemBuilder: (context, index) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    InkWell(
+                                        onTap: () async {
+                                          CustomModal(context: context)
+                                              .loader();
+                                          await DashboardComponent.searchPlaces(
+                                              context,
+                                              suggestions[index]
+                                                  .split("=Rechie=")[0],
+                                              (searchedPlace) {
+                                            print(
+                                                "searchedPlace $searchedPlace");
+                                            if (searchedPlace.isEmpty) {
+                                              Navigator.pop(context);
+                                              return;
+                                            } else {
+                                              List data = [
+                                                {
+                                                  "lat": searchedPlace[0]
+                                                      .toString(),
+                                                  "long": searchedPlace[1]
+                                                      .toString(),
+                                                  "place": suggestions[index]
+                                                      .toString()
+                                                      .split("=Rechie=")[0],
+                                                  "radius":
+                                                      widget.radius.toString(),
+                                                }
+                                              ];
 
-                                                    DashboardComponent.getNearest(
-                                                        ctxt,
-                                                        widget.pTypeCode,
-                                                        widget.radius
-                                                            .toString(),
-                                                        data[0]["lat"]
-                                                            .toString(),
-                                                        data[0]["long"]
-                                                            .toString(),
-                                                        widget.vtypeId,
-                                                        widget.amenities,
-                                                        widget.isAllowOverNight,
-                                                        (nearestData) {
-                                                      Navigator.pop(context);
-                                                      widget.callback({
-                                                        "data": nearestData,
-                                                        "latlng": LatLng(
-                                                          double.parse(data[0]
-                                                                  ["lat"]
-                                                              .toString()),
-                                                          double.parse(
-                                                            data[0]["long"]
-                                                                .toString(),
-                                                          ),
-                                                        ),
-                                                        "searchedData": data
-                                                      });
-                                                    });
-                                                  }
+                                              DashboardComponent.getNearest(
+                                                  ctxt,
+                                                  widget.pTypeCode,
+                                                  widget.radius.toString(),
+                                                  data[0]["lat"].toString(),
+                                                  data[0]["long"].toString(),
+                                                  widget.vtypeId,
+                                                  widget.amenities,
+                                                  widget.isAllowOverNight,
+                                                  (nearestData) {
+                                                Navigator.pop(context);
+                                                widget.callback({
+                                                  "data": nearestData,
+                                                  "latlng": LatLng(
+                                                    double.parse(data[0]["lat"]
+                                                        .toString()),
+                                                    double.parse(
+                                                      data[0]["long"]
+                                                          .toString(),
+                                                    ),
+                                                  ),
+                                                  "searchedData": data
                                                 });
-                                              },
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(10.0),
-                                                child: Row(
+                                              });
+                                            }
+                                          });
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10.0),
+                                          child: Row(
+                                            children: [
+                                              Image(
+                                                image: AssetImage(
+                                                    "assets/dashboard_icon/parking.png"),
+                                                width: 34,
+                                                height: 34,
+                                              ),
+                                              Container(
+                                                width: 10,
+                                              ),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
-                                                    Container(
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: AppColor
-                                                            .primaryColor,
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(3.0),
-                                                        child: Icon(
-                                                          Icons.location_pin,
-                                                          size: 20,
-                                                          color: AppColor
-                                                              .bodyColor,
-                                                        ),
-                                                      ),
+                                                    CustomTitle(
+                                                      text: suggestions[index]
+                                                              .split("=structured=")[
+                                                                  1]
+                                                              .contains(",")
+                                                          ? suggestions[index]
+                                                              .split("=structured=")[
+                                                                  1]
+                                                              .split(",")[0]
+                                                          : suggestions[index]
+                                                              .split(
+                                                                  "=structured=")[1],
+                                                      maxlines: 1,
+                                                      fontSize: 16,
                                                     ),
-                                                    Container(
-                                                      width: 10,
-                                                    ),
-                                                    Expanded(
-                                                        child:
-                                                            CustomDisplayText(
-                                                      label: suggestions[index]
+                                                    CustomParagraph(
+                                                      text: suggestions[index]
                                                           .split("=Rechie=")[0],
-                                                      fontWeight:
-                                                          FontWeight.normal,
-                                                      color: Colors.black,
-                                                      maxLines: 2,
-                                                    ))
+                                                      fontSize: 12,
+                                                      maxlines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      letterSpacing: -0.41,
+                                                    )
                                                   ],
                                                 ),
-                                              )),
-                                          const Divider()
-                                        ],
-                                      );
-                                    },
-                                  )),
-                  ),
+                                              ),
+                                              Icon(
+                                                Icons.chevron_right,
+                                                color: AppColor.primaryColor,
+                                              )
+                                            ],
+                                          ),
+                                        )),
+                                    const Divider()
+                                  ],
+                                );
+                              },
+                            ),
                 ),
               ],
             ),

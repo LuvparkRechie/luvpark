@@ -75,7 +75,7 @@ class _Dashboard3State extends State<Dashboard3> {
   bool isClicked = false;
   //added
   loc.Location locationSer = loc.Location();
-
+  double actualPanelHeight = 60;
   @override
   void initState() {
     super.initState();
@@ -90,6 +90,7 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   void showFilter() {
+    print("isAllowOverNight $isAllowOverNight");
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -99,6 +100,7 @@ class _Dashboard3State extends State<Dashboard3> {
       pageBuilder: (context, _, __) {
         return FilterMap(
             radius: ddRadius!,
+            parkOvernight: isAllowOverNight,
             callBack: (dataCallBack) {
               getFilteredData(dataCallBack);
             });
@@ -237,6 +239,7 @@ class _Dashboard3State extends State<Dashboard3> {
     final Uint8List availabeMarkIcons =
         await DashboardComponent().getSearchMarker(searchImage[0], 100);
     int ctr = 0;
+
     if (userBal >= double.parse(logData["min_wallet_bal"].toString())) {
       if (mounted) {
         setState(() {
@@ -246,7 +249,7 @@ class _Dashboard3State extends State<Dashboard3> {
               double.parse(lat.toString()), double.parse(lng.toString()));
           initialCameraPosition = CameraPosition(
             target: startLocation!,
-            zoom: subDataNearest.isEmpty ? 14 : 18,
+            zoom: subDataNearest.isEmpty ? 14 : 17,
             tilt: 0,
             bearing: 0,
           );
@@ -263,7 +266,7 @@ class _Dashboard3State extends State<Dashboard3> {
                 CameraPosition(
                     target: LatLng(double.parse(lat.toString()),
                         double.parse(lng.toString())),
-                    zoom: nearestData.isEmpty ? 14 : 18),
+                    zoom: nearestData.isEmpty ? 14 : 17),
               ),
             );
           }
@@ -492,131 +495,203 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   Widget mapDisplay(nearestData) {
-    return SlidingUpPanel(
-      maxHeight: Variables.screenSize.height * 0.50,
-      minHeight: Variables.screenSize.height * 0.05,
-      parallaxEnabled: true,
-      parallaxOffset: .3,
-      borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(24.0),
-        topRight: Radius.circular(24.0),
-      ),
-      controller: panelController,
-      body: Column(
-        children: [
-          Expanded(
-            child: _body(),
+    return Stack(
+      children: [
+        SlidingUpPanel(
+          maxHeight: 280,
+          minHeight: Variables.screenSize.height * 0.05,
+          parallaxEnabled: true,
+          parallaxOffset: .3,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(24.0),
+            topRight: Radius.circular(24.0),
           ),
-          Container(
+          controller: panelController,
+          onPanelSlide: (dd) {
+            setState(() {
+              actualPanelHeight = (dd * 280) + 50;
+            });
+          },
+          body: _body(),
+          header: Container(
             decoration: BoxDecoration(
-              color: Color(0xFFF8F8F8),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(24.0),
                 topRight: Radius.circular(24.0),
               ),
+              color: AppColor.bodyColor,
             ),
-            height: Variables.screenSize.height * 0.08,
-          )
-        ],
-      ),
-      panel: _panel(nearestData),
-      color: Color(0xFFF8F8F8),
+            width: Variables.screenSize.width,
+            child: _panel(nearestData),
+          ),
+          collapsed: GestureDetector(
+            onTap: () {
+              setState(() {
+                panelController.open();
+              });
+            },
+            child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(24.0),
+                    topRight: Radius.circular(24.0),
+                  ),
+                  color: Colors.white,
+                ),
+                child: Center(
+                  child: Icon(
+                    Icons.keyboard_arrow_up,
+                    color: AppColor.secondaryColor,
+                  ),
+                )),
+          ),
+          panel: Container(
+            width: Variables.screenSize.width,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(24.0),
+                topRight: Radius.circular(24.0),
+              ),
+              color: AppColor.bodyColor,
+            ),
+          ),
+          color: AppColor.bodyColor,
+        ),
+        SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 15, right: 15),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  width: 60,
+                  height: 56,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x0C000000),
+                        blurRadius: 15,
+                        offset: Offset(0, 5),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Image(
+                      image: AssetImage("assets/dashboard_icon/menu.png")),
+                ),
+                Container(
+                  width: 178,
+                  height: 68,
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x0C000000),
+                        blurRadius: 15,
+                        offset: Offset(0, 5),
+                        spreadRadius: 0,
+                      )
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Image(
+                        image: AssetImage("assets/images/luvparklogo.png"),
+                        width: 37,
+                        height: 31,
+                      ),
+                      Container(width: 10),
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomParagraph(
+                              text: "My balance",
+                              maxlines: 1,
+                              fontSize: 16,
+                              letterSpacing: -0.41,
+                            ),
+                            CustomTitle(
+                              text: "1450.00",
+                              maxlines: 1,
+                              fontSize: 20,
+                              letterSpacing: -0.41,
+                            )
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right_outlined,
+                        color: AppColor.secondaryColor,
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+        ),
+        Positioned(
+          bottom: actualPanelHeight,
+          right: 20,
+          child: CircleAvatar(
+            radius: 20,
+            backgroundColor: Colors.green,
+          ),
+        )
+      ],
     );
   }
 
   Widget _body() {
-    return Stack(
-      fit: StackFit.loose,
-      children: [
-        GoogleMap(
-          mapType: MapType.normal,
-          zoomGesturesEnabled: true,
-          initialCameraPosition: initialCameraPosition!,
-          mapToolbarEnabled: false,
-          zoomControlsEnabled: false,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          compassEnabled: false,
-          buildingsEnabled: false,
-          tiltGesturesEnabled: true,
-          markers: Set<Marker>.of(markers),
-          onMapCreated: (GoogleMapController controller) {
-            if (mounted) {
-              setState(() {
-                mapController = controller;
-                DefaultAssetBundle.of(context)
-                    .loadString('assets/custom_map_style/map_style.json')
-                    .then((String style) {
-                  controller.setMapStyle(style);
-                });
-              });
-            }
-          },
+    return GoogleMap(
+      mapType: MapType.normal,
+      zoomGesturesEnabled: true,
+      initialCameraPosition: initialCameraPosition!,
+      mapToolbarEnabled: false,
+      zoomControlsEnabled: false,
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      compassEnabled: false,
+      buildingsEnabled: false,
+      tiltGesturesEnabled: true,
+      markers: Set<Marker>.of(markers),
+      circles: Set.of([
+        Circle(
+          circleId: CircleId('circle_1'),
+          center: startLocation!,
+          radius: 500, // in meters
+          fillColor: Colors.blue.withOpacity(0.1),
+          strokeColor: Colors.blue.withOpacity(0.3),
+          strokeWidth: 1,
         ),
-        SafeArea(child: searchBar(true)),
-        Positioned(
-          bottom: Variables.screenSize.height * 0.11,
-          right: 20,
-          child: Row(
-            children: [
-              Tooltip(
-                preferBelow: false,
-                message: 'Parking Areas',
-                child: InkWell(
-                  onTap: () {
-                    Variables.pageTrans(
-                        ViewList(
-                          nearestData: subDataNearest,
-                          balance: userBal,
-                          minBalance: double.parse(
-                              logData["min_wallet_bal"].toString()),
-                          onTap: () {},
-                        ),
-                        context);
-                    // Variables.pageTrans(ReserveReceipt(), context);
-                  },
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Image.asset(
-                      "assets/images/vh_list.png",
-                      width: 20.013092041015625,
-                      height: 19.998329162597656,
-                    ),
-                  ),
-                ),
-              ),
-              Container(width: 10),
-              Tooltip(
-                preferBelow: false,
-                message: 'Current Location',
-                child: InkWell(
-                  onTap: () {
-                    if (isClicked) return;
-                    setState(() {
-                      isClicked = true;
-                      hasInternetBal = true;
-                      isLoadingMap = true;
-                      searchController.clear();
-                      onSearchAdd = false;
-                    });
-                    getUsersData("Current Location");
-                  },
-                  child: CircleAvatar(
-                    radius: 20,
-                    backgroundColor: Colors.white,
-                    child: Image.asset(
-                      "assets/images/my_marker.png",
-                      width: 20.013092041015625,
-                      height: 19.998329162597656,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        )
-      ],
+      ]),
+      onMapCreated: (GoogleMapController controller) {
+        if (mounted) {
+          setState(() {
+            mapController = controller;
+            DefaultAssetBundle.of(context)
+                .loadString('assets/custom_map_style/map_style.json')
+                .then((String style) {
+              controller.setMapStyle(style);
+            });
+          });
+        }
+      },
     );
   }
 
@@ -624,47 +699,148 @@ class _Dashboard3State extends State<Dashboard3> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 2),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            height: 80,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                      width: 71,
-                      height: 6,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(56),
-                          color: Color(0xffd9d9d9))),
-                ),
-                Container(height: 20),
-                CustomDisplayText(
-                  label:
-                      "${jsonDecode(myData!)['first_name'] == null ? "Welcome to luvpark" : "Hi, " + jsonDecode(myData!)['first_name']}",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 18,
-                  maxFontsize: 1,
-                  maxLines: 1,
-                ),
-                CustomDisplayText(
-                  label:
-                      "Parking ${data.length >= 5 ? "areas" : "area"} near you",
-                  fontWeight: FontWeight.w500,
-                  fontSize: 14,
-                  maxFontsize: 1,
-                  maxLines: 1,
-                  color: Colors.grey,
-                ),
-                Container(height: 10),
-              ],
-            ),
+          Center(
+            child: Container(
+                width: 71,
+                height: 6,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(56),
+                    color: Color(0xffd9d9d9))),
           ),
-          Expanded(
-              child: HorizontalListView(
-                  abnormal: data.take(5).toList(),
-                  startLocation: startLocation!)),
+          Container(height: 20),
+          CustomParagraph(
+            text:
+                "${jsonDecode(myData!)['first_name'] == null ? "Welcome to luvpark" : "${Variables.greeting()}, " + jsonDecode(myData!)['first_name']}",
+            // color: Color(0xFF666666),
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            letterSpacing: -0.41,
+          ),
+          CustomTitle(
+            text: "What do you want to do today?",
+            color: Color(0xFF131313),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            letterSpacing: -0.41,
+          ),
+          Container(height: 20),
+          inatay("Find Parking", "Reserve space in advance", "search_icon", () {
+            Variables.pageTrans(
+                SearchPlaces(
+                    latlng: LatLng(
+                      startLocation!.latitude,
+                      startLocation!.longitude,
+                    ),
+                    radius: ddRadius.toString(),
+                    pTypeCode: pTypeCode,
+                    vtypeId: vtypeId,
+                    amenities: amenities,
+                    isAllowOverNight: isAllowOverNight,
+                    callback: (searchedObj) {
+                      if (searchedObj["data"].isEmpty &&
+                          searchedObj["searchedData"].isEmpty) {
+                        setState(() {
+                          isLoadingMap = true;
+                        });
+                        Future.delayed(Duration(seconds: 1));
+                        getUsersData("Current Location");
+                        return;
+                      }
+                      if (mounted) {
+                        Navigator.of(context).pop();
+                        setState(() {
+                          onSearchAdd = true;
+                          isLoadingPage = true;
+                          searchController.text = searchedObj["searchedData"][0]
+                                  ["place"]
+                              .toString();
+                          startLocation = LatLng(
+                              double.parse(searchedObj["searchedData"][0]["lat"]
+                                  .toString()),
+                              double.parse(searchedObj["searchedData"][0]
+                                      ["long"]
+                                  .toString()));
+                          ddRadius = searchedObj["searchedData"][0]["radius"]
+                              .toString();
+
+                          if (searchedObj == "No Internet") {
+                            hasInternetBal = false;
+                          }
+                        });
+                      }
+
+                      displayMapData(
+                          searchedObj["data"],
+                          double.parse(
+                              searchedObj["searchedData"][0]["lat"].toString()),
+                          double.parse(searchedObj["searchedData"][0]["long"]
+                              .toString()),
+                          "Pin Location");
+                    }),
+                context);
+          }),
+          Container(height: 10),
+          inatay(
+              "Pay Now", "I've parked and want to pay", "car_dashboard", () {}),
         ],
+      ),
+    );
+  }
+
+  Widget inatay(String title, String paragraph, String img, Function onTap) {
+    return GestureDetector(
+      onTap: () {
+        onTap();
+      },
+      child: Container(
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          shadows: [
+            BoxShadow(
+              color: Color(0x0C000000),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 11, 5, 11),
+          child: Row(
+            children: [
+              Image(
+                image: AssetImage("assets/dashboard_icon/$img.png"),
+                width: 48,
+                height: 48,
+              ),
+              Container(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomTitle(
+                    text: title,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    letterSpacing: -0.41,
+                  ),
+                  CustomParagraph(
+                    text: paragraph,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: -0.41,
+                    maxlines: 1,
+                  )
+                ],
+              )
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -777,7 +953,7 @@ class _Dashboard3State extends State<Dashboard3> {
                                     double.parse(searchedObj["searchedData"][0]
                                             ["long"]
                                         .toString()),
-                                    "Searched Location");
+                                    "Pin Location");
                               });
                         });
                   },

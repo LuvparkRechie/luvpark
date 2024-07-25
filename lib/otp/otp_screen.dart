@@ -219,7 +219,7 @@ class _OTPScreenState extends State<OTPScreen> with TickerProviderStateMixin {
 
     return CustomParentWidget(
       appbarColor: AppColor.bodyColor,
-      onPop: false,
+      onPop: true,
       child: Padding(
         padding: const EdgeInsets.symmetric(
           horizontal: 20,

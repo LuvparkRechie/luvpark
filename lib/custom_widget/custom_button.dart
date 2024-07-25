@@ -1,7 +1,8 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
+import 'package:luvpark/classess/variables.dart';
+import 'package:luvpark/custom_widget/custom_text.dart';
 
 class CustomButton extends StatefulWidget {
   final String label;
@@ -26,33 +27,58 @@ class CustomButton extends StatefulWidget {
 class _CustomButtonState extends State<CustomButton> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
+    return MaterialButton(
+      shape: RoundedRectangleBorder(
+        side: BorderSide(
+          color: widget.bordercolor ?? Colors.transparent,
+        ),
+        borderRadius: BorderRadius.circular(7),
+      ),
+      color: widget.color ?? AppColor.primaryColor,
+      minWidth: Variables.screenSize.width,
+      onPressed: () {
         widget.onTap();
       },
-      child: Container(
-        decoration: BoxDecoration(
-          color: widget.color ?? AppColor.primaryColor,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: widget.bordercolor ?? Colors.transparent,
-          ),
-        ),
-        child: Center(
-          child: Padding(
+      child: Center(
+        child: Padding(
             padding: EdgeInsets.all(widget.btnHeight ?? 15.0),
-            child: AutoSizeText(
-              widget.label,
-              style: GoogleFonts.lato(
-                color: widget.textColor ?? Colors.white,
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
+            child: CustomDisplayText(
+              label: widget.label,
+              color: widget.textColor ?? Colors.white,
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              maxLines: 1,
+            )),
       ),
     );
+
+    // GestureDetector(
+    //   onTap: () {
+    //     widget.onTap();
+    //   },
+    //   child: Container(
+    //     decoration: BoxDecoration(
+    //       color: widget.color ?? AppColor.primaryColor,
+    //       borderRadius: BorderRadius.circular(20),
+    //       border: Border.all(
+    //         color: widget.bordercolor ?? Colors.transparent,
+    //       ),
+    //     ),
+    //     child: Center(
+    //       child: Padding(
+    //         padding: EdgeInsets.all(widget.btnHeight ?? 15.0),
+    //         child: AutoSizeText(
+    //           widget.label,
+    //           style: GoogleFonts.lato(
+    //             color: widget.textColor ?? Colors.white,
+    //             fontSize: 14,
+    //             fontWeight: FontWeight.bold,
+    //           ),
+    //         ),
+    //       ),
+    //     ),
+    //   ),
+    // );
   }
 }
 
@@ -84,7 +110,7 @@ class _CustomButtonCancelState extends State<CustomButtonCancel> {
       child: Container(
         decoration: BoxDecoration(
             color: widget.color!,
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(7),
             border: widget.borderColor == null
                 ? null
                 : Border.all(color: widget.borderColor!)),

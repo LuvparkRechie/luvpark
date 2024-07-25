@@ -146,11 +146,10 @@ class _BookingNoticeState extends State<BookingNotice> {
                                   children: [
                                     Expanded(
                                       child: CustomButton(
-                                          bordercolor: Colors.black12,
                                           btnHeight: 10,
                                           label: "Cancel",
                                           textColor: Colors.black,
-                                          color: Colors.transparent,
+                                          color: Colors.grey.shade100,
                                           onTap: () async {
                                             Navigator.pop(context);
                                             if (Navigator.of(context)

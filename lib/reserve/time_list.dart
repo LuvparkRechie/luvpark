@@ -42,8 +42,8 @@ class _TimeListState extends State<TimeList> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+          topLeft: Radius.circular(7),
+          topRight: Radius.circular(7),
         ),
       ),
       child: Padding(

@@ -383,12 +383,6 @@ class _WelcomeSplashScreenState extends State<WelcomeSplashScreen>
                       subTitle: sliderData[i]["subTitle"],
                       icon: sliderData[i]["icon"],
                     ),
-                  // CustomSlider(
-                  //   title: "Share Location",
-                  //   subTitle:
-                  //       " Discover the convenience of our Share Location Feature, seamlessly integrated with Google Maps, empowering you to effortlessly share your current location with colleague, friend or family member.",
-                  //   icon: "step5",
-                  // ),
                 ],
               ),
             ),

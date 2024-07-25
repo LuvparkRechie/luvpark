@@ -19,7 +19,7 @@ class DashboardComponent {
       isAllowOverNight, Function callBack) async {
     var params =
         "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
-    print(params);
+
     try {
       var returnData = await HttpRequest(api: params).get();
       if (returnData == "No Internet") {
@@ -133,8 +133,9 @@ class DashboardComponent {
         if (predictions != null) {
           List<String> suggestions = [];
           for (var prediction in predictions) {
+            // print("prediction $prediction");
             suggestions.add(
-                "${prediction['description']}=Rechie=${prediction['place_id']}");
+                "${prediction['description']}=Rechie=${prediction['place_id']}=structured=${prediction["structured_formatting"]["main_text"]}");
           }
           return suggestions;
         } else {

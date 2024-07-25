@@ -15,7 +15,12 @@ import 'package:luvpark/dashboard/class/dashboardMap_component.dart';
 class FilterMap extends StatefulWidget {
   final Function callBack;
   final String radius;
-  const FilterMap({super.key, required this.callBack, required this.radius});
+  final String parkOvernight;
+  const FilterMap(
+      {super.key,
+      required this.callBack,
+      required this.radius,
+      required this.parkOvernight});
 
   @override
   State<FilterMap> createState() => _FilterMapState();
@@ -39,13 +44,14 @@ class _FilterMapState extends State<FilterMap> {
   bool loadingTypes = true;
   bool loadingAmen = true;
   bool loadingPTypes = true;
-  String isAllowOverNight = "N";
+  bool isAllowOverNight = false;
   String? selectedVehicleType;
   String? ddRadius;
 
   @override
   void initState() {
     super.initState();
+    isAllowOverNight = widget.parkOvernight == "Y" ? true : false;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getVhTypeData();
     });
@@ -179,7 +185,7 @@ class _FilterMapState extends State<FilterMap> {
   @override
   Widget build(BuildContext context) {
     return CustomParentWidgetV2(
-      appBarHeaderText: 'Map Filter',
+      appBarHeaderText: '',
       appBarIconClick: () {
         Navigator.pop(context);
       },
@@ -224,7 +230,7 @@ class _FilterMapState extends State<FilterMap> {
                         "amen": filterAmen.toString(),
                         "p_type": filterVtype.toString(),
                         "radius": ddRadius == null ? 10 : ddRadius,
-                        "is_allow_overnight": isAllowOverNight,
+                        "is_allow_overnight": isAllowOverNight ? "Y" : "",
                       });
                       Navigator.of(context).pop();
                     },
@@ -239,54 +245,38 @@ class _FilterMapState extends State<FilterMap> {
   }
 
   Widget buildOvernight() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        LabelText(text: "Allow Overnight"),
-        Container(
-          height: 30,
-          child: RadioListTile<String>(
-            contentPadding: EdgeInsets.zero,
-            title: CustomDisplayText(label: "Yes"),
-            value: overNightData[0]["value"],
-            groupValue: isAllowOverNight,
-            onChanged: (String? value) {
+    return Container(
+      width: Variables.screenSize.width,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          LabelText(text: "Filter Options"),
+          InkWell(
+            onTap: () {
               setState(() {
-                isAllowOverNight = value!;
+                isAllowOverNight = !isAllowOverNight;
               });
             },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Checkbox(
+                  value: isAllowOverNight,
+                  onChanged: (value) {
+                    setState(() {
+                      isAllowOverNight = value!;
+                    });
+                  },
+                ),
+                SizedBox(width: 5.0),
+                CustomDisplayText(
+                  label: 'Overnight Parking',
+                ),
+              ],
+            ),
           ),
-        ),
-        Container(
-          height: 30,
-          child: RadioListTile<String>(
-            contentPadding: EdgeInsets.zero,
-            title: CustomDisplayText(label: "No"),
-            value: overNightData[1]["value"],
-            groupValue: isAllowOverNight,
-            onChanged: (String? value) {
-              setState(() {
-                isAllowOverNight = value!;
-              });
-            },
-          ),
-        ),
-        Container(
-          height: 30,
-          child: RadioListTile<String>(
-            contentPadding: EdgeInsets.zero,
-            title: CustomDisplayText(label: "All"),
-            value: "",
-            groupValue: isAllowOverNight,
-            onChanged: (String? value) {
-              setState(() {
-                isAllowOverNight = value!;
-              });
-            },
-          ),
-        ),
-        SizedBox(height: 10.0),
-      ],
+        ],
+      ),
     );
   }
 

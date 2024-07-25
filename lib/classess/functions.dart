@@ -51,7 +51,9 @@ class Functions {
           "user_bal":
               double.parse(returnBalance["items"][0]["amount_bal"].toString()),
           "min_wal_bal": double.parse(
-              returnBalance["items"][0]["min_wallet_bal"].toString())
+              returnBalance["items"][0]["min_wallet_bal"].toString()),
+          "rewards":
+              double.parse(returnBalance["items"][0]["points_bal"].toString()),
         });
       }
     });
