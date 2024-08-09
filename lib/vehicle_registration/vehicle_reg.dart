@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
@@ -12,8 +11,8 @@ import 'package:luvpark/classess/http_request.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
+import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -326,7 +325,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
               Container(
                 height: 20,
               ),
-              LabelText(text: "Vehicle Type"),
+              CustomTitle(text: "Vehicle Type"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: DropdownButtonFormField(
@@ -340,11 +339,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                     // constraints:
                     //     const BoxConstraints.tightFor(height: 50),
                     contentPadding: const EdgeInsets.all(10),
-                    hintStyle: GoogleFonts.varela(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade500,
-                      fontSize: 15,
-                    ),
+                    hintStyle: paragraphStyle(fontWeight: FontWeight.w500),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(7)),
                       borderSide: BorderSide(color: Colors.blue),
@@ -360,11 +355,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                     ),
                   ),
                   style: Platform.isAndroid
-                      ? GoogleFonts.dmSans(
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15,
-                        )
+                      ? paragraphStyle()
                       : TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.normal,
@@ -398,7 +389,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                         value: item['vehicle_id'].toString(),
                         child: AutoSizeText(
                           item['vehicle_desc'],
-                          style: GoogleFonts.varela(color: Colors.black),
+                          style: paragraphStyle(),
                           overflow: TextOverflow.ellipsis,
                           maxFontSize: 15,
                           maxLines: 2,
@@ -406,7 +397,8 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                   }).toList(),
                 ),
               ),
-              LabelText(text: "Brand"),
+              Container(height: 10),
+              CustomTitle(text: "Brand"),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 5),
                 child: DropdownButtonFormField(
@@ -416,11 +408,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                   decoration: InputDecoration(
                     hintText: "Brand",
                     contentPadding: const EdgeInsets.all(10),
-                    hintStyle: GoogleFonts.varela(
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade500,
-                      fontSize: 15,
-                    ),
+                    hintStyle: paragraphStyle(),
                     focusedBorder: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(7)),
                       borderSide: BorderSide(color: Colors.blue),
@@ -436,11 +424,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                     ),
                   ),
                   style: Platform.isAndroid
-                      ? GoogleFonts.dmSans(
-                          color: Colors.black,
-                          fontWeight: FontWeight.normal,
-                          fontSize: 15,
-                        )
+                      ? paragraphStyle(fontWeight: FontWeight.w500)
                       : TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.normal,
@@ -464,7 +448,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                         value: item['vehicle_brand_id'].toString(),
                         child: AutoSizeText(
                           item['vehicle_brand_name'],
-                          style: GoogleFonts.varela(color: Colors.black),
+                          style: paragraphStyle(fontWeight: FontWeight.w500),
                           overflow: TextOverflow.ellipsis,
                           maxFontSize: 15,
                           maxLines: 2,
@@ -472,7 +456,8 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                   }).toList(),
                 ),
               ),
-              LabelText(text: "Plate No"),
+              Container(height: 10),
+              CustomTitle(text: "Plate No"),
               CustomTextField(
                 labelText: hintTextLabel,
                 inputFormatters: [_maskFormatter!],
@@ -490,7 +475,7 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
                   }
                 },
               ),
-              LabelText(text: "Original Receipt (OR)"),
+              CustomTitle(text: "Original Receipt (OR)"),
               Container(
                 height: 10,
               ),
@@ -533,9 +518,9 @@ class _VehicleRegDialogState extends State<VehicleRegDialog> {
               Container(
                 height: 10,
               ),
-              LabelText(text: "Certificate of Registration (CR)"),
+              CustomTitle(text: "Certificate of Registration (CR)"),
               Container(
-                height: 10,
+                height: 5,
               ),
               Stack(
                 children: [

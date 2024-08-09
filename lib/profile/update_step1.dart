@@ -177,9 +177,8 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                         width: 10,
                       ),
                       Expanded(
-                          child: CustomDisplayText(
-                        label: "Male",
-                        fontWeight: FontWeight.bold,
+                          child: CustomParagraph(
+                        text: "Male",
                         color: Colors.black,
                         fontSize: 14,
                       ))
@@ -222,12 +221,12 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                         width: 10,
                       ),
                       Expanded(
-                          child: CustomDisplayText(
-                        label: "Female",
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                        fontSize: 14,
-                      ))
+                        child: CustomParagraph(
+                          text: "Female",
+                          color: Colors.black,
+                          fontSize: 14,
+                        ),
+                      )
                     ],
                   ),
                 ),
@@ -251,54 +250,7 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
               Container(
                 height: 10,
               ),
-              // Container(
-              //   decoration: BoxDecoration(
-              //     borderRadius: BorderRadius.circular(5),
-              //   ),
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(8.0),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         DropdownButtonFormField(
-              //           dropdownColor: Colors.white,
-              //           padding: EdgeInsets.zero,
-              //           decoration: const InputDecoration(
-              //             //   constraints: BoxConstraints.tightFor(height: 60),
 
-              //             constraints: BoxConstraints.tightFor(height: 50),
-
-              //             focusedBorder: InputBorder.none,
-              //             hintText: "Select your answer",
-              //             border: InputBorder.none,
-              //             enabledBorder: InputBorder.none,
-              //           ),
-              //           style: GoogleFonts.dmSans(
-              //             color: Colors.grey,
-              //             fontWeight: FontWeight.normal,
-              //           ),
-              //           value: ddCivil,
-              //           onChanged: (String? newValue) {
-              //             setState(() {
-              //               ddCivil = newValue!;
-              //               widget.civil.text = ddCivil!;
-              //             });
-              //           },
-              //           isExpanded: true,
-              //           items: civilStatusData.map((item) {
-              //             return DropdownMenuItem(
-              //                 value: item['value'].toString(),
-              //                 child: CustomDisplayText(
-              //                   label: item['status'],
-              //                   color: Colors.black,
-              //                   fontWeight: FontWeight.normal,
-              //                 ));
-              //           }).toList(),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
               Container(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -347,16 +299,11 @@ class _RegistrationPage1State extends State<UpdateProfStep1> {
                       isExpanded: true,
                       items: civilStatusData.map((item) {
                         return DropdownMenuItem(
-                          value: item['value'].toString(),
-                          child: Text(
-                            item['status'],
-                            style: TextStyle(
+                            value: item['value'].toString(),
+                            child: CustomParagraph(
+                              text: item['status'],
                               color: Colors.black,
-                              fontWeight: FontWeight.normal,
-                              fontSize: 15,
-                            ),
-                          ),
-                        );
+                            ));
                       }).toList(),
                     ),
                   ],

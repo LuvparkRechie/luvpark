@@ -100,7 +100,7 @@ class _ViewDetailsState extends State<ViewDetails> {
           printScreen(data, ctr == 1 ? Colors.white : AppColor.primaryColor),
           30,
           false);
-
+      print("ctr $ctr");
       newMarkers.add(
         Marker(
           markerId: MarkerId(ctr == 1
@@ -342,39 +342,30 @@ class _ViewDetailsState extends State<ViewDetails> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: <Widget>[
-                                              CustomDisplayText(
-                                                label: "Current Location"
+                                              CustomTitle(
+                                                text: "Current Location"
                                                     .toUpperCase(),
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              CustomDisplayText(
-                                                label: currAdd,
+                                              CustomParagraph(
+                                                text: currAdd,
                                                 fontSize: 14,
                                                 overflow: TextOverflow.ellipsis,
-                                                color: Color(0x993C3C43),
-                                                fontWeight: FontWeight.w500,
-                                                letterSpacing: -0.41,
+                                                maxlines: 2,
                                               ),
                                               Divider(),
-                                              CustomDisplayText(
-                                                label: widget.areaData[0]
+                                              CustomTitle(
+                                                text: widget.areaData[0]
                                                         ["park_area_name"]
                                                     .toString()
                                                     .toUpperCase(),
                                                 fontSize: 16,
-                                                fontWeight: FontWeight.bold,
-                                                overflow: TextOverflow.ellipsis,
                                               ),
-                                              CustomDisplayText(
-                                                label: widget.areaData[0]
+                                              CustomParagraph(
+                                                text: widget.areaData[0]
                                                     ["address"],
                                                 fontSize: 14,
-                                                overflow: TextOverflow.ellipsis,
-                                                color: Color(0x993C3C43),
-                                                fontWeight: FontWeight.w500,
-                                                letterSpacing: -0.41,
+                                                maxlines: 2,
                                               ),
                                             ],
                                           ),
@@ -460,19 +451,14 @@ class _ViewDetailsState extends State<ViewDetails> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    CustomDisplayText(
-                                      label: "Worktime",
-                                      color: Colors.grey,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      maxLines: 1,
+                                    CustomParagraph(
+                                      text: "Worktime",
+                                      maxlines: 1,
                                     ),
-                                    CustomDisplayText(
-                                      label:
+                                    CustomTitle(
+                                      text:
                                           "${widget.areaData[0]["parking_schedule"]}",
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
-                                      maxLines: 1,
+                                      maxlines: 1,
                                     ),
                                   ],
                                 ),
@@ -487,10 +473,9 @@ class _ViewDetailsState extends State<ViewDetails> {
                                       isOpen ? Color(0xFF7BB56C) : Colors.red,
                                 ),
                                 child: Center(
-                                  child: CustomDisplayText(
-                                    label: isOpen ? "Open" : "Close",
+                                  child: CustomParagraph(
+                                    text: isOpen ? "Open" : "Close",
                                     fontSize: 14,
-                                    fontWeight: FontWeight.w500,
                                     color: Colors.white,
                                   ),
                                 ),
@@ -528,12 +513,10 @@ class _ViewDetailsState extends State<ViewDetails> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                CustomDisplayText(
-                                  label: "Availability",
-                                  color: Colors.grey,
+                                CustomParagraph(
+                                  text: "Availability",
                                   fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  maxLines: 1,
+                                  maxlines: 1,
                                 ),
                                 RichText(
                                   text: TextSpan(
@@ -541,17 +524,17 @@ class _ViewDetailsState extends State<ViewDetails> {
                                       TextSpan(
                                         text:
                                             "${widget.areaData[0]["ps_vacant_count"]}",
-                                        style: GoogleFonts.dmSans(
+                                        style: GoogleFonts.manrope(
                                           color: Colors.black,
                                           fontSize: 14,
-                                          fontWeight: FontWeight.w500,
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
                                       TextSpan(
                                         text:
                                             "/${widget.areaData[0]["ps_total_count"]} slots available",
-                                        style: GoogleFonts.dmSans(
-                                          color: Colors.grey,
+                                        style: GoogleFonts.manrope(
+                                          color: AppColor.paragraphColor,
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                         ),
@@ -626,11 +609,9 @@ class _ViewDetailsState extends State<ViewDetails> {
                             },
                             child: Row(
                               children: [
-                                CustomDisplayText(
-                                  label: "More details",
-                                  fontSize: 14,
+                                CustomParagraph(
+                                  text: "More details",
                                   color: AppColor.primaryColor,
-                                  fontWeight: FontWeight.w600,
                                 ),
                                 Icon(
                                   Icons.keyboard_arrow_right_outlined,
@@ -790,7 +771,7 @@ class _ViewDetailsState extends State<ViewDetails> {
 
       color: Color(0xFFf8f8f8),
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 15, 20, 10),
+        padding: const EdgeInsets.fromLTRB(15, 15, 20, 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -803,15 +784,13 @@ class _ViewDetailsState extends State<ViewDetails> {
               child: Row(
                 children: [
                   Icon(
-                    Icons.arrow_back_ios,
+                    Icons.chevron_left,
                     color: AppColor.primaryColor,
                   ),
-                  Container(width: 10),
-                  CustomDisplayText(
-                    label: "Back",
+                  Container(width: 5),
+                  CustomTitle(
+                    text: "Back",
                     fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.primaryColor,
                   )
                 ],
               ),
@@ -820,51 +799,48 @@ class _ViewDetailsState extends State<ViewDetails> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomDisplayText(
-                  label: "Parking Slot",
+                CustomTitle(
+                  text: "Parking Slot",
                   color: Colors.black,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  maxLines: 1,
+                  maxlines: 1,
                 ),
                 Container(height: 10),
                 if (widget.areaData[0]["park_size"] == null)
-                  CustomDisplayText(
-                    label: "No data yet",
+                  CustomParagraph(
+                    text: "No data yet",
                     color: const Color(0xFF8D8D8D),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    maxLines: 2,
+                    maxlines: 2,
                   ),
                 if (widget.areaData[0]["park_size"] != null)
-                  CustomDisplayText(
-                    label: widget.areaData[0]["park_size"] == null
+                  CustomParagraph(
+                    text: widget.areaData[0]["park_size"] == null
                         ? "Unknown"
                         : "${widget.areaData[0]["park_size"]}",
                     color: const Color(0xFF8D8D8D),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    maxLines: 2,
+                    maxlines: 2,
                   ),
                 Container(height: 5),
                 if (widget.areaData[0]["park_size"] != null)
-                  CustomDisplayText(
-                    label: widget.areaData[0]["park_size"] == null
+                  CustomParagraph(
+                    text: widget.areaData[0]["park_size"] == null
                         ? "Unknown"
                         : "${widget.areaData[0]["park_orientation"]}",
                     color: const Color(0xFF8D8D8D),
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
-                    maxLines: 2,
+                    maxlines: 2,
                   ),
               ],
             ),
             Container(height: 10),
-            CustomDisplayText(
-              label: "Amenities",
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+            CustomTitle(
+              text: "Amenities",
             ),
             Container(height: 10),
             SizedBox(
@@ -899,14 +875,13 @@ class _ViewDetailsState extends State<ViewDetails> {
                             ),
 
                             Container(width: 5),
-                            CustomDisplayText(
-                              label:
+                            CustomTitle(
+                              text:
                                   "${widget.amenitiesData[index]["parking_amenity_desc"]}",
                               color: Colors.black,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              maxlines: 1,
                             ),
                           ],
                         ),
@@ -915,11 +890,8 @@ class _ViewDetailsState extends State<ViewDetails> {
                   })),
             ),
             Container(height: 10),
-            CustomDisplayText(
-              label: "Vehicles",
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+            CustomTitle(
+              text: "Vehicles",
             ),
             Container(height: 10),
             SizedBox(
@@ -964,15 +936,14 @@ class _ViewDetailsState extends State<ViewDetails> {
                             ),
                           ),
                           child: Center(
-                            child: CustomDisplayText(
-                              label: "${vehicles[index]}",
+                            child: CustomTitle(
+                              text: "${vehicles[index]}",
                               color: selected == index
                                   ? AppColor.primaryColor
                                   : Colors.black,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                              maxlines: 1,
                             ),
                           ),
                         ),
@@ -980,14 +951,11 @@ class _ViewDetailsState extends State<ViewDetails> {
                     );
                   })),
             ),
-            Container(height: 10),
-            CustomDisplayText(
-              label: "Parking rates",
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+            Container(height: 15),
+            CustomTitle(
+              text: "Parking rates",
             ),
-            Container(height: 10),
+            Container(height: 15),
             Container(
               height: 200,
               width: Variables.screenSize.width,
@@ -1061,13 +1029,12 @@ class _ViewDetailsState extends State<ViewDetails> {
               color: Colors.white,
             ),
             child: Center(
-              child: CustomDisplayText(
-                label: text1,
+              child: CustomParagraph(
+                text: text1,
                 fontSize: 14,
-                alignment: TextAlign.center,
-                maxLines: 1,
+                textAlign: TextAlign.center,
+                maxlines: 1,
                 color: Colors.grey,
-                fontWeight: FontWeight.w500,
               ),
             ),
           ),
@@ -1081,11 +1048,11 @@ class _ViewDetailsState extends State<ViewDetails> {
             ),
             padding: EdgeInsets.all(5),
             child: Center(
-              child: CustomDisplayText(
-                label: text2,
+              child: CustomParagraph(
+                text: text2,
                 fontSize: 14,
-                alignment: TextAlign.center,
-                maxLines: 1,
+                textAlign: TextAlign.center,
+                maxlines: 1,
                 color: Colors.grey,
                 fontWeight: FontWeight.bold,
               ),

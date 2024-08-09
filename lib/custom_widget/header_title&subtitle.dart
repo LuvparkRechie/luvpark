@@ -13,24 +13,14 @@ class HeaderLabel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CustomDisplayText(
-          label: title,
-          fontWeight: FontWeight.bold,
-          color: Colors.black,
-          fontSize: 16,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        CustomTitle(
+          text: title,
         ),
         Container(
           height: 5,
         ),
-        CustomDisplayText(
-          label: subTitle,
-          fontWeight: FontWeight.w500,
-          color: Colors.black54,
-          fontSize: 14,
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
+        CustomParagraph(
+          text: subTitle,
         ),
         Container(
           height: 20,
@@ -47,11 +37,8 @@ class LabelText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CustomDisplayText(
-      label: text,
-      fontWeight: FontWeight.w600,
-      color: Colors.black87,
-      fontSize: 16,
+    return CustomTitle(
+      text: text,
     );
   }
 }

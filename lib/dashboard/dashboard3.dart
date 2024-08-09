@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+import 'dart:math';
 
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
@@ -27,6 +29,7 @@ import 'package:luvpark/dashboard/search_place.dart';
 import 'package:luvpark/dashboard/view_area_details.dart';
 import 'package:luvpark/dashboard/view_list.dart';
 import 'package:luvpark/no_internet/no_internet_connected.dart';
+import 'package:luvpark/parking_trans/park_detailsv2.dart';
 import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:luvpark/sqlite/reserve_notification_table.dart';
 import 'package:luvpark/sqlite/share_location_table.dart';
@@ -48,15 +51,12 @@ class _Dashboard3State extends State<Dashboard3> {
   TextEditingController searchController = TextEditingController();
   PanelController panelController = PanelController();
 
-  List pTypeData = [];
-  List radiusData = [];
   late GoogleMapController mapController;
   LatLng? startLocation;
   String pTypeCode = "";
   String amenities = "";
   String vtypeId = "";
   String isAllowOverNight = "";
-  List filteredArea = [];
   CameraPosition? initialCameraPosition;
   bool isLoadingPage = true;
   bool isLoadingMap = true;
@@ -76,6 +76,12 @@ class _Dashboard3State extends State<Dashboard3> {
   //added
   loc.Location locationSer = loc.Location();
   double actualPanelHeight = 60;
+
+  Circle _circle = const Circle(circleId: CircleId('dottedCircle'));
+  Polyline _polyline = const Polyline(
+    polylineId: PolylineId('dottedPolyLine'),
+  );
+
   @override
   void initState() {
     super.initState();
@@ -270,13 +276,35 @@ class _Dashboard3State extends State<Dashboard3> {
               ),
             );
           }
+          _circle = Circle(
+            circleId: const CircleId('dottedCircle'),
+            center: startLocation!,
+            radius: 200,
+            strokeWidth: 0,
+            fillColor: AppColor.primaryColor.withOpacity(.03),
+          );
+          _polyline = Polyline(
+            polylineId: const PolylineId('dottedCircle'),
+            color: AppColor.primaryColor,
+            width: 2,
+            patterns: [
+              PatternItem.dash(20),
+              PatternItem.gap(20),
+            ],
+            points: List<LatLng>.generate(
+                360,
+                (index) => calculateNewCoordinates(
+                    startLocation!.latitude,
+                    startLocation!.longitude,
+                    200,
+                    double.parse(index.toString()))),
+          );
         });
       }
       setState(() {
         isLoadingPage = false;
         isLoadingMap = false;
       });
-
       if (nearestData.isNotEmpty) {
         for (var i = 0; i < nearestData.length; i++) {
           ctr++;
@@ -350,6 +378,29 @@ class _Dashboard3State extends State<Dashboard3> {
     }
   }
 
+  LatLng calculateNewCoordinates(
+      double lat, double lon, double radiusInMeters, double angleInDegrees) {
+    // Convert angle from degrees to radians
+    double PI = 3.141592653589793238;
+
+    double angleInRadians = angleInDegrees * PI / 180;
+
+    // Constants for Earth's radius and degrees per meter
+    const earthRadiusInMeters = 6371000; // Approximate Earth radius in meters
+    const degreesPerMeterLatitude = 1 / earthRadiusInMeters * 180 / pi;
+    final degreesPerMeterLongitude =
+        1 / (earthRadiusInMeters * cos(lat * PI / 180)) * 180 / pi;
+
+    // Calculate the change in latitude and longitude in degrees
+    double degreesOfLatitude = radiusInMeters * degreesPerMeterLatitude;
+    double degreesOfLongitude = radiusInMeters * degreesPerMeterLongitude;
+
+    // Calculate the new latitude and longitude
+    double newLat = lat + degreesOfLatitude * sin(angleInRadians);
+    double newLon = lon + degreesOfLongitude * cos(angleInRadians);
+    return LatLng(newLat, newLon);
+  }
+
   void getFilteredData(data) {
     if (mounted) {
       setState(() {
@@ -411,13 +462,8 @@ class _Dashboard3State extends State<Dashboard3> {
                       child: Shimmer.fromColors(
                         baseColor: Colors.black,
                         highlightColor: Colors.grey[100]!,
-                        child: CustomDisplayText(
-                          label: 'Getting nearest parking area for you.',
-                          color: Colors.black,
-                          fontSize: 14,
-                          fontWeight: FontWeight.normal,
-                          maxLines: 1,
-                        ),
+                        child: CustomParagraph(
+                            text: 'Getting nearest parking area for you.'),
                       ),
                     ),
                   ],
@@ -435,32 +481,20 @@ class _Dashboard3State extends State<Dashboard3> {
           searchBar(false),
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   subDataNearest.isEmpty
                       ? Container()
-                      : Text(
-                          'Parking Nearby',
-                          style: GoogleFonts.lato(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            height: 0.06,
-                          ),
-                        ),
+                      : CustomTitle(text: "Parking Nearby"),
                   Container(
                     height: 8,
                   ),
                   subDataNearest.isEmpty
                       ? Container()
-                      : CustomDisplayText(
-                          label: 'The best parking space near you',
-                          color: const Color.fromARGB(255, 82, 82, 82),
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          height: 0,
+                      : CustomParagraph(
+                          text: 'The best parking space near you',
                         ),
                   subDataNearest.isEmpty
                       ? Container()
@@ -495,296 +529,389 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   Widget mapDisplay(nearestData) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Column(
+        children: [
+          Expanded(child: _body()),
+          SlidingUpPanel(
+            maxHeight: 280,
+            minHeight: Variables.screenSize.height * 0.05,
+            parallaxEnabled: true,
+            parallaxOffset: .3,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(7.0),
+              topRight: Radius.circular(7.0),
+            ),
+            controller: panelController,
+            header: SizedBox(
+                width: MediaQuery.of(context).size.width,
+                child: _panel(nearestData)),
+            collapsed: GestureDetector(
+              onTap: () {
+                setState(() {
+                  panelController.open();
+                });
+              },
+              child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(7.0),
+                      topRight: Radius.circular(7.0),
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      Icons.keyboard_arrow_up,
+                      color: AppColor.secondaryColor,
+                    ),
+                  )),
+            ),
+            panel: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: AppColor.bodyColor,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(7.0),
+                  topRight: Radius.circular(7.0),
+                ),
+              ),
+            ),
+            color: AppColor.bodyColor,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _body() {
     return Stack(
       children: [
-        SlidingUpPanel(
-          maxHeight: 280,
-          minHeight: Variables.screenSize.height * 0.05,
-          parallaxEnabled: true,
-          parallaxOffset: .3,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(24.0),
-            topRight: Radius.circular(24.0),
-          ),
-          controller: panelController,
-          onPanelSlide: (dd) {
-            setState(() {
-              actualPanelHeight = (dd * 280) + 50;
-            });
-          },
-          body: _body(),
-          header: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24.0),
-                topRight: Radius.circular(24.0),
-              ),
-              color: AppColor.bodyColor,
-            ),
-            width: Variables.screenSize.width,
-            child: _panel(nearestData),
-          ),
-          collapsed: GestureDetector(
-            onTap: () {
+        GoogleMap(
+          mapType: MapType.normal,
+          zoomGesturesEnabled: true,
+          initialCameraPosition: initialCameraPosition!,
+          mapToolbarEnabled: false,
+          zoomControlsEnabled: false,
+          myLocationEnabled: true,
+          myLocationButtonEnabled: false,
+          compassEnabled: false,
+          buildingsEnabled: false,
+          tiltGesturesEnabled: true,
+          markers: Set<Marker>.of(markers),
+          polylines: {_polyline},
+          circles: {_circle},
+          onMapCreated: (GoogleMapController controller) {
+            if (mounted) {
               setState(() {
-                panelController.open();
+                mapController = controller;
+                DefaultAssetBundle.of(context)
+                    .loadString('assets/custom_map_style/map_style.json')
+                    .then((String style) {
+                  controller.setMapStyle(style);
+                });
               });
-            },
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(24.0),
-                    topRight: Radius.circular(24.0),
-                  ),
-                  color: Colors.white,
-                ),
-                child: Center(
-                  child: Icon(
-                    Icons.keyboard_arrow_up,
-                    color: AppColor.secondaryColor,
-                  ),
-                )),
-          ),
-          panel: Container(
-            width: Variables.screenSize.width,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(24.0),
-                topRight: Radius.circular(24.0),
-              ),
-              color: AppColor.bodyColor,
-            ),
-          ),
-          color: AppColor.bodyColor,
+            }
+          },
         ),
-        SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.only(left: 15, right: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Container(
-                  width: 60,
-                  height: 56,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
-                  clipBehavior: Clip.antiAlias,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x0C000000),
-                        blurRadius: 15,
-                        offset: Offset(0, 5),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                  child: Image(
-                      image: AssetImage("assets/dashboard_icon/menu.png")),
-                ),
-                Container(
-                  width: 178,
-                  height: 68,
-                  clipBehavior: Clip.antiAlias,
-                  decoration: ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                      borderRadius: BorderRadius.circular(7),
-                    ),
-                    shadows: [
-                      BoxShadow(
-                        color: Color(0x0C000000),
-                        blurRadius: 15,
-                        offset: Offset(0, 5),
-                        spreadRadius: 0,
-                      )
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Image(
-                        image: AssetImage("assets/images/luvparklogo.png"),
-                        width: 37,
-                        height: 31,
-                      ),
-                      Container(width: 10),
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomParagraph(
-                              text: "My balance",
-                              maxlines: 1,
-                              fontSize: 16,
-                              letterSpacing: -0.41,
-                            ),
-                            CustomTitle(
-                              text: "1450.00",
-                              maxlines: 1,
-                              fontSize: 20,
-                              letterSpacing: -0.41,
-                            )
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_outlined,
-                        color: AppColor.secondaryColor,
-                      )
-                    ],
-                  ),
+        Positioned(
+          top: 10,
+          right: 15,
+          child: SafeArea(
+              child: Container(
+            width: 178,
+            padding: EdgeInsets.fromLTRB(12, 11, 10, 11),
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                side: const BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                borderRadius: BorderRadius.circular(7),
+              ),
+              shadows: const [
+                BoxShadow(
+                  color: Color(0x0C000000),
+                  blurRadius: 15,
+                  offset: Offset(0, 5),
+                  spreadRadius: 0,
                 )
               ],
             ),
-          ),
+            child: Row(
+              children: [
+                const Image(
+                  image: AssetImage("assets/images/luvparklogo.png"),
+                  width: 37,
+                  height: 32,
+                ),
+                Container(width: 8),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomParagraph(
+                        text: "My balance",
+                        maxlines: 1,
+                        fontSize: 16,
+                        letterSpacing: -0.41,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      CustomTitle(
+                        text: toCurrencyString(userBal.toString()),
+                        maxlines: 1,
+                        fontSize: 18,
+                        letterSpacing: -0.41,
+                        fontWeight: FontWeight.w900,
+                      )
+                    ],
+                  ),
+                ),
+                Container(width: 8),
+                Icon(
+                  Icons.chevron_right_outlined,
+                  color: AppColor.secondaryColor,
+                ),
+              ],
+            ),
+          )),
         ),
         Positioned(
-          bottom: actualPanelHeight,
-          right: 20,
-          child: CircleAvatar(
-            radius: 20,
-            backgroundColor: Colors.green,
+          right: 10,
+          left: 10,
+          bottom: 25,
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                clipBehavior: Clip.antiAlias,
+                decoration: ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: const BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                    borderRadius: BorderRadius.circular(57),
+                  ),
+                  shadows: const [
+                    BoxShadow(
+                      color: Color(0x0C000000),
+                      blurRadius: 15,
+                      offset: Offset(0, 5),
+                      spreadRadius: 0,
+                    )
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      width: 24,
+                      height: 24,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(),
+                      child: Image(
+                        image: AssetImage("assets/dashboard_icon/car.png"),
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                    Container(width: 5),
+                    const CustomTitle(text: "Land Cruiser", fontSize: 14),
+                    Container(width: 5),
+                    CustomLinkLabel(
+                      text: "YKB-7635",
+                      fontSize: 14,
+                      color: AppColor.primaryColor,
+                    )
+                  ],
+                ),
+              ),
+              Expanded(child: Container()),
+              GestureDetector(
+                onTap: () {
+                  Variables.pageTrans(
+                      ViewList(
+                        nearestData: subDataNearest,
+                        balance: userBal,
+                        minBalance:
+                            double.parse(logData["min_wallet_bal"].toString()),
+                        onTap: () {},
+                      ),
+                      context);
+                },
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Container(
+                    width: 48,
+                    height: 48,
+                    padding: const EdgeInsets.all(10),
+                    clipBehavior: Clip.antiAlias,
+                    decoration: ShapeDecoration(
+                      color: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        side: const BorderSide(
+                            width: 1, color: Color(0xFFDFE7EF)),
+                        borderRadius: BorderRadius.circular(57),
+                      ),
+                      shadows: const [
+                        BoxShadow(
+                          color: Color(0x0C000000),
+                          blurRadius: 15,
+                          offset: Offset(0, 5),
+                          spreadRadius: 0,
+                        )
+                      ],
+                    ),
+                    child: const Image(
+                      image: AssetImage("assets/dashboard_icon/parking.png"),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         )
       ],
     );
   }
 
-  Widget _body() {
-    return GoogleMap(
-      mapType: MapType.normal,
-      zoomGesturesEnabled: true,
-      initialCameraPosition: initialCameraPosition!,
-      mapToolbarEnabled: false,
-      zoomControlsEnabled: false,
-      myLocationEnabled: true,
-      myLocationButtonEnabled: false,
-      compassEnabled: false,
-      buildingsEnabled: false,
-      tiltGesturesEnabled: true,
-      markers: Set<Marker>.of(markers),
-      circles: Set.of([
-        Circle(
-          circleId: CircleId('circle_1'),
-          center: startLocation!,
-          radius: 500, // in meters
-          fillColor: Colors.blue.withOpacity(0.1),
-          strokeColor: Colors.blue.withOpacity(0.3),
-          strokeWidth: 1,
-        ),
-      ]),
-      onMapCreated: (GoogleMapController controller) {
-        if (mounted) {
-          setState(() {
-            mapController = controller;
-            DefaultAssetBundle.of(context)
-                .loadString('assets/custom_map_style/map_style.json')
-                .then((String style) {
-              controller.setMapStyle(style);
-            });
-          });
-        }
-      },
-    );
-  }
-
   Widget _panel(data) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 2),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Center(
-            child: Container(
-                width: 71,
-                height: 6,
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(56),
-                    color: Color(0xffd9d9d9))),
-          ),
-          Container(height: 20),
-          CustomParagraph(
-            text:
-                "${jsonDecode(myData!)['first_name'] == null ? "Welcome to luvpark" : "${Variables.greeting()}, " + jsonDecode(myData!)['first_name']}",
-            // color: Color(0xFF666666),
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-            letterSpacing: -0.41,
-          ),
-          CustomTitle(
-            text: "What do you want to do today?",
-            color: Color(0xFF131313),
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            letterSpacing: -0.41,
-          ),
-          Container(height: 20),
-          inatay("Find Parking", "Reserve space in advance", "search_icon", () {
-            Variables.pageTrans(
-                SearchPlaces(
-                    latlng: LatLng(
-                      startLocation!.latitude,
-                      startLocation!.longitude,
-                    ),
-                    radius: ddRadius.toString(),
-                    pTypeCode: pTypeCode,
-                    vtypeId: vtypeId,
-                    amenities: amenities,
-                    isAllowOverNight: isAllowOverNight,
-                    callback: (searchedObj) {
-                      if (searchedObj["data"].isEmpty &&
-                          searchedObj["searchedData"].isEmpty) {
-                        setState(() {
-                          isLoadingMap = true;
-                        });
-                        Future.delayed(Duration(seconds: 1));
-                        getUsersData("Current Location");
-                        return;
-                      }
-                      if (mounted) {
-                        Navigator.of(context).pop();
-                        setState(() {
-                          onSearchAdd = true;
-                          isLoadingPage = true;
-                          searchController.text = searchedObj["searchedData"][0]
-                                  ["place"]
-                              .toString();
-                          startLocation = LatLng(
-                              double.parse(searchedObj["searchedData"][0]["lat"]
-                                  .toString()),
-                              double.parse(searchedObj["searchedData"][0]
-                                      ["long"]
-                                  .toString()));
-                          ddRadius = searchedObj["searchedData"][0]["radius"]
-                              .toString();
+    return SizedBox(
+      width: MediaQuery.of(context).size.width,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 2),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                  width: 71,
+                  height: 6,
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(56),
+                      color: Color(0xffd9d9d9))),
+            ),
+            Container(height: 20),
+            CustomParagraph(
+              text:
+                  "${jsonDecode(myData!)['first_name'] == null ? "Welcome to luvpark" : "${Variables.greeting()}, " + jsonDecode(myData!)['first_name']}",
+              // color: Color(0xFF666666),
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              letterSpacing: -0.41,
+            ),
+            CustomTitle(
+              text: "What do you want to do today?",
+              color: Color(0xFF131313),
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              letterSpacing: -0.41,
+            ),
+            Container(height: 20),
+            inatay("Find Parking", "Reserve space in advance", "search_icon",
+                () {
+              Variables.pageTrans(
+                  SearchPlaces(
+                      latlng: LatLng(
+                        startLocation!.latitude,
+                        startLocation!.longitude,
+                      ),
+                      radius: ddRadius.toString(),
+                      pTypeCode: pTypeCode,
+                      vtypeId: vtypeId,
+                      amenities: amenities,
+                      isAllowOverNight: isAllowOverNight,
+                      callback: (searchedObj) {
+                        if (searchedObj["data"].isEmpty &&
+                            searchedObj["searchedData"].isEmpty) {
+                          setState(() {
+                            isLoadingMap = true;
+                          });
+                          Future.delayed(Duration(seconds: 1));
+                          getUsersData("Current Location");
+                          return;
+                        }
+                        if (mounted) {
+                          Navigator.of(context).pop();
+                          setState(() {
+                            onSearchAdd = true;
+                            isLoadingPage = true;
+                            searchController.text = searchedObj["searchedData"]
+                                    [0]["place"]
+                                .toString();
+                            startLocation = LatLng(
+                                double.parse(searchedObj["searchedData"][0]
+                                        ["lat"]
+                                    .toString()),
+                                double.parse(searchedObj["searchedData"][0]
+                                        ["long"]
+                                    .toString()));
+                            ddRadius = searchedObj["searchedData"][0]["radius"]
+                                .toString();
 
-                          if (searchedObj == "No Internet") {
-                            hasInternetBal = false;
-                          }
-                        });
-                      }
+                            if (searchedObj == "No Internet") {
+                              hasInternetBal = false;
+                            }
+                          });
+                        }
 
-                      displayMapData(
-                          searchedObj["data"],
-                          double.parse(
-                              searchedObj["searchedData"][0]["lat"].toString()),
-                          double.parse(searchedObj["searchedData"][0]["long"]
-                              .toString()),
-                          "Pin Location");
-                    }),
-                context);
-          }),
-          Container(height: 10),
-          inatay(
-              "Pay Now", "I've parked and want to pay", "car_dashboard", () {}),
-        ],
+                        displayMapData(
+                            searchedObj["data"],
+                            double.parse(searchedObj["searchedData"][0]["lat"]
+                                .toString()),
+                            double.parse(searchedObj["searchedData"][0]["long"]
+                                .toString()),
+                            "Pin Location");
+                      }),
+                  context);
+            }),
+            Container(height: 10),
+            inatay(
+                "Park and pay now", "I'm in the parking zone", "car_dashboard",
+                () {
+              Variables.pageTrans(ParkDetailsV2(), context);
+              // if (subDataNearest.isEmpty) {
+              //   errorDialog(context, "LuvPark", "No nearest data found.", () {
+              //     Navigator.of(context).pop();
+              //   });
+              //   return;
+              // }
+              // setState(() {
+              //   isLoadingPage = true;
+              // });
+              // if (userBal <
+              //     double.parse(logData["min_wallet_bal"].toString())) {
+              //   setState(() {
+              //     isLoadingPage = false;
+              //   });
+              //   showAlertDialog(
+              //       context,
+              //       "Attention",
+              //       "Your balance is below the required minimum for this feature. "
+              //           "Please ensure a minimum balance of ${double.parse(logData["min_wallet_bal"].toString())} tokens to access the requested service.",
+              //       () {
+              //     Navigator.of(context).pop();
+              //   });
+              //   return;
+              // } else {
+              //   CustomModal(context: context).loader();
+              //   func.Functions.getAmenities(
+              //       context, subDataNearest[0]["park_area_id"], (cb) {
+              //     if (cb["msg"] == "Success") {
+              //       Navigator.of(context).pop();
+              //       if (cb["data"].isNotEmpty) {
+              //         Variables.pageTrans(
+              //             ViewDetails(
+              //                 areaData: [subDataNearest[0]],
+              //                 amenitiesData: cb["data"]),
+              //             context);
+              //       }
+              //     }
+              //   });
+              // }
+            }),
+          ],
+        ),
       ),
     );
   }
@@ -850,125 +977,125 @@ class _Dashboard3State extends State<Dashboard3> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
       child: Container(
-        decoration: BoxDecoration(
-          color: isMap ? Colors.white : Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(16.0),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 1,
-              blurRadius: 4,
-              offset: Offset(0, 2), // changes position of shadow
-            ),
-          ],
-        ),
+        width: Variables.screenSize.width,
         height: 50,
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 1,
+                offset: Offset(0, 1), // changes position of shadow
+              ),
+            ]),
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 14,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
           child: Row(
             children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Icon(
+                  CupertinoIcons.search,
+                  color: Colors.black87,
+                ),
+              ),
+              Container(width: 10),
+              Expanded(
+                child: TextField(
+                  controller: searchController,
+                  readOnly: true,
+                  decoration: InputDecoration(
+                      border: InputBorder.none,
+                      hintText: 'Search address, places or city',
+                      hintStyle: GoogleFonts.manrope(
+                        color: Color(0x993C3C43),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: -0.41,
+                      )),
+                  onTap: () {
+                    Variables.pageTrans(
+                        SearchPlaces(
+                            latlng: LatLng(
+                              startLocation!.latitude,
+                              startLocation!.longitude,
+                            ),
+                            radius: ddRadius.toString(),
+                            pTypeCode: pTypeCode,
+                            vtypeId: vtypeId,
+                            amenities: amenities,
+                            isAllowOverNight: isAllowOverNight,
+                            callback: (searchedObj) {
+                              Navigator.of(context).pop();
+                              print("searchedObj $searchedObj");
+                              if (searchedObj["data"].isEmpty &&
+                                  searchedObj["searchedData"].isEmpty) {
+                                setState(() {
+                                  isLoadingMap = true;
+                                });
+                                Future.delayed(Duration(seconds: 1));
+                                getUsersData("Current Location");
+                                return;
+                              }
+                              if (mounted) {
+                                setState(() {
+                                  onSearchAdd = true;
+                                  isLoadingPage = true;
+                                  searchController.text =
+                                      searchedObj["searchedData"][0]["place"]
+                                          .toString();
+                                  startLocation = LatLng(
+                                      double.parse(searchedObj["searchedData"]
+                                              [0]["lat"]
+                                          .toString()),
+                                      double.parse(searchedObj["searchedData"]
+                                              [0]["long"]
+                                          .toString()));
+                                  ddRadius = searchedObj["searchedData"][0]
+                                          ["radius"]
+                                      .toString();
+
+                                  if (searchedObj == "No Internet") {
+                                    hasInternetBal = false;
+                                  }
+                                });
+                              }
+
+                              displayMapData(
+                                  searchedObj["data"],
+                                  double.parse(searchedObj["searchedData"][0]
+                                          ["lat"]
+                                      .toString()),
+                                  double.parse(searchedObj["searchedData"][0]
+                                          ["long"]
+                                      .toString()),
+                                  "Pin Location");
+                            }),
+                        context);
+                  },
+                  style: GoogleFonts.manrope(
+                    fontWeight: FontWeight.w600,
+                    fontStyle: FontStyle.normal,
+                    letterSpacing: 0.0,
+                    color: AppColor.paragraphColor,
+                    wordSpacing: 2,
+                  ),
+                ),
+              ),
               GestureDetector(
                 onTap: () {
                   showFilter();
                 },
-                child: Icon(
-                  Iconsax.filter,
-                  color: AppColor.primaryColor,
-                ),
-              ),
-              Expanded(
-                child: TextField(
-                  readOnly: true,
-                  controller: searchController,
-                  textAlign: TextAlign.left,
-                  textDirection: TextDirection.ltr,
-                  decoration: InputDecoration(
-                    hintText: "Enter your destination here...",
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.only(left: 10),
-                    hintStyle: Platform.isAndroid
-                        ? GoogleFonts.dmSans(
-                            color: Color(0x993C3C43),
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                            height: 0.08,
-                            letterSpacing: -0.41,
-                          )
-                        : TextStyle(
-                            color: Color(0x993C3C43),
-                            fontSize: 17,
-                            fontWeight: FontWeight.w400,
-                            height: 0.08,
-                            letterSpacing: -0.41,
-                          ),
-                  ),
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (context) {
-                          return SearchPlaces(
-                              latlng: LatLng(
-                                startLocation!.latitude,
-                                startLocation!.longitude,
-                              ),
-                              radius: ddRadius.toString(),
-                              pTypeCode: pTypeCode,
-                              vtypeId: vtypeId,
-                              amenities: amenities,
-                              isAllowOverNight: isAllowOverNight,
-                              callback: (searchedObj) {
-                                Navigator.of(context).pop();
-
-                                if (mounted) {
-                                  setState(() {
-                                    onSearchAdd = true;
-                                    isLoadingPage = true;
-                                    searchController.text =
-                                        searchedObj["searchedData"][0]["place"]
-                                            .toString();
-                                    startLocation = LatLng(
-                                        double.parse(searchedObj["searchedData"]
-                                                [0]["lat"]
-                                            .toString()),
-                                        double.parse(searchedObj["searchedData"]
-                                                [0]["long"]
-                                            .toString()));
-                                    ddRadius = searchedObj["searchedData"][0]
-                                            ["radius"]
-                                        .toString();
-
-                                    if (searchedObj == "No Internet") {
-                                      hasInternetBal = false;
-                                    }
-                                  });
-                                }
-
-                                displayMapData(
-                                    searchedObj["data"],
-                                    double.parse(searchedObj["searchedData"][0]
-                                            ["lat"]
-                                        .toString()),
-                                    double.parse(searchedObj["searchedData"][0]
-                                            ["long"]
-                                        .toString()),
-                                    "Pin Location");
-                              });
-                        });
-                  },
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10.0, right: 10),
-                child: InkWell(
-                  onTap: () async {},
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: Icon(
-                    Icons.search,
-                    color: AppColor.primaryColor,
+                    Iconsax.filter,
+                    color: Colors.black87,
                   ),
                 ),
-              )
+              ),
             ],
           ),
         ),
@@ -977,22 +1104,20 @@ class _Dashboard3State extends State<Dashboard3> {
   }
 
   Widget reserveShimmer() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: const Color(0xFFe6faff),
-        child: Container(
-          height: 100.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: const Color(0xFFffffff),
-            border: Border.all(
-                style: BorderStyle.solid, color: Colors.grey.shade100),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(15),
-            ),
-          ),
+    return Shimmer.fromColors(
+      baseColor: Colors.grey[300]!,
+      highlightColor: Colors.grey[100]!,
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(0),
+        title: Container(
+          width: double.infinity,
+          height: 20.0,
+          color: Colors.white,
+        ),
+        subtitle: Container(
+          width: double.infinity,
+          height: 14.0,
+          color: Colors.white,
         ),
       ),
     );

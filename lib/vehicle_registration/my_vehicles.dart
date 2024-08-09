@@ -254,20 +254,13 @@ class _MyVehiclesState extends State<MyVehicles> {
                                                 Container(
                                                   height: 10,
                                                 ),
-                                                CustomDisplayText(
-                                                  label: myVehicles[index]
+                                                CustomTitle(
+                                                  text: myVehicles[index]
                                                       ["vehicle_brand_name"],
-                                                  fontSize: 14,
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w700,
                                                 ),
-                                                CustomDisplayText(
-                                                  label: myVehicles[index]
+                                                CustomParagraph(
+                                                  text: myVehicles[index]
                                                       ["vehicle_plate_no"],
-                                                  color: const Color.fromARGB(
-                                                      255, 137, 140, 148),
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.normal,
                                                 ),
                                               ],
                                             ),

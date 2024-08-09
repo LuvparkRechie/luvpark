@@ -141,7 +141,7 @@ class CustomDisplayTextkanit extends StatelessWidget {
 class CustomTitle extends StatelessWidget {
   final String text;
   final double fontSize;
-  final Color color;
+  final Color? color;
   final FontWeight fontWeight;
   final FontStyle fontStyle;
   final double letterSpacing;
@@ -154,7 +154,7 @@ class CustomTitle extends StatelessWidget {
     super.key,
     required this.text,
     this.fontSize = 16.0,
-    this.color = Colors.black87,
+    this.color,
     this.fontWeight = FontWeight.w700,
     this.fontStyle = FontStyle.normal,
     this.letterSpacing = -1,
@@ -168,14 +168,15 @@ class CustomTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoSizeText(
       text,
-      style: GoogleFonts.manrope(
-          fontSize: fontSize,
-          color: color,
-          fontWeight: fontWeight,
-          fontStyle: fontStyle,
-          letterSpacing: letterSpacing,
-          wordSpacing: wordspacing,
-          height: height ?? height),
+      style: titleStyle(
+        fontSize: fontSize,
+        color: color ?? Colors.black87,
+        fontWeight: fontWeight,
+        fontStyle: fontStyle,
+        letterSpacing: letterSpacing,
+        wordSpacing: wordspacing,
+        height: height ?? height,
+      ),
       maxLines: maxlines,
       textAlign: textAlign,
     );
@@ -194,6 +195,7 @@ class CustomParagraph extends StatelessWidget {
   final int? maxlines;
   final TextAlign? textAlign;
   final TextOverflow? overflow;
+  final TextDecoration? textDecoration;
 
   const CustomParagraph({
     super.key,
@@ -208,19 +210,21 @@ class CustomParagraph extends StatelessWidget {
     this.wordspacing = 4,
     this.textAlign,
     this.overflow,
+    this.textDecoration,
   });
 
   @override
   Widget build(BuildContext context) {
     return AutoSizeText(
       text,
-      style: GoogleFonts.manrope(
+      style: paragraphStyle(
         fontSize: fontSize,
         color: color ?? AppColor.paragraphColor,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: letterSpacing,
         height: height ?? height,
+        textDecoration: textDecoration,
       ),
       textAlign: textAlign,
       maxLines: maxlines,
@@ -244,7 +248,7 @@ class CustomLinkLabel extends StatelessWidget {
     super.key,
     required this.text,
     this.fontSize = 14.0,
-    this.color = Colors.white,
+    this.color,
     this.fontWeight = FontWeight.w700,
     this.fontStyle = FontStyle.normal,
     this.letterSpacing = 0.0,
@@ -257,9 +261,9 @@ class CustomLinkLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoSizeText(
       text,
-      style: GoogleFonts.manrope(
+      style: linkStyle(
         fontSize: fontSize,
-        color: color,
+        color: color ?? AppColor.primaryColor,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: letterSpacing,
@@ -268,4 +272,63 @@ class CustomLinkLabel extends StatelessWidget {
       maxLines: maxlines,
     );
   }
+}
+
+// Style for link labels
+TextStyle linkStyle({
+  double fontSize = 14.0,
+  Color? color,
+  FontWeight fontWeight = FontWeight.w700,
+  FontStyle fontStyle = FontStyle.normal,
+  double letterSpacing = 0.0,
+}) {
+  return GoogleFonts.manrope(
+    fontSize: fontSize,
+    color: color ?? AppColor.primaryColor,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    letterSpacing: letterSpacing,
+  );
+}
+
+// Style for paragraphs
+TextStyle paragraphStyle({
+  double fontSize = 14.0,
+  Color? color, // Default value if not provided
+  FontWeight fontWeight = FontWeight.w600,
+  FontStyle fontStyle = FontStyle.normal,
+  double letterSpacing = 0.0,
+  double? height,
+  TextDecoration? textDecoration,
+}) {
+  return GoogleFonts.manrope(
+    fontSize: fontSize,
+    color: color ?? AppColor.paragraphColor,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    letterSpacing: letterSpacing,
+    height: height,
+    decoration: textDecoration,
+  );
+}
+
+// Style for titles
+TextStyle titleStyle({
+  double? fontSize = 16.0,
+  Color color = Colors.black87,
+  FontWeight fontWeight = FontWeight.w700,
+  FontStyle fontStyle = FontStyle.normal,
+  double letterSpacing = -1.0,
+  double wordSpacing = 2.0,
+  double? height,
+}) {
+  return GoogleFonts.manrope(
+    fontSize: fontSize,
+    color: color,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    letterSpacing: letterSpacing,
+    wordSpacing: wordSpacing,
+    height: height,
+  );
 }

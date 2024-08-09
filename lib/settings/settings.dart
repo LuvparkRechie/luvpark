@@ -419,7 +419,8 @@ class _SettingsPageState extends State<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     return CustomParentWidget(
-        appbarColor: AppColor.bodyColor,
+        appbarColor: Colors.white,
+        bodyColor: Color.fromARGB(255, 249, 248, 248),
         child: Container(
           color: Color(0xFFF8F8F8),
           child: loading
@@ -471,11 +472,10 @@ class _SettingsPageState extends State<SettingsPage> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              CustomDisplayText(
-                                  label: "Settings",
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black),
+                              CustomTitle(
+                                text: "Settings",
+                                fontSize: 20,
+                              ),
                             ],
                           ),
                         ),
@@ -531,8 +531,8 @@ class _SettingsPageState extends State<SettingsPage> {
                                                   backgroundColor:
                                                       AppColor.primaryColor,
                                                   child: Center(
-                                                    child: CustomDisplayText(
-                                                      label: loading
+                                                    child: CustomTitle(
+                                                      text: loading
                                                           ? ""
                                                           : jsonDecode(akongP!)[
                                                                           'first_name']
@@ -541,11 +541,6 @@ class _SettingsPageState extends State<SettingsPage> {
                                                               ? "N/A"
                                                               : "${jsonDecode(akongP!)['first_name'].toString()[0]}${jsonDecode(akongP!)['last_name'].toString()[0]}",
                                                       color: Colors.white,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      height: 0,
-                                                      letterSpacing: -0.32,
                                                     ),
                                                   ),
                                                 ),
@@ -558,17 +553,12 @@ class _SettingsPageState extends State<SettingsPage> {
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
                                             children: [
-                                              CustomDisplayText(
-                                                label: loading ? "" : fullName,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
+                                              CustomTitle(
+                                                text: loading ? "" : fullName,
                                                 letterSpacing: -0.32,
                                               ),
-                                              CustomDisplayText(
-                                                label: email,
-                                                color: Colors.black54,
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
+                                              CustomParagraph(
+                                                text: email,
                                                 height: 0,
                                                 letterSpacing: -0.28,
                                               ),
@@ -657,12 +647,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                                     Container(
                                                       width: 5,
                                                     ),
-                                                    CustomDisplayText(
-                                                      label: 'Edit',
+                                                    CustomParagraph(
+                                                      text: 'Edit',
                                                       fontSize: 12,
                                                       color: Colors.white,
-                                                      fontWeight:
-                                                          FontWeight.w500,
                                                     )
                                                   ],
                                                 ),
@@ -695,7 +683,7 @@ class _SettingsPageState extends State<SettingsPage> {
                                 ),
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(
-                                    //horizontal: 20.0,
+                                    horizontal: 5.0,
                                     vertical: 10,
                                   ),
                                   child: Row(
@@ -722,12 +710,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 },
                                               ),
                                               Container(height: 5),
-                                              CustomDisplayText(
-                                                label: 'Parking History',
+                                              CustomTitle(
+                                                text: 'Parking History',
                                                 fontSize: 12,
-                                                alignment: TextAlign.center,
-                                                maxLines: 1,
-                                                fontWeight: FontWeight.w600,
+                                                maxlines: 1,
                                               ),
                                             ],
                                           ),
@@ -758,11 +744,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 },
                                               ),
                                               Container(height: 5),
-                                              CustomDisplayText(
-                                                label: 'My Vehicles',
+                                              CustomTitle(
+                                                text: 'My Vehicles',
                                                 fontSize: 12,
-                                                maxLines: 1,
-                                                fontWeight: FontWeight.w600,
+                                                maxlines: 1,
                                               ),
                                             ],
                                           ),
@@ -793,11 +778,10 @@ class _SettingsPageState extends State<SettingsPage> {
                                                 },
                                               ),
                                               Container(height: 5),
-                                              CustomDisplayText(
-                                                maxLines: 1,
-                                                label: 'About Us',
+                                              CustomTitle(
+                                                text: 'About Us',
                                                 fontSize: 12,
-                                                fontWeight: FontWeight.w600,
+                                                maxlines: 1,
                                               ),
                                             ],
                                           ),
@@ -810,9 +794,9 @@ class _SettingsPageState extends State<SettingsPage> {
                               Container(
                                 height: 20,
                               ),
-                              CustomDisplayText(
-                                label: 'My Account'.toUpperCase(),
-                                fontWeight: FontWeight.bold,
+                              CustomTitle(
+                                text: 'My Account'.toUpperCase(),
+                                fontSize: 14,
                               ),
                               Container(height: 10),
                               Container(
@@ -943,9 +927,9 @@ class _SettingsPageState extends State<SettingsPage> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
-                                    CustomDisplayText(
-                                      label: 'Help and Support'.toUpperCase(),
-                                      fontWeight: FontWeight.bold,
+                                    CustomTitle(
+                                      text: 'Help and Support'.toUpperCase(),
+                                      fontSize: 14,
                                     ),
                                   ],
                                 ),
@@ -1108,8 +1092,8 @@ class _SettingsPageState extends State<SettingsPage> {
                       if (desc == '')
                         Column(
                           children: [
-                            CustomDisplayText(
-                              label: title,
+                            CustomTitle(
+                              text: title,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
@@ -1119,13 +1103,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomDisplayText(
-                              label: title,
+                            CustomTitle(
+                              text: title,
                               fontSize: 14,
                               fontWeight: FontWeight.bold,
                             ),
-                            CustomDisplayText(
-                              label: desc,
+                            CustomParagraph(
+                              text: desc,
                               fontSize: 12,
                               fontWeight: FontWeight.normal,
                               color: Colors.grey,

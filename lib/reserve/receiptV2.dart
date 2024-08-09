@@ -156,7 +156,7 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                         color: AppColor.textSubColor,
                       ),
                     ),
-                    Expanded(
+                    Flexible(
                         child: InkWell(
                       onTap: () {
                         saveToGallery();
@@ -170,9 +170,9 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                             height: 20,
                           ),
                           Container(width: 5),
-                          CustomDisplayText(
-                            label: "Receipt",
-                            alignment: TextAlign.center,
+                          CustomTitle(
+                            text: "Receipt",
+                            textAlign: TextAlign.center,
                             fontWeight: FontWeight.w600,
                             color: Color(0xFF7d7e75),
                             fontSize: 14,
@@ -193,27 +193,16 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                     children: [
                       Row(
                         children: [
-                          Expanded(
-                            child: Container(
-                              height: 100,
-
-                              child: AutoSizeText(
-                                "Parking\nReceipt\nDetails",
-                                style: GoogleFonts.openSans(
-                                    fontWeight: FontWeight.w600,
-                                    color: Color(0xFF1e1c2e),
-                                    fontSize: 25,
-                                    letterSpacing: .48),
-                                textAlign: TextAlign.left,
-                              ),
-
-                              //  CustomDisplayText(
-                              //   label: "Parking\nreceipt\ndetails",
-                              //   alignment: TextAlign.left,
-                              //   fontWeight: FontWeight.w600,
-                              //   color: Color(0xFF1e1c2e),
-                              //   fontSize: 25,
-                              // ),
+                          Container(
+                            height: 100,
+                            child: AutoSizeText(
+                              "Parking\nReceipt\nDetails",
+                              style: GoogleFonts.openSans(
+                                  fontWeight: FontWeight.w600,
+                                  color: Color(0xFF1e1c2e),
+                                  fontSize: 25,
+                                  letterSpacing: .48),
+                              textAlign: TextAlign.left,
                             ),
                           ),
                           Expanded(
@@ -288,10 +277,10 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                               CircleAvatar(
                                 radius: 30,
                                 backgroundColor: AppColor.primaryColor,
-                                child: CustomDisplayText(
-                                  label: "P",
-                                  alignment: TextAlign.center,
-                                  fontWeight: FontWeight.w600,
+                                child: CustomTitle(
+                                  text: "P",
+                                  textAlign: TextAlign.center,
+                                  fontWeight: FontWeight.w900,
                                   color: Colors.white,
                                   fontSize: 20,
                                 ),
@@ -301,10 +290,9 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                   child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  CustomDisplayText(
-                                    label: widget.parkArea,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
+                                  CustomTitle(
+                                    text: widget.parkArea,
+                                    fontWeight: FontWeight.w900,
                                   ),
                                   Container(height: 10),
                                   Row(
@@ -315,9 +303,9 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                         size: 16,
                                       ),
                                       Container(width: 10),
-                                      CustomDisplayText(
-                                        label: widget.plateNo,
-                                        alignment: TextAlign.left,
+                                      CustomParagraph(
+                                        text: widget.plateNo,
+                                        textAlign: TextAlign.left,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14,
                                       ),
@@ -332,10 +320,10 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                         size: 16,
                                       ),
                                       Container(width: 10),
-                                      CustomDisplayText(
-                                        label:
+                                      CustomParagraph(
+                                        text:
                                             "${widget.hours} ${int.parse(widget.hours.toString()) > 1 ? "Hours" : "Hour"}",
-                                        alignment: TextAlign.left,
+                                        textAlign: TextAlign.left,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14,
                                       ),
@@ -348,13 +336,9 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                         ),
                       ),
                       Container(height: 25),
-                      CustomDisplayText(
-                        label: "Booking Date",
-                        alignment: TextAlign.left,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 18,
-                        letterSpacing: .4,
-                        color: Color(0xFF1e1c2e),
+                      CustomTitle(
+                        text: "Booking Date",
+                        textAlign: TextAlign.left,
                       ),
                       Container(height: 15),
                       Column(
@@ -392,18 +376,15 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                     children: <Widget>[
                                       Row(
                                         children: [
-                                          CustomDisplayText(
-                                            label: widget.startTime,
-                                            fontSize: 14,
+                                          CustomParagraph(
+                                            text: widget.startTime,
                                             fontWeight: FontWeight.bold,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Container(width: 10),
-                                          CustomDisplayText(
-                                            label: convertDateFormat(
+                                          CustomParagraph(
+                                            text: convertDateFormat(
                                                 widget.startDate),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
                                             overflow: TextOverflow.ellipsis,
                                             color: Color(0xFF7d7e75),
                                           ),
@@ -412,18 +393,16 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                       Container(height: 10),
                                       Row(
                                         children: [
-                                          CustomDisplayText(
-                                            label: widget.endTime,
+                                          CustomParagraph(
+                                            text: widget.endTime,
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Container(width: 10),
-                                          CustomDisplayText(
-                                            label: convertDateFormat(
+                                          CustomParagraph(
+                                            text: convertDateFormat(
                                                 widget.endDate),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w400,
                                             overflow: TextOverflow.ellipsis,
                                             color: Color(0xFF7d7e75),
                                           ),
@@ -455,18 +434,14 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(height: 30),
-                              CustomDisplayText(
-                                label: widget.refno,
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
+                              CustomTitle(
+                                text: widget.refno,
                               ),
                               Container(height: 5),
-                              CustomDisplayText(
-                                label: "Reference Number",
-                                fontWeight: FontWeight.w600,
-                                fontSize: 14,
+                              CustomParagraph(
+                                text: "Reference Number",
                                 color: Color(0xFF7d7e75),
-                                maxLines: 1,
+                                maxlines: 1,
                               ),
                             ],
                           ))
@@ -493,20 +468,10 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                                   color: Colors.white,
                                 ),
                                 Container(width: 5),
-                                Text("Share",
-                                    style: Platform.isAndroid
-                                        ? GoogleFonts.dmSans(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1,
-                                            fontSize: 14)
-                                        : TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w600,
-                                            letterSpacing: 1,
-                                            fontSize: 14,
-                                            fontFamily: "SFProTextReg",
-                                          )),
+                                CustomParagraph(
+                                  text: "Share",
+                                  color: Colors.white,
+                                )
                               ],
                             ),
                           ),
@@ -526,15 +491,15 @@ class _ReserveReceiptState extends State<ReserveReceipt> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        CustomDisplayText(
-                          label: "Total",
+                        CustomParagraph(
+                          text: "Total",
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
-                        CustomDisplayText(
-                          label: toCurrencyString(widget.amount),
+                        CustomParagraph(
+                          text: toCurrencyString(widget.amount),
                           fontWeight: FontWeight.w600,
-                          alignment: TextAlign.left,
+                          textAlign: TextAlign.left,
                           fontSize: 16,
                         ),
                       ],
@@ -837,29 +802,13 @@ class ReceiptBody extends StatelessWidget {
         child: Column(
           children: [
             Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Total Token',
-                  style: CustomTextStyle(
-                    color: const Color(0xFF353536),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 0,
-                    letterSpacing: -0.32,
-                  ),
+                CustomTitle(
+                  text: 'Total Token',
                 ),
-                Expanded(
-                  child: Text(
-                    toCurrencyString(amount),
-                    style: CustomTextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                    textAlign: TextAlign.right,
-                    softWrap: true,
-                  ),
+                CustomTitle(
+                  text: toCurrencyString(amount),
                 )
               ],
             ),
@@ -903,28 +852,18 @@ class ReceiptBody extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: AutoSizeText(
-            label,
-            style: CustomTextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.black54,
-            ),
+          child: CustomParagraph(
+            text: label,
             textAlign: TextAlign.left,
-            softWrap: true,
-            maxLines: 1,
-            minFontSize: 1,
+            maxlines: 1,
           ),
         ),
         Expanded(
-          child: AutoSizeText(
-            value,
-            style: CustomTextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-            softWrap: true,
-            maxLines: 1,
-            minFontSize: 1,
+          child: CustomParagraph(
+            text: value,
+            color: Colors.black,
+            maxlines: 2,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ],

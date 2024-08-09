@@ -403,3 +403,27 @@ class _AlertContainState extends State<AlertContain> {
     );
   }
 }
+
+void errorDialog(
+    BuildContext context, String title, String paragraph, VoidCallback onTap) {
+  showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: CustomTitle(
+            text: title,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          content: CustomParagraph(text: paragraph),
+          actions: <Widget>[
+            TextButton(
+              child: const Text("Close"),
+              onPressed: () {
+                onTap();
+              },
+            ),
+          ],
+        );
+      });
+}

@@ -207,7 +207,7 @@ class _CustomParent1WidgetState extends State<CustomParent1Widget> {
                 widget.appBarIconClick!();
               },
               icon: Icon(
-                Icons.arrow_back_ios_new,
+                Icons.chevron_left_outlined,
                 color: Colors.black,
               ),
             ),

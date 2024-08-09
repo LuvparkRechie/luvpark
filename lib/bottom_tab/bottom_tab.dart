@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:luvpark/classess/color_component.dart';
-import 'package:luvpark/custom_widget/custom_text.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/dashboard/dashboard3.dart';
 import 'package:luvpark/parking_trans/parking_transaction.dart';
 import 'package:luvpark/settings/settings.dart';
 import 'package:luvpark/wallet/my_wallet.dart';
 
-// ignore: must_be_immutable
 class MainLandingScreen extends StatefulWidget {
   final int index;
   final int? parkingIndex;
@@ -18,10 +16,7 @@ class MainLandingScreen extends StatefulWidget {
   });
 
   @override
-  // ignore: library_private_types_in_public_api
-  _MainLandingScreenState createState() =>
-      // ignore: no_logic_in_create_state
-      _MainLandingScreenState();
+  _MainLandingScreenState createState() => _MainLandingScreenState();
 }
 
 class _MainLandingScreenState extends State<MainLandingScreen> {
@@ -29,16 +24,14 @@ class _MainLandingScreenState extends State<MainLandingScreen> {
   int _currentIndex = 0;
   bool isRating = false;
   final List<Widget> _pages = <Widget>[];
+
   @override
   void initState() {
     super.initState();
     _pages.add(Dashboard3());
-    _pages.add(ParkingActivity(
-      tabIndex: widget.parkingIndex ?? 0,
-    ));
+    _pages.add(ParkingActivity(tabIndex: widget.parkingIndex ?? 0));
     _pages.add(const MyWallet());
     _pages.add(const SettingsPage());
-
     _currentIndex = widget.index;
   }
 
@@ -61,87 +54,99 @@ class _MainLandingScreenState extends State<MainLandingScreen> {
     return MediaQuery(
       data: MediaQuery.of(context)
           .copyWith(textScaler: const TextScaler.linear(1)),
-      child: PopScope(
-        canPop: false,
-        child: Scaffold(
-          extendBodyBehindAppBar: _currentIndex == 0 ? true : false,
-          appBar: _currentIndex > 0
-              ? null
-              : AppBar(
-                  elevation: 0,
-                  toolbarHeight: 0,
-                  automaticallyImplyLeading: false,
-                  backgroundColor: Colors.transparent,
-                  systemOverlayStyle: SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarBrightness: Brightness.dark,
-                    statusBarIconBrightness: Brightness.dark,
-                  ),
-                ),
-          body: _pages[_currentIndex],
-          bottomNavigationBar: BottomAppBar(
-            shape: const CircularNotchedRectangle(),
-            notchMargin: 5.0,
-            clipBehavior: Clip.antiAlias,
-            child: Container(
-              decoration: const BoxDecoration(
-                color: Colors.white,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.only(top: 10, bottom: 5),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    buildNavBarItem(0, "home", 'Home'),
-                    buildNavBarItem(1, "parking", 'My Parking'),
-                    buildNavBarItem(2, "wallet", 'Wallet'),
-                    buildNavBarItem(3, "settings", 'Settings'),
-                  ],
+      child: Scaffold(
+        extendBodyBehindAppBar: _currentIndex == 0,
+        appBar: _currentIndex > 0
+            ? null
+            : AppBar(
+                elevation: 0,
+                toolbarHeight: 0,
+                automaticallyImplyLeading: false,
+                backgroundColor: Colors.transparent,
+                systemOverlayStyle: SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarBrightness: Brightness.dark,
+                  statusBarIconBrightness: Brightness.dark,
                 ),
               ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+        body: _pages[_currentIndex],
+        bottomNavigationBar: LayoutBuilder(
+          builder: (context, constraints) {
+            // Get screen width
+            double screenWidth = constraints.maxWidth;
 
-  Widget buildNavBarItem(int index, String iconData, String title) {
-    return InkWell(
-      onTap: () {
-        setState(() {
-          _currentIndex = index;
-          isCenterDocked = false;
-          isRating = false;
-        });
-      },
-      child: SizedBox(
-        height: 50,
-        width: MediaQuery.of(context).size.width / 4,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image(
-              height: 24,
-              width: 24,
-              fit: BoxFit.cover,
-              image: AssetImage(
-                  "assets/images/${_currentIndex == index ? '${iconData}_active' : "${iconData}_inactive"}.png"),
-            ),
-            const SizedBox(
-              height: 12,
-            ),
-            CustomDisplayText(
-              label: title,
-              color: _currentIndex == index
-                  ? AppColor.primaryColor
-                  : Color(0xFF666666),
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              height: 0.16,
-              maxLines: 1,
-            ),
-          ],
+            // Define sizes based on screen width
+            double imageSize = screenWidth < 360 ? 20 : 24;
+            double fontSize = screenWidth < 360 ? 12 : 14;
+
+            return BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              currentIndex: _currentIndex,
+              selectedLabelStyle: GoogleFonts.manrope(
+                fontSize: fontSize,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              unselectedLabelStyle: GoogleFonts.manrope(
+                fontSize: fontSize,
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+              onTap: (index) {
+                setState(() {
+                  _currentIndex = index;
+                  isCenterDocked = false;
+                  isRating = false;
+                });
+              },
+              items: [
+                BottomNavigationBarItem(
+                  icon: Image(
+                    fit: BoxFit.cover,
+                    image: AssetImage(
+                      "assets/images/home_${_currentIndex == 0 ? 'active' : 'inactive'}.png",
+                    ),
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                  label: 'Home',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image(
+                    fit: BoxFit.cover,
+                    image: AssetImage(
+                      "assets/images/parking_${_currentIndex == 1 ? 'active' : 'inactive'}.png",
+                    ),
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                  label: 'Parking',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image(
+                    fit: BoxFit.cover,
+                    image: AssetImage(
+                      "assets/images/wallet_${_currentIndex == 2 ? 'active' : 'inactive'}.png",
+                    ),
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                  label: 'Wallet',
+                ),
+                BottomNavigationBarItem(
+                  icon: Image(
+                    fit: BoxFit.cover,
+                    image: AssetImage(
+                      "assets/images/settings_${_currentIndex == 3 ? 'active' : 'inactive'}.png",
+                    ),
+                    width: imageSize,
+                    height: imageSize,
+                  ),
+                  label: 'Settings',
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

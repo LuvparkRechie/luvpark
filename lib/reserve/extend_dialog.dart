@@ -75,21 +75,16 @@ class _CustomDialogState extends State<CustomDialog> {
                   children: [
                     const SizedBox(height: 10),
                     InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                      },
-                      child: const Text(
-                        "Cancel",
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
+                        onTap: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: CustomTitle(
+                          text: "Cancel",
                           color: Colors.blue,
-                        ),
-                        softWrap: true,
-                      ),
-                    ),
+                        )),
                     const SizedBox(height: 20),
-                    CustomDisplayText(
-                        label: "Extend your parking now",
+                    CustomParagraph(
+                        text: "Extend your parking now",
                         fontSize: 20,
                         fontWeight: FontWeight.w400,
                         letterSpacing: .5,
@@ -126,17 +121,13 @@ class _CustomDialogState extends State<CustomDialog> {
                         ),
                         Column(
                           children: [
-                            CustomDisplayText(
-                              label: counter.toString(),
-                              fontWeight: FontWeight.bold,
+                            CustomTitle(
+                              text: counter.toString(),
                               color: AppColor.primaryColor,
                               fontSize: 40,
                             ),
-                            CustomDisplayText(
-                              label: counter == 1 ? "Hour" : "Hours",
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.textSubColor,
-                              letterSpacing: .5,
+                            CustomParagraph(
+                              text: counter == 1 ? "Hour" : "Hours",
                               fontSize: 12,
                             ),
                           ],

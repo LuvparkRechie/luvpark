@@ -9,10 +9,10 @@ import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/classess/api_keys.dart';
-import 'package:luvpark/classess/textstyle.dart';
 import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
+import 'package:luvpark/custom_widget/custom_shimmer.dart';
 import 'package:luvpark/custom_widget/custom_text.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/http_request/http_request_model.dart';
@@ -21,7 +21,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shimmer/shimmer.dart';
 
 class ParkingHistory extends StatefulWidget {
   const ParkingHistory({super.key});
@@ -132,7 +131,7 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                       ? ListView.builder(
                           itemCount: 10,
                           itemBuilder: ((context, index) {
-                            return reserveShimmer();
+                            return CustomShimmer();
                           }),
                         )
                       : parkingHistoryData.isEmpty
@@ -148,36 +147,18 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                             )
                           : RefreshIndicator(
                               onRefresh: refresh,
-                              child: ListView(
-                                padding: EdgeInsets.zero,
-                                children: histParent,
-                              ),
-                            ),
+                              child: ListView.separated(
+                                  itemBuilder: (context, index) {
+                                    return historyWidget(
+                                        parkingHistoryData[index]);
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(height: 5);
+                                  },
+                                  itemCount: parkingHistoryData.length)),
                 ),
               ],
             ),
-    );
-  }
-
-  Widget reserveShimmer() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(0, 5, 0, 5),
-      child: Shimmer.fromColors(
-        baseColor: Colors.grey.shade300,
-        highlightColor: const Color(0xFFe6faff),
-        child: Container(
-          height: 100.0,
-          width: MediaQuery.of(context).size.width,
-          decoration: BoxDecoration(
-            color: const Color(0xFFffffff),
-            border: Border.all(
-                style: BorderStyle.solid, color: Colors.grey.shade100),
-            borderRadius: const BorderRadius.all(
-              Radius.circular(15),
-            ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -283,33 +264,21 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                 Row(
                   children: [
                     Expanded(
-                      child: CustomDisplayText(
-                        label: data["reservation_ref_no"].toString(),
-                        fontSize: 14,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w600,
-                        maxLines: 1,
+                      child: CustomTitle(
+                        text: data["reservation_ref_no"].toString(),
+                        maxlines: 1,
                       ),
-
-                      //  AutoSizeText(
-                      //   "Parking Completed",
-                      //   style: CustomTextStyle(
-                      //       fontSize: 14,
-                      //       color: AppColor.mainColor,
-                      //       fontWeight: FontWeight.bold),
-                      //   maxLines: 1,
-                      // ),
                     ),
-                    CustomDisplayText(
-                      label: toCurrencyString(data["amount"].toString()),
+                    CustomTitle(
+                      text: toCurrencyString(data["amount"].toString()),
                       fontSize: 14,
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      maxLines: 1,
+                      maxlines: 1,
                     ),
                   ],
                 ),
-                Container(height: 22),
+                Container(height: 20),
                 Row(
                   children: [
                     Icon(
@@ -323,20 +292,17 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomDisplayText(
-                          label: convertDateFormat(data["dt_in"]),
-                          fontSize: 16,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          maxLines: 1,
+                        CustomTitle(
+                          text: convertDateFormat(data["dt_in"]),
+                          maxlines: 1,
                         ),
-                        CustomDisplayText(
-                          label: Variables.convertTime(
+                        CustomParagraph(
+                          text: Variables.convertTime(
                               data["dt_in"].toString().split(" ")[1]),
                           fontSize: 14,
                           color: const Color.fromARGB(255, 137, 140, 148),
                           fontWeight: FontWeight.w500,
-                          maxLines: 1,
+                          maxlines: 1,
                         ),
                       ],
                     ),
@@ -354,20 +320,20 @@ class _ParkingHistoryState extends State<ParkingHistory> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        CustomDisplayText(
-                          label: convertDateFormat(data["dt_out"]),
+                        CustomTitle(
+                          text: convertDateFormat(data["dt_out"]),
                           fontSize: 16,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
-                          maxLines: 1,
+                          maxlines: 1,
                         ),
-                        CustomDisplayText(
-                          label: Variables.convertTime(
+                        CustomParagraph(
+                          text: Variables.convertTime(
                               data["dt_out"].toString().split(" ")[1]),
                           fontSize: 14,
                           color: const Color.fromARGB(255, 137, 140, 148),
                           fontWeight: FontWeight.w500,
-                          maxLines: 1,
+                          maxlines: 1,
                         ),
                       ],
                     )
@@ -444,25 +410,15 @@ class _DetailsState extends State<Details> {
                       Container(height: 15),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: CustomDisplayText(
-                          label: widget.param["park_area"].toString(),
-                          color: const Color(0xFF353536),
+                        child: CustomTitle(
+                          text: widget.param["park_area"].toString(),
                           fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          height: 0,
-                          letterSpacing: -0.32,
                         ),
-                      ),
-                      Container(
-                        height: 5,
                       ),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: CustomDisplayText(
-                          label: "Parking Area",
-                          fontSize: 16,
-                          color: Colors.black54,
-                          fontWeight: FontWeight.w600,
+                        child: CustomParagraph(
+                          text: "Parking Area",
                         ),
                       ),
                       Container(
@@ -493,7 +449,7 @@ class _DetailsState extends State<Details> {
                                       ),
                                       Text("Share",
                                           style: Platform.isAndroid
-                                              ? GoogleFonts.dmSans(
+                                              ? GoogleFonts.manrope(
                                                   color: Colors.black,
                                                   fontWeight: FontWeight.w600,
                                                   letterSpacing: 1,
@@ -532,7 +488,7 @@ class _DetailsState extends State<Details> {
                                       Text(
                                         "Save",
                                         style: Platform.isAndroid
-                                            ? GoogleFonts.dmSans(
+                                            ? GoogleFonts.manrope(
                                                 color: Colors.black,
                                                 fontWeight: FontWeight.w600,
                                                 letterSpacing: 1,
@@ -575,29 +531,14 @@ class _DetailsState extends State<Details> {
           children: [
             Row(
               children: [
-                Text(
-                  'Total Token',
-                  style: CustomTextStyle(
-                    color: const Color(0xFF353536),
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    height: 0,
-                    letterSpacing: -0.32,
+                Expanded(
+                  child: CustomTitle(
+                    text: 'Total Token',
                   ),
                 ),
-                Expanded(
-                  child: Text(
-                    toCurrencyString(widget.amount.toString()),
-                    style: CustomTextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      height: 0,
-                      letterSpacing: -0.32,
-                    ),
-                    textAlign: TextAlign.right,
-                    softWrap: true,
-                  ),
-                )
+                CustomTitle(
+                  text: toCurrencyString(widget.amount.toString()),
+                ),
               ],
             ),
             const Divider(),
@@ -651,12 +592,8 @@ class _DetailsState extends State<Details> {
               Container(height: 50),
               Align(
                 alignment: Alignment.centerLeft,
-                child: CustomDisplayText(
-                  label: widget.param["park_area"].toString(),
-                  color: const Color(0xFF353536),
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  height: 0,
+                child: CustomTitle(
+                  text: widget.param["park_area"].toString(),
                   letterSpacing: -0.32,
                 ),
               ),
@@ -665,11 +602,10 @@ class _DetailsState extends State<Details> {
               ),
               Align(
                 alignment: Alignment.centerLeft,
-                child: CustomDisplayText(
-                    label: "Parking Area",
-                    fontSize: 12,
-                    color: const Color.fromARGB(255, 137, 140, 148),
-                    fontWeight: FontWeight.w600),
+                child: CustomParagraph(
+                  text: "Parking Area",
+                  fontSize: 12,
+                ),
               ),
               Container(
                 height: 30,
@@ -712,14 +648,10 @@ class _DetailsState extends State<Details> {
                         width: 10,
                       ),
                       Expanded(
-                        child: CustomDisplayText(
-                          label: "Total Paid",
-                          color: const Color(0xFF353536),
-                          fontSize: 15,
-                          fontWeight: FontWeight.w700,
+                        child: CustomTitle(
+                          text: "Total Paid",
                           height: 0,
                           letterSpacing: -0.32,
-                          maxLines: 1,
                         ),
                       ),
                       Container(
@@ -733,8 +665,8 @@ class _DetailsState extends State<Details> {
                             children: [
                               Align(
                                 alignment: Alignment.centerRight,
-                                child: CustomDisplayText(
-                                  label: toCurrencyString(
+                                child: CustomTitle(
+                                  text: toCurrencyString(
                                       widget.param["amount"].toString()),
                                   color: const Color(0xFF353536),
                                   fontSize: 14,
@@ -744,15 +676,15 @@ class _DetailsState extends State<Details> {
                               ),
                               Align(
                                 alignment: Alignment.centerRight,
-                                child: CustomDisplayText(
-                                  label: "Token",
+                                child: CustomTitle(
+                                  text: "Token",
                                   color:
                                       const Color.fromARGB(255, 137, 140, 148),
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                   height: 0,
                                   letterSpacing: -0.20,
-                                  maxLines: 1,
+                                  maxlines: 1,
                                 ),
                               ),
                             ],
@@ -776,20 +708,15 @@ class _DetailsState extends State<Details> {
       child: Row(
         children: [
           Expanded(
-            child: CustomDisplayText(
-              label: label,
-              fontWeight: FontWeight.normal,
-              color: Colors.black54,
-              maxLines: 1,
-              alignment: TextAlign.left,
+            child: CustomParagraph(
+              text: label,
+              maxlines: 1,
             ),
           ),
           Expanded(
-            child: CustomDisplayText(
-              label: value,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-              maxLines: 1,
+            child: CustomParagraph(
+              text: value,
+              maxlines: 1,
             ),
           ),
         ],

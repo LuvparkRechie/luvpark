@@ -4,9 +4,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/variables.dart';
+import 'package:luvpark/custom_widget/custom_text.dart';
 
 class CustomTextField extends StatefulWidget {
   final String labelText;
@@ -79,15 +79,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
               widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
-            labelText: widget.title,
-            labelStyle: TextStyle(
-              color: AppColor.textSubColor,
-              fontWeight: FontWeight.w500,
-            ),
-            floatingLabelStyle: TextStyle(
-              color: AppColor.primaryColor,
-              fontWeight: FontWeight.w500,
-            ),
             filled: widget.isFilled != null && widget.isFilled!
                 ? widget.isFilled!
                 : null,
@@ -119,11 +110,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 : widget.labelText,
 
             hintStyle: Platform.isAndroid
-                ? GoogleFonts.dmSans(
-                    fontWeight: widget.fontweight,
-                    color: const Color(0xFF9C9C9C),
-                    fontSize: widget.fontsize,
-                  )
+                ? paragraphStyle(fontWeight: FontWeight.w500)
                 : TextStyle(
                     fontWeight: widget.fontweight,
                     color: const Color(0xFF9C9C9C),
@@ -132,29 +119,28 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   ),
 
             contentPadding: const EdgeInsets.only(left: 17, right: 17),
+
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(color: Colors.blue),
             ),
             border: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(
-                width: 1,
-                color: Colors.black.withOpacity(0.15000000596046448),
+                width: 2,
+                color: Colors.black.withOpacity(0.07999999821186066),
               ),
             ),
             enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(
-                width: 1,
-                color: Colors.black.withOpacity(0.15000000596046448),
+                width: 2,
+                color: Colors.black.withOpacity(0.07999999821186066),
               ),
             ),
           ),
           style: Platform.isAndroid
-              ? GoogleFonts.dmSans(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14,
-                )
+              ? paragraphStyle(color: Colors.black)
               : TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
@@ -271,11 +257,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
                   Text(
                     '+63',
                     style: Platform.isAndroid
-                        ? GoogleFonts.dmSans(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          )
+                        ? paragraphStyle()
                         : TextStyle(
                             fontFamily: "SFProTextReg",
                             color: Colors.black,
@@ -288,11 +270,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
             ),
             hintText: "10 digit mobile number",
             hintStyle: Platform.isAndroid
-                ? GoogleFonts.dmSans(
-                    fontWeight: FontWeight.w500,
-                    color: const Color(0xFF9C9C9C),
-                    fontSize: 14,
-                  )
+                ? paragraphStyle(fontWeight: FontWeight.w500)
                 : TextStyle(
                     fontWeight: FontWeight.w500,
                     color: const Color(0xFF9C9C9C),
@@ -307,21 +285,23 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(color: Colors.blue),
             ),
-            border: const OutlineInputBorder(
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
-              borderSide: BorderSide(color: Colors.blue),
+              borderSide: BorderSide(
+                width: 2,
+                color: Colors.black.withOpacity(0.07999999821186066),
+              ),
             ),
-            enabledBorder: const OutlineInputBorder(
+            enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
-              borderSide: BorderSide(color: Color.fromARGB(255, 223, 223, 223)),
+              borderSide: BorderSide(
+                width: 2,
+                color: Colors.black.withOpacity(0.07999999821186066),
+              ),
             ),
           ),
           style: Platform.isAndroid
-              ? GoogleFonts.dmSans(
-                  color: Colors.black,
-                  fontWeight: FontWeight.normal,
-                  fontSize: 14,
-                )
+              ? paragraphStyle(color: Colors.black)
               : TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.normal,
@@ -357,18 +337,18 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
 }
 
 class CustomDropdown extends StatefulWidget {
-  final String ddValue;
+  final String? ddValue;
   final List ddData;
   final String labelText;
-  final ValueChanged<String>? onChange;
-  final Function? onTap;
-  const CustomDropdown(
-      {super.key,
-      required this.labelText,
-      required this.ddData,
-      this.onChange,
-      required this.ddValue,
-      this.onTap});
+  final ValueChanged<String> onChange;
+
+  const CustomDropdown({
+    super.key,
+    required this.labelText,
+    required this.ddData,
+    required this.onChange,
+    this.ddValue,
+  });
 
   @override
   State<CustomDropdown> createState() => _CustomDropdownState();
@@ -390,61 +370,52 @@ class _CustomDropdownState extends State<CustomDropdown> {
         child: DropdownButtonFormField(
           dropdownColor: Colors.white,
           decoration: InputDecoration(
-            // filled: true,
-            // fillColor: Colors.white,
-            hintText: "",
+            hintText: widget.labelText,
             hintStyle: Platform.isAndroid
-                ? GoogleFonts.dmSans(
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF9C9C9C),
-                    fontSize: 16,
-                  )
+                ? paragraphStyle(fontWeight: FontWeight.w500)
                 : TextStyle(
                     fontWeight: FontWeight.w600,
                     color: const Color(0xFF9C9C9C),
                     fontSize: 16,
                     fontFamily: "SFProTextReg",
                   ),
-
             contentPadding: const EdgeInsets.all(10),
             focusedBorder: const OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(color: Colors.blue),
             ),
-            border: const OutlineInputBorder(
+            border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
-              borderSide: BorderSide(color: Colors.blue),
+              borderSide: BorderSide(
+                width: 2,
+                color: Colors.black.withOpacity(0.07999999821186066),
+              ),
             ),
-            enabledBorder: const OutlineInputBorder(
+            enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(7)),
-              borderSide: BorderSide(color: Color.fromARGB(255, 223, 223, 223)),
+              borderSide: BorderSide(
+                width: 2,
+                color: Colors.black.withOpacity(0.07999999821186066),
+              ),
             ),
           ),
           value: widget.ddValue,
           isExpanded: true,
           onChanged: (String? newValue) {
-            setState(() {
-              // ddProvice = newValue!;
-
-              // ddCity = null;
-              // ddBrgy = null;
-              // getProvinceData(
-              //     int.parse(newValue.toString()), gApiSubFolderGetCity);
-              // provinceName = provinceData.where((element) {
-              //   return int.parse(element["value"].toString()) ==
-              //       int.parse(ddProvice.toString());
-              // }).toList()[0]["province"];
-            });
+            widget.onChange(newValue!);
+          },
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please select a ${widget.labelText}';
+            }
+            return null;
           },
           items: widget.ddData.map((item) {
             return DropdownMenuItem(
                 value: item['value'].toString(),
                 child: AutoSizeText(
                   item['text'],
-                  style: GoogleFonts.varela(
-                    color: Colors.black,
-                    fontWeight: FontWeight.normal,
-                  ),
+                  style: paragraphStyle(color: Colors.black),
                   overflow: TextOverflow.ellipsis,
                   maxFontSize: 15,
                   maxLines: 2,

@@ -6,7 +6,6 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gallery_saver/gallery_saver.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/class/get_user_bal.dart';
 import 'package:luvpark/classess/api_keys.dart';
@@ -33,7 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 // ignore: must_be_immutable
 class ParkingDetails extends StatefulWidget {
   String startDate, startTime, endTime;
-  final List resData, returnData;
+  final dynamic resData, returnData;
   final Object paramsCalc;
   final String? dtOut, dateIn;
   final Function? onTap;
@@ -56,45 +55,6 @@ class ParkingDetails extends StatefulWidget {
 
 class _ParkingDetailsState extends State<ParkingDetails>
     with TickerProviderStateMixin {
-  // AnimationController? controller;
-  // String get timerString {
-  //   Duration duration = controller!.duration! * controller!.value;
-  //   int hours = duration.inHours;
-  //   int minutes = duration.inMinutes % 60;
-  //   int seconds = duration.inSeconds % 60;
-
-  //   return '$hours:${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  //   DateTime currentTime = DateTime.now();
-
-  //   Duration remainingDuration = DateTime.parse(widget.dtOut.toString())
-  //       .difference(DateTime.parse(widget.dtOut.toString()));
-
-  //   controller = AnimationController(
-  //     vsync: this,
-  //     duration: remainingDuration,
-  //   );
-  //   controller!.addListener(() {
-  //     setState(() {}); // Update UI whenever the animation value changes
-  //   });
-  //   // Only reverse the animation if it's not already animating
-  //   if (!controller!.isAnimating) {
-  //     controller!
-  //         .reverse(from: controller!.value == 0.0 ? 20.0 : controller!.value);
-  //   }
-  // }
-
-  // @override
-  // void dispose() {
-  //   controller!.dispose();
-  //   super.dispose();
-  // }
-
   DateTime? startTime;
   DateTime? endTime;
   int threshold = 30; // minutes
@@ -167,21 +127,16 @@ class _ParkingDetailsState extends State<ParkingDetails>
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      CustomDisplayText(
-                                        label: widget.returnData[0]
+                                      CustomTitle(
+                                        text: widget.returnData[0]
                                                 ["park_area_name"]
                                             .toString(),
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
                                       ),
                                       Container(height: 10),
-                                      CustomDisplayText(
-                                        label: widget.returnData[0]["address"]
+                                      CustomParagraph(
+                                        text: widget.returnData[0]["address"]
                                             .toString(),
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black54,
-                                        maxLines: 2,
+                                        maxlines: 2,
                                       )
                                     ],
                                   ),
@@ -221,24 +176,22 @@ class _ParkingDetailsState extends State<ParkingDetails>
                               Row(
                                 children: [
                                   Expanded(
-                                    child: CustomDisplayText(
-                                      label:
+                                    child: CustomParagraph(
+                                      text:
                                           "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.startTime))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(widget.endTime))} ",
                                       fontSize: 12,
-                                      fontWeight: FontWeight.w400,
                                     ),
                                   ),
                                   Expanded(
                                     child: Align(
                                       alignment: Alignment.centerRight,
-                                      child: CustomDisplayText(
-                                        label: timeLeft == null
+                                      child: CustomParagraph(
+                                        text: timeLeft == null
                                             ? ""
                                             : "${Variables.formatTimeLeft(timeLeft!)}",
                                         fontSize: 12,
-                                        fontWeight: FontWeight.normal,
                                         color: Colors.grey,
-                                        maxLines: 1,
+                                        maxlines: 1,
                                       ),
                                     ),
                                   ),
@@ -276,22 +229,22 @@ class _ParkingDetailsState extends State<ParkingDetails>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           ReceiptBody(
-                            amount: widget.resData[0]["amount"].toString(),
+                            amount: widget.resData["amount"].toString(),
                             plateNo: widget.returnData[0]["vehicle_plate_no"]
                                 .toString(),
                             startDate: widget.startDate,
                             startTime: widget.startTime,
                             endTime: widget.endTime,
-                            hours: widget.resData[0]["no_hours"].toString(),
+                            hours: widget.resData["no_hours"].toString(),
                             parkArea: widget.returnData[0]["park_area_name"],
-                            refno: widget.resData[0]["reservation_ref_no"]
-                                .toString(),
+                            refno:
+                                widget.resData["reservation_ref_no"].toString(),
                           ),
                           Container(height: 20),
                           Row(
                             children: [
                               QrImageView(
-                                data: widget.resData[0]["reservation_ref_no"]
+                                data: widget.resData["reservation_ref_no"]
                                     .toString(),
                                 version: QrVersions.auto,
                                 size: 100,
@@ -319,20 +272,11 @@ class _ParkingDetailsState extends State<ParkingDetails>
                                         ),
                                       ),
                                       Container(height: 5),
-                                      Text("Share",
-                                          style: Platform.isAndroid
-                                              ? GoogleFonts.dmSans(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600,
-                                                  letterSpacing: 1,
-                                                  fontSize: 14)
-                                              : TextStyle(
-                                                  color: Colors.black,
-                                                  fontWeight: FontWeight.w600,
-                                                  letterSpacing: 1,
-                                                  fontSize: 14,
-                                                  fontFamily: "SFProTextReg",
-                                                )),
+                                      CustomParagraph(
+                                        text: "Share",
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      )
                                     ],
                                   ),
                                 ),
@@ -357,22 +301,11 @@ class _ParkingDetailsState extends State<ParkingDetails>
                                         ),
                                       ),
                                       Container(height: 5),
-                                      Text(
-                                        "Save",
-                                        style: Platform.isAndroid
-                                            ? GoogleFonts.dmSans(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: 1,
-                                                fontSize: 14)
-                                            : TextStyle(
-                                                color: Colors.black,
-                                                fontWeight: FontWeight.w600,
-                                                letterSpacing: 1,
-                                                fontSize: 14,
-                                                fontFamily: "SFProTextReg",
-                                              ),
-                                      ),
+                                      CustomParagraph(
+                                        text: "Save",
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w600,
+                                      )
                                     ],
                                   ),
                                 ),
@@ -400,12 +333,12 @@ class _ParkingDetailsState extends State<ParkingDetails>
                       onTap: () async {
                         String mapUrl = "";
                         String dest =
-                            "${widget.resData[0]["pa_latitude"]},${widget.resData[0]["pa_longitude"]}";
+                            "${widget.resData["pa_latitude"]},${widget.resData["pa_longitude"]}";
                         if (Platform.isIOS) {
                           mapUrl = 'https://maps.apple.com/?daddr=$dest';
                         } else {
                           mapUrl =
-                              'https://www.google.com/maps/search/?api=1&query=${widget.resData[0]["pa_latitude"]},${widget.resData[0]["pa_longitude"]}';
+                              'https://www.google.com/maps/search/?api=1&query=${widget.resData["pa_latitude"]},${widget.resData["pa_longitude"]}';
                         }
                         if (await canLaunchUrl(Uri.parse(mapUrl))) {
                           await launchUrl(Uri.parse(mapUrl),
@@ -420,13 +353,11 @@ class _ParkingDetailsState extends State<ParkingDetails>
                   Expanded(
                       child: CustomButton(
                           label:
-                              widget.resData[0]["is_auto_extend"].toString() ==
-                                      "Y"
+                              widget.resData["is_auto_extend"].toString() == "Y"
                                   ? "Cancel auto extend"
                                   : "Extend Parking",
                           onTap:
-                              widget.resData[0]["is_auto_extend"].toString() ==
-                                      "Y"
+                              widget.resData["is_auto_extend"].toString() == "Y"
                                   ? cancelAutoExtend
                                   : extendParking))
                 ],
@@ -484,7 +415,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
                 child: Padding(
                   padding: const EdgeInsets.all(15.0),
                   child: QrImageView(
-                    data: widget.resData[0]["reservation_id"].toString(),
+                    data: widget.resData["reservation_id"].toString(),
                     version: QrVersions.auto,
                     gapless: false,
                   ),
@@ -523,14 +454,14 @@ class _ParkingDetailsState extends State<ParkingDetails>
               height: 38,
             ),
             ReceiptBody(
-              amount: widget.resData[0]["amount"].toString(),
+              amount: widget.resData["amount"].toString(),
               plateNo: widget.returnData[0]["vehicle_plate_no"].toString(),
               startDate: widget.startDate,
               startTime: widget.startTime,
               endTime: widget.endTime,
-              hours: widget.resData[0]["no_hours"].toString(),
+              hours: widget.resData["no_hours"].toString(),
               parkArea: widget.returnData[0]["park_area_name"],
-              refno: widget.resData[0]["reservation_ref_no"].toString(),
+              refno: widget.resData["reservation_ref_no"].toString(),
             ),
             Container(
               height: 10,
@@ -613,7 +544,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
 
     HttpRequest(
             api: ApiKeys.gApiLuvPayPutCancelAutoExtend,
-            parameters: {"reservation_id": widget.resData[0]["reservation_id"]})
+            parameters: {"reservation_id": widget.resData["reservation_id"]})
         .put()
         .then((objData) {
       if (objData == "No Internet") {
@@ -683,7 +614,7 @@ class _ParkingDetailsState extends State<ParkingDetails>
               amountBal: double.parse(userBal[0]["amount_bal"].toString()),
               paramsCalc: widget.paramsCalc,
               dtOut: widget.dtOut.toString(),
-              referenceNo: widget.resData[0]["reservation_ref_no"].toString(),
+              referenceNo: widget.resData["reservation_ref_no"].toString(),
               icon: Icons.abc,
               detailContext: context,
             );

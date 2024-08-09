@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/http_request.dart';
@@ -180,10 +179,8 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                 Container(
                   height: 41,
                 ),
-                CustomDisplayText(
-                  label: "Enter your One-Time-Pin",
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.textHeaderLabelColor,
+                CustomTitle(
+                  text: "Enter your One-Time-Pin",
                   fontSize: 20,
                 ),
                 RichText(
@@ -192,20 +189,11 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                       TextSpan(
                           text:
                               "We have sent an OTP to your registered\nmobile number",
-                          style: GoogleFonts.inter(
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.textSecondaryColor,
-                            fontSize: 14,
-                          ),
+                          style: paragraphStyle(),
                           children: <TextSpan>[
                             TextSpan(
-                              text: " +${widget.mobileNo}",
-                              style: GoogleFonts.inter(
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.primaryColor,
-                                fontSize: 14,
-                              ),
-                            ),
+                                text: " +${widget.mobileNo}",
+                                style: paragraphStyle()),
                           ]),
                     ],
                   ),
@@ -222,7 +210,6 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                         AndroidSmsAutofillMethod.smsUserConsentApi,
                     listenForMultipleSmsOnAndroid: true,
                     defaultPinTheme: defaultPinTheme,
-
                     hapticFeedbackType: HapticFeedbackType.lightImpact,
                     onCompleted: (pin) {
                       if (pin.length == 6) {
@@ -267,9 +254,6 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                             width: 2),
                       ),
                     ),
-                    // errorPinTheme: defaultPinTheme.copyBorderWith(
-                    //   border: Border.all(color: Colors.redAccent),
-                    // ),
                   ),
                 ),
                 Container(
@@ -284,13 +268,10 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                         size: 14,
                         color: Colors.red,
                       ),
-                      Text(
-                        " Incorrect pin",
-                        style: GoogleFonts.poppins(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.red,
-                          fontSize: 14,
-                        ),
+                      CustomParagraph(
+                        text: " Incorrect pin",
+                        color: Colors.red,
+                        fontSize: 14,
                       ),
                     ],
                   ),
@@ -298,10 +279,8 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                   height: 40,
                 ),
                 Center(
-                  child: CustomDisplayText(
-                    label: "Didn't you receive any code?",
-                    fontWeight: FontWeight.bold,
-                    color: AppColor.textSecondaryColor,
+                  child: CustomTitle(
+                    text: "Didn't you receive any code?",
                     fontSize: 14,
                   ),
                 ),
@@ -317,19 +296,17 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      CustomDisplayText(
-                        label: minutes != 0 || seconds != 0
+                      CustomParagraph(
+                        text: minutes != 0 || seconds != 0
                             ? "Resend OTP in"
                             : "I didn't get a code",
-                        fontWeight: FontWeight.w500,
-                        color: AppColor.primaryColor,
                         fontSize: 14,
+                        color: AppColor.primaryColor,
                       ),
                       if (minutes != 0 || seconds != 0)
-                        CustomDisplayText(
-                          label:
+                        CustomParagraph(
+                          text:
                               " $minutes:${seconds < 10 ? "0" : ""}$seconds ${minutes != 0 ? "minutes" : "seconds"}",
-                          fontWeight: FontWeight.w500,
                           color: AppColor.primaryColor,
                           fontSize: 14,
                         ),
@@ -378,25 +355,5 @@ class _OtpTransferScreenState extends State<OtpTransferScreen>
             ),
           ),
         ));
-    //  MediaQuery(
-    //   data: MediaQuery.of(context)
-    //       .copyWith(textScaler: const TextScaler.linear(1)),
-    //   child: PopScope(
-    //     canPop: true,
-    //     child: Scaffold(
-    //       appBar: AppbarWidget(
-    //         appbarColor: AppColor.bodyColor,
-    //       ),
-    //       body: SafeArea(
-    //         child: Container(
-    //           width: MediaQuery.of(context).size.width,
-    //           height: MediaQuery.of(context).size.height,
-    //           color: AppColor.bodyColor,
-    //           child:
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }

@@ -192,11 +192,10 @@ class _ActivateAccountScreenState extends State<ActivateAccountScreen>
                   const SizedBox(
                     height: 20,
                   ),
-                  CustomDisplayText(
-                      label: "Activate Account",
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black),
+                  CustomTitle(
+                    text: "Activate Account",
+                    fontSize: 20,
+                  ),
                   SizedBox(
                     height: 3.h,
                   ),

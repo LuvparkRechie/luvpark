@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/DbProvider.dart';
 import 'package:luvpark/classess/api_keys.dart';
 import 'package:luvpark/classess/biometric_login.dart';
@@ -122,13 +121,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         width: 10,
                       ),
                       Expanded(
-                        child: CustomDisplayText(
-                          label:
+                        child: CustomParagraph(
+                          text:
                               "Your new password must be different from previous used passwords.",
                           fontWeight: FontWeight.w600,
                           color: const Color(0xFF723B13),
                           fontSize: 14,
-                          maxLines: 2,
+                          maxlines: 2,
                         ),
                       ),
                     ],
@@ -200,15 +199,12 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Password Strength",
-                        style: GoogleFonts.varela(
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                        softWrap: true,
-                        maxLines: 2,
+                      CustomParagraph(
+                        text: "Password Strength",
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black,
+                        fontSize: 15,
+                        maxlines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
                       Container(
@@ -258,14 +254,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                             Container(
                               width: 6,
                             ),
-                            CustomDisplayText(
-                              label: Variables.getPasswordStrengthText(
+                            CustomParagraph(
+                              text: Variables.getPasswordStrengthText(
                                   passStrength),
                               fontWeight: FontWeight.w600,
                               color: Variables.getColorForPasswordStrength(
                                   passStrength),
                               fontSize: 15,
-                              maxLines: 2,
+                              maxlines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
                           ],
@@ -273,12 +269,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       Container(
                         height: 10,
                       ),
-                      CustomDisplayText(
-                        label:
+                      CustomParagraph(
+                        text:
                             "The password should have a minimum of 8 characters, including at least one uppercase letter and a number.",
-                        fontWeight: FontWeight.w600,
-                        color: const Color.fromARGB(255, 141, 140, 140),
-                        fontSize: 14,
                       ),
                     ],
                   ),

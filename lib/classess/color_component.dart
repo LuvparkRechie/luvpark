@@ -22,5 +22,6 @@ class AppColor {
 
   //Icon color
   static Color activeTextColor = const Color(0xFF666666);
-  static Color paragraphColor = const Color(0xFF666666);
+  // static Color paragraphColor = const Color(0xFF666666);
+  static Color paragraphColor = Colors.grey;
 }

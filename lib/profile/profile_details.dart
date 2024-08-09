@@ -448,187 +448,158 @@ class _ProfileDetailsState extends State<ProfileDetails> {
           Navigator.pop(context);
         },
         canPop: true,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              height: 10,
-            ),
-            Center(
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                    ),
-                    child: myProfilePic != 'null'
-                        ? CircleAvatar(
-                            radius: 28,
-                            backgroundColor: const Color(0xFFffffff),
-                            backgroundImage: MemoryImage(
-                              const Base64Decoder()
-                                  .convert(myProfilePic.toString()),
-                            ),
-                          )
-                        : CircleAvatar(
-                            radius: 28,
-                            backgroundColor: AppColor.primaryColor,
-                            child: Center(
-                              child: CustomDisplayText(
-                                label: loading
-                                    ? ""
-                                    : jsonDecode(akongP!)['first_name']
-                                                .toString() ==
-                                            'null'
-                                        ? "N/A"
-                                        : "${jsonDecode(akongP!)['first_name'].toString()[0]}${jsonDecode(akongP!)['last_name'].toString()[0]}",
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                height: 0,
-                                letterSpacing: -0.32,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                height: 10,
+              ),
+              Center(
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
+                      child: myProfilePic != 'null'
+                          ? CircleAvatar(
+                              radius: 28,
+                              backgroundColor: const Color(0xFFffffff),
+                              backgroundImage: MemoryImage(
+                                const Base64Decoder()
+                                    .convert(myProfilePic.toString()),
+                              ),
+                            )
+                          : CircleAvatar(
+                              radius: 28,
+                              backgroundColor: AppColor.primaryColor,
+                              child: Center(
+                                child: CustomTitle(
+                                  text: loading
+                                      ? ""
+                                      : jsonDecode(akongP!)['first_name']
+                                                  .toString() ==
+                                              'null'
+                                          ? "N/A"
+                                          : "${jsonDecode(akongP!)['first_name'].toString()[0]}${jsonDecode(akongP!)['last_name'].toString()[0]}",
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
-                          ),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: 10,
-            ),
-            Center(
-              child: InkWell(
-                child: CustomDisplayText(
-                  label: 'Edit Image',
-                  color: AppColor.primaryColor,
-                  fontWeight: FontWeight.w400,
+                    ),
+                  ],
                 ),
-                onTap: () {
-                  showBottomSheetCamera(context);
-                },
               ),
-            ),
-            Container(
-              height: 5,
-            ),
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      CustomDisplayText(
-                        label: fullName,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: const Color.fromARGB(255, 63, 63, 64),
-                      ),
-                      CustomDisplayText(
-                        label: mobileNum,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black54,
-                      ),
-                    ]),
+              Container(
+                height: 10,
               ),
-            ),
-            Container(height: 20),
-            CustomDisplayText(
-              label: 'Personal Details',
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-            Container(
-              height: 10,
-            ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding:
-                        const EdgeInsets.only(top: 10.0, left: 10, right: 10),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomDisplayText(
-                                    label: 'Account Name',
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  CustomDisplayText(
-                                    label: fullName,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black54,
-                                    maxLines: 1,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            isActive == 'Y'
-                                ? Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      CustomDisplayText(
-                                        label: 'Verified',
-                                        fontSize: 14,
-                                        color: Colors.green,
-                                      ),
-                                      Container(
-                                        width: 5,
-                                      ),
-                                      Icon(
-                                        Icons.check,
-                                        color: Colors.green,
-                                        size: 15,
-                                      ),
-                                    ],
-                                  )
-                                : Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      CustomDisplayText(
-                                        label: 'Not Verified',
-                                        fontSize: 14,
-                                        color: Colors.red,
-                                      ),
-                                      Container(
-                                        width: 5,
-                                      ),
-                                      Icon(
-                                        Icons.close,
-                                        color: Colors.red,
-                                        size: 15,
-                                      ),
-                                    ],
-                                  )
-                          ],
-                        ),
-                      ],
-                    ),
+              Center(
+                child: InkWell(
+                  child: CustomLinkLabel(
+                    text: 'Edit Image',
                   ),
-                  Divider(color: Colors.black),
-                  info("Gender", gender),
-                  info("Civil Status", civilStatus),
-                  info("Birthday", bday),
-                  info("Address", "$brgy $municipality"),
-                  info("Province", province),
-                  info("Zip Code", zipCode),
-                  SizedBox(height: 10),
-                  ProfileDelete(),
-                  SizedBox(height: 10),
-                ],
+                  onTap: () {
+                    showBottomSheetCamera(context);
+                  },
+                ),
               ),
-            ),
-          ],
+              Container(
+                height: 5,
+              ),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40),
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomTitle(
+                          text: fullName,
+                        ),
+                        CustomParagraph(
+                          text: mobileNum,
+                        ),
+                      ]),
+                ),
+              ),
+              Container(height: 20),
+              CustomTitle(
+                text: 'Personal Details',
+                fontSize: 18,
+              ),
+              Container(
+                height: 20,
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomTitle(
+                            text: 'Account Name',
+                            fontSize: 14,
+                          ),
+                          CustomParagraph(
+                            text: fullName,
+                            maxlines: 1,
+                          ),
+                        ],
+                      ),
+                    ),
+                    isActive == 'Y'
+                        ? Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CustomParagraph(
+                                text: 'Verified',
+                                color: Colors.green,
+                              ),
+                              Container(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.check,
+                                color: Colors.green,
+                                size: 15,
+                              ),
+                            ],
+                          )
+                        : Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              CustomParagraph(
+                                text: 'Not Verified',
+                                color: Colors.red,
+                              ),
+                              Container(
+                                width: 5,
+                              ),
+                              Icon(
+                                Icons.close,
+                                color: Colors.red,
+                                size: 15,
+                              ),
+                            ],
+                          ),
+                  ],
+                ),
+              ),
+              Divider(color: Colors.black),
+              info("Gender", gender),
+              info("Civil Status", civilStatus),
+              info("Birthday", bday),
+              info("Address", "$brgy $municipality"),
+              info("Province", province),
+              info("Zip Code", zipCode),
+              SizedBox(height: 10),
+              ProfileDelete(),
+              SizedBox(height: 10),
+            ],
+          ),
         ));
   }
 
@@ -638,33 +609,15 @@ class _ProfileDetailsState extends State<ProfileDetails> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Stack(
-            alignment: Alignment.centerRight,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomDisplayText(
-                    label: label,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  Row(
-                    children: [
-                      CustomDisplayText(
-                        label: value,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.black54,
-                        maxLines: 1,
-                      ),
-                    ],
-                  ),
-                  Divider(
-                    color: Colors.black,
-                  ),
-                ],
-              ),
-            ],
+          CustomTitle(
+            text: label,
+            fontSize: 14,
+          ),
+          CustomParagraph(
+            text: value,
+          ),
+          Divider(
+            color: Colors.black,
           ),
         ],
       ),

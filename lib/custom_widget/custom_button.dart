@@ -42,43 +42,14 @@ class _CustomButtonState extends State<CustomButton> {
       child: Center(
         child: Padding(
             padding: EdgeInsets.all(widget.btnHeight ?? 15.0),
-            child: CustomDisplayText(
-              label: widget.label,
+            child: CustomParagraph(
+              text: widget.label,
               color: widget.textColor ?? Colors.white,
               fontSize: 14,
-              fontWeight: FontWeight.bold,
-              maxLines: 1,
+              maxlines: 1,
             )),
       ),
     );
-
-    // GestureDetector(
-    //   onTap: () {
-    //     widget.onTap();
-    //   },
-    //   child: Container(
-    //     decoration: BoxDecoration(
-    //       color: widget.color ?? AppColor.primaryColor,
-    //       borderRadius: BorderRadius.circular(20),
-    //       border: Border.all(
-    //         color: widget.bordercolor ?? Colors.transparent,
-    //       ),
-    //     ),
-    //     child: Center(
-    //       child: Padding(
-    //         padding: EdgeInsets.all(widget.btnHeight ?? 15.0),
-    //         child: AutoSizeText(
-    //           widget.label,
-    //           style: GoogleFonts.lato(
-    //             color: widget.textColor ?? Colors.white,
-    //             fontSize: 14,
-    //             fontWeight: FontWeight.bold,
-    //           ),
-    //         ),
-    //       ),
-    //     ),
-    //   ),
-    // );
   }
 }
 

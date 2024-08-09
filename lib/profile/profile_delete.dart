@@ -119,70 +119,67 @@ class _ProfileDeleteState extends State<ProfileDelete> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
-        children: [
-          SizedBox(
-            height: 15,
-          ),
-          GestureDetector(
-            onTap: () => postDeleteAccount(context),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 20,
-              ),
-              child: Container(
-                height: 50,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Colors.white,
-                  ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        SizedBox(
+          height: 15,
+        ),
+        GestureDetector(
+          onTap: () => postDeleteAccount(context),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              vertical: 20,
+            ),
+            child: Container(
+              height: 50,
+              decoration: BoxDecoration(
+                border: Border.all(
                   color: Colors.white,
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(7),
+                ),
+                color: Colors.white,
+                borderRadius: BorderRadius.all(
+                  Radius.circular(7),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      spreadRadius: 1,
-                      blurRadius: 4,
-                      offset: Offset(0, 2),
+                ],
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                ),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.delete_forever_outlined,
+                      color: Colors.red,
+                    ),
+                    Container(
+                      width: 10,
+                    ),
+                    Expanded(
+                      child: CustomParagraph(
+                        text: 'Delete My Account',
+                        color: Colors.red,
+                      ),
+                    ),
+                    Icon(
+                      Icons.chevron_right,
+                      color: Colors.red,
                     ),
                   ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 20,
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.delete_forever_outlined,
-                        color: Colors.red,
-                      ),
-                      Container(
-                        width: 10,
-                      ),
-                      Expanded(
-                        child: CustomDisplayText(
-                          label: 'Delete My Account',
-                          color: Colors.red,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right,
-                        color: Colors.red,
-                      ),
-                    ],
-                  ),
                 ),
               ),
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -200,22 +197,11 @@ void showModalConfirmation(
     context: context,
     builder: (BuildContext context) {
       return AlertDialog(
-        title: Center(
-            child: Text(
-          "$title",
-          style: TextStyle(
-            fontSize: 17,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        )),
-        content: Text(
-          "$msg",
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.normal,
-          ),
-          textAlign: TextAlign.justify,
+        title: CustomTitle(
+          text: "Delete your account?",
+        ),
+        content: CustomParagraph(
+          text: "$msg",
         ),
         // CustomDisplayText(
         //   label: msg,
@@ -231,10 +217,7 @@ void showModalConfirmation(
               },
               child: Text(
                 cancelButtonLabel,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: paragraphStyle(color: Colors.white),
                 textAlign: TextAlign.center,
               ),
               style: ElevatedButton.styleFrom(
@@ -252,11 +235,7 @@ void showModalConfirmation(
               },
               child: Text(
                 continueButtonLabel,
-                style: TextStyle(
-                  color: Colors.red,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                ),
+                style: paragraphStyle(color: Colors.red),
                 textAlign: TextAlign.center,
               ),
             ),

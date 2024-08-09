@@ -210,6 +210,7 @@ class LoginComponent {
                 "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile")
         .get()
         .then((objData) {
+      print("objData $objData");
       if (objData == "No Internet") {
         showAlertDialog(context, "Error",
             "Please check your internet connection and try again.", () {

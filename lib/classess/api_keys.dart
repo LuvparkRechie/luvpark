@@ -10,7 +10,7 @@ class ApiKeys {
   //get Payment key
   static const gApiSubFolderPayments = '/ords/$luvApi/ps/qr/';
   //Get luv ReferenceNo
-  static const gApiSubFolderGetRefNo = '/ords/$luvApi/base/refno/';
+
   static const gApiSubFolderPutChangeQR = '/ords/$luvApi/base/newqr/'; //put
   //terms & conditions
   static const gApiSubFolderPolicy = '/ords/$luvApi/base/policy';

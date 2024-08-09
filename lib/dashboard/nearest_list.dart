@@ -53,18 +53,15 @@ class NearestList extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomDisplayText(
-                      label: nearestData["park_area_name"],
+                    CustomTitle(
+                      text: nearestData["park_area_name"],
                       fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      maxLines: 1,
+                      maxlines: 1,
                     ),
-                    CustomDisplayText(
-                      label: nearestData["address"],
+                    CustomParagraph(
+                      text: nearestData["address"],
                       fontSize: 14,
-                      fontWeight: FontWeight.w400,
-                      color: Colors.black54,
-                      maxLines: 2,
+                      maxlines: 2,
                     ),
                     Container(height: 10),
                     RichText(
@@ -73,7 +70,7 @@ class NearestList extends StatelessWidget {
                           TextSpan(
                             text:
                                 "$distance  ●  ${nearestData["parking_schedule"]}  ●  ",
-                            style: GoogleFonts.varela(
+                            style: GoogleFonts.manrope(
                               color: Colors.grey,
                               fontSize: 12,
                               fontWeight: FontWeight.w500,
@@ -81,7 +78,7 @@ class NearestList extends StatelessWidget {
                           ),
                           TextSpan(
                             text: "${isOpen ? "OPEN" : "CLOSE"}",
-                            style: GoogleFonts.dmSans(
+                            style: GoogleFonts.manrope(
                               fontWeight: FontWeight.w500,
                               color: isOpen ? Colors.green : Colors.red,
                               fontSize: 12,

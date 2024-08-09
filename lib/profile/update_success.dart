@@ -102,23 +102,19 @@ class _UpdateInfoSuccessState extends State<UpdateInfoSuccess> {
                   height: 10,
                 ),
                 Center(
-                  child: CustomDisplayText(
-                    label: 'Congratulations',
-                    color: Colors.black,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 18,
+                  child: CustomTitle(
+                    text: 'Congratulations',
+                    fontSize: 20,
                   ),
                 ),
                 Container(
                   height: 20,
                 ),
                 Center(
-                  child: CustomDisplayText(
-                    label:
+                  child: CustomParagraph(
+                    text:
                         "You have successfully updated your account. We are redirecting you to Login Page.",
-                    color: AppColor.textSubColor,
-                    fontWeight: FontWeight.normal,
-                    alignment: TextAlign.center,
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 Container(
@@ -127,17 +123,11 @@ class _UpdateInfoSuccessState extends State<UpdateInfoSuccess> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    CustomDisplayText(
-                      label: "Redirecting in  ",
-                      color: AppColor.primaryColor,
-                      fontWeight: FontWeight.normal,
-                      alignment: TextAlign.center,
+                    CustomLinkLabel(
+                      text: "Redirecting in  ",
                     ),
-                    CustomDisplayText(
-                      label: seconds,
-                      color: AppColor.primaryColor,
-                      fontWeight: FontWeight.w600,
-                      alignment: TextAlign.center,
+                    CustomLinkLabel(
+                      text: seconds,
                     ),
                   ],
                 ),

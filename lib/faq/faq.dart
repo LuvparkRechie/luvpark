@@ -102,12 +102,11 @@ class _FaqsLuvParkState extends State<FaqsLuvPark> {
                         child: Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 16, vertical: 8),
-                            child: CustomDisplayText(
-                              label: faqTitle,
+                            child: CustomTitle(
+                              text: faqTitle,
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
+                              maxlines: 2,
                             )),
                       ),
                       IconButton(
@@ -132,10 +131,10 @@ class _FaqsLuvParkState extends State<FaqsLuvPark> {
                                 fontSize: 30,
                               ),
                             ),
-                            title: CustomDisplayText(
-                              label: dataRow["faq_ans_text"],
+                            title: CustomParagraph(
+                              text: dataRow["faq_ans_text"],
                               fontSize: 13,
-                              alignment: TextAlign.justify,
+                              textAlign: TextAlign.justify,
                             ),
                           );
                         }).toList(),
@@ -240,7 +239,7 @@ class _FaqsLuvParkState extends State<FaqsLuvPark> {
                         itemCount: faqsData.length,
                         itemBuilder: (BuildContext context, int index) {
                           return Card(
-                            elevation: 6,
+                            elevation: 2,
                             margin: const EdgeInsets.symmetric(
                                 vertical: 2, horizontal: 20),
                             child: ListTile(
@@ -251,9 +250,9 @@ class _FaqsLuvParkState extends State<FaqsLuvPark> {
                               leading: const Icon(
                                 Iconsax.message_question,
                               ),
-                              title: CustomDisplayText(
-                                label: faqsData[index]['faq_text'],
-                                fontWeight: FontWeight.bold,
+                              title: CustomTitle(
+                                text: faqsData[index]['faq_text'],
+                                fontSize: 14,
                               ),
                             ),
                           );

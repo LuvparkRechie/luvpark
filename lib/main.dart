@@ -192,12 +192,30 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
   bool isInternetConnected = true;
+
+  /// ANIMATION CONTROLLER
+  late AnimationController _controller;
+
+  /// ANIMATION
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+
+    /// INITIALING THE CONTROLLER
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+
+    /// INITIALING THE ANIMATION
+    _animation = CurvedAnimation(
+        parent: _controller, curve: Curves.fastEaseInToSlowEaseOut);
+
+    /// STARTING THE ANIMATION
+    _controller.forward();
     NotificationController.startListeningNotificationEvents();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onBoarding();
@@ -217,26 +235,37 @@ class _SplashScreenState extends State<SplashScreen> {
       'loginData',
     );
 
+    /// TIMER FOR SPLASH DURATION
+
     if (logData == null) {
-      Timer(const Duration(seconds: 1), () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) => const WelcomeSplashScreen()));
+      Timer(const Duration(seconds: 3), () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+            builder: (context) => const WelcomeSplashScreen(),
+          ),
+        );
       });
     } else {
       var mappedLogData = [jsonDecode(logData)];
       if (mappedLogData[0]["is_active"] == "Y") {
-        Variables.pageTrans(const MainLandingScreen(), context);
+        Timer(const Duration(seconds: 3), () {
+          /// NAVIAGTING TO LOGIN SCREEN
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (context) => const MainLandingScreen()),
+          );
+        });
       } else {
         // ignore: use_build_context_synchronously
-
-        Navigator.push(
-            context,
+        Timer(const Duration(seconds: 3), () {
+          /// NAVIAGTING TO LOGIN SCREEN
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-                builder: (context) => const LoginScreen(
-                      index: 1,
-                    )));
+              builder: (context) => const LoginScreen(
+                index: 1,
+              ),
+            ),
+          );
+        });
       }
     }
   }
@@ -251,36 +280,47 @@ class _SplashScreenState extends State<SplashScreen> {
           appbarColor: AppColor.primaryColor,
         ),
         backgroundColor: AppColor.primaryColor,
-        body: Container(
-          color:
-              !isInternetConnected ? AppColor.bodyColor : AppColor.primaryColor,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
-          child: !isInternetConnected
-              ? NoInternetConnected(
-                  onTap: () {
-                    setState(() {
-                      isInternetConnected = true;
-                    });
-                    onBoarding();
-                  },
-                )
-              : Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 84,
-                      height: 84,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(15)),
-                        image: DecorationImage(
-                          image: AssetImage("assets/images/luvpark_logo.png"),
-                          fit: BoxFit.fill,
+        body: ScaleTransition(
+          scale: _animation,
+          child: Container(
+            color: !isInternetConnected
+                ? AppColor.bodyColor
+                : AppColor.primaryColor,
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            child: !isInternetConnected
+                ? NoInternetConnected(
+                    onTap: () {
+                      setState(() {
+                        isInternetConnected = true;
+                      });
+                      onBoarding();
+                    },
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Center(
+                        child: Hero(
+                          tag: "luvpark",
+                          child: Container(
+                            width: 84,
+                            height: 84,
+                            decoration: const BoxDecoration(
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(15)),
+                              image: DecorationImage(
+                                image: AssetImage(
+                                    "assets/images/luvpark_logo.png"),
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
+                    ],
+                  ),
+          ),
         ),
       ),
     );

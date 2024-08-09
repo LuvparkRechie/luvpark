@@ -363,6 +363,14 @@ class Variables {
     return formattedDateString;
   }
 
+//Format sample August 16,1998
+  static String timeNow() {
+    DateTime now = DateTime.now();
+    DateFormat dateFormat = DateFormat('MMMM d, yyyy h:mm a');
+    String formattedDate = dateFormat.format(now);
+    return formattedDate;
+  }
+
   static customBottomSheet(BuildContext context, Widget child) {
     showModalBottomSheet(
       context: context,

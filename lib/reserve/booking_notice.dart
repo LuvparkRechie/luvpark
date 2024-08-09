@@ -121,23 +121,21 @@ class _BookingNoticeState extends State<BookingNotice> {
                                     // ),
                                   ],
                                 ),
-                                CustomDisplayText(
-                                  label: noticeData[0]["msg_title"].toString(),
+                                CustomTitle(
+                                  text: noticeData[0]["msg_title"].toString(),
                                   color: Colors.black,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w900,
-                                  maxLines: 1,
-                                  alignment: TextAlign.start,
+                                  maxlines: 1,
+                                  textAlign: TextAlign.start,
                                 ),
                                 Container(
                                   height: 10,
                                 ),
-                                CustomDisplayText(
-                                  label: noticeData[0]["msg"],
-                                  fontWeight: FontWeight.w400,
-                                  color: const Color.fromRGBO(0, 0, 0, 1),
+                                CustomParagraph(
+                                  text: noticeData[0]["msg"],
                                   fontSize: 14,
-                                  alignment: TextAlign.justify,
+                                  textAlign: TextAlign.justify,
                                 ),
                                 Container(
                                   height: 29,

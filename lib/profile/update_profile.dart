@@ -11,9 +11,6 @@ import 'package:luvpark/classess/variables.dart';
 import 'package:luvpark/custom_widget/custom_button.dart';
 import 'package:luvpark/custom_widget/custom_loader.dart';
 import 'package:luvpark/custom_widget/custom_parent_widget.dart';
-import 'package:luvpark/custom_widget/custom_text.dart';
-import 'package:luvpark/custom_widget/custom_textfield.dart';
-import 'package:luvpark/custom_widget/header_title&subtitle.dart';
 import 'package:luvpark/custom_widget/snackbar_dialog.dart';
 import 'package:luvpark/otp/otp_update.dart';
 import 'package:luvpark/profile/update_step1.dart';
@@ -21,7 +18,6 @@ import 'package:luvpark/profile/update_step2.dart';
 import 'package:luvpark/profile/update_step3.dart';
 import 'package:luvpark/profile/update_success.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:sizer/sizer.dart';
 
 class UpdateProfile extends StatefulWidget {
   const UpdateProfile({
@@ -125,15 +121,6 @@ class _RegistrationFormState extends State<UpdateProfile> {
     gender.text = jsonDecode(akongP)["gender"] == null
         ? "M"
         : jsonDecode(akongP)["gender"].toString();
-  }
-
-  Future showInformationDialog(BuildContext context, double lat, double lng,
-      ValueChanged<List> callback) {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return ConfirmMapLocation(lat: lat, lng: lng, cb: callback);
-        });
   }
 
   sendOtp(paramInfo) {
@@ -484,225 +471,6 @@ class _RegistrationFormState extends State<UpdateProfile> {
           SizedBox(height: Platform.isIOS ? 20.0 : 10),
         ],
       ),
-    );
-  }
-}
-
-// ignore: must_be_immutable
-class UsersPrivacy extends StatefulWidget {
-  String dataDesc;
-  UsersPrivacy({super.key, required this.dataDesc});
-
-  @override
-  State<UsersPrivacy> createState() => _UsersPrivacyState();
-}
-
-class _UsersPrivacyState extends State<UsersPrivacy> {
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {},
-      child: MediaQuery(
-        data: MediaQuery.of(context)
-            .copyWith(textScaler: const TextScaler.linear(1)),
-        child: Container(
-          // constraints: BoxConstraints(
-          //   maxHeight: MediaQuery.of(context).size.height,
-          // ),
-          height: MediaQuery.of(context).size.height * 0.8,
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text(
-                'Terms & Conditions',
-                style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
-              ),
-              Container(
-                height: 10,
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: CustomDisplayText(
-                    label: widget.dataDesc.toString().replaceAll("â", '"'),
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ),
-              Container(
-                height: 10,
-              ),
-              CustomButton(
-                  label: "Agree",
-                  onTap: () {
-                    Navigator.of(context).pop();
-                  }),
-              Container(
-                height: 10,
-              ),
-              CustomButtonCancel(
-                  label: "Cancel",
-                  color: Colors.grey.shade200,
-                  textColor: Colors.black,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    if (Navigator.canPop(context)) {
-                      Navigator.of(context).pop();
-                    }
-                  })
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ConfirmMapLocation extends StatefulWidget {
-  final double lat, lng;
-  final ValueChanged<List> cb;
-  const ConfirmMapLocation(
-      {super.key, required this.lat, required this.lng, required this.cb});
-
-  @override
-  State<ConfirmMapLocation> createState() => _ViewSecurityQuestionState();
-}
-
-class _ViewSecurityQuestionState extends State<ConfirmMapLocation> {
-  late GoogleMapController mapController;
-  late CameraPosition? cameraPositions;
-  LatLng? locationAddress;
-  bool loading = false;
-  List<Marker> markers = <Marker>[];
-  Set<Circle> _circles = {};
-
-  @override
-  void initState() {
-    super.initState();
-    locationAddress = LatLng(widget.lat, widget.lng);
-    _addCircle();
-  }
-
-  void _onMapCreated(GoogleMapController controller) {
-    setState(() {
-      mapController = controller;
-    });
-  }
-
-  _addCircle() {
-    // Create a Circle with specified properties
-    setState(() {
-      markers = [];
-      cameraPositions = null;
-      _circles = {};
-    });
-    cameraPositions = CameraPosition(
-      target: locationAddress!,
-      zoom: 14,
-      tilt: 0,
-      bearing: 0,
-    );
-    markers.add(
-      Marker(
-          markerId: const MarkerId("My Location"),
-          position: locationAddress!,
-          visible: true,
-          onTap: () async {}),
-    );
-    _circles.add(
-      Circle(
-        circleId: const CircleId("myCircle"), // Unique ID for the circle
-        center: locationAddress!, // Circle center
-        radius: 500, // Radius in meters (adjust as needed)
-        fillColor:
-            AppColor.primaryColor.withOpacity(0.1), // Fill color of the circle
-        strokeColor: AppColor.primaryColor, // Border color of the circle
-        strokeWidth: 1, // Border width
-      ),
-    );
-    setState(() {
-      loading = false;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Sizer(
-      builder: (context, orientation, deviceType) {
-        return MediaQuery(
-          data: MediaQuery.of(context)
-              .copyWith(textScaler: const TextScaler.linear(1)),
-          child: Scaffold(
-            backgroundColor: Colors.transparent,
-            body: Center(
-              child: Container(
-                height: MediaQuery.of(context).size.height * .70,
-                width: MediaQuery.of(context).size.width * .95,
-                decoration: BoxDecoration(
-                  color: AppColor.bodyColor,
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(15),
-                  ),
-                ),
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomButtonClose(onTap: () {
-                        Navigator.of(context).pop();
-                      }),
-                      Container(
-                        height: 5,
-                      ),
-                      const HeaderLabel(
-                          title: "Confirm Location",
-                          subTitle: "Is this your correct address?"),
-                      Expanded(
-                        child: loading
-                            ? Container()
-                            : GoogleMap(
-                                mapType: MapType.normal,
-                                onMapCreated: _onMapCreated,
-                                initialCameraPosition: cameraPositions!,
-                                mapToolbarEnabled: true,
-                                zoomControlsEnabled: false,
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: false,
-                                compassEnabled: false,
-                                buildingsEnabled: true,
-                                scrollGesturesEnabled: true,
-                                markers: Set<Marker>.of(markers),
-                                onTap: (LatLng latLng) {
-                                  // Handle the map tap here
-
-                                  setState(() {
-                                    loading = true;
-                                    _circles = {};
-                                    locationAddress = LatLng(
-                                        latLng.latitude, latLng.longitude);
-                                    _addCircle();
-                                  });
-                                },
-                                circles: _circles,
-                              ),
-                      ),
-                      Container(
-                        height: 10,
-                      ),
-                      CustomButton(
-                          label: "Confirm",
-                          onTap: () {
-                            // Navigator.pop(context);
-                          })
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-      },
     );
   }
 }

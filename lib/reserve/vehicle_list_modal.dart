@@ -1,9 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/classess/color_component.dart';
 import 'package:luvpark/classess/functions.dart';
 import 'package:luvpark/classess/variables.dart';
@@ -106,7 +103,7 @@ class _VehicleOptionState extends State<VehicleOption> {
       child: Wrap(
         children: [
           Container(
-            height: Variables.screenSize.height * .55,
+            height: !isSecondScreen ? null : Variables.screenSize.height * .55,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
               color: Colors.white,
@@ -142,212 +139,96 @@ class _VehicleOptionState extends State<VehicleOption> {
                                 }
                                 Navigator.of(context).pop();
                               },
-                              child: CircleAvatar(
-                                  backgroundColor: Colors.grey.shade100,
-                                  child: Icon(
-                                    Icons.arrow_back_ios_new_outlined,
-                                    color: Colors.grey,
-                                  )),
+                              child: Icon(
+                                Icons.chevron_left,
+                                color: Colors.black,
+                              ),
                             ),
                             Container(height: 20),
-                            Expanded(
-                                child: !isSecondScreen
-                                    ? Form(
-                                        key: formKey,
-                                        child: SingleChildScrollView(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              CustomTextField(
-                                                title: "Plate No.",
-                                                labelText: "Enter Plate No.",
-                                                controller: plateNumber,
-                                                fontsize: 15,
-                                                fontweight: FontWeight.w400,
-                                                textCapitalization:
-                                                    TextCapitalization
-                                                        .characters,
-                                              ),
-                                              Container(height: 10),
-                                              DropdownButtonFormField(
-                                                dropdownColor: Colors.white,
-                                                decoration: InputDecoration(
-                                                  labelText: 'Vehicle Type',
-                                                  floatingLabelStyle: TextStyle(
-                                                      color: AppColor
-                                                          .primaryColor),
-                                                  labelStyle: TextStyle(
-                                                    fontSize: 14,
-                                                    color: Colors.black,
-                                                  ),
-                                                  constraints:
-                                                      const BoxConstraints
-                                                          .tightFor(height: 50),
-                                                  contentPadding:
-                                                      const EdgeInsets.only(
-                                                          left: 16,
-                                                          top: 15,
-                                                          bottom: 15,
-                                                          right: 16),
-                                                  focusedBorder:
-                                                      OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: AppColor
-                                                            .primaryColor),
-                                                  ),
-                                                  hintText: "Vehicle Type",
-                                                  hintStyle: Platform.isAndroid
-                                                      ? GoogleFonts.dmSans(
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: const Color(
-                                                              0xFF9C9C9C),
-                                                          fontSize: 15,
-                                                        )
-                                                      : TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: const Color(
-                                                              0xFF9C9C9C),
-                                                          fontSize: 15,
-                                                          fontFamily:
-                                                              "SFProTextReg",
-                                                        ),
-                                                  border: OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: AppColor
-                                                            .primaryColor),
-                                                  ),
-                                                  enabledBorder:
-                                                      const OutlineInputBorder(
-                                                    borderSide: BorderSide(
-                                                        color: Color.fromARGB(
-                                                            255,
-                                                            223,
-                                                            223,
-                                                            223)),
-                                                  ),
-                                                ),
-                                                value: dropdownValue,
-                                                onChanged: (String? newValue) {
-                                                  FocusManager
-                                                      .instance.primaryFocus!
-                                                      .unfocus();
-
-                                                  setState(() {
-                                                    dropdownValue = newValue!;
-                                                  });
-                                                },
-                                                isExpanded: true,
-                                                items: widget.vehicleData.map(
-                                                  (item) {
-                                                    return DropdownMenuItem(
-                                                        value: item['value']
-                                                            .toString(),
-                                                        child: AutoSizeText(
-                                                          item['text'],
-                                                          style: Platform
-                                                                  .isAndroid
-                                                              ? GoogleFonts
-                                                                  .dmSans(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 14,
-                                                                )
-                                                              : TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      "SFProTextReg",
-                                                                ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 2,
-                                                        ));
-                                                  },
-                                                ).toList(),
-                                              ),
-                                              Container(height: 10),
-                                              Align(
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: SizedBox(
-                                                  width: 47,
-                                                  height: 47,
-                                                  child: FloatingActionButton(
-                                                    elevation: 1,
-                                                    backgroundColor:
-                                                        AppColor.primaryColor,
-                                                    child: Icon(
-                                                      Icons.check,
-                                                      color: Colors.white,
-                                                    ),
-                                                    onPressed: () {
-                                                      if (formKey.currentState!
-                                                          .validate()) {
-                                                        String vtName = widget
-                                                            .vehicleData
-                                                            .where((element) {
-                                                              return element[
-                                                                      "value"] ==
-                                                                  int.parse(
-                                                                      dropdownValue!
-                                                                          .toString());
-                                                            })
-                                                            .toList()[0]["text"]
-                                                            .toString();
-                                                        List callBackData = [
-                                                          {
-                                                            'vehicle_type_id':
-                                                                dropdownValue!
-                                                                    .toString(),
-                                                            'vehicle_brand_id':
-                                                                0,
-                                                            'vehicle_brand_name':
-                                                                vtName,
-                                                            'vehicle_plate_no':
-                                                                plateNumber.text
-                                                          }
-                                                        ];
-
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                        widget.onTap(
-                                                            callBackData);
-                                                      }
-                                                    },
-                                                  ),
-                                                ),
-                                              ),
-                                              Container(height: 30),
-                                              CustomButtonCancel(
-                                                  borderColor: Colors.black,
-                                                  textColor: Colors.black,
-                                                  color: AppColor.bodyColor,
-                                                  label: "My Vehicle",
-                                                  onTap: () {
-                                                    setState(() {
-                                                      isSecondScreen = true;
-                                                    });
-                                                  })
-                                            ],
-                                          ),
+                            !isSecondScreen
+                                ? Form(
+                                    key: formKey,
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        CustomTitle(
+                                            text: "What's your plate number?"),
+                                        CustomTextField(
+                                          title: "Plate No.",
+                                          labelText: "Enter Plate No.",
+                                          controller: plateNumber,
+                                          fontsize: 15,
+                                          fontweight: FontWeight.w400,
+                                          textCapitalization:
+                                              TextCapitalization.characters,
                                         ),
-                                      )
-                                    : VehicleList(
-                                        vehicles: myVehicles,
-                                        ontap: (data) {
-                                          widget.onTap(data);
-                                        },
-                                      ))
+                                        CustomTitle(text: "Select vehicle"),
+                                        CustomDropdown(
+                                          labelText: "Vehicle Type",
+                                          ddData: widget.vehicleData,
+                                          ddValue: dropdownValue,
+                                          onChange: (newValue) {
+                                            FocusManager.instance.primaryFocus!
+                                                .unfocus();
+
+                                            setState(() {
+                                              dropdownValue = newValue;
+                                            });
+                                          },
+                                        ),
+                                        Container(height: 31),
+                                        CustomButton(
+                                          label: "Confirm",
+                                          onTap: () {
+                                            if (formKey.currentState!
+                                                .validate()) {
+                                              String vtName = widget.vehicleData
+                                                  .where((element) {
+                                                    return element["value"] ==
+                                                        int.parse(dropdownValue!
+                                                            .toString());
+                                                  })
+                                                  .toList()[0]["text"]
+                                                  .toString();
+                                              List callBackData = [
+                                                {
+                                                  'vehicle_type_id':
+                                                      dropdownValue!.toString(),
+                                                  'vehicle_brand_id': 0,
+                                                  'vehicle_brand_name': vtName,
+                                                  'vehicle_plate_no':
+                                                      plateNumber.text
+                                                }
+                                              ];
+
+                                              Navigator.of(context).pop();
+                                              widget.onTap(callBackData);
+                                            }
+                                          },
+                                        ),
+                                        Container(height: 15),
+                                        CustomButtonCancel(
+                                            borderColor: Colors.black,
+                                            textColor: Colors.black,
+                                            color: AppColor.bodyColor,
+                                            label: "My Vehicle",
+                                            onTap: () {
+                                              setState(() {
+                                                isSecondScreen = true;
+                                              });
+                                            })
+                                      ],
+                                    ),
+                                  )
+                                : Expanded(
+                                    child: VehicleList(
+                                      vehicles: myVehicles,
+                                      ontap: (data) {
+                                        widget.onTap(data);
+                                      },
+                                    ),
+                                  )
                           ],
                         ),
                       ),

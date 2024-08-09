@@ -59,7 +59,7 @@ class _SearchPlacesState extends State<SearchPlaces> {
         bodyColor: AppColor.secondaryColor,
         child: Container(
           padding: const EdgeInsets.only(
-            top: 14,
+            top: 18,
           ),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
@@ -79,17 +79,19 @@ class _SearchPlacesState extends State<SearchPlaces> {
                   },
                   child: Row(
                     children: [
-                      Icon(Icons.chevron_left),
-                      CustomTitle(
+                      Icon(
+                        Icons.chevron_left,
+                      ),
+                      CustomParagraph(
                         text: "Back",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        letterSpacing: -0.41,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
                       )
                     ],
                   ),
                 ),
-                Container(height: 35),
+                Container(height: 20),
                 CustomTitle(
                   text: "Where do you want to park?",
                   fontWeight: FontWeight.bold,
@@ -120,7 +122,7 @@ class _SearchPlacesState extends State<SearchPlaces> {
                           padding: const EdgeInsets.all(8.0),
                           child: Icon(
                             CupertinoIcons.search,
-                            color: Colors.black87,
+                            color: AppColor.paragraphColor,
                           ),
                         ),
                         Container(width: 10),
@@ -153,48 +155,104 @@ class _SearchPlacesState extends State<SearchPlaces> {
                     ),
                   ),
                 ),
-                Container(height: 33),
+                Container(height: 20),
                 GestureDetector(
                   onTap: () {
-                    Navigator.pop(context);
+                    Navigator.of(context).pop();
                     widget.callback({
                       "data": [],
                       "latlng": LatLng(0.0, 0.0),
                       "searchedData": []
                     });
                   },
-                  child: Row(
-                    children: [
-                      Image(
-                        image: AssetImage("assets/dashboard_icon/precise.png"),
-                        width: 48,
-                        height: 48,
-                      ),
-                      Container(width: 10),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomTitle(
-                              text: "Use my current location",
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                            CustomParagraph(
-                              text: "Within 10 kilometers of you",
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: -0.41,
-                            )
-                          ],
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 9, 8, 0),
+                    child: Row(
+                      children: [
+                        Image(
+                          image:
+                              AssetImage("assets/dashboard_icon/precise.png"),
+                          width: 48,
+                          height: 48,
                         ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_outlined,
-                        color: AppColor.primaryColor,
-                      ),
-                      Container(width: 10),
-                    ],
+                        Container(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(
+                                text: "Use my current location",
+                                maxlines: 1,
+                                fontSize: 16,
+                                letterSpacing: -0.41,
+                              ),
+                              CustomParagraph(
+                                text: "Within 10 kilometers of you",
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.41,
+                              )
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right_outlined,
+                          color: AppColor.primaryColor,
+                        ),
+                        Container(width: 10),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(height: 15),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    widget.callback({
+                      "data": [],
+                      "latlng": LatLng(0.0, 0.0),
+                      "searchedData": []
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 9, 8, 0),
+                    child: Row(
+                      children: [
+                        Image(
+                          image:
+                              AssetImage("assets/dashboard_icon/precise.png"),
+                          width: 48,
+                          height: 48,
+                        ),
+                        Container(width: 10),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(
+                                text: "Enter location zone ID",
+                                maxlines: 1,
+                                fontSize: 16,
+                                letterSpacing: -0.41,
+                              ),
+                              CustomParagraph(
+                                text: "Within 10 kilometers of you",
+                                fontSize: 12,
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: -0.41,
+                              )
+                            ],
+                          ),
+                        ),
+                        Icon(
+                          Icons.chevron_right_outlined,
+                          color: AppColor.primaryColor,
+                        ),
+                        Container(width: 10),
+                      ],
+                    ),
                   ),
                 ),
                 Container(height: 35),
@@ -221,11 +279,9 @@ class _SearchPlacesState extends State<SearchPlaces> {
                                 Container(
                                   height: 20,
                                 ),
-                                CustomDisplayText(
-                                    label:
+                                CustomParagraph(
+                                    text:
                                         "Please check your internet connection.",
-                                    fontWeight: FontWeight.normal,
-                                    color: AppColor.textSubColor,
                                     fontSize: 12),
                                 Container(
                                   height: 10,

@@ -19,7 +19,7 @@ class DashboardComponent {
       isAllowOverNight, Function callBack) async {
     var params =
         "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$parkType&latitude=${lat.toString()}&longitude=${long.toString()}&radius=${radius.toString()}&parking_amenity_code=$amenity&vehicle_type_id=$vhId";
-
+    print("params $params");
     try {
       var returnData = await HttpRequest(api: params).get();
       if (returnData == "No Internet") {
