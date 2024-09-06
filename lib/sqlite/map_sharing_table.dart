@@ -4,8 +4,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:luvpark/classess/variables.dart';
-import 'package:luvpark/sqlite/sharing_data_model.dart';
+import 'package:luvpark_get/custom_widgets/variables.dart';
+import 'package:luvpark_get/sqlite/sharing_data_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

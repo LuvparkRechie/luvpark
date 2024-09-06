@@ -1,7 +1,7 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'package:luvpark/classess/variables.dart';
-import 'package:luvpark/sqlite/vehicle_brands_model.dart';
+import 'package:luvpark_get/custom_widgets/variables.dart';
+import 'package:luvpark_get/sqlite/vehicle_brands_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -82,7 +82,7 @@ class VehicleBrandsTable {
       orderBy: "${VHBrandsDataFields.vhBrandId} ASC",
     );
 
-    final Map<String, dynamic>? matchingRecord = maps.firstWhere(
+    final Map<String, dynamic> matchingRecord = maps.firstWhere(
       (record) =>
           record[VHBrandsDataFields.vhTypeId] == vtId &&
           record[VHBrandsDataFields.vhBrandId] == vbId,
@@ -91,9 +91,7 @@ class VehicleBrandsTable {
     );
 
     String? brandName;
-    if (matchingRecord != null) {
-      brandName = matchingRecord[VHBrandsDataFields.vhBrandName] as String?;
-    }
+    brandName = matchingRecord[VHBrandsDataFields.vhBrandName] as String?;
 
     return brandName;
   }
