@@ -15,7 +15,6 @@ class LegendDialogScreen extends StatefulWidget {
 }
 
 class _LegendDialogScreenState extends State<LegendDialogScreen> {
-  double _maxHeight = 0;
   int currentPage = 0;
   PageController pageController = PageController();
   List<Map<String, dynamic>> sliderData = [
@@ -27,7 +26,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
     },
     {
       "title": "Private Parking",
-      "subTitle": "These parking spaces are located"
+      "subTitle": "These parking spaces are located "
           "within private establishments.",
       "icon": "private_legend",
     },
@@ -53,7 +52,6 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("_maxHeight $_maxHeight");
     return PopScope(
       canPop: false,
       child: Scaffold(
@@ -102,6 +100,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                                     SizedBox(height: 15),
                                     CustomParagraph(
                                       text: sliderData[index]["subTitle"],
+                                      textAlign: TextAlign.center,
                                       maxlines: 2,
                                     )
                                   ],

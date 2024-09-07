@@ -8,7 +8,6 @@ import 'package:luvpark_get/my_account/index.dart';
 import 'package:luvpark_get/my_account/utils/index.dart';
 import 'package:luvpark_get/my_account/utils/otp_update/index.dart';
 import 'package:luvpark_get/profile/index.dart';
-import 'package:luvpark_get/rate_booking/index.dart';
 import 'package:luvpark_get/wallet_qr/index.dart';
 import 'package:luvpark_get/wallet_recharge/index.dart';
 import 'package:luvpark_get/wallet_recharge_load/index.dart';
@@ -133,11 +132,7 @@ class AppPages {
       page: () => const WalletSend(),
       binding: WalletSendBinding(),
     ),
-    GetPage(
-      name: Routes.rateBooking,
-      page: () => RateBooking(),
-      binding: RateBookingBinding(),
-    ),
+
     GetPage(
       name: Routes.sendOtp,
       page: () => const SendOtp(),

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:luvpark_get/booking_notice/controller.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -14,14 +13,15 @@ class BookingNotice extends GetView<BookingNoticeController> {
   @override
   Widget build(BuildContext context) {
     final BookingNoticeController ct = Get.put(BookingNoticeController());
+
     return Container(
-      height: MediaQuery.of(context).size.height * .80,
+      height: MediaQuery.of(context).size.height * .54,
       width: MediaQuery.of(context).size.width,
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(7),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(17)),
       ),
-      padding: const EdgeInsets.all(15),
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
       child: Obx(() => !ct.isInternetConn.value
           ? NoInternetConnected(
               onTap: controller.getNotice,
@@ -31,36 +31,79 @@ class BookingNotice extends GetView<BookingNoticeController> {
               : Obx(
                   () => Column(
                     children: [
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: IconButton(
-                          onPressed: () {
-                            Get.back();
-                            Get.back();
-                          },
-                          icon: const Icon(
-                            Iconsax.close_circle,
-                            color: Colors.grey,
-                          ),
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          InkWell(
+                            onTap: () {
+                              Get.back();
+                              Get.back();
+                            },
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Container(
+                                  height: 15,
+                                  width: 200,
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(56)),
+                                  ),
+                                ),
+                                Container(
+                                  height: 6,
+                                  width: 71,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFD9D9D9),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(56)),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ],
                       ),
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: CustomTitle(
-                          text: ct.noticeData[0]["msg_title"],
-                          fontSize: 20,
-                        ),
-                        subtitle: CustomParagraph(
-                            text: Variables.convertDateFormat(
-                                ct.noticeData[0]["updated_date"])),
+                      Container(height: 21),
+                      Row(
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(
+                                text: ct.noticeData[0]["msg_title"],
+                                fontSize: 16,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.48,
+                                color: const Color(0xFF475467),
+                                fontStyle: FontStyle.normal,
+                              ),
+                              CustomParagraph(
+                                text: Variables.convertDateFormat(
+                                  ct.noticeData[0]["updated_date"],
+                                ),
+                                color: const Color(0xFF101828),
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                                fontStyle: FontStyle.normal,
+                              ),
+                            ],
+                          ),
+                        ],
                       ),
                       Container(height: 10),
                       Expanded(
                         child: StretchingOverscrollIndicator(
                           axisDirection: AxisDirection.down,
                           child: SingleChildScrollView(
-                            child:
-                                CustomParagraph(text: ct.noticeData[0]["msg"]),
+                            child: CustomParagraph(
+                              text: ct.noticeData[0]["msg"],
+                              fontWeight: FontWeight.w400,
+                              color: const Color(0xFF101828),
+                              fontSize: 14,
+                            ),
                           ),
                         ),
                       ),
@@ -69,7 +112,6 @@ class BookingNotice extends GetView<BookingNoticeController> {
                           onPressed: () {
                             Get.back();
                           }),
-                      Container(height: 30),
                     ],
                   ),
                 )),

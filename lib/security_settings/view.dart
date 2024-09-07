@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
@@ -101,38 +100,38 @@ class Security extends GetView<SecuritySettingsController> {
                     Get.toNamed(Routes.changepassword);
                   },
                 ),
-                Divider(color: Colors.grey.shade500),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(13),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColor.primaryColor.withOpacity(0.1),
-                    ),
-                    child: Icon(
-                      Iconsax.finger_cricle,
-                      color: AppColor.primaryColor,
-                      size: 20,
-                    ),
-                  ),
-                  title: const CustomTitle(
-                    text: "Biometric Authentication",
-                    fontSize: 14,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: -0.408,
-                  ),
-                  subtitle: const CustomParagraph(
-                    text:
-                        "Use your device's biometric for a quick and secure login. (Under maintenance)",
-                    letterSpacing: -0.408,
-                    fontSize: 12,
-                  ),
-                  trailing: const Icon(Icons.chevron_right_sharp,
-                      color: Color(0xFF1C1C1E)),
-                  onTap: () {},
-                ),
-                Divider(color: Colors.grey.shade500),
+                // Divider(color: Colors.grey.shade500),
+                // ListTile(
+                //   leading: Container(
+                //     padding: const EdgeInsets.all(13),
+                //     decoration: BoxDecoration(
+                //       shape: BoxShape.circle,
+                //       color: AppColor.primaryColor.withOpacity(0.1),
+                //     ),
+                //     child: Icon(
+                //       Iconsax.finger_cricle,
+                //       color: AppColor.primaryColor,
+                //       size: 20,
+                //     ),
+                //   ),
+                //   title: const CustomTitle(
+                //     text: "Biometric Authentication",
+                //     fontSize: 14,
+                //     fontStyle: FontStyle.normal,
+                //     fontWeight: FontWeight.w700,
+                //     letterSpacing: -0.408,
+                //   ),
+                //   subtitle: const CustomParagraph(
+                //     text:
+                //         "Use your device's biometric for a quick and secure login. (Under maintenance)",
+                //     letterSpacing: -0.408,
+                //     fontSize: 12,
+                //   ),
+                //   trailing: const Icon(Icons.chevron_right_sharp,
+                //       color: Color(0xFF1C1C1E)),
+                //   onTap: () {},
+                // ),
+                // Divider(color: Colors.grey.shade500),
               ],
             ),
           ),

@@ -78,7 +78,7 @@ class ExtendParking extends GetView<BookingReceiptController> {
                     Expanded(
                       child: CustomButton(
                         text: "Submit",
-                        onPressed: controller.onSubmit,
+                        onPressed: controller.extendParking,
                       ),
                     ),
                   ],

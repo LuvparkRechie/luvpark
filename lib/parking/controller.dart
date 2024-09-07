@@ -59,6 +59,7 @@ class ParkingController extends GetxController
   }
 
   Future<void> onRefresh() async {
+    print("on refresh");
     getReserveData(currentPage.value == 0 ? "C" : "U");
   }
 
@@ -113,16 +114,8 @@ class ParkingController extends GetxController
           return;
         } else {
           List itemData = returnData["items"];
+          print("itemData $itemData");
           resData.value = itemData;
-          // if (currentPage.value == 0) {
-          //   resData.value = itemData.where((element) {
-          //     return element["status"] == "C";
-          //   }).toList();
-          // } else {
-          //   resData.value = itemData.where((element) {
-          //     return element["status"] == "U";
-          //   }).toList();
-          // }
         }
       } finally {
         isLoading.value = false; // Ensure loading ends
@@ -170,7 +163,7 @@ class ParkingController extends GetxController
       'isShowRate': false,
       'reservationId': data["reservation_id"],
       'address': data["address"],
-      'isAutoExtend': data["is_auto_extend"] == null ? "N" : "Y",
+      'isAutoExtend': data["is_auto_extend"],
       'isBooking': false,
       'paramsCalc': parameters,
       'status': data["status"].toString() == "C" ? "R" : "A",

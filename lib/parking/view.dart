@@ -21,6 +21,7 @@ class ParkingScreen extends GetView<ParkingController> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+        backgroundColor: AppColor.bodyColor,
         appBar: CustomAppbar(
           title: "My Parking",
           bgColor: AppColor.primaryColor,
@@ -255,134 +256,161 @@ class ListCard extends GetView<ParkingController> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(
-          side: const BorderSide(width: 1, color: Color(0xFFE8E6E6)),
-          borderRadius: BorderRadius.circular(10),
+    return InkWell(
+      onTap: () {
+        controller.getParkingDetails(data);
+      },
+      child: Container(
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(width: 1, color: Color(0xFFE8E6E6)),
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  leading: CircleAvatar(
-                    backgroundColor: currentTab == 0
-                        ? const Color(0xFFF0E6C3)
-                        : const Color(0xFFEAF3EA),
-                    child: SvgPicture.asset(
-                      "assets/dashboard_icon/${currentTab == 0 ? "orange_check" : "green_check"}.svg",
-                      height: 24,
-                      width: 24,
-                    ),
-                  ),
-                  title: CustomTitle(
-                    text: title,
-                    color: AppColor.primaryColor,
-                    letterSpacing: -0.41,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  subtitle: CustomParagraph(
-                    text: subTitle,
-                    fontSize: 14,
-                    letterSpacing: -0.41,
-                  ),
-                  trailing: Icon(
-                    Icons.chevron_right,
-                    color: AppColor.primaryColor,
-                    size: 30,
-                  ),
-                  onTap: () {
-                    controller.getParkingDetails(data);
-                  },
-                ),
-                Row(
-                  children: [
-                    const SizedBox(
-                      width: 35.50,
-                      height: 35.50,
-                      child: Image(
-                        image: AssetImage("assets/dashboard_icon/calendar.png"),
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                    Container(width: 8),
-                    CustomParagraph(
-                      text: date,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: -0.41,
-                    ),
-                    Container(width: 15),
-                    Flexible(
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: 10),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            const SizedBox(
-                              width: 35.50,
-                              height: 35.50,
-                              child: Image(
-                                image: AssetImage(
-                                    "assets/dashboard_icon/clock.png"),
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            Container(width: 8),
-                            Flexible(
-                              child: CustomParagraph(
-                                text: time,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                letterSpacing: -0.41,
-                                maxlines: 1,
-                              ),
-                            )
-                          ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (data["is_auto_extend"] == "Y")
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Container(
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color.fromARGB(255, 253, 244, 255),
+                          borderRadius: BorderRadius.circular(7),
+                        ),
+                        child: CustomParagraph(
+                          text: "auto extend",
+                          color: Colors.purple,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 12,
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ),
-                  ],
-                ),
-              ],
+                  Container(height: 10),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: CircleAvatar(
+                      backgroundColor: currentTab == 0
+                          ? const Color(0xFFF0E6C3)
+                          : const Color(0xFFEAF3EA),
+                      child: SvgPicture.asset(
+                        "assets/dashboard_icon/${currentTab == 0 ? "orange_check" : "green_check"}.svg",
+                        height: 24,
+                        width: 24,
+                      ),
+                    ),
+                    title: CustomTitle(
+                      text: title,
+                      color: AppColor.primaryColor,
+                      letterSpacing: -0.41,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    subtitle: CustomParagraph(
+                      text: subTitle,
+                      fontSize: 14,
+                      letterSpacing: -0.41,
+                    ),
+                    trailing: Icon(
+                      Icons.chevron_right,
+                      color: AppColor.primaryColor,
+                      size: 30,
+                    ),
+                    onTap: () {
+                      controller.getParkingDetails(data);
+                    },
+                  ),
+                  Row(
+                    children: [
+                      const SizedBox(
+                        width: 35.50,
+                        height: 35.50,
+                        child: Image(
+                          image:
+                              AssetImage("assets/dashboard_icon/calendar.png"),
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                      Container(width: 8),
+                      CustomParagraph(
+                        text: date,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: -0.41,
+                      ),
+                      Container(width: 15),
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              const SizedBox(
+                                width: 35.50,
+                                height: 35.50,
+                                child: Image(
+                                  image: AssetImage(
+                                      "assets/dashboard_icon/clock.png"),
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              Container(width: 8),
+                              Flexible(
+                                child: CustomParagraph(
+                                  text: time,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  letterSpacing: -0.41,
+                                  maxlines: 1,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 13),
-            decoration: const BoxDecoration(
-                color: Color(0xFF2495eb),
-                borderRadius:
-                    BorderRadius.vertical(bottom: Radius.circular(10))),
-            child: Row(
-              children: [
-                const Expanded(
-                  child: CustomTitle(
-                    text: "Total Amount Paid",
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 13),
+              decoration: const BoxDecoration(
+                  color: Color(0xFF2495eb),
+                  borderRadius:
+                      BorderRadius.vertical(bottom: Radius.circular(10))),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: CustomTitle(
+                      text: "Total Amount Paid",
+                      color: Colors.white,
+                      letterSpacing: -0.41,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  CustomTitle(
+                    text: totalAmt,
                     color: Colors.white,
+                    fontWeight: FontWeight.w700,
                     letterSpacing: -0.41,
                     fontSize: 14,
-                    fontWeight: FontWeight.w700,
                   ),
-                ),
-                CustomTitle(
-                  text: totalAmt,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: -0.41,
-                  fontSize: 14,
-                ),
-              ],
-            ),
-          )
-        ],
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }

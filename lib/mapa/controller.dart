@@ -652,7 +652,7 @@ class DashboardMapController extends GetxController
         markers.add(
           Marker(
             // ignore: deprecated_member_use
-            consumeTapEvents: true,
+
             infoWindow: InfoWindow(title: items["park_area_name"]),
             // ignore: deprecated_member_use
             icon: BitmapDescriptor.fromBytes(markerIcon),

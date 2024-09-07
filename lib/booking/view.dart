@@ -1050,102 +1050,117 @@ class BookingDuration extends GetView<BookingController> {
   Widget build(BuildContext context) {
     BookingController ct = Get.put(BookingController());
     return Obx(() => Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
           height: numbersList.length >= 5
               ? MediaQuery.of(context).size.height * .50
               : null,
           decoration: const BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(7),
-              topRight: Radius.circular(7),
+              topLeft: Radius.circular(17),
+              topRight: Radius.circular(17),
             ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                child: Column(
-                  children: [
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Iconsax.clock),
-                      title: const CustomTitle(text: "Booking Duration"),
-                      subtitle: CustomParagraph(
-                        text: Variables.timeNow(),
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 12,
-                      ),
-                      trailing: IconButton(
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                          icon: const Icon(
-                            Iconsax.close_circle,
-                            color: Colors.grey,
-                          )),
-                    ),
-                    CustomTextField(
-                      labelText: "Input number of hours",
-                      title: "No. of hours",
-                      controller: controller.noHours,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d*$')),
+              Column(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      Get.back();
+                    },
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Container(
+                          height: 15,
+                          width: 200,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.all(Radius.circular(56)),
+                          ),
+                        ),
+                        Container(
+                          height: 6,
+                          width: 71,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFFD9D9D9),
+                            borderRadius: BorderRadius.all(Radius.circular(56)),
+                          ),
+                        ),
                       ],
-                      keyboardType: Platform.isAndroid
-                          ? TextInputType.number
-                          : const TextInputType.numberWithOptions(
-                              signed: true, decimal: false),
-                      onChange: (value) {
-                        controller.noHours.text =
-                            value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-                        controller.inpDisplay.text =
-                            value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-
-                        if (value.isNotEmpty &&
-                            int.parse(value) >
-                                int.parse(controller.parameters["areaData"]
-                                        ["res_max_hours"]
-                                    .toString()) &&
-                            int.parse(controller.parameters["areaData"]
-                                        ["res_max_hours"]
-                                    .toString()) !=
-                                0) {
-                          CustomDialog().errorDialog(context, "luvpark",
-                              "Booking limit is up to ${controller.parameters["areaData"]["res_max_hours"].toString()} hours only.",
-                              () {
-                            Get.back();
-                            controller.noHours.text = controller.noHours.text
-                                .substring(
-                                    0, controller.noHours.text.length - 1);
-
-                            controller.inpDisplay.text = controller.noHours.text
-                                .substring(
-                                    0, controller.noHours.text.length - 1);
-                            controller.inpDisplay.text = controller.noHours.text
-                                .substring(
-                                    0, controller.noHours.text.length - 1);
-
-                            controller.noHours.selection =
-                                TextSelection.fromPosition(TextPosition(
-                                    offset: controller.noHours.text.length));
-
-                            controller.selectedNumber.value =
-                                int.parse(controller.noHours.text);
-                          });
-                        }
-
-                        controller.selectedNumber.value =
-                            (controller.noHours.text.isEmpty
-                                ? null
-                                : int.parse(controller.noHours.text))!;
-                      },
                     ),
-                  ],
-                ),
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Icon(Iconsax.clock, color: AppColor.primaryColor),
+                    ),
+                    title: const CustomTitle(text: "Booking Duration"),
+                    subtitle: CustomParagraph(
+                      text: Variables.timeNow(),
+                      color: Colors.grey,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                  CustomTextField(
+                    labelText: "Input number of hours",
+                    title: "No. of hours",
+                    controller: controller.noHours,
+                    inputFormatters: <TextInputFormatter>[
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                    ],
+                    keyboardType: Platform.isAndroid
+                        ? TextInputType.number
+                        : const TextInputType.numberWithOptions(
+                            signed: true, decimal: false),
+                    onChange: (value) {
+                      controller.noHours.text =
+                          value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+                      controller.inpDisplay.text =
+                          value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
+
+                      if (value.isNotEmpty &&
+                          int.parse(value) >
+                              int.parse(controller.parameters["areaData"]
+                                      ["res_max_hours"]
+                                  .toString()) &&
+                          int.parse(controller.parameters["areaData"]
+                                      ["res_max_hours"]
+                                  .toString()) !=
+                              0) {
+                        CustomDialog().errorDialog(context, "luvpark",
+                            "Booking limit is up to ${controller.parameters["areaData"]["res_max_hours"].toString()} hours only.",
+                            () {
+                          Get.back();
+                          controller.noHours.text = controller.noHours.text
+                              .substring(0, controller.noHours.text.length - 1);
+
+                          controller.inpDisplay.text = controller.noHours.text
+                              .substring(0, controller.noHours.text.length - 1);
+                          controller.inpDisplay.text = controller.noHours.text
+                              .substring(0, controller.noHours.text.length - 1);
+
+                          controller.noHours.selection =
+                              TextSelection.fromPosition(TextPosition(
+                                  offset: controller.noHours.text.length));
+
+                          controller.selectedNumber.value =
+                              int.parse(controller.noHours.text);
+                        });
+                      }
+
+                      controller.selectedNumber.value =
+                          (controller.noHours.text.isEmpty
+                              ? null
+                              : int.parse(controller.noHours.text))!;
+                    },
+                  ),
+                ],
               ),
               Container(height: 10),
               if (numbersList.isNotEmpty)
@@ -1183,9 +1198,6 @@ class BookingDuration extends GetView<BookingController> {
                         Get.back();
                       }),
                 ),
-              Container(
-                height: 30,
-              ),
             ],
           ),
         ));
@@ -1240,7 +1252,7 @@ class VehicleOption extends GetView<BookingController> {
                     : null
                 : MediaQuery.of(context).size.height * .50,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
               color: Colors.white,
             ),
             child: !controller.isNetConnVehicles.value

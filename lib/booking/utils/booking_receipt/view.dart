@@ -304,8 +304,12 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomButton(
-                        text: "Extend parking",
-                        onPressed: controller.onExtend,
+                        text: controller.parameters["isAutoExtend"] == "Y"
+                            ? "Cancel auto extend"
+                            : "Extend parking",
+                        onPressed: controller.parameters["isAutoExtend"] == "Y"
+                            ? controller.cancelAutoExtend
+                            : controller.onExtend,
                       ),
                     ),
                   ],

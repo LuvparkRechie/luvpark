@@ -437,10 +437,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Visibility(
-                        visible: (controller.hasLastBooking.value &&
-                                controller.isOpenDial.value
-                            ? false
-                            : true),
+                        visible: controller.hasLastBooking.value,
                         child: InkWell(
                           onTap: controller.bookNow,
                           child: Container(

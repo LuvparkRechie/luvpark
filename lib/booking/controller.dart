@@ -115,28 +115,12 @@ class BookingController extends GetxController
 
   void _handleInactivity() {
     inactivityTimer?.cancel();
-    showDialog(
-      context: Get.context!,
-      builder: (BuildContext context) {
-        return PopScope(
-          canPop: false,
-          child: AlertDialog(
-            title: const Text('No Interaction Detected'),
-            content: const Text(
-                'No gestures were detected within the last minute. Reloading the page.'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  _reloadPage();
-                },
-                child: const Text('OK'),
-              ),
-            ],
-          ),
-        );
-      },
-    );
+    CustomDialog().errorDialog(Get.context!, "No Interaction Detected",
+        "No Gestures were detected within the last minute. Reloading the page",
+        () {
+      Get.back();
+      _reloadPage();
+    });
   }
 
   void _reloadPage() {
