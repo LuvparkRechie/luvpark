@@ -75,7 +75,6 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     LayoutBuilder(builder: (context, constraints) {
-                      print("_maxHeight ${constraints.maxHeight.toDouble()}");
                       return SizedBox(
                         height: 200,
                         child: PageView.builder(

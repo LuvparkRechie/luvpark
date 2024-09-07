@@ -54,7 +54,6 @@ class QrWalletController extends GetxController
   }
 
   void onTabChanged(int index) async {
-    // print(index);
     currentPage.value = index;
     if (currentPage.value == 0) {
       getQrData();
@@ -69,7 +68,7 @@ class QrWalletController extends GetxController
     isInternetConn.value = true;
     var userData = await Authentication().getUserData();
     var item = jsonDecode(userData!);
-    // print('userdataaa$userData');
+
     if (item["first_name"] != null) {
       String middleName = item['middle_name'].toString().toUpperCase() == "NA"
           ? ""

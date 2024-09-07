@@ -225,8 +225,6 @@ class NotificationController {
 
   static Future<void> onActionReceivedImplementationMethod(
       ReceivedAction receivedAction) async {
-    print("receivedAction.buttonKeyPressed $receivedAction");
-
     if (receivedAction.payload!["notificationId"] == "parking") {
       Get.toNamed(Routes.parking, arguments: "N");
     }

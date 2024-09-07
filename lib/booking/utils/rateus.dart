@@ -42,22 +42,6 @@ class _RateUsState extends State<RateUs> {
   }
 
   Future<void> postRatingComments() async {
-//
-    // SharedPreferences prefs = await SharedPreferences.getInstance();
-    // var objInfoData = prefs.getString(
-    //   'userData',
-    // );
-    // var myData = jsonDecode(objInfoData!);
-    // CustomModal(context: context).loader();
-
-    // Map<String, dynamic> param = {
-    //   'user_id': myData["user_id"],
-    //   'reservation_id': widget.reservationId!,
-    //   'rating': myRate.round(),
-    //   'comments': commentController.text,
-    // };
-
-//
     int? userId = await Authentication().getUserId();
 
     CustomDialog().loadingDialog(Get.context!);
@@ -67,7 +51,7 @@ class _RateUsState extends State<RateUs> {
       'rating': myRate.round(),
       'comments': commentController.text,
     };
-    // print("param $param");
+
     return HttpRequest(api: ApiKeys.gApiLuvParkPostRating, parameters: param)
         .post()
         .then((returnData) async {

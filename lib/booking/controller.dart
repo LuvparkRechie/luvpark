@@ -405,7 +405,7 @@ class BookingController extends GetxController
       Get.back();
     }, () {
       Get.back();
-      print("dynamicBookParam $dynamicBookParam");
+
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {

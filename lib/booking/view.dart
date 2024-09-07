@@ -1022,7 +1022,10 @@ class BookingPage extends GetView<BookingController> {
                                                     }),
                                         ),
                                       ],
-                                    )
+                                    ),
+                                  Container(
+                                    height: 10,
+                                  ),
                                 ],
                               ),
                             ),

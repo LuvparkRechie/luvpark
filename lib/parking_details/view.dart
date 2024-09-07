@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -447,6 +449,7 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
             onPressed: controller.onClickBooking,
           ),
         ),
+        if (Platform.isIOS) Container(height: 20),
       ],
     );
   }

@@ -19,7 +19,7 @@ class BookingReceiptController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    print("parameters ${parameters["isAutoExtend"]}");
+
     if (parameters["status"] == "A") {
       startTimer();
     }
@@ -121,7 +121,7 @@ class BookingReceiptController extends GetxController
           .postBody()
           .then((objData) async {
         Get.back();
-        print("objData $objData");
+
         if (objData == "No Internet") {
           CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();
@@ -175,7 +175,7 @@ class BookingReceiptController extends GetxController
           .postBody()
           .then((objData) async {
         Get.back();
-        print("objData $objData");
+
         if (objData == "No Internet") {
           CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();

@@ -15,7 +15,7 @@ class BookingNotice extends GetView<BookingNoticeController> {
     final BookingNoticeController ct = Get.put(BookingNoticeController());
 
     return Container(
-      height: MediaQuery.of(context).size.height * .54,
+      height: MediaQuery.of(context).size.height * .55,
       width: MediaQuery.of(context).size.width,
       decoration: const BoxDecoration(
         color: Colors.white,
@@ -112,6 +112,7 @@ class BookingNotice extends GetView<BookingNoticeController> {
                           onPressed: () {
                             Get.back();
                           }),
+                      Container(height: 20),
                     ],
                   ),
                 )),

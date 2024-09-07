@@ -22,6 +22,8 @@ import 'package:luvpark_get/mapa/utils/legend/legend_dialog.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import 'utils/suggestions/suggestions.dart';
+
 // ignore: deprecated_member_use
 class DashboardMapController extends GetxController
     with GetTickerProviderStateMixin {
@@ -554,7 +556,7 @@ class DashboardMapController extends GetxController
     update();
   }
 
-  String _getIconAssetForPwd(String parkingTypeCode, String vehicleTypes) {
+  String getIconAssetForPwd(String parkingTypeCode, String vehicleTypes) {
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
@@ -588,7 +590,7 @@ class DashboardMapController extends GetxController
     }
   }
 
-  String _getIconAssetForNonPwd(String parkingTypeCode, String vehicleTypes) {
+  String getIconAssetForNonPwd(String parkingTypeCode, String vehicleTypes) {
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
@@ -640,10 +642,10 @@ class DashboardMapController extends GetxController
         // Determine the iconAsset based on parking type and PWD status
         if (isPwd == "Y") {
           iconAsset =
-              _getIconAssetForPwd(items["parking_type_code"], vehicleTypes);
+              getIconAssetForPwd(items["parking_type_code"], vehicleTypes);
         } else {
           iconAsset =
-              _getIconAssetForNonPwd(items["parking_type_code"], vehicleTypes);
+              getIconAssetForNonPwd(items["parking_type_code"], vehicleTypes);
         }
 
         final Uint8List markerIcon =
@@ -715,126 +717,9 @@ class DashboardMapController extends GetxController
   }
 
   void showNearestSuggestDialog() {
-    Get.defaultDialog(
-      title: "Nearby parking found",
-      titlePadding: const EdgeInsets.fromLTRB(15, 40, 15, 0),
-      contentPadding: const EdgeInsets.all(15),
-      titleStyle: titleStyle(fontSize: 20, fontWeight: FontWeight.w800),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          const CustomParagraph(
-            text: 'Here are the list of parking zone.',
-            textAlign: TextAlign.center,
-          ),
-          Container(height: 10),
-          SizedBox(
-            height: MediaQuery.of(Get.context!).size.height * .40,
-            child: StretchingOverscrollIndicator(
-              axisDirection: AxisDirection.down,
-              child: ListView.separated(
-                padding: EdgeInsets.zero,
-                separatorBuilder: (context, index) {
-                  return const SizedBox(height: 2);
-                },
-                itemCount: dataNearest.length > 5
-                    ? dataNearest.take(5).toList().length
-                    : dataNearest.length,
-                itemBuilder: (context, index) {
-                  String getDistanceString() {
-                    double kmDist = Variables.convertToMeters(
-                        dataNearest[index]["distance"].toString());
-                    if (kmDist >= 1000) {
-                      double distanceInKilometers = kmDist / 1000;
-                      return '${distanceInKilometers.round()} km';
-                    } else {
-                      return '${kmDist.round()} m';
-                    }
-                  }
-
-                  final String isPwd = dataNearest[index]["is_pwd"] ?? "N";
-                  final String vehicleTypes =
-                      dataNearest[index]["vehicle_types_list"];
-
-                  String iconAsset;
-                  // Determine the iconAsset based on parking type and PWD status
-                  if (isPwd == "Y") {
-                    iconAsset = _getIconAssetForPwd(
-                        dataNearest[index]["parking_type_code"], vehicleTypes);
-                  } else {
-                    iconAsset = _getIconAssetForNonPwd(
-                        dataNearest[index]["parking_type_code"], vehicleTypes);
-                  }
-
-                  return ShowUpAnimation(
-                    delay: 5 * index,
-                    child: InkWell(
-                      onTap: () {
-                        Get.back();
-                        Get.toNamed(Routes.parkingDetails,
-                            arguments: dataNearest[index]);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.fromLTRB(0, 15, 15, 15),
-                        width: MediaQuery.of(context).size.width * .88,
-                        decoration: BoxDecoration(
-                          border: Border(
-                              bottom: BorderSide(
-                            color: Colors.grey.shade200,
-                          )),
-                        ),
-                        child: Row(
-                          children: [
-                            Container(
-                              height: 34,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: const BoxDecoration(),
-                              child: Image(
-                                image: AssetImage(iconAsset),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            Container(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  CustomTitle(
-                                    text: dataNearest[index]["park_area_name"],
-                                    fontSize: 16,
-                                    maxlines: 1,
-                                  ),
-                                  CustomParagraph(
-                                    text: dataNearest[index]["address"],
-                                    fontSize: 14,
-                                    maxlines: 2,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(width: 10),
-                            CustomLinkLabel(text: getDistanceString())
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          )
-        ],
-      ),
-      confirm: CustomButton(
-          text: "More options",
-          onPressed: () {
-            Get.back();
-          }),
-      backgroundColor: Colors.white,
-      barrierDismissible: true,
-    );
+    Get.dialog(SuggestionsScreen(
+      data: dataNearest,
+    ));
   }
 
   //calculate coordinates

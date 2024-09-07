@@ -195,9 +195,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                         data: controller.resData[index],
                                         currentTab:
                                             controller.currentPage.value,
-                                        onRefresh: () {
-                                          print("atatat");
-                                        },
+                                        onRefresh: () {},
                                       );
                                     },
                                     separatorBuilder: (context, index) =>

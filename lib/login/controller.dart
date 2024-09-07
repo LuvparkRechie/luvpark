@@ -116,7 +116,6 @@ class LoginScreenController extends GetxController {
         HttpRequest(api: ApiKeys.gApiSubFolderPostLogin, parameters: param)
             .post()
             .then((returnPost) async {
-          print(" $returnPost");
           if (returnPost == "No Internet") {
             CustomDialog().internetErrorDialog(context, () {
               Get.back();

@@ -55,7 +55,6 @@ class WalletController extends GetxController
   }
 
   Future<void> getUserBalance() async {
-    print("Get user balance");
     final userPp = await Authentication().getUserProfilePic();
     var uData = await Authentication().getUserData();
     var item = jsonDecode(uData!);
@@ -134,7 +133,6 @@ class WalletController extends GetxController
 
 //Get logs | transaction Page
   Future<void> getLogs() async {
-    print("get logs");
     final item = await Authentication().getUserData();
     String userId = jsonDecode(item!)['user_id'].toString();
     isLoading.value = true;
@@ -143,7 +141,6 @@ class WalletController extends GetxController
         "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
 
     HttpRequest(api: subApi).get().then((response) {
-      print("response $response");
       if (response == "No Internet") {
         isLoading.value = false;
         isNetConn.value = false;
@@ -170,7 +167,7 @@ class WalletController extends GetxController
 
         DateTime today = DateTime.now().toUtc();
         String todayString = today.toIso8601String().substring(0, 10);
-        // print(response["items"]);
+
         List filteredTransactions = response["items"].where((transaction) {
           String transactionDate =
               transaction['tran_date'].toString().split("T")[0];

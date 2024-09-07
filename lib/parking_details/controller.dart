@@ -90,7 +90,6 @@ class ParkingDetailsController extends GetxController {
                 "${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=${dataNearest["park_area_id"]}")
         .get();
 
-    print("getAmenities $response");
     if (response == "No Internet") {
       isNetConnected.value = false;
       CustomDialog().internetErrorDialog(Get.context!, () => Get.back());

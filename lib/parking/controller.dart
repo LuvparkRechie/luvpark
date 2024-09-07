@@ -59,7 +59,6 @@ class ParkingController extends GetxController
   }
 
   Future<void> onRefresh() async {
-    print("on refresh");
     getReserveData(currentPage.value == 0 ? "C" : "U");
   }
 
@@ -114,7 +113,7 @@ class ParkingController extends GetxController
           return;
         } else {
           List itemData = returnData["items"];
-          print("itemData $itemData");
+
           resData.value = itemData;
         }
       } finally {
@@ -126,7 +125,7 @@ class ParkingController extends GetxController
   // BTN details
   Future<void> getParkingDetails(dynamic data) async {
     int userId = await Authentication().getUserId();
-    print("data $data");
+
     var dateInRelated = "";
     var dateOutRelated = "";
     dateInRelated = data["dt_in"];

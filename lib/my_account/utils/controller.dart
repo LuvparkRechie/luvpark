@@ -369,7 +369,7 @@ class UpdateProfileController extends GetxController {
                 }
               ];
               dynamic args = {"otp_data": otpData, "parameter": submitParam};
-              print("args $args");
+
               Get.toNamed(
                 Routes.otpUpdProfile,
                 arguments: args,
