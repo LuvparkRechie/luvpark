@@ -15,6 +15,7 @@ import 'package:luvpark_get/wallet_send/index.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
+import '../routes/routes.dart';
 
 class WalletSend extends GetView<WalletSendController> {
   const WalletSend({super.key});
@@ -24,6 +25,9 @@ class WalletSend extends GetView<WalletSendController> {
     return Scaffold(
       appBar: CustomAppbar(
         title: "Send",
+        onTap: () {
+          Get.offAllNamed(Routes.wallet);
+        },
       ),
       body: SingleChildScrollView(
         physics: NeverScrollableScrollPhysics(),

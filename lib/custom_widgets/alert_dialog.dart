@@ -513,7 +513,7 @@ class CustomDialog {
         backgroundColor: Colors.transparent,
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),

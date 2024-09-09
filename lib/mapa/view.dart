@@ -1,3 +1,4 @@
+//mapa
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -18,7 +19,6 @@ import 'package:luvpark_get/voice_search/view.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
-import '../custom_widgets/alert_dialog.dart';
 import 'controller.dart';
 
 class DashboardMapScreen extends GetView<DashboardMapController> {
@@ -663,6 +663,12 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                         padding: const EdgeInsets.all(15.0),
                         child: GetBuilder<DashboardMapController>(
                             builder: (context) {
+                          List<String> _biniMae = controller.dialogData[0]
+                                  ["parking_schedule"]
+                              .toString()
+                              .split("-");
+                          String mySpecialBiniSched =
+                              '  ●  ${_biniMae[0]} ${_biniMae.length > 1 ? "to ${_biniMae[1]}" : ""}  ●   ';
                           String formatTime(String time) {
                             return "${time.substring(0, 2)}:${time.substring(2)}";
                           }
@@ -737,8 +743,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                       ),
                                     ),
                                     TextSpan(
-                                      text:
-                                          '  ●  ${controller.dialogData[0]["parking_schedule"].toString().split("-")[0]} to ${controller.dialogData[0]["parking_schedule"].toString().split("-")[1]}   ●   ',
+                                      text: mySpecialBiniSched,
                                       style: paragraphStyle(),
                                     ),
                                     TextSpan(

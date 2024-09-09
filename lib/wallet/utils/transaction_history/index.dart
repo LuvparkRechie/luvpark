@@ -55,7 +55,6 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${filterfromDate.text}&tran_date_to=${filtertoDate.text}";
 
     HttpRequest(api: subApi).get().then((response) {
-       
       setState(() {
         isLoadingPage = false;
       });
@@ -203,7 +202,9 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                               color: (filterLogs[index]["tran_desc"] ==
                                           'Share a token' ||
                                       filterLogs[index]["tran_desc"] ==
-                                          'Received token')
+                                          'Received token' ||
+                                      filterLogs[index]["tran_desc"] ==
+                                          'Credit top-up')
                                   ? const Color(0xFF0078FF)
                                   : const Color(0xFFBD2424),
                             ),

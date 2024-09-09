@@ -29,7 +29,7 @@ class WalletScreen extends GetView<WalletController> {
         appBar: CustomAppbar(
           title: "My Wallet",
           onTap: () {
-            Get.back();
+            Get.offAllNamed(Routes.map);
           },
         ),
         body: Obx(
@@ -336,49 +336,52 @@ class WalletScreen extends GetView<WalletController> {
                                                     );
                                                   },
                                                   child: ListTile(
-                                                      contentPadding:
-                                                          EdgeInsets.zero,
-                                                      leading: SvgPicture.asset(
-                                                        fit: BoxFit.cover,
-                                                        "assets/images/${controller.logs[index][" "] == 'Share a token' ? 'wallet_sharetoken' : controller.logs[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
-                                                      ),
-                                                      title: CustomTitle(
-                                                        text: controller
-                                                                .logs[index]
-                                                            ["tran_desc"],
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                      ),
-                                                      subtitle: CustomParagraph(
-                                                        text: DateFormat(
-                                                                'MMM d, yyyy h:mm a')
-                                                            .format(DateTime.parse(
-                                                                controller.logs[
-                                                                        index][
-                                                                    "tran_date"])),
-                                                        fontSize: 12,
-                                                      ),
-                                                      trailing: CustomTitle(
-                                                        text: controller
-                                                                .logs[index]
-                                                            ["amount"],
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: (controller.logs[
-                                                                            index]
-                                                                        [
-                                                                        "tran_desc"] ==
-                                                                    'Share a token' ||
-                                                                controller.logs[
-                                                                            index]
-                                                                        [
-                                                                        "tran_desc"] ==
-                                                                    'Received token')
-                                                            ? Color(0xFF0078FF)
-                                                            : Color(0xFFBD2424),
-                                                      )),
+                                                    contentPadding:
+                                                        EdgeInsets.zero,
+                                                    leading: SvgPicture.asset(
+                                                      fit: BoxFit.cover,
+                                                      "assets/images/${controller.logs[index][" "] == 'Share a token' ? 'wallet_sharetoken' : controller.logs[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
+                                                    ),
+                                                    title: CustomTitle(
+                                                      text:
+                                                          controller.logs[index]
+                                                              ["tran_desc"],
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    subtitle: CustomParagraph(
+                                                      text: DateFormat(
+                                                              'MMM d, yyyy h:mm a')
+                                                          .format(DateTime
+                                                              .parse(controller
+                                                                          .logs[
+                                                                      index][
+                                                                  "tran_date"])),
+                                                      fontSize: 12,
+                                                    ),
+                                                    trailing: CustomTitle(
+                                                      text:
+                                                          controller.logs[index]
+                                                              ["amount"],
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: (controller.logs[index]["tran_desc"] == 'Share a token' ||
+                                                              controller.logs[
+                                                                          index]
+                                                                      [
+                                                                      "tran_desc"] ==
+                                                                  'Received token' ||
+                                                              controller.logs[
+                                                                          index]
+                                                                      [
+                                                                      "tran_desc"] ==
+                                                                  'Credit top-up')
+                                                          ? Color(0xFF0078FF)
+                                                          : Color(0xFFBD2424),
+                                                    ),
+                                                  ),
                                                 );
                                               },
                                               separatorBuilder:

@@ -1,3 +1,5 @@
+//mapa controller
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
@@ -10,9 +12,6 @@ import 'package:http/http.dart' as http;
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/showup_animation.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/api_keys.dart';
@@ -748,10 +747,11 @@ class DashboardMapController extends GetxController
 
   //onMarker tapped
   void onMarkerTapped(data) {
+    isMarkerTapped.value = false;
+    isGetNearData.value = true;
     dialogData.add(data);
-
-    isMarkerTapped.value = true;
-    isGetNearData.value = false;
+    isMarkerTapped.value = !isMarkerTapped.value;
+    isGetNearData.value = !isGetNearData.value;
   }
 
   void closeMarkerDialog() {
