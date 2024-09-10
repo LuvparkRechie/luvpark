@@ -531,17 +531,18 @@ class DashboardMapController extends GetxController
                 200,
                 double.parse(index.toString()))),
       );
-      markers.add(
-        Marker(
-          // ignore: deprecated_member_use
-          consumeTapEvents: true,
-          infoWindow: InfoWindow(title: "Current"),
-          // ignore: deprecated_member_use
-          icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
-          markerId: MarkerId(0.toString()),
-          position: coordinates,
-        ),
-      );
+      // markers.add(
+      //   Marker(
+      //     // ignore: deprecated_member_use
+      //     consumeTapEvents: true,
+      //     infoWindow: InfoWindow(title: "Current"),
+
+      //     // ignore: deprecated_member_use
+      //     icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+      //     markerId: MarkerId(0.toString()),
+      //     position: coordinates,
+      //   ),
+      // );
 
       buildMarkers(returnData["items"]);
       netConnected.value = true;
