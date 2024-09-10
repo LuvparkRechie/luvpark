@@ -14,6 +14,7 @@ import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/drawer/view.dart';
 import 'package:luvpark_get/functions/functions.dart';
+import 'package:luvpark_get/mapa/utils/legend/legend_dialog.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/voice_search/view.dart';
 import 'package:shimmer/shimmer.dart';
@@ -414,6 +415,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
+                      _buildDialItem("info", 'Info', () {
+                        Get.dialog(LegendDialogScreen());
+                      }),
+                      const SizedBox(height: 16),
                       _buildDialItem("list", 'Parking areas', () {
                         Get.toNamed(Routes.parkingAreas,
                             arguments: controller.dataNearest);
@@ -826,7 +831,11 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              SvgPicture.asset("assets/dashboard_icon/$icon.svg"),
+              SvgPicture.asset(
+                "assets/dashboard_icon/$icon.svg",
+                color: Color(0xFF474545),
+                height: 24,
+              ),
               Container(width: 10),
               CustomParagraph(
                 text: label,

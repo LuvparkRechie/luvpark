@@ -7,8 +7,8 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import '../../../custom_widgets/app_color.dart';
 
 class LegendDialogScreen extends StatefulWidget {
-  final VoidCallback callback;
-  const LegendDialogScreen({super.key, required this.callback});
+  final VoidCallback? callback;
+  const LegendDialogScreen({super.key, this.callback});
 
   @override
   State<LegendDialogScreen> createState() => _LegendDialogScreenState();
@@ -139,7 +139,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                         text: "Okay",
                         onPressed: () {
                           Get.back();
-                          widget.callback();
+                          widget.callback!();
                         })
                   ],
                 ),

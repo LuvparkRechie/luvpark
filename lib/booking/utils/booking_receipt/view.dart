@@ -371,6 +371,7 @@ class BookingReceipt extends GetView<BookingReceiptController> {
 
                         Get.back();
 
+                        // ignore: deprecated_member_use
                         await Share.shareFiles([imgFile.path]);
                       }),
                       CustomParagraph(

@@ -1,3 +1,4 @@
+// ignore: library_names
 library SendOtp;
 
 export './bindings.dart';

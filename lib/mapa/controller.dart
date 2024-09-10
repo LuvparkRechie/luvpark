@@ -490,6 +490,7 @@ class DashboardMapController extends GetxController
         "No parking area found within \n${(isDouble ? double.parse(ddRadius!) : int.parse(ddRadius!)) >= 1 ? '${ddRadius!} Km' : '${double.parse(ddRadius!) * 1000} meters'}, please change location.",
         () {
       Get.back();
+      Get.offAllNamed(Routes.mapFilter);
     });
   }
 
