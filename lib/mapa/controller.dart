@@ -329,7 +329,7 @@ class DashboardMapController extends GetxController
     );
     polyline = Polyline(
       polylineId: const PolylineId('dottedCircle'),
-      color: AppColor.mainColor,
+      color: AppColor.primaryColor,
       width: 4,
       patterns: [
         PatternItem.dash(20),

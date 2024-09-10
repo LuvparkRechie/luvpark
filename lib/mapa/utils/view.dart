@@ -157,8 +157,16 @@ class FilterMap extends GetView<FilterMapController> {
                             color: Colors.black87,
                             fontWeight: FontWeight.w700,
                           ),
+                          PantropikoCheckBox(
+                            vhTypeData: controller.vhTypeData
+                                .map((item) => {
+                                      "text": item["text"].toString(),
+                                      "value": item["value"].toString(),
+                                    })
+                                .toList(),
+                          ),
 
-                          buildRadioOptions(),
+                          // buildRadioOptions(),
                           Container(height: 10),
                           Divider(
                             color: Colors.grey.shade300,
@@ -337,6 +345,117 @@ class FilterMap extends GetView<FilterMapController> {
                   .primaryColor, // Optional: Change background color when selected
             ),
         ]),
+      ],
+    );
+  }
+}
+
+class PantropikoCheckBox extends StatefulWidget {
+  final List<Map<String, String>> vhTypeData;
+
+  const PantropikoCheckBox({required this.vhTypeData, Key? key})
+      : super(key: key);
+
+  @override
+  State<PantropikoCheckBox> createState() => _PantropikoCheckBoxState();
+}
+
+class _PantropikoCheckBoxState extends State<PantropikoCheckBox> {
+  // A map to track the state of each checkbox
+  Map<String, bool> checkedValues = {};
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize checkedValues with false for each item
+    checkedValues = {for (var item in widget.vhTypeData) item["value"]!: false};
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Color getColor(Set<MaterialState> states) {
+      const Set<MaterialState> interactiveStates = <MaterialState>{
+        MaterialState.pressed,
+        MaterialState.hovered,
+        MaterialState.focused,
+      };
+      if (states.any(interactiveStates.contains)) {
+        return Colors.blue;
+      }
+      return Colors.transparent;
+    }
+
+    return Column(
+      children: [
+        for (int i = 0; i < widget.vhTypeData.length; i++)
+          SizedBox(
+            height: 30,
+            child: CheckboxListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(
+                widget.vhTypeData[i]["text"]!,
+                style: TextStyle(
+                  color: Colors.black87,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              value:
+                  checkedValues[widget.vhTypeData[i]["value"] ?? ""] ?? false,
+              checkColor: AppColor.primaryColor,
+              fillColor: MaterialStateProperty.resolveWith(getColor),
+              side: MaterialStateBorderSide.resolveWith((states) {
+                if (states.contains(MaterialState.selected)) {
+                  return BorderSide(width: 1, color: AppColor.primaryColor);
+                } else {
+                  return BorderSide(width: 1, color: AppColor.primaryColor);
+                }
+              }),
+              onChanged: (bool? value) {
+                setState(() {
+                  if (value != null) {
+                    checkedValues[widget.vhTypeData[i]["value"] ?? ""] = value;
+                  }
+                });
+              },
+            ),
+          ),
+        SizedBox(
+          height: 30,
+          child: CheckboxListTile(
+            contentPadding: EdgeInsets.zero,
+            title: const Text(
+              "All",
+              style: TextStyle(
+                color: Colors.black87,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            value: checkedValues.isEmpty ||
+                checkedValues.values.every((val) => !val),
+            checkColor: AppColor.primaryColor,
+            fillColor: MaterialStateProperty.resolveWith(getColor),
+            side: MaterialStateBorderSide.resolveWith((states) {
+              if (states.contains(MaterialState.selected)) {
+                return BorderSide(width: 1, color: AppColor.primaryColor);
+              } else {
+                return BorderSide(width: 1, color: AppColor.primaryColor);
+              }
+            }),
+            onChanged: (bool? value) {
+              setState(() {
+                if (value == true) {
+                  // Check all options
+                  for (var key in checkedValues.keys) {
+                    checkedValues[key] = true;
+                  }
+                } else {
+                  checkedValues.clear();
+                }
+              });
+            },
+          ),
+        ),
+        const SizedBox(height: 10.0),
       ],
     );
   }
