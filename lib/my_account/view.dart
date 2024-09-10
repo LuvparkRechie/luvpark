@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
+import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/page_loader.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
@@ -20,15 +20,13 @@ class MyAccount extends GetView<MyAccountScreenController> {
     return Obx(
       () => Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
+        appBar: CustomAppbar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 0,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.light,
-          ),
+          titleSize: 20,
+          textColor: Colors.white,
+          titleColor: Colors.white,
+          bgColor: Colors.transparent,
+          title: "My Account",
         ),
         body: controller.isLoading.value
             ? const PageLoader()
@@ -50,43 +48,6 @@ class MyAccount extends GetView<MyAccountScreenController> {
                     child: SafeArea(
                       child: Column(
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  Get.back();
-                                },
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Icon(
-                                      Icons.chevron_left,
-                                      color: Colors.white,
-                                    ),
-                                    CustomParagraph(
-                                      text: "Back",
-                                      fontSize: 14,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const CustomTitle(
-                                text: "My Profile",
-                                color: Colors.white,
-                                fontSize: 20,
-                              ),
-                              const Padding(
-                                padding: EdgeInsets.only(right: 10),
-                                child: Icon(
-                                  Icons.more_vert,
-                                  color: Colors.white,
-                                ),
-                              )
-                            ],
-                          ),
                           const SizedBox(height: 20),
                           Stack(
                             clipBehavior: Clip.none,

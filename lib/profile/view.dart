@@ -1,10 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
+import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/page_loader.dart';
 import 'package:luvpark_get/profile/controller.dart';
 import 'package:luvpark_get/routes/routes.dart';
@@ -19,15 +19,13 @@ class Profile extends GetView<ProfileScreenController> {
     return Obx(
       () => Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(
+        appBar: CustomAppbar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
-          toolbarHeight: 0,
-          systemOverlayStyle: const SystemUiOverlayStyle(
-            statusBarColor: Colors.transparent,
-            statusBarBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.light,
-          ),
+          titleSize: 20,
+          textColor: Colors.white,
+          titleColor: Colors.white,
+          bgColor: Colors.transparent,
+          title: "My Profile",
         ),
         body: controller.isLoading.value
             ? const PageLoader()
@@ -52,48 +50,48 @@ class Profile extends GetView<ProfileScreenController> {
                           child: SafeArea(
                             child: Column(
                               children: [
-                                Stack(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        Get.back();
-                                      },
-                                      child: const Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            Icons.chevron_left,
-                                            color: Colors.white,
-                                          ),
-                                          CustomParagraph(
-                                            text: "Back",
-                                            fontSize: 14,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    const Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Center(
-                                          child: CustomTitle(
-                                            text: "My Account",
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w900,
-                                            color: Colors.white,
-                                            textAlign: TextAlign.center,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                // Stack(
+                                //   children: [
+                                //     InkWell(
+                                //       onTap: () {
+                                //         Get.back();
+                                //       },
+                                //       child: const Row(
+                                //         mainAxisAlignment:
+                                //             MainAxisAlignment.start,
+                                //         crossAxisAlignment:
+                                //             CrossAxisAlignment.center,
+                                //         children: [
+                                //           Icon(
+                                //             Icons.chevron_left,
+                                //             color: Colors.white,
+                                //           ),
+                                //           CustomParagraph(
+                                //             text: "Back",
+                                //             fontSize: 14,
+                                //             color: Colors.white,
+                                //             fontWeight: FontWeight.w700,
+                                //           ),
+                                //         ],
+                                //       ),
+                                //     ),
+                                //     const Column(
+                                //       mainAxisAlignment:
+                                //           MainAxisAlignment.center,
+                                //       children: [
+                                //         Center(
+                                //           child: CustomTitle(
+                                //             text: "My Account",
+                                //             fontSize: 16,
+                                //             fontWeight: FontWeight.w900,
+                                //             color: Colors.white,
+                                //             textAlign: TextAlign.center,
+                                //           ),
+                                //         ),
+                                //       ],
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
                           ),

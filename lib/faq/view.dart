@@ -107,10 +107,10 @@ class FaqsAppbar extends StatelessWidget {
     return AppBar(
       elevation: 0,
       actions: [
-        IconButton(
-          onPressed: () {},
-          icon: const Icon(Iconsax.message_search, size: 20),
-        ),
+        // IconButton(
+        //   onPressed: () {},
+        //   icon: const Icon(Iconsax.message_search, size: 20),
+        // ),
       ],
       leading: Padding(
         padding: const EdgeInsets.only(left: 5),
