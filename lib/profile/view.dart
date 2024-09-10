@@ -49,50 +49,7 @@ class Profile extends GetView<ProfileScreenController> {
                           ),
                           child: SafeArea(
                             child: Column(
-                              children: [
-                                // Stack(
-                                //   children: [
-                                //     InkWell(
-                                //       onTap: () {
-                                //         Get.back();
-                                //       },
-                                //       child: const Row(
-                                //         mainAxisAlignment:
-                                //             MainAxisAlignment.start,
-                                //         crossAxisAlignment:
-                                //             CrossAxisAlignment.center,
-                                //         children: [
-                                //           Icon(
-                                //             Icons.chevron_left,
-                                //             color: Colors.white,
-                                //           ),
-                                //           CustomParagraph(
-                                //             text: "Back",
-                                //             fontSize: 14,
-                                //             color: Colors.white,
-                                //             fontWeight: FontWeight.w700,
-                                //           ),
-                                //         ],
-                                //       ),
-                                //     ),
-                                //     const Column(
-                                //       mainAxisAlignment:
-                                //           MainAxisAlignment.center,
-                                //       children: [
-                                //         Center(
-                                //           child: CustomTitle(
-                                //             text: "My Account",
-                                //             fontSize: 16,
-                                //             fontWeight: FontWeight.w900,
-                                //             color: Colors.white,
-                                //             textAlign: TextAlign.center,
-                                //           ),
-                                //         ),
-                                //       ],
-                                //     ),
-                                //   ],
-                                // ),
-                              ],
+                              children: [],
                             ),
                           ),
                         ),
