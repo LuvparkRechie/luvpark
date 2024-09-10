@@ -48,6 +48,7 @@ class ParkingDetailsController extends GetxController {
     {"code": "A", "icon": "asphalt"},
     {"code": "S", "icon": "security"},
     {"code": "P", "icon": "pwd"},
+    {"code": "XXX", "icon": "no_image"},
   ];
 
   String finalSttime = "";
@@ -57,21 +58,23 @@ class ParkingDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    goingBackToTheCornerWhenIFirstSawYou();
+    refreshAmenData();
+  }
 
+  Future<void> goingBackToTheCornerWhenIFirstSawYou() async {
     final vehicleTypesList = dataNearest['vehicle_types_list'] as String;
+    List<String> pantropiko =
+        dataNearest["parking_schedule"].toString().split("-");
+    parkSched =
+        "${pantropiko[0]} ${pantropiko.length > 1 ? "to ${dataNearest["parking_schedule"].toString().split("-")[1]}" : ""}";
+
     vehicleTypes.value = _parseVehicleTypes(vehicleTypesList);
     finalSttime = formatTime(dataNearest["start_time"]);
     finalEndtime = formatTime(dataNearest["end_time"]);
     isOpen.value = Functions.checkAvailability(finalSttime, finalEndtime);
     destLoc.value =
         LatLng(dataNearest["pa_latitude"], dataNearest["pa_longitude"]);
-    if (dataNearest["parking_schedule"].toString().contains("-")) {
-      parkSched =
-          "${dataNearest["parking_schedule"].toString().split("-")[0]} to ${dataNearest["parking_schedule"].toString().split("-")[1]}";
-    } else {
-      parkSched = dataNearest["parking_schedule"].toString();
-    }
-    refreshAmenData();
   }
 
   String formatTime(String time) {
@@ -111,13 +114,10 @@ class ParkingDetailsController extends GetxController {
     if (response["items"].isNotEmpty) {
       List<dynamic> item = response["items"];
       item = item.map((element) {
-        String icon = iconAmen
-            .where((e) {
-              return e["code"] == element["parking_amenity_code"];
-            })
-            .toList()[0]["icon"]
-            .toString();
-        element["icon"] = icon;
+        List<dynamic> icon = iconAmen.where((e) {
+          return e["code"] == element["parking_amenity_code"];
+        }).toList();
+        element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
 
         return element;
       }).toList();

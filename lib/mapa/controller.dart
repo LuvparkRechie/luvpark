@@ -400,7 +400,9 @@ class DashboardMapController extends GetxController
       myName.value = jsonDecode(userData)["first_name"];
     }
 
-    LocationService.grantPermission(Get.context!, (isGranted) {
+    LocationService.grantPermission(Get.context!, (isGranted) async {
+      List ltlng = await Functions.getCurrentPosition();
+      LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
       if (isGranted) {
         Functions.getUserBalance(Get.context!, (dataBalance) async {
           userBal.value = dataBalance[0]["items"];
@@ -409,14 +411,14 @@ class DashboardMapController extends GetxController
             isLoading.value = false;
             isLoadingMap.value = false;
           } else {
-            isLoading.value = false;
+            //isLoading.value = false;
             if (isSearch) {
-              getNearest(dataBalance[0]["items"], searchCoordinates);
+              getNearest(
+                  dataBalance[0]["items"], searchCoordinates, coordinates);
             } else {
-              List ltlng = await Functions.getCurrentPosition();
-              LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
               searchCoordinates = coordinates;
-              getNearest(dataBalance[0]["items"], coordinates);
+              getNearest(
+                  dataBalance[0]["items"], searchCoordinates, coordinates);
             }
           }
         });
@@ -427,12 +429,14 @@ class DashboardMapController extends GetxController
     });
   }
 
-  void getNearest(List<dynamic> uData, LatLng coordinates) async {
+  void getNearest(
+      List<dynamic> uData, LatLng coordinates, LatLng myCurrLoc) async {
     String params =
-        "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&latitude=${coordinates.latitude}&longitude=${coordinates.longitude}&radius=$ddRadius&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
+        "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&latitude=${myCurrLoc.latitude}&longitude=${myCurrLoc.longitude}&radius=$ddRadius&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
 
     try {
       var returnData = await HttpRequest(api: params).get();
+
       if (returnData == "No Internet") {
         handleNoInternet();
         return;
@@ -447,7 +451,9 @@ class DashboardMapController extends GetxController
       }
 
       handleData(returnData, uData, coordinates);
+      isLoading.value = false;
     } catch (e) {
+      isLoading.value = false;
       handleServerError();
     }
   }
@@ -747,6 +753,7 @@ class DashboardMapController extends GetxController
 
   //onMarker tapped
   void onMarkerTapped(data) {
+    print('data $data');
     isMarkerTapped.value = false;
     isGetNearData.value = true;
     dialogData.add(data);
