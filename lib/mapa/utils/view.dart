@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:image/image.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -157,16 +159,8 @@ class FilterMap extends GetView<FilterMapController> {
                             color: Colors.black87,
                             fontWeight: FontWeight.w700,
                           ),
-                          PantropikoCheckBox(
-                            vhTypeData: controller.vhTypeData
-                                .map((item) => {
-                                      "text": item["text"].toString(),
-                                      "value": item["value"].toString(),
-                                    })
-                                .toList(),
-                          ),
-
-                          // buildRadioOptions(),
+                          Container(height: 5),
+                          buildFilterOptions(),
                           Container(height: 10),
                           Divider(
                             color: Colors.grey.shade300,
@@ -177,7 +171,7 @@ class FilterMap extends GetView<FilterMapController> {
                             color: Colors.black87,
                             fontWeight: FontWeight.w700,
                           ),
-
+                          Container(height: 10),
                           buildFilterChips(),
                           Container(height: 10),
                           Divider(
@@ -191,7 +185,7 @@ class FilterMap extends GetView<FilterMapController> {
                             color: Colors.black87,
                             fontWeight: FontWeight.w700,
                           ),
-
+                          Container(height: 10),
                           buildFilterChipsAmenities(),
                           Container(height: 10),
                           Divider(
@@ -206,56 +200,78 @@ class FilterMap extends GetView<FilterMapController> {
     );
   }
 
-  Widget buildRadioOptions() {
+  Widget buildFilterOptions() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         for (int i = 0; i < controller.vhTypeData.length; i++)
-          SizedBox(
-            height: 30,
-            child: RadioListTile<String>(
-              contentPadding: EdgeInsets.zero,
-              title: CustomParagraph(
-                text: controller.vhTypeData[i]["text"],
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-              value: controller.vhTypeData[i]["value"].toString(),
-              groupValue: controller.selectedVehicleType.value,
-              activeColor: AppColor.primaryColor,
-              onChanged: (String? value) {
-                controller.onRadioChanged(value!);
-                controller.filterParam.value = controller.filterParam.map((e) {
-                  e["vh_type"] = value.toString();
-                  return e;
-                }).toList();
-              },
+          FilterChip(
+            padding: EdgeInsets.symmetric(vertical: 1),
+            showCheckmark: false,
+            backgroundColor: AppColor.primaryColor.withOpacity(.1),
+            label: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(
+                  width: 150,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(width: 10),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: SvgPicture.asset(
+                          _getSvgForVehicle(
+                              controller.vhTypeData[i]["text"].toString()),
+                          width: 30.0,
+                          height: 30.0,
+                        ),
+                      ),
+                      Container(width: 10),
+                      CustomParagraph(
+                        textAlign: TextAlign.center,
+                        fontSize: 12,
+                        text: controller.vhTypeData[i]["text"].toString(),
+                        color: controller.selectedVehicleTypes.contains(
+                                controller.vhTypeData[i]["value"].toString())
+                            ? Colors.white
+                            : Colors.black87,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ),
-        SizedBox(
-          height: 30,
-          child: RadioListTile<String>(
-            contentPadding: EdgeInsets.zero,
-            title: const CustomParagraph(
-              text: "All",
-              color: Colors.black87,
-              fontWeight: FontWeight.w600,
-            ),
-            value: "",
-            groupValue: controller.selectedVehicleType.value,
-            activeColor: AppColor.primaryColor,
-            onChanged: (String? value) {
-              controller.onRadioChanged(value!);
-              controller.filterParam.value = controller.filterParam.map((e) {
-                e["vh_type"] = value.toString();
-                return e;
-              }).toList();
+            selected: controller.selectedVehicleTypes
+                .contains(controller.vhTypeData[i]["value"].toString()),
+            onSelected: (bool selected) {
+              if (selected) {
+                controller.selectedVehicleTypes
+                    .add(controller.vhTypeData[i]["value"].toString());
+              } else {
+                controller.selectedVehicleTypes
+                    .remove(controller.vhTypeData[i]["value"].toString());
+              }
             },
+            selectedColor: AppColor.primaryColor,
           ),
-        ),
         const SizedBox(height: 10.0),
       ],
     );
+  }
+
+  String _getSvgForVehicle(String vhTypeText) {
+    switch (vhTypeText) {
+      case 'Large Vehicle':
+        return 'assets/images/cars.svg';
+      case 'Motorcycle':
+        return 'assets/images/motor.svg';
+      case 'Trikes and Cars':
+        return 'assets/images/cars.svg';
+      default:
+        return 'assets/images/cars.svg';
+    }
   }
 
   Widget buildFilterChips() {
@@ -265,16 +281,44 @@ class FilterMap extends GetView<FilterMapController> {
         Wrap(spacing: 10.0, children: [
           for (int i = 0; i < controller.parkTypeData.length; i++)
             FilterChip(
-              checkmarkColor: Colors.white,
+              showCheckmark: false,
               backgroundColor: AppColor.primaryColor.withOpacity(.1),
-              label: CustomParagraph(
-                text: controller.parkTypeData[i]["parking_type_name"],
-                color: controller.sfPt.contains(controller.parkTypeData[i]
-                            ["parking_type_code"]
-                        .toString())
-                    ? Colors.white
-                    : Colors.black87,
-                fontWeight: FontWeight.w600,
+              label: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 150,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(width: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: SvgPicture.asset(
+                            _getSvgForParkingType(controller.parkTypeData[i]
+                                ["parking_type_name"]),
+                            width: 30.0,
+                            height: 30.0,
+                          ),
+                        ),
+                        Container(width: 10),
+                        CustomParagraph(
+                          textAlign: TextAlign.center,
+                          fontSize: 12,
+                          text: capitalizeWords(controller.parkTypeData[i]
+                                  ["parking_type_name"]
+                              .toString()),
+                          color: controller.sfPt.contains(controller
+                                  .parkTypeData[i]["parking_type_code"]
+                                  .toString())
+                              ? Colors.white
+                              : Colors.black87,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               selected: controller.sfPt.contains(
                   controller.parkTypeData[i]["parking_type_code"].toString()),
@@ -288,19 +332,37 @@ class FilterMap extends GetView<FilterMapController> {
                           ["parking_type_code"]
                       .toString());
                 }
+                print(controller.parkTypeData[i]["parking_type_name"]);
                 String filterVtype = controller.sfPt.join('|');
                 controller.filterParam.value = controller.filterParam.map((e) {
                   e["park_type"] = filterVtype.toString();
                   return e;
                 }).toList();
               },
-
-              selectedColor: AppColor
-                  .primaryColor, // Optional: Change background color when selected
+              selectedColor: AppColor.primaryColor,
             ),
         ]),
       ],
     );
+  }
+
+  String capitalizeWords(String str) {
+    return str.toLowerCase().split(' ').map((word) {
+      return word[0].toUpperCase() + word.substring(1);
+    }).join(' ');
+  }
+
+  String _getSvgForParkingType(String ptText) {
+    switch (ptText) {
+      case 'STREET':
+        return 'assets/images/street.svg';
+      case 'COMMERCIAL':
+        return 'assets/images/commercial.svg';
+      case 'PRIVATE':
+        return 'assets/images/private.svg';
+      default:
+        return 'assets/images/street.svg';
+    }
   }
 
   Widget buildFilterChipsAmenities() {
@@ -310,16 +372,41 @@ class FilterMap extends GetView<FilterMapController> {
         Wrap(spacing: 10.0, children: [
           for (int i = 0; i < controller.amenitiesData.length; i++)
             FilterChip(
-              checkmarkColor: Colors.white,
+              showCheckmark: false,
               backgroundColor: AppColor.primaryColor.withOpacity(.1),
-              label: CustomParagraph(
-                text: controller.amenitiesData[i]["parking_amenity_desc"],
-                color: controller.sfAmen.contains(controller.amenitiesData[i]
-                            ["parking_amenity_code"]
-                        .toString())
-                    ? Colors.white
-                    : Colors.black87,
-                fontWeight: FontWeight.w600,
+              label: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    width: 200,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(width: 10),
+                        SvgPicture.asset(
+                          _getSvgForAmenities(
+                            controller.amenitiesData[i]["parking_amenity_desc"],
+                          ),
+                          width: 34.0,
+                          height: 34.0,
+                        ),
+                        Container(width: 10),
+                        CustomParagraph(
+                          text: _capitalTextAmen(controller.amenitiesData[i]
+                              ["parking_amenity_desc"]),
+                          fontSize: 12,
+                          color: controller.sfAmen.contains(controller
+                                  .amenitiesData[i]["parking_amenity_code"]
+                                  .toString())
+                              ? Colors.white
+                              : Colors.black87,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               selected: controller.sfAmen.contains(controller.amenitiesData[i]
                       ["parking_amenity_code"]
@@ -340,9 +427,7 @@ class FilterMap extends GetView<FilterMapController> {
                   return e;
                 }).toList();
               },
-
-              selectedColor: AppColor
-                  .primaryColor, // Optional: Change background color when selected
+              selectedColor: AppColor.primaryColor,
             ),
         ]),
       ],
@@ -350,113 +435,40 @@ class FilterMap extends GetView<FilterMapController> {
   }
 }
 
-class PantropikoCheckBox extends StatefulWidget {
-  final List<Map<String, String>> vhTypeData;
-
-  const PantropikoCheckBox({required this.vhTypeData, Key? key})
-      : super(key: key);
-
-  @override
-  State<PantropikoCheckBox> createState() => _PantropikoCheckBoxState();
+String _getSvgForAmenities(String amenText) {
+  switch (amenText) {
+    case 'ASPHALT FLOOR':
+      return 'assets/images/asphalt.svg';
+    case 'CONCRETE FLOOR':
+      return 'assets/images/concrete.svg';
+    case 'COVERED / SHADED':
+      return 'assets/images/covered.svg';
+    // case 'SAND  AND GRAVEL':
+    //   return 'assets/images/sand.svg';
+    case 'WITH CCTV':
+      return 'assets/images/cctv.svg';
+    case 'WITH SECURITY':
+      return 'assets/images/security.svg';
+    default:
+      return 'assets/images/grass.svg';
+  }
 }
 
-class _PantropikoCheckBoxState extends State<PantropikoCheckBox> {
-  // A map to track the state of each checkbox
-  Map<String, bool> checkedValues = {};
-
-  @override
-  void initState() {
-    super.initState();
-    // Initialize checkedValues with false for each item
-    checkedValues = {for (var item in widget.vhTypeData) item["value"]!: false};
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Color getColor(Set<MaterialState> states) {
-      const Set<MaterialState> interactiveStates = <MaterialState>{
-        MaterialState.pressed,
-        MaterialState.hovered,
-        MaterialState.focused,
-      };
-      if (states.any(interactiveStates.contains)) {
-        return Colors.blue;
-      }
-      return Colors.transparent;
-    }
-
-    return Column(
-      children: [
-        for (int i = 0; i < widget.vhTypeData.length; i++)
-          SizedBox(
-            height: 30,
-            child: CheckboxListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(
-                widget.vhTypeData[i]["text"]!,
-                style: TextStyle(
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              value:
-                  checkedValues[widget.vhTypeData[i]["value"] ?? ""] ?? false,
-              checkColor: AppColor.primaryColor,
-              fillColor: MaterialStateProperty.resolveWith(getColor),
-              side: MaterialStateBorderSide.resolveWith((states) {
-                if (states.contains(MaterialState.selected)) {
-                  return BorderSide(width: 1, color: AppColor.primaryColor);
-                } else {
-                  return BorderSide(width: 1, color: AppColor.primaryColor);
-                }
-              }),
-              onChanged: (bool? value) {
-                setState(() {
-                  if (value != null) {
-                    checkedValues[widget.vhTypeData[i]["value"] ?? ""] = value;
-                  }
-                });
-              },
-            ),
-          ),
-        SizedBox(
-          height: 30,
-          child: CheckboxListTile(
-            contentPadding: EdgeInsets.zero,
-            title: const Text(
-              "All",
-              style: TextStyle(
-                color: Colors.black87,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            value: checkedValues.isEmpty ||
-                checkedValues.values.every((val) => !val),
-            checkColor: AppColor.primaryColor,
-            fillColor: MaterialStateProperty.resolveWith(getColor),
-            side: MaterialStateBorderSide.resolveWith((states) {
-              if (states.contains(MaterialState.selected)) {
-                return BorderSide(width: 1, color: AppColor.primaryColor);
-              } else {
-                return BorderSide(width: 1, color: AppColor.primaryColor);
-              }
-            }),
-            onChanged: (bool? value) {
-              setState(() {
-                if (value == true) {
-                  // Check all options
-                  for (var key in checkedValues.keys) {
-                    checkedValues[key] = true;
-                  }
-                } else {
-                  checkedValues.clear();
-                }
-              });
-            },
-          ),
-        ),
-        const SizedBox(height: 10.0),
-      ],
-    );
+String _capitalTextAmen(String amenText) {
+  switch (amenText) {
+    case 'ASPHALT FLOOR':
+      return 'Asphalt Floor';
+    case 'CONCRETE FLOOR':
+      return 'Concrete Floor';
+    case 'COVERED / SHADED':
+      return 'Covered/ Shaded';
+    case 'SAND  AND GRAVEL':
+      return 'Sand and Gravel';
+    case 'WITH CCTV':
+      return 'With CCTV';
+    case 'WITH SECURITY':
+      return 'With Security';
+    default:
+      return 'DEFAULT';
   }
 }

@@ -23,6 +23,7 @@ class FilterMapController extends GetxController {
   RxList radiusData = [].obs;
   RxList sfPt = [].obs;
   RxList sfAmen = [].obs;
+  RxList selectedVehicleTypes = [].obs;
   RxList<Map<String, String>> filterParam = [
     {"ovp": "", "radius": "", "vh_type": "", "park_type": "", "amen": ""}
   ].obs;
@@ -37,7 +38,6 @@ class FilterMapController extends GetxController {
       e["radius"] = currentDistance.value.roundToDouble().toString();
       return e;
     }).toList();
-
     loadData();
   }
 
