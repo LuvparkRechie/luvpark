@@ -11,7 +11,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/api_keys.dart';
@@ -21,12 +20,12 @@ import 'package:luvpark_get/mapa/utils/legend/legend_dialog.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../custom_widgets/app_color.dart';
 import 'utils/suggestions/suggestions.dart';
 
 // ignore: deprecated_member_use
 class DashboardMapController extends GetxController
     with GetTickerProviderStateMixin {
-  RxBool isOpenDial = false.obs;
   // Dependencies
   final GlobalKey<ScaffoldState> dashboardScaffoldKey =
       GlobalKey<ScaffoldState>();
@@ -58,7 +57,7 @@ class DashboardMapController extends GetxController
   List<String> searchImage = ['assets/dashboard_icon/location_pin.png'];
 
   // Configuration Variables
-  String? ddRadius = "10";
+  RxString ddRadius = "10".obs;
   String pTypeCode = "";
   String amenities = "";
   String vtypeId = "";
@@ -85,7 +84,7 @@ class DashboardMapController extends GetxController
   void onInit() {
     super.onInit();
 
-    ddRadius = "10";
+    ddRadius.value = "10";
     pTypeCode = "";
     amenities = "";
     vtypeId = "";
@@ -108,7 +107,8 @@ class DashboardMapController extends GetxController
     ));
 
     getLastBooking();
-    getUserData(false);
+    getUserData();
+    getDefaultLocation();
   }
 
   @override
@@ -119,12 +119,149 @@ class DashboardMapController extends GetxController
     animationController.dispose();
   }
 
-  void toggleSpeedDial() {
-    isOpenDial.value = !isOpenDial.value;
-    if (isOpenDial.value) {
-      animationDialController.forward();
+  void getUserData() async {
+    String? userData = await Authentication().getUserData();
+    final item = await Authentication().getUserData2();
+    final profPic = await Authentication().getUserProfilePic();
+
+    userProfile = item;
+    myProfPic.value = profPic;
+
+    userProfile = item;
+    if (jsonDecode(userData!)["first_name"] == null) {
+      myName.value = "";
     } else {
-      animationDialController.reverse();
+      myName.value = jsonDecode(userData)["first_name"];
+    }
+  }
+
+  //GEt nearest data based on
+  getDefaultLocation() {
+    isLoading.value = true;
+    LocationService.grantPermission(Get.context!, (isGranted) async {
+      if (isGranted) {
+        List ltlng = await Functions.getCurrentPosition();
+        LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+        searchCoordinates = coordinates;
+
+        bridgeLocation(coordinates);
+      } else {
+        isLoading.value = true;
+        Get.toNamed(Routes.permission);
+      }
+    });
+  }
+
+  void bridgeLocation(coordinates) {
+    isLoadingMap.value = true;
+
+    Functions.getUserBalance(Get.context!, (dataBalance) async {
+      userBal.value = dataBalance[0]["items"];
+      if (!dataBalance[0]["has_net"]) {
+        netConnected.value = false;
+        isLoading.value = false;
+      } else {
+        isLoading.value = false;
+        getNearest(dataBalance[0]["items"], coordinates);
+      }
+    });
+  }
+
+  void getNearest(dynamic userData, coordinates) async {
+    CustomDialog().mapLoading();
+    String params =
+        "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&latitude=${coordinates.latitude}&longitude=${coordinates.longitude}&radius=${ddRadius.value}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
+    print(" params$params");
+    try {
+      var returnData = await HttpRequest(api: params).get();
+
+      Get.back();
+      isLoadingMap.value = false;
+      if (returnData == "No Internet") {
+        handleNoInternet();
+        return;
+      }
+      if (returnData == null) {
+        handleServerError();
+        return;
+      }
+      if (returnData["items"].isEmpty) {
+        handleNoParkingFound(returnData["items"]);
+        return;
+      }
+
+      handleData(returnData["items"]);
+    } catch (e) {
+      handleServerError();
+    }
+  }
+
+  void handleNoInternet() {
+    netConnected.value = false;
+    CustomDialog().internetErrorDialog(Get.context!, () {
+      Get.back();
+    });
+  }
+
+  void handleServerError() {
+    netConnected.value = true;
+    CustomDialog().errorDialog(Get.context!, "Internet Error",
+        "Error while connecting to server, Please contact support.", () {
+      Get.back();
+    });
+  }
+
+  void handleNoParkingFound(dynamic nearData) {
+    netConnected.value = true;
+
+    markers.clear();
+    bool isDouble = ddRadius.value.contains(".");
+
+    CustomDialog().errorDialog(Get.context!, "Luvpark",
+        "No parking area found within \n${(isDouble ? double.parse(ddRadius.value) : int.parse(ddRadius.value)) >= 1 ? '${ddRadius.value} Km' : '${double.parse(ddRadius.value) * 1000} meters'}, please change location.",
+        () {
+      Get.back();
+      showDottedCircle(nearData);
+    });
+    update();
+  }
+
+  void handleData(dynamic nearData) async {
+    markers.clear();
+
+    if (double.parse(userBal[0]["amount_bal"].toString()) >=
+        double.parse(userBal[0]["min_wallet_bal"].toString())) {
+      showDottedCircle(nearData);
+
+      buildMarkers(nearData);
+      netConnected.value = true;
+      bool isShowPopUp = await Authentication().getPopUpNearest();
+      if (dataNearest.isNotEmpty && !isShowPopUp) {
+        Future.delayed(const Duration(seconds: 1), () {
+          Authentication().setShowPopUpNearest(true);
+
+          showLegend(() {
+            showNearestSuggestDialog();
+          });
+        });
+      }
+    }
+
+    update();
+  }
+
+//Based on radius
+  void showDottedCircle(nearData) {
+    if (double.parse(userBal[0]["amount_bal"].toString()) >=
+        double.parse(userBal[0]["min_wallet_bal"].toString())) {
+      initialCameraPosition = CameraPosition(
+        target: searchCoordinates,
+        zoom: nearData.isEmpty ? 14 : 14,
+        tilt: 0,
+        bearing: 0,
+      );
+
+      animateCamera();
     }
   }
 
@@ -262,27 +399,30 @@ class DashboardMapController extends GetxController
 
   //get curr location
   Future<void> getCurrentLoc() async {
-    ddRadius = "10";
+    ddRadius.value = "10";
     pTypeCode = "";
     amenities = "";
     vtypeId = "";
     addressText = "".obs;
     isAllowOverNight = "";
-    isOpenDial.value = false;
+
     animationDialController.value = 0.0;
 
-    getUserData(false);
+    getDefaultLocation();
   }
 
   //get curr location
   Future<void> getFilterNearest(data) async {
-    ddRadius = data[0]["radius"];
+    List ltlng = await Functions.getCurrentPosition();
+    LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+    ddRadius.value = data[0]["radius"];
     pTypeCode = data[0]["park_type"];
     amenities = data[0]["amen"];
     vtypeId = data[0]["vh_type"];
     isAllowOverNight = data[0]["ovp"];
+    searchCoordinates = coordinates;
 
-    getUserData(false);
+    bridgeLocation(coordinates);
   }
 
   //toggle
@@ -313,23 +453,23 @@ class DashboardMapController extends GetxController
   }
 
   void onCameraIdle() async {
-    String? address = await Functions.getAddress(
-      initialCameraPosition!.target.latitude,
-      initialCameraPosition!.target.longitude,
-    );
+    if (isMarkerTapped.value) return;
+    isGetNearData.value = true;
+  }
 
-    addressText.value = address!;
+  void animateCamera() {
+    double filterRadius = Variables.convertToMeters(ddRadius.value);
 
-    initialCameraPosition = CameraPosition(
-      target: LatLng(initialCameraPosition!.target.latitude,
-          initialCameraPosition!.target.longitude),
-      zoom: 16,
-      tilt: 0,
-      bearing: 0,
+    circle = Circle(
+      circleId: const CircleId('dottedCircle'),
+      center: LatLng(searchCoordinates.latitude, searchCoordinates.longitude),
+      radius: filterRadius,
+      strokeWidth: 0,
+      fillColor: AppColor.primaryColor.withOpacity(.03),
     );
     polyline = Polyline(
       polylineId: const PolylineId('dottedCircle'),
-      color: AppColor.primaryColor,
+      color: AppColor.mainColor,
       width: 4,
       patterns: [
         PatternItem.dash(20),
@@ -338,27 +478,22 @@ class DashboardMapController extends GetxController
       points: List<LatLng>.generate(
         360,
         (index) => calculateNewCoordinates(
-          initialCameraPosition!.target.latitude,
-          initialCameraPosition!.target.longitude,
-          200,
+          searchCoordinates.latitude,
+          searchCoordinates.longitude,
+          filterRadius,
           double.parse(
             index.toString(),
           ),
         ),
       ),
     );
-    if (isMarkerTapped.value) return;
-    isGetNearData.value = true;
-  }
-
-  void animateCamera() {
     if (gMapController != null) {
       gMapController!.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
               target: LatLng(initialCameraPosition!.target.latitude,
                   initialCameraPosition!.target.longitude),
-              zoom: dataNearest.isEmpty ? 15 : 17),
+              zoom: dataNearest.isEmpty ? 14 : 15),
         ),
       );
     }
@@ -378,188 +513,6 @@ class DashboardMapController extends GetxController
     } else {
       myName.value = jsonDecode(userData)["first_name"];
     }
-    update();
-  }
-
-//END OF MAP SETUP
-  void getUserData(isSearch) async {
-    isLoading.value = true;
-    isLoadingMap.value = true;
-
-    String? userData = await Authentication().getUserData();
-    final item = await Authentication().getUserData2();
-    final profPic = await Authentication().getUserProfilePic();
-
-    userProfile = item;
-    myProfPic.value = profPic;
-
-    userProfile = item;
-    if (jsonDecode(userData!)["first_name"] == null) {
-      myName.value = "";
-    } else {
-      myName.value = jsonDecode(userData)["first_name"];
-    }
-
-    LocationService.grantPermission(Get.context!, (isGranted) async {
-      List ltlng = await Functions.getCurrentPosition();
-      LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
-      if (isGranted) {
-        Functions.getUserBalance(Get.context!, (dataBalance) async {
-          userBal.value = dataBalance[0]["items"];
-          if (!dataBalance[0]["has_net"]) {
-            netConnected.value = false;
-            isLoading.value = false;
-            isLoadingMap.value = false;
-          } else {
-            //isLoading.value = false;
-            if (isSearch) {
-              getNearest(
-                  dataBalance[0]["items"], searchCoordinates, coordinates);
-            } else {
-              searchCoordinates = coordinates;
-              getNearest(
-                  dataBalance[0]["items"], searchCoordinates, coordinates);
-            }
-          }
-        });
-      } else {
-        isLoading.value = true;
-        Get.toNamed(Routes.permission);
-      }
-    });
-  }
-
-  void getNearest(
-      List<dynamic> uData, LatLng coordinates, LatLng myCurrLoc) async {
-    String params =
-        "${ApiKeys.gApiSubFolderGetNearestSpace}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&latitude=${myCurrLoc.latitude}&longitude=${myCurrLoc.longitude}&radius=$ddRadius&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-
-    try {
-      var returnData = await HttpRequest(api: params).get();
-
-      if (returnData == "No Internet") {
-        handleNoInternet();
-        return;
-      }
-      if (returnData == null) {
-        handleServerError();
-        return;
-      }
-      if (returnData["items"].isEmpty) {
-        handleNoParkingFound();
-        return;
-      }
-
-      handleData(returnData, uData, coordinates);
-      isLoading.value = false;
-    } catch (e) {
-      isLoading.value = false;
-      handleServerError();
-    }
-  }
-
-  void handleNoInternet() {
-    netConnected.value = false;
-    isLoadingMap.value = true;
-    CustomDialog().internetErrorDialog(Get.context!, () {
-      Get.back();
-    });
-  }
-
-  void handleServerError() {
-    netConnected.value = true;
-    isLoadingMap.value = false;
-    CustomDialog().errorDialog(Get.context!, "Internet Error",
-        "Error while connecting to server, Please contact support.", () {
-      Get.back();
-    });
-  }
-
-  void handleNoParkingFound() {
-    netConnected.value = true;
-    isLoadingMap.value = false;
-    initialCameraPosition = CameraPosition(
-      target: searchCoordinates,
-      zoom: 16,
-      tilt: 0,
-      bearing: 0,
-    );
-    markers.clear();
-    bool isDouble = ddRadius!.contains(".");
-    CustomDialog().errorDialog(Get.context!, "Luvpark",
-        "No parking area found within \n${(isDouble ? double.parse(ddRadius!) : int.parse(ddRadius!)) >= 1 ? '${ddRadius!} Km' : '${double.parse(ddRadius!) * 1000} meters'}, please change location.",
-        () {
-      Get.back();
-      Get.offAllNamed(Routes.mapFilter);
-    });
-  }
-
-  void handleData(
-      dynamic returnData, List<dynamic> uData, LatLng coordinates) async {
-    final Uint8List availabeMarkIcons =
-        await Functions.getSearchMarker(searchImage[0], 100);
-    markers.clear();
-
-    if (double.parse(uData[0]["amount_bal"].toString()) >=
-        double.parse(uData[0]["min_wallet_bal"].toString())) {
-      initialCameraPosition = CameraPosition(
-        target: coordinates,
-        zoom: uData.isEmpty ? 14 : 17,
-        tilt: 0,
-        bearing: 0,
-      );
-      circle = Circle(
-        circleId: const CircleId('dottedCircle'),
-        center: LatLng(initialCameraPosition!.target.latitude,
-            initialCameraPosition!.target.longitude),
-        radius: 200,
-        strokeWidth: 0,
-        fillColor: AppColor.primaryColor.withOpacity(.03),
-      );
-      polyline = Polyline(
-        polylineId: const PolylineId('dottedCircle'),
-        color: AppColor.primaryColor,
-        width: 2,
-        patterns: [
-          PatternItem.dash(20),
-          PatternItem.gap(20),
-        ],
-        points: List<LatLng>.generate(
-            360,
-            (index) => calculateNewCoordinates(
-                initialCameraPosition!.target.latitude,
-                initialCameraPosition!.target.longitude,
-                200,
-                double.parse(index.toString()))),
-      );
-      // markers.add(
-      //   Marker(
-      //     // ignore: deprecated_member_use
-      //     consumeTapEvents: true,
-      //     infoWindow: InfoWindow(title: "Current"),
-
-      //     // ignore: deprecated_member_use
-      //     icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
-      //     markerId: MarkerId(0.toString()),
-      //     position: coordinates,
-      //   ),
-      // );
-
-      buildMarkers(returnData["items"]);
-      netConnected.value = true;
-      isLoadingMap.value = false;
-      bool isShowPopUp = await Authentication().getPopUpNearest();
-      if (dataNearest.isNotEmpty && !isShowPopUp) {
-        Future.delayed(const Duration(seconds: 1), () {
-          Authentication().setShowPopUpNearest(true);
-
-          showLegend(() {
-            showNearestSuggestDialog();
-          });
-        });
-      }
-    }
-
     update();
   }
 
@@ -644,9 +597,8 @@ class DashboardMapController extends GetxController
 
         final String isPwd = items["is_pwd"] ?? "N";
         final String vehicleTypes = items["vehicle_types_list"];
-
         String iconAsset;
-        // Determine the iconAsset based on parking type and PWD status
+
         if (isPwd == "Y") {
           iconAsset =
               getIconAssetForPwd(items["parking_type_code"], vehicleTypes);
@@ -660,18 +612,37 @@ class DashboardMapController extends GetxController
 
         markers.add(
           Marker(
-            // ignore: deprecated_member_use
-
             infoWindow: InfoWindow(title: items["park_area_name"]),
             // ignore: deprecated_member_use
             icon: BitmapDescriptor.fromBytes(markerIcon),
             markerId: MarkerId(ctr.toString()),
             position: LatLng(double.parse(items["pa_latitude"].toString()),
                 double.parse(items["pa_longitude"].toString())),
-            onTap: () {
+            onTap: () async {
+              CustomDialog().loadingDialog(Get.context!);
+              List subData = [];
+              subData.add(items);
               dialogData.clear();
 
-              onMarkerTapped(items);
+              List ltlng = await Functions.getCurrentPosition();
+              LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+              LatLng dest = LatLng(
+                  double.parse(items["pa_latitude"].toString()),
+                  double.parse(items["pa_longitude"].toString()));
+              final estimatedData = await Functions.fetchETA(coordinates, dest);
+              subData = subData.map((e) {
+                e["distance"] = estimatedData[0]["distance"];
+                return e;
+              }).toList();
+              Get.back();
+              if (estimatedData[0]["error"] == "No Internet") {
+                CustomDialog().internetErrorDialog(Get.context!, () {
+                  Get.back();
+                });
+
+                return;
+              }
+              onMarkerTapped(subData[0]);
             },
           ),
         );
@@ -729,33 +700,31 @@ class DashboardMapController extends GetxController
     ));
   }
 
-  //calculate coordinates
   LatLng calculateNewCoordinates(
       double lat, double lon, double radiusInMeters, double angleInDegrees) {
-    // ignore: non_constant_identifier_names
-    double PI = 3.141592653589793238;
+    const double PI = 3.141592653589793;
+    const double EARTH_RADIUS_IN_METERS = 6371000.0;
 
-    double angleInRadians = angleInDegrees * PI / 180;
+    double angleInRadians = angleInDegrees * PI / 180.0;
 
-    // Constants for Earth's radius and degrees per meter
-    const earthRadiusInMeters = 6371000; // Approximate Earth radius in meters
-    const degreesPerMeterLatitude = 1 / earthRadiusInMeters * 180 / pi;
-    final degreesPerMeterLongitude =
-        1 / (earthRadiusInMeters * cos(lat * PI / 180)) * 180 / pi;
+    // Calculate the change in latitude
+    double deltaLat = radiusInMeters / EARTH_RADIUS_IN_METERS * 180.0 / PI;
 
-    // Calculate the change in latitude and longitude in degrees
-    double degreesOfLatitude = radiusInMeters * degreesPerMeterLatitude;
-    double degreesOfLongitude = radiusInMeters * degreesPerMeterLongitude;
+    // Calculate the change in longitude
+    double deltaLon = radiusInMeters /
+        (EARTH_RADIUS_IN_METERS * cos(lat * PI / 180.0)) *
+        180.0 /
+        PI;
 
-    // Calculate the new latitude and longitude
-    double newLat = lat + degreesOfLatitude * sin(angleInRadians);
-    double newLon = lon + degreesOfLongitude * cos(angleInRadians);
+    // Calculate new coordinates
+    double newLat = lat + deltaLat * cos(angleInRadians);
+    double newLon = lon + deltaLon * sin(angleInRadians);
+
     return LatLng(newLat, newLon);
   }
 
   //onMarker tapped
   void onMarkerTapped(data) {
-    print('data $data');
     isMarkerTapped.value = false;
     isGetNearData.value = true;
     dialogData.add(data);

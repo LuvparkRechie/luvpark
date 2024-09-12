@@ -492,7 +492,7 @@ class Variables {
   static String gagi(dynamic distance) {
     if (distance < 1000) {
       // Assume distance is in meters
-      return '${distance.toStringAsFixed(2)} meters';
+      return '${distance} meters';
     } else {
       // Assume distance is in kilometers
       double distanceKm = double.parse(distance.toString()) / 1000;

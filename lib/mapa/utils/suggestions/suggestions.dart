@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -61,6 +60,7 @@ class SuggestionsScreen extends StatelessWidget {
                               ? data.take(5).toList().length
                               : data.length,
                           itemBuilder: (context, index) {
+                            print("data $data");
                             String getDistanceString() {
                               double kmDist = Variables.convertToMeters(
                                   data[index]["distance"].toString());

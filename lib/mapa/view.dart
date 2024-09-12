@@ -14,13 +14,12 @@ import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/drawer/view.dart';
 import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/mapa/utils/legend/legend_dialog.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/voice_search/view.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 import 'controller.dart';
+import 'utils/legend/legend_dialog.dart';
 
 class DashboardMapScreen extends GetView<DashboardMapController> {
   const DashboardMapScreen({Key? key}) : super(key: key);
@@ -47,51 +46,26 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
       } else {
         if (double.parse(controller.userBal[0]["amount_bal"].toString()) >=
             double.parse(controller.userBal[0]["min_wallet_bal"].toString())) {
-          if (controller.isLoadingMap.value) {
-            return CustomScaffold(
-                canPop: false,
-                children: SizedBox(
-                  height: MediaQuery.of(context).size.height,
-                  width: MediaQuery.of(context).size.width,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Image(
-                          width: 100,
-                          height: 100,
-                          image: AssetImage("assets/images/logo.png")),
-                      FadeIn(
-                        delay: const Duration(milliseconds: 400),
-                        child: Shimmer.fromColors(
-                          baseColor: Colors.black,
-                          highlightColor: Colors.grey[100]!,
-                          child: const CustomParagraph(
-                              text: 'Getting nearest parking area for you.'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ));
-          } else {
-            return PopScope(
-              canPop: false,
-              child: Scaffold(
-                extendBodyBehindAppBar: true,
-                key: controller.dashboardScaffoldKey,
-                appBar: AppBar(
-                  elevation: 0,
-                  backgroundColor: Colors.transparent,
-                  toolbarHeight: 0,
-                  systemOverlayStyle: const SystemUiOverlayStyle(
-                    statusBarColor: Colors.transparent,
-                    statusBarBrightness: Brightness.light,
-                    statusBarIconBrightness: Brightness.dark,
-                  ),
+          return PopScope(
+            canPop: false,
+            child: Scaffold(
+              extendBodyBehindAppBar: true,
+              key: controller.dashboardScaffoldKey,
+              appBar: AppBar(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                toolbarHeight: 0,
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                  statusBarColor: Colors.transparent,
+                  statusBarBrightness: Brightness.light,
+                  statusBarIconBrightness: Brightness.dark,
                 ),
-                drawer: const CustomDrawer(),
-                body: Column(
-                  children: [
-                    Expanded(child: accessMaps(context)),
+              ),
+              drawer: const CustomDrawer(),
+              body: Column(
+                children: [
+                  Expanded(child: accessMaps(context)),
+                  if (!controller.isLoadingMap.value)
                     Visibility(
                       visible: controller.isGetNearData.value,
                       child: FadeInUp(
@@ -158,11 +132,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                         ),
                       ),
                     ),
-                  ],
-                ),
+                ],
               ),
-            );
-          }
+            ),
+          );
         } else {
           return PopScope(
               canPop: false,
@@ -193,7 +166,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                         } else {
                           controller.searchCoordinates =
                               LatLng(searchedPlace[0], searchedPlace[1]);
-                          controller.getUserData(true);
+                          controller.ddRadius.value = "2";
+                          controller
+                              .bridgeLocation(controller.searchCoordinates);
                         }
                       });
                     },
@@ -407,123 +382,103 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
               ),
 
               Visibility(
-                visible: controller.isOpenDial.value &&
-                    controller.isGetNearData.value,
-                child: Positioned(
-                  right: 20,
-                  bottom: 100,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      _buildDialItem("info", 'Info', () {
-                        Get.dialog(LegendDialogScreen());
-                      }),
-                      const SizedBox(height: 16),
-                      _buildDialItem("list", 'Parking areas', () {
-                        Get.toNamed(Routes.parkingAreas,
-                            arguments: controller.dataNearest);
-                      }),
-                      const SizedBox(height: 16),
-                      _buildDialItem("gps", 'Current location', () {
-                        controller.getCurrentLoc();
-                      }),
-                    ],
-                  ),
-                ),
-              ),
-
-              Visibility(
                 visible: controller.isGetNearData.value,
                 child: Positioned(
                   right: 10,
                   left: 10,
                   bottom: 25,
                   child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Visibility(
                         visible: controller.hasLastBooking.value,
-                        child: InkWell(
-                          onTap: controller.bookNow,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            clipBehavior: Clip.antiAlias,
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: const BorderSide(
-                                    width: 1, color: Color(0xFFDFE7EF)),
-                                borderRadius: BorderRadius.circular(57),
+                        child: Flexible(
+                          child: InkWell(
+                            onTap: controller.bookNow,
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      width: 1, color: Color(0xFFDFE7EF)),
+                                  borderRadius: BorderRadius.circular(57),
+                                ),
+                                shadows: const [
+                                  BoxShadow(
+                                    color: Color(0x0C000000),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 5),
+                                    spreadRadius: 0,
+                                  )
+                                ],
                               ),
-                              shadows: const [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Container(
-                                  width: 24,
-                                  height: 24,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: const BoxDecoration(),
-                                  child: const Image(
-                                    image: AssetImage(
-                                        "assets/dashboard_icon/car.png"),
-                                    fit: BoxFit.contain,
-                                  ),
-                                ),
-                                Container(width: 5),
-                                Obx(
-                                  () => CustomTitle(
-                                      text: controller.brandName.value,
-                                      fontSize: 14),
-                                ),
-                                Container(width: 5),
-                                Obx(() => CustomLinkLabel(
-                                      text: controller.plateNo.value,
-                                      fontSize: 14,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    width: 24,
+                                    height: 24,
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: const BoxDecoration(),
+                                    child: Image(
+                                      image: AssetImage(
+                                          "assets/dashboard_icon/car.png"),
+                                      fit: BoxFit.contain,
                                       color: AppColor.primaryColor,
-                                    ))
-                              ],
+                                    ),
+                                  ),
+                                  Container(width: 5),
+                                  Obx(
+                                    () => Text.rich(
+                                      TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: controller.plateNo.value,
+                                            style: paragraphStyle(),
+                                          ),
+                                        ],
+                                      ),
+                                      overflow: TextOverflow
+                                          .ellipsis, // Ensures that if the text is too long, it will be truncated with an ellipsis
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                      Expanded(child: Container()),
-                      InkWell(
-                        onTap: controller.toggleSpeedDial,
-                        child: AnimatedBuilder(
-                          animation: controller.animationDialController,
-                          builder: (context, child) {
-                            return AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 100),
-                              child: SvgPicture.asset(
-                                "assets/dashboard_icon/${controller.animationDialController.value > 0.5 ? "close_menu" : "menu"}.svg",
-                                key: ValueKey<bool>(
-                                    controller.animationDialController.value >
-                                        0.5),
-                              ),
-                            );
-                          },
+                      Container(width: 5),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            _buildDialItem("lightbulb", () {
+                              Get.dialog(LegendDialogScreen());
+                            }),
+                            const SizedBox(width: 10),
+                            _buildDialItem("list", () {
+                              Get.toNamed(Routes.parkingAreas,
+                                  arguments: controller.dataNearest);
+                            }),
+                            const SizedBox(width: 10),
+                            _buildDialItem("gps", () {
+                              controller.getCurrentLoc();
+                            }),
+                          ],
                         ),
-                      )
+                      ),
                     ],
                   ),
                 ),
               ),
               //My balance
               Visibility(
-                visible: !controller.isOpenDial.value &&
-                        controller.isGetNearData.value
-                    ? true
-                    : false,
+                visible: controller.isGetNearData.value ? true : false,
                 child: Positioned(
                   top: 40,
                   right: 20,
@@ -596,10 +551,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
               ),
               //Drawer
               Visibility(
-                visible: !controller.isOpenDial.value &&
-                        controller.isGetNearData.value
-                    ? true
-                    : false,
+                visible: controller.isGetNearData.value ? true : false,
                 child: Positioned(
                   top: 40,
                   left: 20,
@@ -770,24 +722,24 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 children: [
                                   Expanded(
                                     child: CustomButton(
-                                      text: "Book Now",
+                                      btnColor: AppColor.mainColor,
+                                      bordercolor: AppColor.mainColor,
+                                      textColor: Colors.white,
+                                      text: "More info",
                                       onPressed: () {
-                                        controller.bookMarkerNow(
-                                            controller.dialogData);
+                                        Get.toNamed(Routes.parkingDetails,
+                                            arguments:
+                                                controller.dialogData[0]);
                                       },
                                     ),
                                   ),
                                   Container(width: 10),
                                   Expanded(
                                     child: CustomButton(
-                                      btnColor: Colors.white,
-                                      bordercolor: AppColor.primaryColor,
-                                      textColor: AppColor.primaryColor,
-                                      text: "Parking details",
-                                      onPressed: () {
-                                        Get.toNamed(Routes.parkingDetails,
-                                            arguments:
-                                                controller.dialogData[0]);
+                                      text: "Book Now",
+                                      onPressed: () async {
+                                        controller.bookMarkerNow(
+                                            controller.dialogData);
                                       },
                                     ),
                                   ),
@@ -803,48 +755,32 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
           );
   }
 
-  Widget _buildDialItem(String icon, String label, Function ontap) {
-    return Align(
-      alignment: Alignment.centerRight,
-      child: GestureDetector(
-        onTap: () {
-          controller.isOpenDial.value = false;
-          controller.animationDialController.value = 0.0;
-          ontap();
-        },
-        child: Container(
-          padding: const EdgeInsets.all(10.0),
-          decoration: ShapeDecoration(
-            color: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(49),
-            ),
-            shadows: const [
-              BoxShadow(
-                color: Color(0x0C000000),
-                blurRadius: 4,
-                offset: Offset(0, 4),
-                spreadRadius: 0,
-              )
-            ],
+  Widget _buildDialItem(String icon, Function ontap) {
+    return GestureDetector(
+      onTap: () {
+        controller.animationDialController.value = 0.0;
+        ontap();
+      },
+      child: Container(
+        padding: const EdgeInsets.all(10.0),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(49),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              SvgPicture.asset(
-                "assets/dashboard_icon/$icon.svg",
-                color: Color(0xFF474545),
-                height: 24,
-              ),
-              Container(width: 10),
-              CustomParagraph(
-                text: label,
-                color: const Color(0xFF474545),
-                fontSize: 14,
-                fontWeight: FontWeight.w700,
-              )
-            ],
-          ),
+          shadows: const [
+            BoxShadow(
+              color: Color(0x0C000000),
+              blurRadius: 4,
+              offset: Offset(0, 4),
+              spreadRadius: 0,
+            )
+          ],
+        ),
+        child: SvgPicture.asset(
+          "assets/dashboard_icon/$icon.svg",
+          color: Color(0xFF474545),
+          height: 20,
         ),
       ),
     );

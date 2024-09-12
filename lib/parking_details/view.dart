@@ -6,6 +6,7 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
@@ -13,6 +14,7 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/parking_details/controller.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ParkingDetails extends GetView<ParkingDetailsController> {
   const ParkingDetails({super.key});
@@ -111,45 +113,108 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                         return Column(
                           children: [
                             Expanded(
-                              child: GoogleMap(
-                                mapType: MapType.normal,
-                                onMapCreated: (GoogleMapController mapCtlr) {
-                                  controller.googleMapController.value =
-                                      mapCtlr;
-                                  DefaultAssetBundle.of(context)
-                                      .loadString(
-                                          'assets/custom_map_style/map_style.json')
-                                      .then((String style) {
-                                    mapCtlr.setMapStyle(style);
-                                  });
+                              child: Stack(
+                                children: [
+                                  GoogleMap(
+                                    mapType: MapType.normal,
+                                    onMapCreated:
+                                        (GoogleMapController mapCtlr) {
+                                      controller.googleMapController.value =
+                                          mapCtlr;
+                                      DefaultAssetBundle.of(context)
+                                          .loadString(
+                                              'assets/custom_map_style/map_style.json')
+                                          .then((String style) {
+                                        mapCtlr.setMapStyle(style);
+                                      });
 
-                                  controller.googleMapController.value!
-                                      .animateCamera(
-                                          CameraUpdate.newLatLngBounds(
-                                    bounds,
-                                    80, // Adjust padding as needed
-                                  ));
-                                },
-                                initialCameraPosition: CameraPosition(
-                                  target: center,
-                                ),
-                                zoomGesturesEnabled: true,
-                                mapToolbarEnabled: false,
-                                zoomControlsEnabled: false,
-                                myLocationEnabled: true,
-                                myLocationButtonEnabled: false,
-                                compassEnabled: false,
-                                buildingsEnabled: false,
-                                tiltGesturesEnabled: true,
-                                markers: Set<Marker>.of(controller.markers),
-                                polylines: <Polyline>{
-                                  Polyline(
-                                    polylineId: const PolylineId('polylineId'),
-                                    color: Colors.blue,
-                                    width: 5,
-                                    points: controller.etaData[0]['poly_line'],
+                                      controller.googleMapController.value!
+                                          .animateCamera(
+                                              CameraUpdate.newLatLngBounds(
+                                        bounds,
+                                        80, // Adjust padding as needed
+                                      ));
+                                    },
+                                    initialCameraPosition: CameraPosition(
+                                      target: center,
+                                    ),
+                                    zoomGesturesEnabled: true,
+                                    mapToolbarEnabled: false,
+                                    zoomControlsEnabled: false,
+                                    myLocationEnabled: true,
+                                    myLocationButtonEnabled: false,
+                                    compassEnabled: false,
+                                    buildingsEnabled: false,
+                                    tiltGesturesEnabled: true,
+                                    markers: Set<Marker>.of(controller.markers),
+                                    polylines: <Polyline>{
+                                      Polyline(
+                                        polylineId:
+                                            const PolylineId('polylineId'),
+                                        color: Colors.blue,
+                                        width: 5,
+                                        points: controller.etaData[0]
+                                            ['poly_line'],
+                                      ),
+                                    },
                                   ),
-                                },
+                                  Positioned(
+                                    bottom: 20,
+                                    right: 15,
+                                    child: InkWell(
+                                      onTap: () async {
+                                        CustomDialog().loadingDialog(context);
+                                        String mapUrl = "";
+
+                                        String dest =
+                                            "${destLocation.latitude},${destLocation.longitude}";
+                                        if (Platform.isIOS) {
+                                          mapUrl =
+                                              'https://maps.apple.com/?daddr=$dest';
+                                        } else {
+                                          mapUrl =
+                                              'https://www.google.com/maps/search/?api=1&query=$dest';
+                                        }
+                                        Future.delayed(
+                                            const Duration(seconds: 2),
+                                            () async {
+                                          Get.back();
+                                          if (await canLaunchUrl(
+                                              Uri.parse(mapUrl))) {
+                                            await launchUrl(Uri.parse(mapUrl),
+                                                mode: LaunchMode
+                                                    .externalApplication);
+                                          } else {
+                                            throw 'Something went wrong while opening map. Pleaase report problem';
+                                          }
+                                        });
+                                      },
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: AppColor.primaryColor,
+                                          shape: BoxShape.circle,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color:
+                                                  Colors.black.withOpacity(0.3),
+                                              offset: Offset(4, 4),
+                                              blurRadius: 8.0,
+                                            ),
+                                          ],
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Center(
+                                            child: Icon(
+                                              Icons.directions,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             _buildDetails()
@@ -280,7 +345,7 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                       ),
                       TextSpan(
                         text:
-                            '${int.parse(controller.dataNearest["ps_vacant_count"].toString())} ${int.parse(controller.dataNearest["ps_vacant_count"].toString()) > 1 ? "Slots" : "Slot"} remaining',
+                            '${int.parse(controller.dataNearest["ps_vacant_count"].toString())} ${int.parse(controller.dataNearest["ps_vacant_count"].toString()) > 1 ? "Slots" : "Slot"} left',
                         style: paragraphStyle(color: const Color(0xFFE03C20)),
                       ),
                     ],

@@ -508,7 +508,7 @@ class CustomDialog {
 
   Widget dialogBody(Widget? child) {
     return PopScope(
-      canPop: false,
+      canPop: true,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -544,6 +544,47 @@ class CustomDialog {
         ),
       ],
     ));
+  }
+
+  void mapLoading() {
+    Get.dialog(
+      dialogBody(
+        Column(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  height: 150,
+                  width: MediaQuery.of(Get.context!).size.width,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(14),
+                    ),
+                    image: DecorationImage(
+                        image: AssetImage('assets/dashboard_icon/loadBg.png'),
+                        fit: BoxFit.cover),
+                  ),
+                ),
+                SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Image.asset('assets/dashboard_icon/loading_map.gif'),
+                )
+              ],
+            ),
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
+              child: CustomParagraph(
+                text: "Getting nearest parking,\nplease wait...",
+                textAlign: TextAlign.center,
+              ),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   void snackbarDialog(BuildContext context, String text, Color? color) {
