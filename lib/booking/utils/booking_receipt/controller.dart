@@ -153,9 +153,51 @@ class BookingReceiptController extends GetxController
   }
 
   void cancelAutoExtend() {
-    CustomDialog().errorDialog(
-        Get.context!, "Sorry", "We're currently working on it", () {
+    CustomDialog().confirmationDialog(
+        Get.context!,
+        "Cancel auto extend",
+        "Are you sure you want to cancel auto extend parking? ",
+        "No",
+        "Yes", () {
       Get.back();
+    }, () {
+      Get.back();
+      CustomDialog().loadingDialog(Get.context!);
+      Map<String, dynamic> param = {
+        "reservation_id": parameters["reservationId"]
+      };
+      HttpRequest(api: ApiKeys.gApiCancelAutoExtend, parameters: param)
+          .postBody()
+          .then((objData) async {
+        Get.back();
+
+        if (objData == "No Internet") {
+          CustomDialog().internetErrorDialog(Get.context!, () {
+            Get.back();
+          });
+          return;
+        }
+        if (objData == null) {
+          CustomDialog().serverErrorDialog(Get.context!, () {
+            Get.back();
+          });
+        }
+        if (objData["success"] == "Y") {
+          CustomDialog().successDialog(
+              Get.context!, "Success", objData["msg"], "Okay", () {
+            Get.back();
+            Get.back();
+            Get.back();
+            parameters["onRefresh"]();
+          });
+        } else {
+          CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
+              () {
+            Get.back();
+          });
+          return;
+        }
+      });
     });
   }
 
@@ -171,7 +213,7 @@ class BookingReceiptController extends GetxController
         "reservation_id": parameters["reservationId"],
         "no_hours": parameters["hours"]
       };
-      HttpRequest(api: ApiKeys.gApiCancelAutoExtend, parameters: param)
+      HttpRequest(api: ApiKeys.gApiExtendParking, parameters: param)
           .postBody()
           .then((objData) async {
         Get.back();

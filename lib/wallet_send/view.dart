@@ -15,7 +15,6 @@ import 'package:luvpark_get/wallet_send/index.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
-import '../routes/routes.dart';
 
 class WalletSend extends GetView<WalletSendController> {
   const WalletSend({super.key});
@@ -26,7 +25,8 @@ class WalletSend extends GetView<WalletSendController> {
       appBar: CustomAppbar(
         title: "Send",
         onTap: () {
-          Get.offAllNamed(Routes.wallet);
+          Get.back();
+          controller.parameter();
         },
       ),
       body: SingleChildScrollView(
@@ -145,7 +145,9 @@ class WalletSend extends GetView<WalletSendController> {
                             } catch (e) {
                               return "Error retrieving balance";
                             }
-
+                            if (parsedValue < 10) {
+                              return "Amount must not be less than 10";
+                            }
                             if (parsedValue > availableBalance) {
                               return "You don't have enough balance to proceed";
                             }
@@ -236,7 +238,6 @@ class WalletSend extends GetView<WalletSendController> {
             padding: const EdgeInsets.fromLTRB(20, 17, 20, 17),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-
               border: Border.all(
                   color: Colors.grey.shade200,
                   width: 1), // Color(0xFF2563EB) corresponds to #2563EB

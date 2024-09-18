@@ -44,6 +44,7 @@ class CustomTitle extends StatelessWidget {
       ),
       maxLines: maxlines,
       textAlign: textAlign,
+      minFontSize: 10,
     );
   }
 }
@@ -84,7 +85,8 @@ class CustomParagraph extends StatelessWidget {
       text,
       style: paragraphStyle(
         fontSize: fontSize,
-        color: color ?? AppColor.paragraphColor,
+        color: color ??
+            const Color.fromARGB(221, 32, 32, 32), //AppColor.paragraphColor,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: letterSpacing,
@@ -94,7 +96,7 @@ class CustomParagraph extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxlines,
       overflow: overflow,
-      minFontSize: 8,
+      minFontSize: 10,
     );
   }
 }
@@ -181,7 +183,7 @@ TextStyle paragraphStyle({
 // Style for titles
 TextStyle titleStyle({
   double? fontSize = 16.0,
-  Color color = Colors.black87,
+  Color color = const Color.fromARGB(221, 32, 32, 32),
   FontWeight fontWeight = FontWeight.w700,
   FontStyle fontStyle = FontStyle.normal,
   double letterSpacing = -1.0,

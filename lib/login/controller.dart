@@ -10,6 +10,8 @@ import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/sqlite/vehicle_brands_model.dart';
 import 'package:luvpark_get/sqlite/vehicle_brands_table.dart';
 
+import '../custom_widgets/variables.dart';
+
 class LoginScreenController extends GetxController {
   LoginScreenController();
   final GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
@@ -100,6 +102,7 @@ class LoginScreenController extends GetxController {
           ]);
         });
       } else {
+        Variables.gVBrand.value = returnBrandData["items"];
         VehicleBrandsTable.instance.deleteAll();
         for (var dataRow in returnBrandData["items"]) {
           var vbData = {
@@ -109,6 +112,9 @@ class LoginScreenController extends GetxController {
                 int.parse(dataRow["vehicle_brand_id"].toString()),
             VHBrandsDataFields.vhBrandName:
                 dataRow["vehicle_brand_name"].toString(),
+            VHBrandsDataFields.image: dataRow["imageb64"] == null
+                ? ""
+                : dataRow["imageb64"].toString().replaceAll("\n", ""),
           };
           await VehicleBrandsTable.instance.insertUpdate(vbData);
         }
@@ -195,6 +201,7 @@ class LoginScreenController extends GetxController {
                   Authentication().setUserData(jsonEncode(items));
                   Authentication().setPasswordBiometric(param["pwd"]);
                   Authentication().setShowPopUpNearest(false);
+                  Authentication().setLogoutStatus(false);
                   if (items["image_base64"] != null) {
                     Authentication()
                         .setProfilePic(jsonEncode(items["image_base64"]));

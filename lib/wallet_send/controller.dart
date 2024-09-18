@@ -13,7 +13,7 @@ import '../functions/functions.dart';
 class WalletSendController extends GetxController
     with GetSingleTickerProviderStateMixin {
   WalletSendController();
-  final parameter = Get.arguments; // sending args to another screen
+  final parameter = Get.arguments;
   final GlobalKey<FormState> formKeySend = GlobalKey<FormState>();
   final TextEditingController recipient = TextEditingController();
   final TextEditingController tokenAmount = TextEditingController();
@@ -101,12 +101,12 @@ class WalletSendController extends GetxController
 
   Future<void> sendOtp() async {
     final item = await Authentication().getUserLogin();
-    Map<String, dynamic> parameters = {
+    Map<String, dynamic> paramSend = {
       "mobile_no": item["mobile_no"],
     };
 
     HttpRequest(
-            api: ApiKeys.gApiSubFolderPostReqOtpShare, parameters: parameters)
+            api: ApiKeys.gApiSubFolderPostReqOtpShare, parameters: paramSend)
         .post()
         .then(
       (retvalue) {

@@ -22,6 +22,7 @@ class TransactionDetails extends StatelessWidget {
       alignment: Alignment.topCenter,
       children: [
         Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             SizedBox(
               height: 38,
@@ -145,12 +146,19 @@ class TransactionDetails extends StatelessWidget {
             ),
           ],
         ),
-        SvgPicture.asset(
-          "assets/images/${data[index]["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : data[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
-          //if trans_Desc is equal to Share a token svg is wallet_sharetoken else Receive Token svg is wallet_receivetoken else parking transaction is svg wallet_payparking
-          height: 65,
-          width: 65,
-        )
+        Container(
+          decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                width: 10,
+                color: Colors.white,
+              )),
+          child: SvgPicture.asset(
+            fit: BoxFit.cover, height: 50,
+            "assets/images/${data[index]["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : data[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
+            //if trans_Desc is equal to Share a token svg is wallet_sharetoken else Receive Token svg is wallet_receivetoken else parking transaction is svg wallet_payparking
+          ),
+        ),
       ],
     );
   }

@@ -8,7 +8,6 @@ import '../custom_widgets/alert_dialog.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
 import '../notification_controller.dart';
-import '../routes/routes.dart';
 
 class SendOtpController extends GetxController {
   SendOtpController();
@@ -162,7 +161,7 @@ class SendOtpController extends GetxController {
             CustomDialog().successDialog(
                 Get.context!, "Success", "Transaction complete", "Okay", () {
               Get.back();
-              Get.offAllNamed(Routes.walletsend);
+              Get.back();
             });
           } else {
             Get.back();

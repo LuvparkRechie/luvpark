@@ -58,6 +58,7 @@ class ParkingDetailsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+
     goingBackToTheCornerWhenIFirstSawYou();
     refreshAmenData();
   }
@@ -121,9 +122,7 @@ class ParkingDetailsController extends GetxController {
 
         return element;
       }).toList();
-
-      if (dataNearest["park_orientation"] != null &&
-          dataNearest["is_pwd"] == "N") {
+      if (dataNearest["park_orientation"] != null) {
         item.insert(0, {
           "zone_amenity_id": 0,
           "zone_id": 0,
@@ -132,26 +131,6 @@ class ParkingDetailsController extends GetxController {
               "${dataNearest["park_size"]} ${dataNearest["park_orientation"]}",
           "icon": "dimension"
         });
-      } else {
-        if (dataNearest["is_pwd"] == "Y") {
-          item.insert(0, {
-            "zone_amenity_id": 0,
-            "zone_id": 0,
-            "parking_amenity_code": "P",
-            "parking_amenity_desc": "PWD Parking Available",
-            "icon": "pwd"
-          });
-        }
-        if (dataNearest["park_orientation"] != null) {
-          item.insert(1, {
-            "zone_amenity_id": 0,
-            "zone_id": 0,
-            "parking_amenity_code": "D",
-            "parking_amenity_desc":
-                "${dataNearest["park_size"]} ${dataNearest["park_orientation"]}",
-            "icon": "dimension"
-          });
-        }
       }
 
       amenData.value = item;
@@ -319,16 +298,14 @@ class ParkingDetailsController extends GetxController {
       int minutes = difference.inMinutes;
 
       if (minutes <= 0) {
-        CustomDialog().errorDialog(
-          Get.context!,
-          "luvpark",
-          "Apologies, but we are closed for bookings right now.",
-          () {
-            Get.back();
-          },
-        );
+        CustomDialog().infoDialog(
+            "luvpark", "Apologies, but we are closed for bookings right now.",
+            () {
+          Get.back();
+        });
         return;
       }
+      print("minutes $minutes");
       if (minutes <= 29) {
         CustomDialog().errorDialog(
           Get.context!,
@@ -376,6 +353,7 @@ class ParkingDetailsController extends GetxController {
             Functions.computeDistanceResorChckIN(Get.context!, destLoc.value,
                 (success) {
               btnLoading.value = false;
+
               if (success["success"]) {
                 Get.toNamed(Routes.booking, arguments: {
                   "currentLocation": success["location"],

@@ -10,6 +10,11 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/> 
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/> 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" /> 
+
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/> 
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT"/>
     <!-- <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" /> -->
  
      
@@ -25,7 +30,9 @@
     </queries>
 
     <queries>
-      <package android:name="com.globe.gcash.android" />  
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
     </queries>
 
    <application 

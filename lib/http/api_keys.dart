@@ -80,6 +80,8 @@ class ApiKeys {
 
   static const gApiSubFolderGetNearestSpace =
       '/ords/$parkSpaceApi/zone/nearestParking';
+  static const gApiSubGetNearybyParkings =
+      '/ords/$parkSpaceApi/zone/nearbyParkings';
 
   //get parking type filter dropdown dashboard
   static const gApiSubFolderGetParkingTypes =
@@ -236,9 +238,11 @@ class ApiKeys {
   //Delete advance parking
   static const gApiPostCancelParking =
       '/ords/$parkSpaceApi/pm/cancelAdvancedParking';
-  //Cancel auto extendPost param reservation_id, no_hours
-  static const gApiCancelAutoExtend =
+  //  extendPost param reservation_id, no_hours
+  static const gApiExtendParking =
       '/ords/$parkSpaceApi/pm/extendAdvancedParking';
+  //Cancel Auto Extend  POSt  parameter: reservation_id
+  static const gApiCancelAutoExtend = '/ords/$parkSpaceApi/pm/cancelAutoExtend';
 
   //REMOVED API
   // //Reserve payment key

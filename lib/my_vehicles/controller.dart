@@ -98,14 +98,19 @@ class MyVehiclesController extends GetxController {
         vehicleData.value = [];
 
         for (var row in myVehicles["items"]) {
-          String brandName = await Functions.getBrandName(
+          // String brandName = await Functions.getBrandName(
+          //     row["vehicle_type_id"], row["vehicle_brand_id"]);
+          // String? image = await Functions.getBrandImage(
+          //     row["vehicle_type_id"], row["vehicle_brand_id"]);
+          List dataVBrand = await Functions.getBranding(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
 
           vehicleData.add({
             "vehicle_type_id": row["vehicle_type_id"],
             "vehicle_brand_id": row["vehicle_brand_id"],
-            "vehicle_brand_name": brandName,
+            "vehicle_brand_name": dataVBrand[0]["vehicle_brand_name"],
             "vehicle_plate_no": row["vehicle_plate_no"],
+            "image": dataVBrand[0]["imageb64"]
           });
         }
         isLoadingAddVh.value = false;
@@ -220,33 +225,34 @@ class MyVehiclesController extends GetxController {
 
   void showBottomSheetCamera(isOr) {
     showCupertinoModalPopup(
-        context: Get.context!,
-        builder: (BuildContext cont) {
-          return CupertinoActionSheet(
-            actions: [
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  Navigator.pop(Get.context!);
-                  takePhoto(ImageSource.camera, isOr);
-                },
-                child: const Text('Use Camera'),
-              ),
-              CupertinoActionSheetAction(
-                onPressed: () {
-                  Navigator.pop(Get.context!);
-                  takePhoto(ImageSource.gallery, isOr);
-                },
-                child: const Text('Upload from files'),
-              ),
-            ],
-            cancelButton: CupertinoActionSheetAction(
+      context: Get.context!,
+      builder: (BuildContext cont) {
+        return CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
               onPressed: () {
-                // ignore: unnecessary_statements
+                Navigator.pop(Get.context!);
+                takePhoto(ImageSource.camera, isOr);
               },
-              child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+              child: const Text('Use Camera'),
             ),
-          );
-        });
+            CupertinoActionSheetAction(
+              onPressed: () {
+                Navigator.pop(Get.context!);
+                takePhoto(ImageSource.gallery, isOr);
+              },
+              child: const Text('Upload from files'),
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () {
+              // ignore: unnecessary_statements
+            },
+            child: const Text('Cancel', style: TextStyle(color: Colors.red)),
+          ),
+        );
+      },
+    );
   }
 
   void takePhoto(ImageSource source, bool isOr) async {

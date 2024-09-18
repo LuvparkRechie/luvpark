@@ -43,4 +43,6 @@ class Routes {
   static const myaccount = "/myaccount";
   static const updProfile = "/update_profile";
   static const otpUpdProfile = "/otp_update_profile";
+  static const message = "/message";
+  static const helpfeedback = "/help_feedback";
 }

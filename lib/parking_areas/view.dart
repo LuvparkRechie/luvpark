@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/parking_areas/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
 
+import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/showup_animation.dart';
+import '../functions/functions.dart';
+import '../routes/routes.dart';
 
 class ParkingAreas extends GetView<ParkingAreasController> {
   const ParkingAreas({super.key});
@@ -102,8 +104,10 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                       itemCount: ct.searchedZone.length,
                       itemBuilder: (context, index) {
                         String getDistanceString() {
-                          double kmDist = Variables.convertToMeters(
-                              ct.searchedZone[index]["distance"].toString());
+                          double kmDist = double.parse(ct.searchedZone[index]
+                                  ["current_distance"]
+                              .toString());
+
                           if (kmDist >= 1000) {
                             double distanceInKilometers = kmDist / 1000;
                             return '${distanceInKilometers.round()} km';
@@ -132,9 +136,44 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                         return ShowUpAnimation(
                           delay: 5 * index,
                           child: InkWell(
-                            onTap: () {
+                            onTap: () async {
+                              CustomDialog().loadingDialog(Get.context!);
+
+                              controller.markerData = ct.searchedZone;
+
+                              List ltlng = await Functions.getCurrentPosition();
+                              LatLng coordinates =
+                                  LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+                              LatLng dest = LatLng(
+                                  double.parse(ct.searchedZone[index]
+                                          ["pa_latitude"]
+                                      .toString()),
+                                  double.parse(ct.searchedZone[index]
+                                          ["pa_longitude"]
+                                      .toString()));
+                              final estimatedData =
+                                  await Functions.fetchETA(coordinates, dest);
+
+                              controller.markerData.value =
+                                  controller.markerData.map((e) {
+                                e["distance_display"] =
+                                    "${estimatedData[0]["distance"]} away";
+                                e["time_arrival"] = estimatedData[0]["time"];
+                                return e;
+                              }).toList();
+                              Get.back();
+
+                              if (estimatedData[0]["error"] == "No Internet") {
+                                CustomDialog().internetErrorDialog(Get.context!,
+                                    () {
+                                  Get.back();
+                                });
+
+                                return;
+                              }
+
                               Get.toNamed(Routes.parkingDetails,
-                                  arguments: ct.searchedZone[index]);
+                                  arguments: controller.markerData[index]);
                             },
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(0, 15, 15, 15),

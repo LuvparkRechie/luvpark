@@ -649,7 +649,7 @@ class Functions {
             if (hasInternet) {
               final estimatedData = await Functions.fetchETA(
                   LatLng(ll.latitude, ll.longitude), dest);
-              print("estimatedData $estimatedData");
+
               if (estimatedData[0]["error"] == "No Internet") {
                 cb({"success": false});
 
@@ -775,5 +775,13 @@ class Functions {
         await VehicleBrandsTable.instance.readVehicleBrandsByVbId(vtId, vbId);
 
     return brandName!;
+  }
+
+  static Future<List> getBranding(int typeId, int brandId) async {
+    List data = Variables.gVBrand.where((objData) {
+      return objData["vehicle_type_id"] == typeId &&
+          objData["vehicle_brand_id"] == brandId;
+    }).toList();
+    return data;
   }
 }

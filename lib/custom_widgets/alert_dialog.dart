@@ -248,7 +248,7 @@ class CustomDialog {
             ),
             clipBehavior: Clip.hardEdge,
             child: Image.asset(
-              'assets/images/pu_confirmation.png', // Use the static image name
+              'assets/images/pu_info.png', // Use the static image name
               fit: BoxFit.cover,
               height: 100,
               width: double.infinity,
@@ -506,9 +506,54 @@ class CustomDialog {
     ));
   }
 
+  void loadingDialog(
+    BuildContext context,
+  ) {
+    Get.dialog(
+        loadingBody(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Center(
+                child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(15),
+                    color: Colors.white,
+                  ),
+                  width: 90,
+                  height: 90,
+                  child: Center(
+                    child: SizedBox(
+                      width: 35,
+                      height: 35,
+                      child: CircularProgressIndicator(
+                        color: Colors.blue,
+                        backgroundColor: Colors.blue.withOpacity(.3),
+                        strokeWidth: 5,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        barrierColor: Colors.black.withOpacity(0.2));
+  }
+
+  Widget loadingBody(Widget? child) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: child,
+      ),
+    );
+  }
+
   Widget dialogBody(Widget? child) {
     return PopScope(
-      canPop: true,
+      canPop: false,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -527,26 +572,28 @@ class CustomDialog {
     );
   }
 
-  void loadingDialog(
-    BuildContext context,
-  ) {
-    Get.dialog(Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(
-          width: 100,
-          height: 100,
-          child: Center(
-            child: CircularProgressIndicator(
-              color: Colors.blue,
-            ),
-          ),
-        ),
-      ],
-    ));
+  Widget dialogBody2(Widget? child) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                ),
+                width: MediaQuery.of(Get.context!).size.width,
+                child: child),
+          )
+        ]),
+      ),
+    );
   }
 
-  void mapLoading() {
+  void mapLoading(String title) {
     Get.dialog(
       dialogBody(
         Column(
@@ -577,7 +624,7 @@ class CustomDialog {
               padding:
                   const EdgeInsets.symmetric(horizontal: 15.0, vertical: 20),
               child: CustomParagraph(
-                text: "Getting nearest parking,\nplease wait...",
+                text: "Getting nearest parking within \n$title, please wait...",
                 textAlign: TextAlign.center,
               ),
             )
@@ -617,7 +664,7 @@ class CustomDialog {
     bool showTwoButtons = true,
     required String imageName, // Add this parameter for the dynamic image name
   }) {
-    Get.dialog(dialogBody(
+    Get.dialog(dialogBody2(
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[

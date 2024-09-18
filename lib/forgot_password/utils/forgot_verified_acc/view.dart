@@ -82,6 +82,7 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                   textCapitalization:
                                       TextCapitalization.characters,
                                   controller: controller.answer,
+                                  isReadOnly: controller.isVerifiedAns.value,
                                 ),
 
                                 //IF succcess
@@ -242,7 +243,11 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                           .currentState!
                                           .validate()) {
                                         if (controller.isVerifiedAns.value) {
-                                          controller.onSubmit();
+                                          if (controller.passStrength.value ==
+                                              4) {
+                                            controller.onSubmit();
+                                            return;
+                                          }
                                         } else {
                                           controller.onVerify();
                                         }

@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
@@ -28,6 +29,7 @@ class Variables {
   static String notifTable = 'notification_table';
   static String shareLocTable = 'share_location_table';
   static String lastBooking = 'booking_table';
+  static RxList gVBrand = [].obs;
   //static void Timer? backgroundTimer
   static final emailRegex = RegExp(
     r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
@@ -295,6 +297,21 @@ class Variables {
     return distanceValue * 1000;
   }
 
+  static String convertDistance(String distanceString) {
+    // Extract numeric part of the string
+    String numericPart = distanceString.replaceAll(RegExp(r'[^0-9.]'), '');
+
+    // Parse numeric part to double
+    double distanceValue = double.tryParse(numericPart) ?? 0;
+    // Convert to meters
+
+    double dist = distanceValue * 1000;
+    if (distanceValue < 1)
+      return "$dist meters";
+    else
+      return "$distanceValue km";
+  }
+
   static double convertToMeters3(String distanceString) {
     // Extract numeric part of the string
     String numericPart = distanceString.replaceAll(RegExp(r'[^0-9.]'), '');
@@ -540,5 +557,23 @@ class Variables {
     ByteData? resizedByteData =
         await resizedFrameInfo.image.toByteData(format: ui.ImageByteFormat.png);
     return resizedByteData!.buffer.asUint8List();
+  }
+
+// '16:30'; format
+  static String timeFormatter(String time) {
+    print(time);
+    try {
+      // Parse the 24-hour time into a DateTime object
+      DateFormat format24Hour = DateFormat('HH:mm');
+      DateTime dateTime = format24Hour.parse(time.trim());
+
+      // Convert to 12-hour format with AM/PM
+      DateFormat format12Hour = DateFormat('h:mm a');
+      return format12Hour.format(dateTime);
+    } catch (e) {
+      // Handle parsing errors if necessary
+      print("Error parsing time: $e");
+      return 'Invalid time'; // Return a default value or error message
+    }
   }
 }

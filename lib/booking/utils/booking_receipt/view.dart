@@ -273,9 +273,6 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                   children: [
                     Expanded(
                       child: CustomButton(
-                        btnColor: Colors.white,
-                        textColor: AppColor.primaryColor,
-                        bordercolor: AppColor.primaryColor,
                         text: "Find vehicle",
                         onPressed: () async {
                           CustomDialog().loadingDialog(context);
@@ -303,14 +300,17 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                     ),
                     const SizedBox(width: 10),
                     Expanded(
-                      child: CustomButton(
-                        text: controller.parameters["isAutoExtend"] == "Y"
-                            ? "Cancel auto extend"
-                            : "Extend parking",
-                        onPressed: controller.parameters["isAutoExtend"] == "Y"
-                            ? controller.cancelAutoExtend
-                            : controller.onExtend,
-                      ),
+                      child: controller.parameters["isAutoExtend"] == "Y"
+                          ? CustomButton(
+                              text: "Cancel auto extend",
+                              textColor: const Color(0xFFCF4B4B),
+                              btnColor: Colors.white,
+                              bordercolor: const Color(0xFFCF4B4B),
+                              onPressed: controller.cancelAutoExtend)
+                          : CustomButton(
+                              text: "Extend parking",
+                              onPressed: controller.onExtend,
+                            ),
                     ),
                   ],
                 ),

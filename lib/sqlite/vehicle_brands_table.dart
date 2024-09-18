@@ -23,7 +23,7 @@ class VehicleBrandsTable {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path, version: 2, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
@@ -34,7 +34,8 @@ class VehicleBrandsTable {
       CREATE TABLE ${Variables.vhBrands} (  
         ${VHBrandsDataFields.vhTypeId} $integerType, 
         ${VHBrandsDataFields.vhBrandId} $integerType,  
-        ${VHBrandsDataFields.vhBrandName} $textType
+        ${VHBrandsDataFields.vhBrandName} $textType,
+         ${VHBrandsDataFields.image} $textType
         )
       ''');
   }
@@ -44,10 +45,13 @@ class VehicleBrandsTable {
 
     const columns = '${VHBrandsDataFields.vhBrandId},'
         '${VHBrandsDataFields.vhTypeId},'
-        '${VHBrandsDataFields.vhBrandName}';
+        '${VHBrandsDataFields.vhBrandName},'
+        '${VHBrandsDataFields.image}';
     final insertValues = "${json[VHBrandsDataFields.vhBrandId]},"
         "${json[VHBrandsDataFields.vhTypeId]},"
-        "'${json[VHBrandsDataFields.vhBrandName]}'";
+        "'${json[VHBrandsDataFields.vhBrandName]}',"
+        "'${json[VHBrandsDataFields.image]}'";
+
     await db!.transaction((txn) async {
       var batch = txn.batch();
 
@@ -94,6 +98,27 @@ class VehicleBrandsTable {
     brandName = matchingRecord[VHBrandsDataFields.vhBrandName] as String?;
 
     return brandName;
+  }
+
+  Future<String?> getBrandImage(int vtId, int vbId) async {
+    final db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db!.query(
+      Variables.vhBrands,
+      orderBy: "${VHBrandsDataFields.vhBrandId} ASC",
+    );
+
+    final Map<String, dynamic> matchingRecord = maps.firstWhere(
+      (record) =>
+          record[VHBrandsDataFields.vhTypeId] == vtId &&
+          record[VHBrandsDataFields.vhBrandId] == vbId,
+      orElse: () =>
+          {}, // Provide a default value or handle the case where no matching element is found
+    );
+
+    String? image;
+    image = matchingRecord[VHBrandsDataFields.image] as String?;
+
+    return image;
   }
 
   Future<dynamic> readVBrandDataByVTID(int vtId) async {

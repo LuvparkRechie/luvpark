@@ -26,12 +26,16 @@ Future<void> backgroundFunc() async {
   int counter = 0;
 
   Timer.periodic(const Duration(seconds: 10), (timer) async {
-    var akongId = await Authentication().getUserId();
+    final isLogout = await Authentication().getLogoutStatus();
 
-    if (akongId == 0) return;
-    await getParkingTrans(counter);
+    if (isLogout != null && !isLogout) {
+      var akongId = await Authentication().getUserId();
 
-    await getMessNotif();
+      if (akongId == 0) return;
+      await getParkingTrans(counter);
+
+      await getMessNotif();
+    }
   });
 }
 

@@ -228,6 +228,9 @@ class NotificationController {
     if (receivedAction.payload!["notificationId"] == "parking") {
       Get.toNamed(Routes.parking, arguments: "N");
     }
+    if (receivedAction.payload!["notificationId"] == "message") {
+      Get.toNamed(Routes.message);
+    }
   }
 
   static Future<void> myNotifyScheduleInHours({
@@ -371,8 +374,8 @@ Future<void> getParkingQueue() async {
 //GET MEssage from PA
 Future<void> getMessNotif() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  var akongId = prefs.getString('myId');
-  if (akongId == null) return;
+  var akongId = await Authentication().getUserId();
+
   HttpRequest(
     api: "${ApiKeys.gApiLuvParkMessageNotif}?user_id=$akongId",
   ).get().then((messageData) async {

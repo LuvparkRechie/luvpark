@@ -22,6 +22,7 @@ class MyAccountScreenController extends GetxController
     with GetSingleTickerProviderStateMixin {
   MyAccountScreenController();
   final ImagePicker _picker = ImagePicker();
+  final parameter = Get.arguments;
   String? imageBase64;
   AppState? state;
   File? imageFile;

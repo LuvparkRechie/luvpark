@@ -150,4 +150,17 @@ class Authentication {
     }
     return jsonDecode(data);
   }
+
+  //SEt logout status
+  Future<void> setLogoutStatus(bool status) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('is_logout', status);
+  }
+
+  Future<bool?> getLogoutStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? isLogout = prefs.getBool("is_logout");
+
+    return isLogout;
+  }
 }

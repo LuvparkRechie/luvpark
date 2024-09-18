@@ -286,11 +286,7 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
               ),
             ),
             CustomParagraph(
-              text: Variables.gagi(
-                Variables.convertToMeters(
-                  controller.dataNearest["distance"].toString(),
-                ),
-              ),
+              text: controller.dataNearest["distance_display"],
             )
           ],
         ),
@@ -340,7 +336,8 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                         ),
                       ),
                       TextSpan(
-                        text: ' ●  ${controller.parkSched}  ●  ',
+                        text:
+                            ' ●  ${Variables.timeFormatter(controller.dataNearest["opened_time"].toString())} - ${Variables.timeFormatter(controller.dataNearest["closed_time"]).toString()}  ●  ',
                         style: paragraphStyle(),
                       ),
                       TextSpan(
@@ -350,6 +347,7 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                       ),
                     ],
                   ),
+                  maxLines: 1,
                 ),
                 Container(height: 15),
                 const CustomTitle(

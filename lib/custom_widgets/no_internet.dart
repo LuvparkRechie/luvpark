@@ -37,11 +37,12 @@ class NoInternetConnected extends StatelessWidget {
           Container(
             height: 25,
           ),
-          TextButton(
-              onPressed: () {
-                onTap!();
-              },
-              child: const CustomLinkLabel(text: "Reconnect"))
+          if (onTap != null)
+            TextButton(
+                onPressed: () {
+                  onTap!();
+                },
+                child: const CustomLinkLabel(text: "Reconnect"))
         ],
       ),
     );

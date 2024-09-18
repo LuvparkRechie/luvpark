@@ -175,13 +175,9 @@ class BookingPage extends GetView<BookingController> {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 CustomTitle(
-                                                  text: Variables.gagi(
-                                                      Variables.convertToMeters(
-                                                    controller
-                                                        .parameters["areaData"]
-                                                            ["distance"]
-                                                        .toString(),
-                                                  )),
+                                                  text: controller.parameters[
+                                                          "areaData"]
+                                                      ["distance_display"],
                                                   color: Colors.white,
                                                   fontSize: 14,
                                                   letterSpacing: -0.41,

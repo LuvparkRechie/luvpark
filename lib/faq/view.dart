@@ -3,7 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
+import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark_get/custom_widgets/no_data_found.dart';
+import 'package:luvpark_get/custom_widgets/no_internet.dart';
+import 'package:luvpark_get/custom_widgets/page_loader.dart';
 import 'package:luvpark_get/faq/controller.dart';
 
 class FaqPage extends GetView<FaqPageController> {
@@ -11,91 +15,131 @@ class FaqPage extends GetView<FaqPageController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: AppColor.bodyColor,
-      appBar: const PreferredSize(
-        preferredSize: Size.fromHeight(236),
-        child: FaqsAppbar(),
-      ),
-      body: Obx(() {
-        if (controller.isLoadingPage.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (!controller.isNetConn.value) {
-          return const Center(child: Text("No internet connection"));
-        }
-        if (controller.faqsData.isEmpty) {
-          return const Center(child: Text("No FAQs available"));
-        }
-
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: ListView.separated(
-            itemCount: controller.faqsData.length,
-            separatorBuilder: (context, index) => Divider(
-              color: Colors.grey[800],
-              height: 1,
-            ),
-            itemBuilder: (context, index) {
-              var faq = controller.faqsData[index];
-
-              return ExpansionTile(
-                title: CustomParagraph(
-                  text: faq['faq_text'] ?? 'No text available',
-                  color: Colors.black,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                ),
-                trailing: Icon(
-                  controller.expandedIndexes.contains(index)
-                      ? Iconsax.minus
-                      : Iconsax.add,
-                  color: AppColor.primaryColor,
-                ),
-                onExpansionChanged: (onExpand) async {
-                  controller.onExpand(onExpand, index, faq);
-                },
-                children: [
-                  if (controller.expandedIndexes.contains(index))
-                    Padding(
-                      padding: const EdgeInsets.all(15),
+    return Obx(() => Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor:
+              controller.isLoadingPage.value ? null : AppColor.primaryColor,
+          body: controller.isLoadingPage.value
+              ? const PageLoader()
+              : Column(
+                  children: [
+                    Container(
+                      height: 200,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: AssetImage("assets/images/faq_frame.png"),
+                        ),
+                      ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (faq['answers'] == null ||
-                              (faq['answers'] as List).isEmpty)
-                            const CustomParagraph(
-                              text: 'No answers available',
-                              color: Colors.black54,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w400,
-                            )
-                          else
-                            ...((faq['answers'] as List)
-                                .asMap()
-                                .entries
-                                .map((entry) {
-                              int index = entry.key;
-                              var answer = entry.value;
-                              return CustomParagraph(
-                                text:
-                                    '${index + 1}. ${answer['faq_ans_text'] ?? 'No answer available'}',
-                                color: Colors.black,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w400,
-                              );
-                            }).toList()),
+                          CustomAppbar(
+                            elevation: 0,
+                            bgColor: Colors.transparent,
+                            textColor: Colors.white,
+                            titleColor: Colors.white,
+                            title: "FAQ's",
+                          ),
+                          Container(height: 20),
+                          CustomTitle(
+                            text: "How can we help you?",
+                            color: Colors.white,
+                            fontSize: 20,
+                          ),
                         ],
                       ),
                     ),
-                ],
-              );
-            },
-          ),
-        );
-      }),
-    );
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.vertical(
+                                top: Radius.circular(10))),
+                        child: !controller.isNetConn.value
+                            ? NoInternetConnected(
+                                onTap: controller.refresher,
+                              )
+                            : controller.faqsData.isEmpty
+                                ? NoDataFound()
+                                : ListView.separated(
+                                    itemCount: controller.faqsData.length,
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 10, horizontal: 15),
+                                    separatorBuilder: (context, index) =>
+                                        Divider(
+                                      color: Colors.grey[800],
+                                      height: 1,
+                                    ),
+                                    itemBuilder: (context, index) {
+                                      var faq = controller.faqsData[index];
+
+                                      return ExpansionTile(
+                                        title: CustomParagraph(
+                                          text: faq['faq_text'] ??
+                                              'No text available',
+                                          color: Colors.black,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                        trailing: Icon(
+                                          controller.expandedIndexes
+                                                  .contains(index)
+                                              ? Iconsax.minus
+                                              : Iconsax.add,
+                                          color: AppColor.primaryColor,
+                                        ),
+                                        onExpansionChanged: (onExpand) async {
+                                          controller.onExpand(
+                                              onExpand, index, faq);
+                                        },
+                                        children: [
+                                          if (controller.expandedIndexes
+                                              .contains(index))
+                                            Padding(
+                                              padding: const EdgeInsets.all(15),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  if (faq['answers'] == null ||
+                                                      (faq['answers'] as List)
+                                                          .isEmpty)
+                                                    const CustomParagraph(
+                                                      text:
+                                                          'No answers available',
+                                                      color: Colors.black54,
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                    )
+                                                  else
+                                                    ...((faq['answers'] as List)
+                                                        .asMap()
+                                                        .entries
+                                                        .map((entry) {
+                                                      int index = entry.key;
+                                                      var answer = entry.value;
+                                                      return CustomParagraph(
+                                                        text:
+                                                            '${index + 1}. ${answer['faq_ans_text'] ?? 'No answer available'}',
+                                                        color: Colors.black,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                      );
+                                                    }).toList()),
+                                                ],
+                                              ),
+                                            ),
+                                        ],
+                                      );
+                                    },
+                                  ),
+                      ),
+                    ),
+                  ],
+                ),
+        ));
   }
 }
 
@@ -107,10 +151,10 @@ class FaqsAppbar extends StatelessWidget {
     return AppBar(
       elevation: 0,
       actions: [
-        // IconButton(
-        //   onPressed: () {},
-        //   icon: const Icon(Iconsax.message_search, size: 20),
-        // ),
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Iconsax.message_search, size: 20),
+        ),
       ],
       leading: Padding(
         padding: const EdgeInsets.only(left: 5),

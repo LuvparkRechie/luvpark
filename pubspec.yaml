@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.25.42+43
+version: 1.25.43+44
 
 environment:
   sdk: ">=3.2.6 <4.0.0"
@@ -88,13 +88,11 @@ dependencies:
   google_maps_webservice: ^0.0.20-nullsafety.5
   flutter_polyline_points: ^1.0.0
   get: ^4.6.6
-  flutter_dotenv: ^5.1.0
-
+  flutter_dotenv: ^5.1.0 
   google_directions_api: ^0.9.1
   google_places_for_flutter: ^1.0.1
   google_maps_utils: ^2.0.0+1
-  flutter_html: ^3.0.0-beta.2
-  flutter_math_fork: ^0.7.2
+  flutter_html: ^3.0.0-beta.2 
   upgrader: ^9.0.0
   flutter_speed_dial: ^7.0.0
   awesome_notifications: ^0.9.2
@@ -117,12 +115,14 @@ dependencies:
   geolocator: ^10.1.1
   google_fonts: ^4.0.4
   map_picker: ^0.0.3
-  flutter_svg: ^2.0.9
+  flutter_svg: ^1.1.5
   loader_overlay: ^4.0.1
   speech_to_text: ^6.6.0
   sliding_up_panel2: ^3.3.0+1
   provider: ^6.1.2
   image_picker: ^1.0.8
+  iconify_flutter: ^0.0.5
+  lucide_icons: ^0.257.0
 
 dev_dependencies:
   flutter_test:
@@ -154,12 +154,21 @@ flutter:
     - assets/dashboard_icon/
     - assets/dashboard_icon/commercial/
     - assets/dashboard_icon/private/
+    - assets/dashboard_icon/marker_panel/
     - assets/dashboard_icon/street/
     - assets/dashboard_icon/valet/
     - assets/area_details/
     - assets/drawer_icon/ 
     - assets/legend/ 
     - assets/custom_map_style/map_style.json
+    - assets/map_filter/
+    - assets/map_filter/active/
+    - assets/map_filter/inactive/
+    - assets/details_logo/
+    - assets/details_logo/blue/
+    - assets/details_logo/green/
+    - assets/details_logo/orange/
+    - assets/details_logo/violet/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

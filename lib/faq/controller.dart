@@ -17,6 +17,11 @@ class FaqPageController extends GetxController {
     getFaq();
   }
 
+  Future<void> refresher() async {
+    isNetConn.value = true;
+    getFaq();
+  }
+
   Future<void> getFaq() async {
     isLoadingPage.value = true;
     var returnData = await const HttpRequest(
@@ -26,9 +31,7 @@ class FaqPageController extends GetxController {
     if (returnData == "No Internet") {
       isNetConn.value = false;
       isLoadingPage.value = false;
-      CustomDialog().internetErrorDialog(Get.context!, () {
-        Get.back();
-      });
+
       return;
     }
     if (returnData == null) {
@@ -39,13 +42,7 @@ class FaqPageController extends GetxController {
       });
       return;
     }
-    if (returnData["items"].isNotEmpty) {
-      faqsData.value = List<Map<String, dynamic>>.from(returnData["items"]);
-    } else {
-      CustomDialog().errorDialog(Get.context!, "Luvpark", "No data found", () {
-        Get.back();
-      });
-    }
+    faqsData.value = List<Map<String, dynamic>>.from(returnData["items"]);
     isLoadingPage.value = false;
   }
 

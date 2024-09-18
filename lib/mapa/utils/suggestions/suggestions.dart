@@ -1,17 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
 
+import '../../../custom_widgets/alert_dialog.dart';
 import '../../../custom_widgets/showup_animation.dart';
+import '../../../functions/functions.dart';
 import '../../../routes/routes.dart';
 import '../../controller.dart';
 
-class SuggestionsScreen extends StatelessWidget {
+class SuggestionsScreen extends StatefulWidget {
   final List data;
   SuggestionsScreen({super.key, required this.data});
 
+  @override
+  State<SuggestionsScreen> createState() => _SuggestionsScreenState();
+}
+
+class _SuggestionsScreenState extends State<SuggestionsScreen> {
+  List markerData = [];
   @override
   Widget build(BuildContext context) {
     DashboardMapController controller = Get.put(DashboardMapController());
@@ -56,14 +64,15 @@ class SuggestionsScreen extends StatelessWidget {
                           separatorBuilder: (context, index) {
                             return const SizedBox(height: 2);
                           },
-                          itemCount: data.length > 5
-                              ? data.take(5).toList().length
-                              : data.length,
+                          itemCount: widget.data.length > 5
+                              ? widget.data.take(5).toList().length
+                              : widget.data.length,
                           itemBuilder: (context, index) {
-                            print("data $data");
                             String getDistanceString() {
-                              double kmDist = Variables.convertToMeters(
-                                  data[index]["distance"].toString());
+                              double kmDist = double.parse(widget.data[index]
+                                      ["current_distance"]
+                                  .toString());
+
                               if (kmDist >= 1000) {
                                 double distanceInKilometers = kmDist / 1000;
                                 return '${distanceInKilometers.round()} km';
@@ -72,29 +81,56 @@ class SuggestionsScreen extends StatelessWidget {
                               }
                             }
 
-                            final String isPwd = data[index]["is_pwd"] ?? "N";
+                            final String isPwd =
+                                widget.data[index]["is_pwd"] ?? "N";
                             final String vehicleTypes =
-                                data[index]["vehicle_types_list"];
+                                widget.data[index]["vehicle_types_list"];
 
                             String iconAsset;
                             // Determine the iconAsset based on parking type and PWD status
                             if (isPwd == "Y") {
                               iconAsset = controller.getIconAssetForPwd(
-                                  data[index]["parking_type_code"],
+                                  widget.data[index]["parking_type_code"],
                                   vehicleTypes);
                             } else {
                               iconAsset = controller.getIconAssetForNonPwd(
-                                  data[index]["parking_type_code"],
+                                  widget.data[index]["parking_type_code"],
                                   vehicleTypes);
                             }
 
                             return ShowUpAnimation(
                               delay: 5 * index,
                               child: InkWell(
-                                onTap: () {
+                                onTap: () async {
+                                  markerData.clear();
+                                  CustomDialog().loadingDialog(Get.context!);
+
+                                  markerData.add(widget.data[index]);
+                                  List ltlng =
+                                      await Functions.getCurrentPosition();
+                                  LatLng coordinates =
+                                      LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+                                  LatLng dest = LatLng(
+                                      double.parse(widget.data[index]
+                                              ["pa_latitude"]
+                                          .toString()),
+                                      double.parse(widget.data[index]
+                                              ["pa_longitude"]
+                                          .toString()));
+                                  final estimatedData =
+                                      await Functions.fetchETA(
+                                          coordinates, dest);
+
+                                  markerData = markerData.map((e) {
+                                    e["distance_display"] =
+                                        "${estimatedData[0]["distance"]} away";
+                                    e["time_arrival"] =
+                                        estimatedData[0]["time"];
+                                    return e;
+                                  }).toList();
                                   Get.back();
                                   Get.toNamed(Routes.parkingDetails,
-                                      arguments: data[index]);
+                                      arguments: widget.data[index]);
                                 },
                                 child: Container(
                                   padding:
@@ -127,13 +163,14 @@ class SuggestionsScreen extends StatelessWidget {
                                               MainAxisAlignment.center,
                                           children: [
                                             CustomTitle(
-                                              text: data[index]
+                                              text: widget.data[index]
                                                   ["park_area_name"],
                                               fontSize: 16,
                                               maxlines: 1,
                                             ),
                                             CustomParagraph(
-                                              text: data[index]["address"],
+                                              text: widget.data[index]
+                                                  ["address"],
                                               fontSize: 14,
                                               maxlines: 2,
                                               fontWeight: FontWeight.w600,

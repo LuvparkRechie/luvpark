@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -79,19 +81,17 @@ class _CustomTextFieldState extends State<CustomTextField> {
               widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
-            floatingLabelStyle: TextStyle(
-              color: AppColor.primaryColor,
-            ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            filled: true,
             focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7.0),
-                borderSide: BorderSide.none),
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFF0078FF))),
             border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7.0),
-                borderSide: BorderSide.none),
-            labelStyle: paragraphStyle(fontWeight: FontWeight.w600),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+            ),
+            errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderSide: BorderSide(color: Color(0xFFDF0000))),
             labelText: widget.title ?? widget.labelText,
             hintText: widget.labelText,
             suffixIcon: widget.suffixIcon != null
@@ -170,19 +170,17 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         enabled: widget.isEnabled,
         keyboardType: TextInputType.number,
         decoration: InputDecoration(
-          floatingLabelStyle: TextStyle(
-            color: AppColor.primaryColor,
-          ),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-          filled: true,
           focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.0),
-              borderSide: BorderSide.none),
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFF0078FF))),
           border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(7.0),
-              borderSide: BorderSide.none),
-          labelStyle: paragraphStyle(fontWeight: FontWeight.w600),
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+          errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(color: Color(0xFFDF0000))),
           labelText: widget.labelText,
           prefixIcon: Container(
             decoration: const BoxDecoration(
@@ -277,20 +275,17 @@ class _CustomDropdownState extends State<CustomDropdown> {
           dropdownColor: Colors.white,
           focusNode: focusNode,
           decoration: InputDecoration(
-            floatingLabelStyle: TextStyle(
-                color: AppColor.primaryColor, fontWeight: FontWeight.w600),
-            contentPadding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            filled: true,
-            focusedBorder: OutlineInputBorder(
+              floatingLabelStyle: TextStyle(fontWeight: FontWeight.w600),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12)),
+                  borderSide: BorderSide(color: Color(0xFF0078FF))),
+              border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(7.0),
-                borderSide: BorderSide.none),
-            border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7.0),
-                borderSide: BorderSide.none),
-            labelStyle: paragraphStyle(fontWeight: FontWeight.w600),
-            labelText: widget.labelText,
-          ),
+              ),
+              labelText: widget.labelText,
+              labelStyle: paragraphStyle()),
           style: paragraphStyle(color: Colors.black),
           value: widget.ddValue,
           isExpanded: true,

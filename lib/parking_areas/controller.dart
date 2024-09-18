@@ -6,6 +6,7 @@ class ParkingAreasController extends GetxController {
   final dataNearest = Get.arguments;
   RxList searchedZone = [].obs;
   RxBool isLoading = false.obs;
+  RxList markerData = [].obs;
 
   void onSearch(String value) {
     searchedZone.value = dataNearest;
@@ -98,6 +99,7 @@ class ParkingAreasController extends GetxController {
   @override
   void onInit() {
     searchedZone.value = dataNearest;
+
     super.onInit();
   }
 }

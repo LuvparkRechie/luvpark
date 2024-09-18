@@ -19,10 +19,11 @@ import '../booking_notice/index.dart';
 import '../forgot_password/index.dart';
 import '../forgot_password/utils/create_new/index.dart';
 import '../forgot_password/utils/forgot_otp/utils/forgot_pass_success.dart';
+import '../help_feedback/index.dart';
 import '../landing/index.dart';
 import '../login/index.dart';
 import '../mapa/index.dart';
-import '../mapa/utils/index.dart';
+import '../message/index.dart';
 import '../my_vehicles/index.dart';
 import '../my_vehicles/utils/add_vehicle.dart';
 import '../onboarding/index.dart';
@@ -143,11 +144,11 @@ class AppPages {
       page: () => const FaqPage(),
       binding: FaqPageBinding(),
     ),
-    GetPage(
-      name: Routes.mapFilter,
-      page: () => const FilterMap(),
-      binding: FilterMapBinding(),
-    ),
+    // GetPage(
+    //   name: Routes.mapFilter,
+    //   page: () => const FilterMap(),
+    //   binding: FilterMapBinding(),
+    // ),
     GetPage(
       name: Routes.walletrecharge,
       page: () => const WalletRechargeScreen(),
@@ -227,6 +228,16 @@ class AppPages {
       name: Routes.otpUpdProfile,
       page: () => const OtpUpdate(),
       binding: OtpUpdateBinding(),
+    ),
+    GetPage(
+      name: Routes.message,
+      page: () => const MessageScreen(),
+      binding: MessageScreenBinding(),
+    ),
+    GetPage(
+      name: Routes.helpfeedback,
+      page: () => const HelpandFeedback(),
+      binding: HelpandFeedbackBinding(),
     ),
   ];
 }

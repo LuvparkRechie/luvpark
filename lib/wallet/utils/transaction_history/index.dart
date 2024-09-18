@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -89,8 +91,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   Future<void> selectDateRange(BuildContext context) async {
     final DateTimeRange? picked = await showDateRangePicker(
       context: context,
-      firstDate: DateTime(2000), // Allows picking dates from the year 2000
-      lastDate: DateTime.now(), // Prevents selecting any future dates
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now(),
       initialDateRange: DateTimeRange(start: _fromDate, end: _toDate),
       builder: (context, child) {
         return Theme(
@@ -162,58 +164,65 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                 )
               : filterLogs.isEmpty
                   ? NoDataFound()
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(10),
-                      itemCount: filterLogs.length,
-                      itemBuilder: (context, index) {
-                        return GestureDetector(
-                          onTap: () {
-                            showModalBottomSheet(
-                              backgroundColor: Colors.transparent,
-                              context: context,
-                              builder: (context) => TransactionDetails(
-                                index: index,
-                                data: filterLogs,
+                  : StretchingOverscrollIndicator(
+                      axisDirection: AxisDirection.down,
+                      child: ScrollConfiguration(
+                        behavior: ScrollBehavior().copyWith(overscroll: false),
+                        child: ListView.separated(
+                          padding: const EdgeInsets.all(10),
+                          itemCount: filterLogs.length,
+                          itemBuilder: (context, index) {
+                            return GestureDetector(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  backgroundColor: Colors.transparent,
+                                  context: context,
+                                  builder: (context) => TransactionDetails(
+                                    index: index,
+                                    data: filterLogs,
+                                  ),
+                                );
+                              },
+                              child: ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: SvgPicture.asset(
+                                  fit: BoxFit.cover,
+                                  "assets/images/${filterLogs[index]["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : filterLogs[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
+                                  height: 50,
+                                ),
+                                title: CustomTitle(
+                                  text: filterLogs[index]["tran_desc"],
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                subtitle: CustomParagraph(
+                                  text: DateFormat('MMM d, yyyy h:mm a').format(
+                                    DateTime.parse(
+                                        filterLogs[index]["tran_date"]),
+                                  ),
+                                  fontSize: 12,
+                                ),
+                                trailing: CustomTitle(
+                                  text: filterLogs[index]["amount"],
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: (filterLogs[index]["tran_desc"] ==
+                                              'Share a token' ||
+                                          filterLogs[index]["tran_desc"] ==
+                                              'Received token' ||
+                                          filterLogs[index]["tran_desc"] ==
+                                              'Credit top-up')
+                                      ? const Color(0xFF0078FF)
+                                      : const Color(0xFFBD2424),
+                                ),
                               ),
                             );
                           },
-                          child: ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: SvgPicture.asset(
-                              fit: BoxFit.cover,
-                              "assets/images/${filterLogs[index]["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : filterLogs[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
-                              height: 50,
-                            ),
-                            title: CustomTitle(
-                              text: filterLogs[index]["tran_desc"],
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            subtitle: CustomParagraph(
-                              text: DateFormat('MMM d, yyyy h:mm a').format(
-                                DateTime.parse(filterLogs[index]["tran_date"]),
-                              ),
-                              fontSize: 12,
-                            ),
-                            trailing: CustomTitle(
-                              text: filterLogs[index]["amount"],
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: (filterLogs[index]["tran_desc"] ==
-                                          'Share a token' ||
-                                      filterLogs[index]["tran_desc"] ==
-                                          'Received token' ||
-                                      filterLogs[index]["tran_desc"] ==
-                                          'Credit top-up')
-                                  ? const Color(0xFF0078FF)
-                                  : const Color(0xFFBD2424),
-                            ),
+                          separatorBuilder: (context, index) => const Divider(
+                            endIndent: 1,
+                            height: 1,
                           ),
-                        );
-                      },
-                      separatorBuilder: (context, index) => const Divider(
-                        endIndent: 1,
-                        height: 1,
+                        ),
                       ),
                     ),
     );
