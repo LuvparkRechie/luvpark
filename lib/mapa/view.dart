@@ -5,6 +5,7 @@ import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_body.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -95,6 +96,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           parallaxEnabled: true,
                           controller: controller.panelController,
                           parallaxOffset: .3,
+                          onPanelOpened: () {
+                            print("on panel open");
+                          },
                           body: _mapa(),
                           panelBuilder: (sc) => panelSearchedList(sc),
                           header:
@@ -268,71 +272,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               ),
                             ),
                           ),
-
-                        // if (MediaQuery.of(context).viewInsets.bottom == 0)
-                        //   Visibility(
-                        //     visible: controller.hasLastBooking.value ||
-                        //         controller.isGetNearData.value,
-                        //     child: Positioned(
-                        //       left: 20.0,
-                        //       bottom: controller.fabHeight.value,
-                        //       child: InkWell(
-                        //         onTap: controller.bookNow,
-                        //         child: Container(
-                        //           padding: const EdgeInsets.all(10),
-                        //           clipBehavior: Clip.antiAlias,
-                        //           decoration: ShapeDecoration(
-                        //             color: Colors.white,
-                        //             shape: RoundedRectangleBorder(
-                        //               side: const BorderSide(
-                        //                   width: 1, color: Color(0xFFDFE7EF)),
-                        //               borderRadius: BorderRadius.circular(57),
-                        //             ),
-                        //             shadows: const [
-                        //               BoxShadow(
-                        //                 color: Color(0x0C000000),
-                        //                 blurRadius: 15,
-                        //                 offset: Offset(0, 5),
-                        //                 spreadRadius: 0,
-                        //               )
-                        //             ],
-                        //           ),
-                        //           child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.start,
-                        //             children: [
-                        //               Container(
-                        //                 width: 24,
-                        //                 height: 24,
-                        //                 clipBehavior: Clip.antiAlias,
-                        //                 decoration: const BoxDecoration(),
-                        //                 child: Image(
-                        //                   image: AssetImage(
-                        //                       "assets/dashboard_icon/car.png"),
-                        //                   fit: BoxFit.contain,
-                        //                   color: AppColor.primaryColor,
-                        //                 ),
-                        //               ),
-                        //               Container(width: 5),
-                        //               Obx(
-                        //                 () => Text.rich(
-                        //                   TextSpan(
-                        //                     children: [
-                        //                       TextSpan(
-                        //                         text: controller.plateNo.value,
-                        //                         style: paragraphStyle(),
-                        //                       ),
-                        //                     ],
-                        //                   ),
-                        //                   overflow: TextOverflow.ellipsis,
-                        //                   maxLines: 1,
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ),
-                        //   ),
                       ],
                     ),
             ),
@@ -363,9 +302,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
       polylines: {controller.polyline},
       circles: {controller.circle},
       onMapCreated: controller.onMapCreated,
-      // onCameraMove: (s) {
-      //   controller.panelController.close();
-      // },
       onCameraMoveStarted: controller.onCameraMoveStarted,
       onCameraIdle: () async {
         controller.onCameraIdle();
@@ -389,9 +325,11 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                       onTap: () async {
                         FocusManager.instance.primaryFocus!.unfocus();
                         controller.panelController.close();
+                        CustomDialog().loadingDialog(context);
                         await Functions.searchPlaces(context,
                             controller.suggestions[index].split("=Rechie=")[0],
                             (searchedPlace) {
+                          Get.back();
                           if (searchedPlace.isEmpty) {
                             return;
                           } else {
@@ -479,114 +417,113 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             letterSpacing: -0.41,
           ),
           Container(height: 20),
-          Obx(
-            () => SizedBox(
-              height: 54,
-              child: TextField(
-                controller: controller.searchCon,
-                decoration: InputDecoration(
-                  hintText: 'Search parking',
-                  hintStyle: paragraphStyle(
-                      color: Color(0xFF6A6161),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 16),
-                  filled: true,
-                  fillColor: const Color(0xFFFBFBFB),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(54),
-                    borderSide: BorderSide(color: AppColor.primaryColor),
-                  ),
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(54),
-                    borderSide: BorderSide(width: 1, color: Color(0xFFCECECE)),
-                  ),
-                  prefixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(width: 15),
-                      SvgPicture.asset("assets/dashboard_icon/search.svg"),
-                      Container(width: 10),
-                    ],
-                  ),
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(width: 15),
-                      if (!controller.isClearSearch.value)
-                        InkWell(
-                            onTap: () {
-                              FocusManager.instance.primaryFocus!.unfocus();
-                              controller.searchCon.clear();
-                              controller.isClearSearch.value = true;
-                              controller.fetchSuggestions();
-                              controller.panelController.close();
-                            },
-                            child: SvgPicture.asset(
-                                "assets/dashboard_icon/close.svg")),
-                      if (controller.isClearSearch.value)
-                        Row(
-                          children: [
-                            InkWell(
-                                onTap: () {
-                                  showModalBottomSheet(
-                                    context: Get.context!,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.vertical(
-                                          top: Radius.circular(
-                                              20.0)), // Rounded corners
-                                    ),
-                                    clipBehavior: Clip.none,
-                                    builder: (BuildContext context) {
-                                      // Obtain the screen height
+          SizedBox(
+            height: 54,
+            child: TextField(
+              controller: controller.searchCon,
 
-                                      return FilterMap(cb: (data) {
-                                        controller.getFilterNearest(data);
-                                      });
-                                    },
-                                    isScrollControlled:
-                                        true, // Ensure the height is respected
-                                  );
-                                },
-                                child: SvgPicture.asset(
-                                    "assets/dashboard_icon/filter.svg")),
-                            const SizedBox(width: 10),
-                            InkWell(
+              autofocus: false,
+              style: paragraphStyle(color: Colors.black, fontSize: 16),
+              maxLines: 1, // Ensures single line input
+              textAlign: TextAlign.left,
+              decoration: InputDecoration(
+                contentPadding: EdgeInsets.symmetric(vertical: 10),
+                hintText: 'Search parking',
+                hintStyle: paragraphStyle(
+                  color: Color(0xFF6A6161),
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+                filled: true,
+                fillColor: const Color(0xFFFBFBFB),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(54),
+                  borderSide: BorderSide(color: AppColor.primaryColor),
+                ),
+                border: const OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(54),
+                  borderSide: BorderSide(width: 1, color: Color(0xFFCECECE)),
+                ),
+                prefixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(width: 15),
+                    SvgPicture.asset("assets/dashboard_icon/search.svg"),
+                    Container(width: 10),
+                  ],
+                ),
+                suffixIcon: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(width: 15),
+                    if (controller.searchCon.text.isNotEmpty)
+                      InkWell(
+                          onTap: () {
+                            FocusManager.instance.primaryFocus!.unfocus();
+                            controller.searchCon.clear();
+
+                            controller.suggestions.clear();
+                            controller.panelController.close();
+                          },
+                          child: SvgPicture.asset(
+                              "assets/dashboard_icon/close.svg")),
+                    if (controller.searchCon.text.isEmpty)
+                      Row(
+                        children: [
+                          InkWell(
                               onTap: () {
-                                FocusManager.instance.primaryFocus?.unfocus();
-                                Get.dialog(
-                                  const VoiceSearchPopup(),
-                                  arguments: (data) {
-                                    controller.searchCon.text = data;
-                                    controller.fetchSuggestions();
+                                showModalBottomSheet(
+                                  context: Get.context!,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(
+                                            20.0)), // Rounded corners
+                                  ),
+                                  clipBehavior: Clip.none,
+                                  builder: (BuildContext context) {
+                                    // Obtain the screen height
+
+                                    return FilterMap(cb: (data) {
+                                      controller.getFilterNearest(data);
+                                    });
                                   },
+                                  isScrollControlled:
+                                      true, // Ensure the height is respected
                                 );
                               },
                               child: SvgPicture.asset(
-                                  "assets/dashboard_icon/voice.svg"),
-                            ),
-                          ],
-                        ),
-                      Container(width: 15),
-                    ],
-                  ),
+                                  "assets/dashboard_icon/filter.svg")),
+                          const SizedBox(width: 10),
+                          InkWell(
+                            onTap: () {
+                              FocusManager.instance.primaryFocus?.unfocus();
+                              Get.dialog(
+                                const VoiceSearchPopup(),
+                                arguments: (data) {
+                                  controller.searchCon.text = data;
+                                  controller.onVoiceGiatay();
+                                },
+                              );
+                            },
+                            child: SvgPicture.asset(
+                                "assets/dashboard_icon/voice.svg"),
+                          ),
+                        ],
+                      ),
+                    Container(width: 15),
+                  ],
                 ),
-                style: paragraphStyle(color: Colors.black, fontSize: 16),
-                onTap: () {
-                  controller.panelController.open();
-                },
-                onChanged: (text) {
-                  controller.fetchSuggestions();
-                  controller.searchCon.text = text;
-                  if (text.isEmpty) {
-                    controller.isClearSearch.value = true;
-                  } else {
-                    controller.isClearSearch.value = false;
-                  }
-                },
               ),
+              onTap: () {
+                controller.panelController.open();
+              },
+              onChanged: (text) {
+                controller.searchCon.text = text;
+                controller.onSearchChanged();
+              },
             ),
-          )
+          ),
         ],
       ),
     );
@@ -651,7 +588,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                     textAlign: TextAlign.center,
                     style: paragraphStyle(color: Colors.black),
                     onChanged: (text) {
-                      controller.fetchSuggestions();
+                      controller.fetchSuggestions(() {});
                     },
                   ),
                 ),

@@ -244,191 +244,203 @@ class _FilterMapState extends State<FilterMap> {
             )
           : isLoadingPage
               ? const PageLoader()
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //VEHICLE TYPE
-                    Container(height: 20),
-                    Center(
-                      child: Container(
-                        width: 71,
-                        height: 6,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(56),
-                          color: const Color(0xffd9d9d9),
+              : StretchingOverscrollIndicator(
+                  axisDirection: AxisDirection.down,
+                  child: ScrollConfiguration(
+                    behavior: ScrollBehavior().copyWith(overscroll: false),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //VEHICLE TYPE
+                        Container(height: 20),
+                        Center(
+                          child: Container(
+                            width: 71,
+                            height: 6,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(56),
+                              color: const Color(0xffd9d9d9),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
 
-                    Container(height: 20),
-                    Expanded(
-                        child: StretchingOverscrollIndicator(
-                      axisDirection: AxisDirection.down,
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.all(15),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const CustomParagraph(
-                              text: "Vehicle Type",
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            Container(height: 10),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  buildFilterOptions(),
-                                ],
-                              ),
-                            ),
-                            Container(height: 10),
-                            //PARKING TYPE
-                            const CustomParagraph(
-                              text: "Parking Type",
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            Container(height: 10),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  buildFilterChips(),
-                                ],
-                              ),
-                            ),
-                            const CustomParagraph(
-                              text: "Radius",
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            //RADIUS
-                            Row(
+                        Container(height: 20),
+                        Expanded(
+                            child: StretchingOverscrollIndicator(
+                          axisDirection: AxisDirection.down,
+                          child: SingleChildScrollView(
+                            padding: EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Expanded(
-                                  child: Slider(
-                                    value: currentDistance,
-                                    min:
-                                        double.parse(radiusData.first["value"]),
-                                    max: double.parse(radiusData.last["value"]),
-                                    divisions: 1998,
-                                    label: labelDistance,
-                                    onChanged: (value) {
-                                      onPickDistance(value);
-                                      filterParam = filterParam.map((e) {
-                                        e["radius"] = currentDistance
-                                            .roundToDouble()
-                                            .toString();
-                                        return e;
-                                      }).toList();
-                                      setState(() {});
+                                const CustomParagraph(
+                                  text: "Vehicle Type",
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                Container(height: 10),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      buildFilterOptions(),
+                                    ],
+                                  ),
+                                ),
+                                Container(height: 10),
+                                //PARKING TYPE
+                                const CustomParagraph(
+                                  text: "Parking Type",
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                Container(height: 10),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      buildFilterChips(),
+                                    ],
+                                  ),
+                                ),
+                                const CustomParagraph(
+                                  text: "Radius",
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                //RADIUS
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Slider(
+                                        value: currentDistance,
+                                        min: double.parse(
+                                            radiusData.first["value"]),
+                                        max: double.parse(
+                                            radiusData.last["value"]),
+                                        divisions: 1998,
+                                        label: labelDistance,
+                                        onChanged: (value) {
+                                          onPickDistance(value);
+                                          filterParam = filterParam.map((e) {
+                                            e["radius"] = currentDistance
+                                                .roundToDouble()
+                                                .toString();
+                                            return e;
+                                          }).toList();
+                                          setState(() {});
+                                        },
+                                      ),
+                                    ),
+                                    Text(
+                                      labelDistance,
+                                      style: paragraphStyle(
+                                          fontWeight: FontWeight.w600),
+                                    ),
+                                  ],
+                                ),
+                                //OVERNIGHT PARKING
+                                const CustomParagraph(
+                                  text: "Overnight Parking",
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                  letterSpacing: -0.408,
+                                  fontSize: 14,
+                                ),
+                                Container(height: 10),
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children:
+                                        List.generate(items.length, (index) {
+                                      return InkWell(
+                                        onTap: () {
+                                          filterParam = filterParam.map((e) {
+                                            e["ovp"] = items[index]["value"];
+                                            return e;
+                                          }).toList();
+                                          selectedOvp = index;
+                                          setState(() {});
+                                        },
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 7),
+                                            decoration: BoxDecoration(
+                                              color: selectedOvp == index
+                                                  ? const Color(0xFFEDF7FF)
+                                                  : const Color(0xFFE6EBF0),
+                                              borderRadius:
+                                                  const BorderRadius.all(
+                                                Radius.circular(
+                                                    7), // Rounded corners
+                                              ),
+                                            ),
+                                            child: CustomParagraph(
+                                              text: items[index]["text"],
+                                              fontSize: 14,
+                                              color: selectedOvp == index
+                                                  ? const Color(0xFF0078FF)
+                                                  : const Color(0xFFB6C1CC),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                ),
+                                Container(height: 10),
+
+                                const Divider(
+                                  color: Colors.grey,
+                                ),
+                                Container(height: 10),
+
+                                //Amenities
+                                const CustomParagraph(
+                                  text: "Amenities",
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                Container(height: 10),
+                                Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Flexible(
+                                      child: buildFilterChipsAmenities(),
+                                    ),
+                                  ],
+                                ),
+                                Container(height: 5),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: CustomButton(
+                                    text: "Apply",
+                                    onPressed: () {
+                                      Get.back();
+                                      widget.cb(filterParam);
                                     },
                                   ),
                                 ),
-                                Text(
-                                  labelDistance,
-                                  style: paragraphStyle(
-                                      fontWeight: FontWeight.w600),
-                                ),
                               ],
                             ),
-                            //OVERNIGHT PARKING
-                            const CustomParagraph(
-                              text: "Overnight Parking",
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700,
-                              letterSpacing: -0.408,
-                              fontSize: 14,
-                            ),
-                            Container(height: 10),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: List.generate(items.length, (index) {
-                                  return InkWell(
-                                    onTap: () {
-                                      filterParam = filterParam.map((e) {
-                                        e["ovp"] = items[index]["value"];
-                                        return e;
-                                      }).toList();
-                                      selectedOvp = index;
-                                      setState(() {});
-                                    },
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(10),
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 8, vertical: 7),
-                                        decoration: BoxDecoration(
-                                          color: selectedOvp == index
-                                              ? const Color(0xFFEDF7FF)
-                                              : const Color(0xFFE6EBF0),
-                                          borderRadius: const BorderRadius.all(
-                                            Radius.circular(
-                                                7), // Rounded corners
-                                          ),
-                                        ),
-                                        child: CustomParagraph(
-                                          text: items[index]["text"],
-                                          fontSize: 14,
-                                          color: selectedOvp == index
-                                              ? const Color(0xFF0078FF)
-                                              : const Color(0xFFB6C1CC),
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ),
-                            ),
-                            Container(height: 10),
-
-                            const Divider(
-                              color: Colors.grey,
-                            ),
-                            Container(height: 10),
-
-                            //Amenities
-                            const CustomParagraph(
-                              text: "Amenities",
-                              color: Colors.black87,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            Container(height: 10),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Flexible(
-                                  child: buildFilterChipsAmenities(),
-                                ),
-                              ],
-                            ),
-                            Container(height: 5),
-                            SizedBox(
-                              width: double.infinity,
-                              child: CustomButton(
-                                text: "Apply",
-                                onPressed: () {
-                                  Get.back();
-                                  widget.cb(filterParam);
-                                },
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ))
-                  ],
+                          ),
+                        ))
+                      ],
+                    ),
+                  ),
                 ),
     );
   }

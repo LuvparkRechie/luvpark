@@ -461,169 +461,183 @@ class ParkingScreen extends GetView<ParkingController> {
           },
         ),
         body: Obx(
-          () => Column(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColor.primaryColor,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      offset: const Offset(0, 1),
-                      blurRadius: 1,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 15, vertical: 15),
-                      child: Container(
-                        padding: const EdgeInsets.all(0),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF0D62C3),
-                          borderRadius: BorderRadius.circular(7),
-                          border: Border.all(
-                            color: const Color(0xFF0D62C3),
-                          ),
+          () => StretchingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            child: ScrollConfiguration(
+              behavior: ScrollBehavior().copyWith(overscroll: false),
+              child: Column(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryColor,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.2),
+                          offset: const Offset(0, 1),
+                          blurRadius: 1,
+                          spreadRadius: 0,
                         ),
-                        child: Row(children: [
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                if (controller.isLoading.value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Loading on progress, Please wait...'),
-                                      duration: Duration(seconds: 2),
-                                      backgroundColor: Colors.blue,
-                                      behavior: SnackBarBehavior.floating,
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 15),
+                          child: Container(
+                            padding: const EdgeInsets.all(0),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0D62C3),
+                              borderRadius: BorderRadius.circular(7),
+                              border: Border.all(
+                                color: const Color(0xFF0D62C3),
+                              ),
+                            ),
+                            child: Row(children: [
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (controller.isLoading.value) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Loading on progress, Please wait...'),
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.blue,
+                                          behavior: SnackBarBehavior.floating,
+                                        ),
+                                      );
+                                      return;
+                                    }
+                                    controller.onTabTapped(0);
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeOut,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration:
+                                        controller.currentPage.value != 0
+                                            ? decor2()
+                                            : decor1(),
+                                    child: Center(
+                                      child: CustomParagraph(
+                                        text: "Reservations",
+                                        fontSize: 14,
+                                        color: controller.currentPage.value != 0
+                                            ? Colors.white38
+                                            : Colors.white,
+                                      ),
                                     ),
-                                  );
-                                  return;
-                                }
-                                controller.onTabTapped(0);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeOut,
-                                padding: const EdgeInsets.all(10),
-                                decoration: controller.currentPage.value != 0
-                                    ? decor2()
-                                    : decor1(),
-                                child: Center(
-                                  child: CustomParagraph(
-                                    text: "Reservations",
-                                    fontSize: 14,
-                                    color: controller.currentPage.value != 0
-                                        ? Colors.white38
-                                        : Colors.white,
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Container(width: 5),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                if (controller.isLoading.value) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Loading on progress, Please wait...'),
-                                      duration: Duration(seconds: 2),
-                                      backgroundColor: Colors.blue,
-                                      behavior: SnackBarBehavior.floating,
-                                    ),
-                                  );
-                                  return;
-                                }
-                                controller.onTabTapped(1);
-                              },
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 200),
-                                curve: Curves.easeOut,
-                                padding: const EdgeInsets.all(10),
-                                decoration: controller.currentPage.value != 1
-                                    ? decor2()
-                                    : decor1(),
-                                child: Center(
-                                    child: CustomParagraph(
-                                  text: "Active Parking",
-                                  fontSize: 14,
-                                  color: controller.currentPage.value != 1
-                                      ? Colors.white38
-                                      : Colors.white,
-                                )),
-                              ),
-                            ),
-                          ),
-                        ]),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(height: 10),
-              Expanded(
-                child: controller.isLoading.value
-                    ? const ParkShimmer()
-                    : !controller.hasNet.value
-                        ? NoInternetConnected(
-                            onTap: controller.onRefresh,
-                          )
-                        : controller.resData.isEmpty
-                            ? const NoDataFound(
-                                text: "No parking found",
-                              )
-                            : RefreshIndicator(
-                                onRefresh: controller.onRefresh,
-                                child: ListView.separated(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 15),
-                                    itemBuilder: (context, index) {
-                                      String title = controller.resData[index]
-                                          ["park_area_name"];
-                                      String subTitle = controller
-                                          .resData[index]["ticket_ref_no"];
-                                      String date = Variables.convertDateFormat(
-                                          controller.resData[index]["dt_in"]);
-                                      String time =
-                                          "${Variables.convertTime(controller.resData[index]["dt_in"].toString().split(" ")[1])} - ${Variables.convertTime(controller.resData[index]["dt_out"].toString().split(" ")[1])}";
-                                      String totalAmt = toCurrencyString(
-                                          controller.resData[index]["amount"]
-                                              .toString());
-                                      String status = controller.resData[index]
-                                                  ["status"] ==
-                                              "U"
-                                          ? "${controller.resData[index]["is_auto_extend"].toString() == "Y" ? "EXTENDED" : "ACTIVE"} PARKING"
-                                          : "CONFIRMED";
-
-                                      return ListCard(
-                                        title: title,
-                                        subTitle: subTitle,
-                                        date: date,
-                                        time: time,
-                                        totalAmt: totalAmt,
-                                        status: status,
-                                        data: controller.resData[index],
-                                        currentTab:
-                                            controller.currentPage.value,
-                                        onRefresh: () {},
-                                      );
-                                    },
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(
-                                          height: 15,
+                              Container(width: 5),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    if (controller.isLoading.value) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text(
+                                              'Loading on progress, Please wait...'),
+                                          duration: Duration(seconds: 2),
+                                          backgroundColor: Colors.blue,
+                                          behavior: SnackBarBehavior.floating,
                                         ),
-                                    itemCount: controller.resData.length),
+                                      );
+                                      return;
+                                    }
+                                    controller.onTabTapped(1);
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeOut,
+                                    padding: const EdgeInsets.all(10),
+                                    decoration:
+                                        controller.currentPage.value != 1
+                                            ? decor2()
+                                            : decor1(),
+                                    child: Center(
+                                        child: CustomParagraph(
+                                      text: "Active Parking",
+                                      fontSize: 14,
+                                      color: controller.currentPage.value != 1
+                                          ? Colors.white38
+                                          : Colors.white,
+                                    )),
+                                  ),
+                                ),
                               ),
+                            ]),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(height: 10),
+                  Expanded(
+                    child: controller.isLoading.value
+                        ? const ParkShimmer()
+                        : !controller.hasNet.value
+                            ? NoInternetConnected(
+                                onTap: controller.onRefresh,
+                              )
+                            : controller.resData.isEmpty
+                                ? const NoDataFound(
+                                    text: "No parking found",
+                                  )
+                                : RefreshIndicator(
+                                    onRefresh: controller.onRefresh,
+                                    child: ListView.separated(
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 15),
+                                        itemBuilder: (context, index) {
+                                          String title = controller
+                                              .resData[index]["park_area_name"];
+                                          String subTitle = controller
+                                              .resData[index]["ticket_ref_no"];
+                                          String date =
+                                              Variables.convertDateFormat(
+                                                  controller.resData[index]
+                                                      ["dt_in"]);
+                                          String time =
+                                              "${Variables.convertTime(controller.resData[index]["dt_in"].toString().split(" ")[1])} - ${Variables.convertTime(controller.resData[index]["dt_out"].toString().split(" ")[1])}";
+                                          String totalAmt = toCurrencyString(
+                                              controller.resData[index]
+                                                      ["amount"]
+                                                  .toString());
+                                          String status = controller
+                                                          .resData[index]
+                                                      ["status"] ==
+                                                  "U"
+                                              ? "${controller.resData[index]["is_auto_extend"].toString() == "Y" ? "EXTENDED" : "ACTIVE"} PARKING"
+                                              : "CONFIRMED";
+
+                                          return ListCard(
+                                            title: title,
+                                            subTitle: subTitle,
+                                            date: date,
+                                            time: time,
+                                            totalAmt: totalAmt,
+                                            status: status,
+                                            data: controller.resData[index],
+                                            currentTab:
+                                                controller.currentPage.value,
+                                            onRefresh: () {},
+                                          );
+                                        },
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(
+                                              height: 15,
+                                            ),
+                                        itemCount: controller.resData.length),
+                                  ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),

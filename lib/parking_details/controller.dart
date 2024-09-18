@@ -16,6 +16,8 @@ import 'package:luvpark_get/routes/routes.dart';
 class ParkingDetailsController extends GetxController {
   final dataNearest = Get.arguments;
   Rx<GoogleMapController?> googleMapController = Rx<GoogleMapController?>(null);
+  final DraggableScrollableController dragController =
+      DraggableScrollableController();
 
   RxList<Widget> carsData = <Widget>[].obs;
   RxBool btnLoading = false.obs;
@@ -284,6 +286,21 @@ class ParkingDetailsController extends GetxController {
   }
 
   void onClickBooking() {
+    btnLoading.value = true;
+    CustomDialog().loadingDialog(Get.context!);
+    if (dataNearest["is_allow_reserve"] == "N") {
+      btnLoading.value = false;
+      Get.back();
+      CustomDialog().errorDialog(
+        Get.context!,
+        "luvpark",
+        "This area is not available at the moment.",
+        () {
+          Get.back();
+        },
+      );
+      return;
+    }
     if (dataNearest["is_24_hrs"] == "N") {
       DateTime now = DateTime.now();
       String ctime = dataNearest["closed_time"].toString().trim();
@@ -298,6 +315,8 @@ class ParkingDetailsController extends GetxController {
       int minutes = difference.inMinutes;
 
       if (minutes <= 0) {
+        btnLoading.value = false;
+        Get.back();
         CustomDialog().infoDialog(
             "luvpark", "Apologies, but we are closed for bookings right now.",
             () {
@@ -305,8 +324,10 @@ class ParkingDetailsController extends GetxController {
         });
         return;
       }
-      print("minutes $minutes");
+
       if (minutes <= 29) {
+        btnLoading.value = false;
+        Get.back();
         CustomDialog().errorDialog(
           Get.context!,
           "luvpark",
@@ -318,59 +339,116 @@ class ParkingDetailsController extends GetxController {
         return;
       }
     }
+    Functions.getUserBalance(Get.context!, (dataBalance) async {
+      final userdata = dataBalance[0];
+      final items = userdata["items"];
 
-    btnLoading.value = true;
-    if (dataNearest["is_allow_reserve"] == "N") {
-      btnLoading.value = false;
-      CustomDialog().errorDialog(
-        Get.context!,
-        "luvpark",
-        "This area is not available at the moment.",
-        () {
+      if (userdata["success"]) {
+        if (double.parse(items[0]["amount_bal"].toString()) <
+            double.parse(items[0]["min_wallet_bal"].toString())) {
+          btnLoading.value = false;
           Get.back();
-        },
-      );
-    } else {
-      Functions.getUserBalance(Get.context!, (dataBalance) async {
-        final userdata = dataBalance[0];
-        final items = userdata["items"];
-        btnLoading.value = false;
-        if (userdata["success"]) {
-          if (double.parse(items[0]["amount_bal"].toString()) <
-              double.parse(items[0]["min_wallet_bal"].toString())) {
+          CustomDialog().errorDialog(
+            Get.context!,
+            "Attention",
+            "Your balance is below the required minimum for this feature. "
+                "Please ensure a minimum balance of ${items[0]["min_wallet_bal"]} tokens to access the requested service.",
+            () {
+              Get.back();
+            },
+          );
+          return;
+        } else {
+          Functions.computeDistanceResorChckIN(Get.context!, destLoc.value,
+              (success) {
             btnLoading.value = false;
-            CustomDialog().errorDialog(
-              Get.context!,
-              "Attention",
-              "Your balance is below the required minimum for this feature. "
-                  "Please ensure a minimum balance of ${items[0]["min_wallet_bal"]} tokens to access the requested service.",
-              () {
-                Get.back();
-              },
-            );
-            return;
-          } else {
-            Functions.computeDistanceResorChckIN(Get.context!, destLoc.value,
-                (success) {
-              btnLoading.value = false;
-
-              if (success["success"]) {
-                Get.toNamed(Routes.booking, arguments: {
-                  "currentLocation": success["location"],
-                  "areaData": dataNearest,
-                  "canCheckIn": success["can_checkIn"],
-                  "userData": items,
-                });
-              }
-            });
-          }
+            Get.back();
+            if (success["success"]) {
+              Get.toNamed(Routes.booking, arguments: {
+                "currentLocation": success["location"],
+                "areaData": dataNearest,
+                "canCheckIn": success["can_checkIn"],
+                "userData": items,
+              });
+            }
+          });
         }
-      });
+      } else {
+        btnLoading.value = false;
+        Get.back();
+      }
+    });
+  }
+
+  String getIconAssetForPwdDetails(
+      String parkingTypeCode, String vehicleTypes) {
+    switch (parkingTypeCode) {
+      case "S":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/blue/blue_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/blue/blue_mp.svg';
+        } else {
+          return 'assets/details_logo/blue/blue_cp.svg';
+        }
+      case "P":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/orange/orange_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/orange/orange_mp.svg';
+        } else {
+          return 'assets/details_logo/orange/orange_cp.svg';
+        }
+      case "C":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/green/green_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/green/green_mp.svg';
+        } else {
+          return 'assets/details_logo/green/green_cp.svg';
+        }
+      default:
+        return 'assets/details_logo/violet/violet.svg'; // Valet
     }
   }
 
-  void onHideAmenities(bool isHide) {
-    isHideAmen.value = isHide;
-    update();
+  String getIconAssetForNonPwdDetails(
+      String parkingTypeCode, String vehicleTypes) {
+    switch (parkingTypeCode) {
+      case "S":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/blue/blue_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/blue/blue_motor.svg';
+        } else {
+          return 'assets/details_logo/blue/blue_car.svg';
+        }
+      case "P":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/orange/orange_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/orange/orange_motor.svg';
+        } else {
+          return 'assets/details_logo/orange/orange_car.svg';
+        }
+      case "C":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/green/green_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/green/green_motor.svg';
+        } else {
+          return 'assets/details_logo/green/green_car.svg';
+        }
+      case "V":
+        return 'assets/details_logo/violet/violet.svg'; // Valet
+      default:
+        return 'assets/images/no_image.png'; // Fallback icon
+    }
   }
 }

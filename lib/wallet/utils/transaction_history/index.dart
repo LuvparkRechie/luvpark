@@ -14,9 +14,9 @@ import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/custom_widgets/page_loader.dart';
 import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/wallet/utils/transaction_details.dart';
 
 import '../../../auth/authentication.dart';
+import '../transaction_details.dart';
 
 class TransactionHistory extends StatefulWidget {
   const TransactionHistory({super.key});
@@ -174,10 +174,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                           itemBuilder: (context, index) {
                             return GestureDetector(
                               onTap: () {
-                                showModalBottomSheet(
-                                  backgroundColor: Colors.transparent,
-                                  context: context,
-                                  builder: (context) => TransactionDetails(
+                                Get.dialog(
+                                  TransactionDetails(
                                     index: index,
                                     data: filterLogs,
                                   ),

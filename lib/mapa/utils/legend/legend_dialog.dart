@@ -73,14 +73,20 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * .60,
-                      child: PageView(
-                        controller: pageController,
-                        onPageChanged: (index) {
-                          setState(() {
-                            currentPage = index;
-                          });
-                        },
-                        children: [page1(), page2()],
+                      child: ScrollConfiguration(
+                        behavior: ScrollBehavior().copyWith(overscroll: false),
+                        child: StretchingOverscrollIndicator(
+                          axisDirection: AxisDirection.right,
+                          child: PageView(
+                            controller: pageController,
+                            onPageChanged: (index) {
+                              setState(() {
+                                currentPage = index;
+                              });
+                            },
+                            children: [page1(), page2()],
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -120,7 +126,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
         ),
         SizedBox(height: 8),
         Text(
-          'Parking Zones',
+          'Parking Zone Signs',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Color(0xFF1E1E1E),
@@ -283,7 +289,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
         ),
         SizedBox(height: 8),
         Text(
-          'Parking Zones',
+          'Parking Icons',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Color(0xFF1E1E1E),
@@ -294,7 +300,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
         ),
         SizedBox(height: 8),
         Text(
-          'These are the meanings of the colors\nassigned to each parking zone',
+          'Watch out for these parking signs to see which vehicles are allowed',
           textAlign: TextAlign.center,
           style: TextStyle(
             color: Color(0xFF616161),

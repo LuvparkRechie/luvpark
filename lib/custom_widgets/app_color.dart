@@ -11,5 +11,6 @@ class AppColor {
 
   //
   static const linkLabel = Color(0xFF070707);
-  static Color paragraphColor = const Color(0xFF666666);
+  static Color paragraphColor = const Color.fromARGB(255, 117, 117, 117);
+  static Color titleColor = Color(0xFF1C1C1E);
 }
