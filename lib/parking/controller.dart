@@ -113,11 +113,15 @@ class ParkingController extends GetxController
           return;
         } else {
           List itemData = returnData["items"];
-
+          itemData = itemData.where((element) {
+            DateTime timeNow = DateTime.now();
+            DateTime timeOut = DateTime.parse(element["dt_out"].toString());
+            return timeNow.isBefore(timeOut);
+          }).toList();
           resData.value = itemData;
         }
       } finally {
-        isLoading.value = false; // Ensure loading ends
+        isLoading.value = false;
       }
     });
   }

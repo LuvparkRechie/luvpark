@@ -238,7 +238,8 @@ class RegistrationPage extends GetView<RegistrationController> {
                                       CustomDialog().snackbarDialog(
                                           context,
                                           'For enhanced security, please create a stronger password.',
-                                          Colors.red);
+                                          Colors.red,
+                                          () {});
                                       return;
                                     }
                                     if (controller.isLoading.value) return;

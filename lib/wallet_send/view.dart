@@ -77,10 +77,12 @@ class WalletSend extends GetView<WalletSendController> {
                                 ),
                                 Expanded(
                                   child: CustomParagraph(
-                                    text: controller.userData.isEmpty
-                                        ? ""
-                                        : toCurrencyString(controller
-                                            .userData[0]["amount_bal"]),
+                                    text: !controller.isNetConn.value
+                                        ? "No internet"
+                                        : controller.userData.isEmpty
+                                            ? ""
+                                            : toCurrencyString(controller
+                                                .userData[0]["amount_bal"]),
                                     color: Colors.white,
                                     fontWeight: FontWeight.w700,
                                     textAlign: TextAlign.right,
@@ -193,14 +195,26 @@ class WalletSend extends GetView<WalletSendController> {
 
                                   if (item["mobile_no"].toString() ==
                                       "63${controller.recipient.text.replaceAll(" ", "")}") {
-                                    // ignore: use_build_context_synchronously
                                     CustomDialog().snackbarDialog(
                                         context,
                                         "Please use another number.",
-                                        Colors.red);
+                                        Colors.red,
+                                        () {});
                                     return;
                                   }
-
+                                  if (double.parse(controller.userData[0]
+                                              ["amount_bal"]
+                                          .toString()) <
+                                      double.parse(controller.tokenAmount.text
+                                          .toString()
+                                          .removeAllWhitespace)) {
+                                    CustomDialog().snackbarDialog(
+                                        context,
+                                        "Insuficient balance.",
+                                        Colors.red,
+                                        () {});
+                                    return;
+                                  }
                                   CustomDialog().confirmationDialog(
                                       context,
                                       "Confirmation",

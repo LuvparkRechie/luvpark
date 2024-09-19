@@ -138,15 +138,21 @@ class LoginScreen extends GetView<LoginScreenController> {
                                     if (controller.mobileNumber.text.isEmpty) {
                                       controller.toggleLoading(
                                           !controller.isLoading.value);
-                                      CustomDialog().snackbarDialog(context,
-                                          "Mobile number is empty", Colors.red);
+                                      CustomDialog().snackbarDialog(
+                                          context,
+                                          "Mobile number is empty",
+                                          Colors.red,
+                                          () {});
                                       return;
                                     }
                                     if (controller.password.text.isEmpty) {
                                       controller.toggleLoading(
                                           !controller.isLoading.value);
-                                      CustomDialog().snackbarDialog(context,
-                                          "Password is empty", Colors.red);
+                                      CustomDialog().snackbarDialog(
+                                          context,
+                                          "Password is empty",
+                                          Colors.red,
+                                          () {});
                                       return;
                                     }
                                     controller.getAccountStatus(context,

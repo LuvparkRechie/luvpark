@@ -412,7 +412,7 @@ class CustomDialog {
             ),
             clipBehavior: Clip.hardEdge,
             child: Image.asset(
-              'assets/images/pu_confirmation.png', // Use the static image name
+              'assets/images/pu_info.png', // Use the static image name
               fit: BoxFit.cover,
               height: 100,
               width: double.infinity,
@@ -634,7 +634,8 @@ class CustomDialog {
     );
   }
 
-  void snackbarDialog(BuildContext context, String text, Color? color) {
+  void snackbarDialog(
+      BuildContext context, String text, Color? color, VoidCallback? onTap) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: color ?? Colors.red,
@@ -643,7 +644,31 @@ class CustomDialog {
         action: SnackBarAction(
           textColor: Colors.white,
           label: 'Okay',
-          onPressed: () {},
+          onPressed: () {
+            // Call onTap only if it is not null
+            onTap!();
+          },
+        ),
+      ),
+    );
+  }
+
+  void snackbarDialog2(
+      BuildContext context, String text, Color? color, VoidCallback? onTap) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: color,
+        content: Text(text),
+
+        duration: Duration(seconds: 30), // No auto-dismiss
+        action: SnackBarAction(
+          textColor: Colors.white,
+          label: 'Okay',
+          onPressed: () {
+            // Call onTap only if it is not null
+            onTap!();
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
         ),
       ),
     );

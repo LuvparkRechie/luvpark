@@ -627,7 +627,6 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                                       onPressed: () async {
                                         CustomDialog().loadingDialog(context);
                                         String mapUrl = "";
-
                                         String dest =
                                             "${destLocation.latitude},${destLocation.longitude}";
                                         if (Platform.isIOS) {

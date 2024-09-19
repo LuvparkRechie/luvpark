@@ -7,7 +7,7 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/vertical_height.dart';
 import 'package:pinput/pinput.dart';
 
-import '../custom_widgets/custom_appbar.dart';
+import '../../custom_widgets/custom_appbar.dart';
 import 'controller.dart';
 
 class SendOtp extends GetView<SendOtpController> {
@@ -171,7 +171,7 @@ class SendOtp extends GetView<SendOtpController> {
                 Obx(
                   () => InkWell(
                     onTap: () {
-                      if (controller.minutes.value <= 2) {
+                      if (controller.seconds.value == 0) {
                         controller.restartTimer();
                       }
                     },

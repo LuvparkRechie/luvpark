@@ -400,7 +400,7 @@ class BookingReceipt extends GetView<BookingReceiptController> {
 
                           GallerySaver.saveImage(imagePath.path).then((result) {
                             CustomDialog().snackbarDialog(Get.context!,
-                                "Successfully saved.", Colors.green);
+                                "Successfully saved.", Colors.green, () {});
                           });
                         });
                       }),

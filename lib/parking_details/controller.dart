@@ -301,20 +301,51 @@ class ParkingDetailsController extends GetxController {
       );
       return;
     }
+
     if (dataNearest["is_24_hrs"] == "N") {
-      DateTime now = DateTime.now();
+      final now = DateTime.now();
+      int getDiff(String time) {
+        DateTime specifiedTime = DateFormat("HH:mm").parse(time);
+        DateTime todaySpecifiedTime = DateTime(now.year, now.month, now.day,
+            specifiedTime.hour, specifiedTime.minute);
+        Duration difference = todaySpecifiedTime.difference(now);
+        return difference.inMinutes;
+      }
+
+      int diffBook(time) {
+        DateTime specifiedTime = DateFormat("HH:mm").parse(time);
+        final DateTime openingTime = DateTime(now.year, now.month, now.day,
+            specifiedTime.hour, specifiedTime.minute); // Opening at 2:30 PM
+
+        int diff = openingTime.difference(now).inMinutes;
+
+        return diff;
+      }
+
       String ctime = dataNearest["closed_time"].toString().trim();
-      DateTime specifiedTime = DateFormat("HH:mm").parse(ctime);
-      DateTime todaySpecifiedTime = DateTime(now.year, now.month, now.day,
-          specifiedTime.hour, specifiedTime.minute);
+      String otime = dataNearest["opened_time"].toString().trim();
 
-      // Calculate the difference between the current time and the specified time
-      Duration difference = todaySpecifiedTime.difference(now);
+      if (diffBook(otime) > 30) {
+        btnLoading.value = false;
+        Get.back();
 
+        DateTime st = DateFormat("HH:mm").parse(otime);
+        final DateTime ot =
+            DateTime(now.year, now.month, now.day, st.hour, st.minute)
+                .subtract(Duration(minutes: 30));
+        String formattedTime = DateFormat.jm().format(ot);
+
+        CustomDialog().infoDialog("Booking Policy",
+            "Booking will start at $formattedTime.\nPlease come back later.\nThank you",
+            () {
+          Get.back();
+        });
+        return;
+      }
       // Convert the difference to minutes
-      int minutes = difference.inMinutes;
+      int minutesClose = getDiff(ctime);
 
-      if (minutes <= 0) {
+      if (minutesClose <= 0) {
         btnLoading.value = false;
         Get.back();
         CustomDialog().infoDialog(
@@ -325,7 +356,7 @@ class ParkingDetailsController extends GetxController {
         return;
       }
 
-      if (minutes <= 29) {
+      if (minutesClose <= 29) {
         btnLoading.value = false;
         Get.back();
         CustomDialog().errorDialog(
@@ -339,6 +370,7 @@ class ParkingDetailsController extends GetxController {
         return;
       }
     }
+
     Functions.getUserBalance(Get.context!, (dataBalance) async {
       final userdata = dataBalance[0];
       final items = userdata["items"];

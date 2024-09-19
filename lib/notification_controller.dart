@@ -304,7 +304,14 @@ Future<void> getParkingTrans(int ctr) async {
       return;
     }
     if (notificationData != null) {
-      for (var dataRow in notificationData["items"]) {
+      List itemData = notificationData["items"];
+      itemData = itemData.where((element) {
+        DateTime timeNow = DateTime.now();
+        DateTime timeOut = DateTime.parse(element["dt_out"].toString());
+        return timeNow.isBefore(timeOut);
+      }).toList();
+
+      for (var dataRow in itemData) {
         await NotificationDatabase.instance
             .readNotificationByDateOut(
                 dataRow["dt_in"].toString(), dataRow["reservation_id"])
@@ -317,7 +324,7 @@ Future<void> getParkingTrans(int ctr) async {
           if (!Variables.withinOneHourRange(targetDate)) return;
 
           if (returnData == null) {
-            // Insert process
+            // Insert process check in
             var resData = {
               NotificationDataFields.reservedId:
                   int.parse(dataRow["reservation_id"].toString()),
@@ -346,6 +353,13 @@ Future<void> getParkingTrans(int ctr) async {
                   "Your Parking at ${dataRow["park_area_name"]} is about to expire.",
                   dataRow["dt_out"].toString(),
                   "parking");
+
+              NotificationController.scheduleNewNotification(
+                  0,
+                  "luvpark",
+                  "Your parking at ${dataRow["park_area_name"]} will be closing soon",
+                  dataRow["end_time"].toString(),
+                  "");
 
               await NotificationDatabase.instance.insertUpdate(resData);
             }

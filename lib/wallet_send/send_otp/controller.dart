@@ -4,14 +4,15 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 
-import '../custom_widgets/alert_dialog.dart';
-import '../http/api_keys.dart';
-import '../http/http_request.dart';
-import '../notification_controller.dart';
+import '../../custom_widgets/alert_dialog.dart';
+import '../../http/api_keys.dart';
+import '../../http/http_request.dart';
+import '../../notification_controller.dart';
 
 class SendOtpController extends GetxController {
   SendOtpController();
-  List paramArgs = Get.arguments;
+  List paramArgs = Get.arguments["otpData"];
+  final cbFunc = Get.arguments["cb"];
   TextEditingController pinController = TextEditingController();
   RxBool isLoading = false.obs;
   RxBool isInternetConn = true.obs;
@@ -20,9 +21,9 @@ class SendOtpController extends GetxController {
   RxBool isCanSend = false.obs;
   Timer? timer;
   RxString inputPin = "".obs;
-  RxInt minutes = 5.obs;
+  RxInt minutes = 2.obs;
   RxInt seconds = 0.obs;
-  RxInt initialMinutes = 5.obs;
+  RxInt initialMinutes = 2.obs;
 
   @override
   void onInit() {
@@ -101,6 +102,7 @@ class SendOtpController extends GetxController {
           return e;
         }).toList();
         inputPin.value = "";
+        pinController.text = "";
         minutes.value = initialMinutes.value;
         seconds.value = 0;
         isRunning.value = false;
@@ -162,6 +164,7 @@ class SendOtpController extends GetxController {
                 Get.context!, "Success", "Transaction complete", "Okay", () {
               Get.back();
               Get.back();
+              cbFunc();
             });
           } else {
             Get.back();

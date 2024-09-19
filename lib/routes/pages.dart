@@ -34,10 +34,10 @@ import '../permission/permission.dart';
 import '../registration/index.dart';
 import '../registration/utils/otp_screen/index.dart';
 import '../security_settings/index.dart';
-import '../send_otp/index.dart';
 import '../splash_screen/index.dart';
 import '../wallet/index.dart';
 import '../wallet_send/index.dart';
+import '../wallet_send/send_otp/index.dart';
 import 'routes.dart';
 
 class AppPages {

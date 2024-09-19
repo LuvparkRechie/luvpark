@@ -1,4 +1,4 @@
-import 'dart:convert';
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,7 +8,6 @@ import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/routes/routes.dart';
 
 import '../custom_widgets/alert_dialog.dart';
-import '../functions/functions.dart';
 
 class WalletSendController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -22,47 +21,22 @@ class WalletSendController extends GetxController
   final GlobalKey contentKey = GlobalKey();
   RxBool isLpAccount = false.obs;
   RxBool isLoading = true.obs;
-  RxBool isBtnDisabled = true.obs;
-  RxBool isInternetConn = true.obs;
-  RxBool isValidNumber = false.obs;
+
+  RxBool isNetConn = true.obs;
   RxList userData = [].obs;
-  RxList logs = [].obs;
+
   RxInt denoInd = 0.obs;
-  RxDouble amountBalance = 0.0.obs;
-  RxString myBalance = "".obs;
+
   RxInt indexbtn = 0.obs;
   RxList<int> padNumbers = [10, 20, 30, 40, 50, 100, 200, 250].obs;
-  void onPageChanged(bool agree) {
-    update();
-  }
+  Timer? _timer;
 
+// //naa
   Future<void> onTextChange() async {
     denoInd.value = -1;
-
-    if (recipient.value.text.isEmpty ||
-        tokenAmount.text.isEmpty ||
-        double.parse(
-                tokenAmount.text.replaceAll(",", "").replaceAll(".", "")) <=
-            0) {
-      isBtnDisabled.value = true;
-    } else {
-      isBtnDisabled.value = false;
-    }
   }
 
-  Future<void> getConsumersData() async {
-    Functions.getUserBalance(Get.context!, (dataBalance) async {
-      if (!dataBalance[0]["has_net"]) {
-        isLoading.value = false;
-        isInternetConn.value = false;
-        return;
-      } else {
-        userData.value = dataBalance[0]["items"];
-        getLogs();
-      }
-    });
-  }
-
+//naa
   Future<void> getVerifiedAcc() async {
     CustomDialog().loadingDialog(Get.context!);
 
@@ -99,6 +73,7 @@ class WalletSendController extends GetxController
     });
   }
 
+//naa
   Future<void> sendOtp() async {
     final item = await Authentication().getUserLogin();
     Map<String, dynamic> paramSend = {
@@ -137,7 +112,12 @@ class WalletSendController extends GetxController
 
             Get.toNamed(
               Routes.sendOtp,
-              arguments: otpData,
+              arguments: {
+                "otpData": otpData,
+                "cb": () {
+                  refreshUserData();
+                }
+              },
             );
           } else {
             Get.back();
@@ -151,76 +131,48 @@ class WalletSendController extends GetxController
     );
   }
 
-  Future<void> onContinue() async {
-    FocusManager.instance.primaryFocus!.unfocus();
-    if (isBtnDisabled.value) {
-      CustomDialog().errorDialog(Get.context!, "Attention",
-          "Please ensure that you have filled out the provided form before we can proceed.",
-          () {
-        Get.back();
-      });
-      return;
-    }
-  }
-
-  Future<void> getLogs() async {
-    myBalance.value = "";
-    final item = await Authentication().getUserData();
-    String userId = jsonDecode(item!)['user_id'].toString();
-
-    isLoading.value = true;
-
-    String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$userId";
-
-    HttpRequest(api: subApi).get().then((response) {
-      if (response == "No Internet") {
-        isLoading.value = false;
-        isInternetConn.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () => Get.back());
-        return;
-      }
-      if (response == null) {
-        isLoading.value = true;
-        isInternetConn.value = true;
-        CustomDialog().errorDialog(
-          Get.context!,
-          "Error",
-          "Error while connecting to server, Please contact support.",
-          () => Get.back(),
-        );
-        return;
-      }
-
-      if (response["items"].isNotEmpty) {
-        isLoading.value = false;
-        isInternetConn.value = true;
-        logs.value = response["items"];
-      } else {
-        isLoading.value = false;
-        isInternetConn.value = true;
-        CustomDialog().errorDialog(
-          Get.context!,
-          "luvpark",
-          "No amenities found in this area.",
-          () => Get.back(),
-        );
-      }
-    });
-  }
-
+//naa
   Future<void> onBtnChange(int value) async {
     tokenAmount.text = value.toString();
     indexbtn.value = value;
   }
 
+//naa
+  Future<void> refreshUserData() async {
+    isLoading.value = true;
+    final userId = await Authentication().getUserId();
+    String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$userId";
+
+    HttpRequest(api: subApi).get().then((returnBalance) async {
+      isLoading.value = false;
+      if (returnBalance == "No Internet") {
+        isNetConn.value = false;
+
+        return;
+      }
+      isNetConn.value = true;
+      if (returnBalance["items"].isNotEmpty) {
+        userData.value = returnBalance["items"];
+      }
+    });
+  }
+
+  Future<void> timerPeriodic() async {
+    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+      refreshUserData();
+    });
+  }
+
   @override
   void onInit() {
-    getConsumersData();
+    timerPeriodic();
+
     super.onInit();
   }
 
   @override
   void onClose() {
+    _timer!.cancel();
     super.onClose();
   }
 }

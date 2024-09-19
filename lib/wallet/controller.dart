@@ -12,15 +12,17 @@ import 'package:luvpark_get/http/http_request.dart';
 class WalletController extends GetxController
     with GetSingleTickerProviderStateMixin {
   WalletController();
-  late StreamController<void> _dataController;
-  late StreamSubscription<void> dataSubscription;
-  RxBool isLoading = true.obs;
-  RxBool isNetConn = true.obs;
+  RxBool isLoadingCard = true.obs;
+  RxBool isLoadingLogs = true.obs;
+  RxBool isNetConnCard = true.obs;
+  RxBool isAlreadyShowed = false.obs;
+  RxBool isNetConnLogs = true.obs;
   RxList logs = [].obs;
   RxList userData = [].obs;
-  var userImage;
+  ValueNotifier<String?> userImage = ValueNotifier<String?>(null);
   RxString fname = "".obs;
   RxList filterLogs = [].obs;
+  Timer? _timer;
 
   //FILTER VARIABLES
   final GlobalKey<FormState> formKeyFilter = GlobalKey<FormState>();
@@ -34,31 +36,32 @@ class WalletController extends GetxController
     toDate.text = timeNow.toString().split(" ")[0];
     fromDate.text =
         timeNow.subtract(const Duration(days: 1)).toString().split(" ")[0];
-    _dataController = StreamController<void>();
-    getUserBalance();
+    getUlala();
+    timerPeriodic();
   }
 
-  void streamData() {
-    dataSubscription = _dataController.stream.listen((data) {});
-    fetchDataPeriodically();
+  Future<void> timerPeriodic() async {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      getUserBalance();
+      getLogs();
+    });
   }
 
-  void fetchDataPeriodically() async {
-    dataSubscription = Stream.periodic(const Duration(seconds: 10), (count) {
-      fetchData();
-    }).listen((event) {});
+  Future<void> onRefresh() async {
+    if (isLoadingCard.value) return;
+    _timer!.cancel();
+    isLoadingCard.value = true;
+    isLoadingLogs.value = true;
+    isNetConnCard.value = true;
+    isNetConnLogs.value = true;
+    timerPeriodic();
   }
 
-  Future<void> fetchData() async {
-    await Future.delayed(const Duration(seconds: 5));
-    getUserBalance();
-  }
-
-  Future<void> getUserBalance() async {
+  Future<void> getUlala() async {
     final userPp = await Authentication().getUserProfilePic();
     var uData = await Authentication().getUserData();
     var item = jsonDecode(uData!);
-    userImage = userPp;
+    userImage.value = userPp;
 
     if (item['first_name'] == null) {
       fname.value = "Not specified";
@@ -66,25 +69,76 @@ class WalletController extends GetxController
       fname.value =
           "${item['first_name'].toString()} ${item['last_name'].toString()}";
     }
+  }
 
+  Future<void> getUserBalance() async {
     Functions.getUserBalance2(Get.context!, (dataBalance) async {
       if (!dataBalance[0]["has_net"]) {
-        isLoading.value = false;
-        isNetConn.value = false;
+        isLoadingCard.value = true;
+        isNetConnCard.value = false;
+        print("isAlreadyShowed.value ${isAlreadyShowed.value}");
+
+        if (!isAlreadyShowed.value) {
+          CustomDialog().snackbarDialog2(
+              Get.context!, "No internet connection", Colors.blue, () {
+            isAlreadyShowed.value = true;
+          });
+        }
 
         return;
       } else {
+        isLoadingCard.value = false;
+        isNetConnCard.value = true;
+        isAlreadyShowed.value = false;
+        ScaffoldMessenger.of(Get.context!).removeCurrentSnackBar();
         userData.value = dataBalance[0]["items"];
-        getLogs();
+        return;
       }
     });
   }
 
-  Future<void> onRefresh() async {
-    if (isLoading.value) return;
-    isLoading.value = true;
-    isNetConn.value = true;
-    getUserBalance();
+//Get logs | transaction Page
+  Future<void> getLogs() async {
+    final item = await Authentication().getUserData();
+    String userId = jsonDecode(item!)['user_id'].toString();
+
+    String subApi =
+        "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
+
+    HttpRequest(api: subApi).get().then((response) {
+      if (response == "No Internet") {
+        isLoadingLogs.value = false;
+        isNetConnLogs.value = false;
+
+        return;
+      }
+      if (response == null) {
+        isLoadingLogs.value = false;
+        isNetConnLogs.value = true;
+
+        return;
+      }
+
+      if (response["items"].isNotEmpty) {
+        isLoadingLogs.value = false;
+        isNetConnLogs.value = true;
+
+        DateTime today = DateTime.now().toUtc();
+        String todayString = today.toIso8601String().substring(0, 10);
+
+        List filteredTransactions = response["items"].where((transaction) {
+          String transactionDate =
+              transaction['tran_date'].toString().split("T")[0];
+
+          return transactionDate == todayString;
+        }).toList();
+
+        logs.value = filteredTransactions;
+      } else {
+        isLoadingLogs.value = false;
+        isNetConnLogs.value = true;
+      }
+    });
   }
 
   Future<void> applyFilter() async {
@@ -131,67 +185,9 @@ class WalletController extends GetxController
     }
   }
 
-//Get logs | transaction Page
-  Future<void> getLogs() async {
-    final item = await Authentication().getUserData();
-    String userId = jsonDecode(item!)['user_id'].toString();
-    isLoading.value = true;
-
-    String subApi =
-        "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
-
-    HttpRequest(api: subApi).get().then((response) {
-      if (response == "No Internet") {
-        isLoading.value = false;
-        isNetConn.value = false;
-        logs.value = [];
-        CustomDialog().internetErrorDialog(Get.context!, () => Get.back());
-        return;
-      }
-      if (response == null) {
-        isLoading.value = false;
-        isNetConn.value = true;
-        logs.value = [];
-        CustomDialog().errorDialog(
-          Get.context!,
-          "luvpark",
-          "Error while connecting to server, Please contact support.",
-          () => Get.back(),
-        );
-        return;
-      }
-
-      if (response["items"].isNotEmpty) {
-        isLoading.value = false;
-        isNetConn.value = true;
-
-        DateTime today = DateTime.now().toUtc();
-        String todayString = today.toIso8601String().substring(0, 10);
-
-        List filteredTransactions = response["items"].where((transaction) {
-          String transactionDate =
-              transaction['tran_date'].toString().split("T")[0];
-
-          return transactionDate == todayString;
-        }).toList();
-
-        logs.value = filteredTransactions;
-        streamData();
-      } else {
-        _dataController.close();
-
-        isLoading.value = false;
-        isNetConn.value = true;
-
-        logs.value = [];
-      }
-    });
-  }
-
   @override
   void onClose() {
-    _dataController.close();
-    dataSubscription.cancel();
+    _timer!.cancel();
     super.onClose();
   }
 }
