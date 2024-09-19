@@ -1247,6 +1247,7 @@ class BookingDuration extends GetView<BookingController> {
                         Get.back();
                       }),
                 ),
+              if (Platform.isIOS) Container(height: 20),
             ],
           ),
         ));
@@ -1422,7 +1423,9 @@ class VehicleOption extends GetView<BookingController> {
                                                     controller.onScreenChanged(
                                                         !ct.isFirstScreen
                                                             .value);
-                                                  })
+                                                  }),
+                                              if (Platform.isIOS)
+                                                Container(height: 20),
                                             ],
                                           ),
                                       ],

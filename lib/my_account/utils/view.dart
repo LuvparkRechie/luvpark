@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -95,7 +97,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       onPressed: () {
                         controller.onNextPage();
                       },
-                    )
+                    ),
+                    if (Platform.isIOS) Container(height: 20),
                   ],
                 ),
               ),

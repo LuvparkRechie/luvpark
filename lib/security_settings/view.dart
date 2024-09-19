@@ -176,9 +176,7 @@ class Security extends GetView<SecuritySettingsController> {
                   },
                 ),
               ),
-              Container(
-                height: 10,
-              ),
+              Container(height: 20),
             ],
           ),
         ),

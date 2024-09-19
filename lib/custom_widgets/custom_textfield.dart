@@ -168,7 +168,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         readOnly: !widget.isEnabled || widget.isReadOnly!,
         textAlign: TextAlign.left,
         enabled: widget.isEnabled,
-        keyboardType: TextInputType.number,
+        keyboardType: widget.keyboardType!,
         decoration: InputDecoration(
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),

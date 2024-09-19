@@ -9,6 +9,7 @@ class VoiceSearchPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<VoiceSearchController>(
       init: VoiceSearchController(),
+      
       builder: (controller) {
         return AlertDialog(
           shape: RoundedRectangleBorder(

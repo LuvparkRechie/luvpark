@@ -96,9 +96,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           parallaxEnabled: true,
                           controller: controller.panelController,
                           parallaxOffset: .3,
-                          onPanelOpened: () {
-                            print("on panel open");
-                          },
+                          onPanelOpened: () {},
                           body: _mapa(),
                           panelBuilder: (sc) => panelSearchedList(sc),
                           header:
@@ -159,7 +157,8 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               right: 20,
                               child: InkWell(
                                 onTap: () {
-                                  Get.toNamed(Routes.wallet);
+                                  //  Get.toNamed(Routes.wallet);
+                                  controller.panelController.close();
                                 },
                                 child: Container(
                                   width: 178,

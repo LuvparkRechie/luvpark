@@ -102,12 +102,12 @@ class _RateUsState extends State<RateUs> {
         ),
         width: MediaQuery.of(context).size.width,
         child: SingleChildScrollView(
-          padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+          padding: EdgeInsets.fromLTRB(15, 15, 15, 15),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Align(
-                alignment: Alignment.centerRight,
+                alignment: Alignment.topRight,
                 child: IconButton(
                   onPressed: () {
                     Get.back();
@@ -120,16 +120,17 @@ class _RateUsState extends State<RateUs> {
                 child: CustomTitle(
                   text: "How's your Experience?".toUpperCase(),
                   color: AppColor.primaryColor,
-                  fontSize: 17,
+                  fontSize: 18,
                   fontWeight: FontWeight.w900,
+                  textAlign: TextAlign.center,
                 ),
               ),
+              Container(height: 10),
               CustomTitle(
                 text:
                     "Your feedback is important to us, please rate your experience.",
-                fontWeight: FontWeight.w600,
-                color: Colors.black,
-                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 10),
               Center(
@@ -150,6 +151,7 @@ class _RateUsState extends State<RateUs> {
                   ),
                 ),
               ),
+              Container(height: 10),
               TextFormField(
                 style: TextStyle(
                   color: Colors.black,

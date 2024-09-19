@@ -38,6 +38,7 @@ class TransactionDetails extends StatelessWidget {
                 width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(height: 30),
                     Center(
