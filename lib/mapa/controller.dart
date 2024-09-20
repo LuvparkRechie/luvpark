@@ -82,6 +82,7 @@ class DashboardMapController extends GetxController
   RxDouble panelHeightClosed = 60.0.obs;
 
   Timer? debounce;
+  Timer? debounceIdle;
 
   @override
   void onInit() {
@@ -97,13 +98,12 @@ class DashboardMapController extends GetxController
       vsync: this,
       duration: const Duration(milliseconds: 300),
     );
+    fabHeight.value = panelHeightOpen.value + 30;
+    WidgetsBinding.instance.addObserver(this);
 
     getLastBooking();
     getUserData();
     getDefaultLocation();
-    fabHeight.value = panelHeightOpen.value + 30;
-
-    WidgetsBinding.instance.addObserver(this);
   }
 
   @override
@@ -118,9 +118,14 @@ class DashboardMapController extends GetxController
 
   @override
   void didChangeMetrics() {
-    super.didChangeMetrics();
-    panelController.open();
+    final bottomInset = View.of(Get.context!).viewInsets.bottom;
+
+    if (bottomInset > 0) {
+      panelController.open();
+    } else {}
+
     update();
+    super.didChangeMetrics();
   }
 
   Future<void> onSearchChanged() async {
@@ -516,50 +521,63 @@ class DashboardMapController extends GetxController
       controller.setMapStyle(style);
     });
     gMapController = controller;
+    panelController.open();
     animateCamera();
   }
 
   void onCameraMoveStarted() {
     isGetNearData.value = false;
     panelController.close();
+    print("on camerag move started");
     update();
   }
 
   void onCameraIdle() async {
     isGetNearData.value = true;
-    if (suggestions.isEmpty) {
+    if (debounceIdle?.isActive ?? false) debounceIdle?.cancel();
+
+    Duration duration = const Duration(seconds: 2);
+
+    debounceIdle = Timer(duration, () {
       panelController.open();
-    }
-    update();
+      update();
+    });
   }
 
   void animateCamera() {
     double filterRadius = Variables.convertToMeters(ddRadius.value);
 
-    circle = Circle(
-      circleId: const CircleId('dottedCircle'),
-      center: LatLng(searchCoordinates.latitude, searchCoordinates.longitude),
-      radius: filterRadius,
-      strokeWidth: 0,
-      fillColor: AppColor.primaryColor.withOpacity(.03),
-    );
+    // polyline = Polyline(
+    //   polylineId: const PolylineId('dottedCircle'),
+    //   color: AppColor.mainColor,
+    //   width: 4,
+    //   patterns: [
+    //     PatternItem.dash(20),
+    //     PatternItem.gap(20),
+    //   ],
+    //   points: List<LatLng>.generate(
+    //     360,
+    //     (index) => calculateNewCoordinates(
+    //       searchCoordinates.latitude,
+    //       searchCoordinates.longitude,
+    //       filterRadius,
+    //       double.parse(
+    //         index.toString(),
+    //       ),
+    //     ),
+    //   ),
+    // );
     polyline = Polyline(
-      polylineId: const PolylineId('dottedCircle'),
+      polylineId: const PolylineId('solidCircle'),
       color: AppColor.mainColor,
       width: 4,
-      patterns: [
-        PatternItem.dash(20),
-        PatternItem.gap(20),
-      ],
       points: List<LatLng>.generate(
         360,
         (index) => calculateNewCoordinates(
           searchCoordinates.latitude,
           searchCoordinates.longitude,
           filterRadius,
-          double.parse(
-            index.toString(),
-          ),
+          double.parse(index.toString()),
         ),
       ),
     );

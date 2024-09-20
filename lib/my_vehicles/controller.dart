@@ -256,12 +256,12 @@ class MyVehiclesController extends GetxController {
   }
 
   void takePhoto(ImageSource source, bool isOr) async {
+    bool isIOs = Platform.isIOS;
     final pickedFile = await picker.pickImage(
-      source: source,
-      imageQuality: 25,
-      maxHeight: 480,
-      maxWidth: 640,
-    );
+        source: source,
+        imageQuality: isIOs ? 20 : 25,
+        maxWidth: isIOs ? 300 : 640,
+        requestFullMetadata: false);
 
     imageFile = pickedFile != null ? File(pickedFile.path) : null;
 
@@ -337,9 +337,11 @@ class MyVehiclesController extends GetxController {
       "vcr_image_base64": crImageBase64.value,
     };
 
+    print("paramter $parameter");
     HttpRequest(api: ApiKeys.gApiLuvParkAddVehicle, parameters: parameter)
         .postBody()
         .then((returnPost) async {
+      print("paramter $returnPost");
       FocusManager.instance.primaryFocus!.unfocus();
       isBtnLoading.value = false;
 
@@ -363,7 +365,7 @@ class MyVehiclesController extends GetxController {
             Get.back();
           });
         } else {
-          CustomDialog().errorDialog(Get.context!, "luvpark", "No data found",
+          CustomDialog().errorDialog(Get.context!, "Error", returnPost["msg"],
               () {
             Get.back();
           });

@@ -662,7 +662,8 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                                   ),
                                 ],
                               ),
-                            )
+                            ),
+                            if (Platform.isIOS) Container(height: 20),
                           ],
                         );
                       },
@@ -670,29 +671,6 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
         ),
       ),
     );
-  }
-
-  Widget _buildDetails() {
-    return Container(
-        height: MediaQuery.of(Get.context!).size.height * .60,
-        padding: const EdgeInsets.all(20),
-        width: MediaQuery.of(Get.context!).size.width,
-        clipBehavior: Clip.antiAlias,
-        decoration: const ShapeDecoration(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-              borderRadius: BorderRadius.vertical(top: Radius.circular(7))),
-          shadows: [
-            BoxShadow(
-              color: Color(0x0C000000),
-              blurRadius: 15,
-              offset: Offset(0, 5),
-              spreadRadius: 0,
-            )
-          ],
-        ),
-        child: moreDetails());
   }
 
   Widget moreDetails() {

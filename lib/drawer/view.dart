@@ -15,6 +15,8 @@ import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/sqlite/reserve_notification_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../mapa/utils/legend/legend_dialog.dart';
+
 class CustomDrawer extends GetView<DashboardMapController> {
   const CustomDrawer({super.key});
 
@@ -115,6 +117,30 @@ class CustomDrawer extends GetView<DashboardMapController> {
                         ),
                         onTap: () {
                           Get.toNamed(Routes.helpfeedback);
+                        },
+                      ),
+                      ListTile(
+                        contentPadding: EdgeInsets.zero,
+                        minLeadingWidth: 18,
+                        leading: Icon(
+                          LucideIcons.blinds,
+                          color: Colors.black,
+                        ),
+                        title: const CustomParagraph(
+                          text: "Legend",
+                          fontSize: 16,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1C1C1E),
+                        ),
+                        onTap: () {
+                          Get.back();
+                          Get.dialog(LegendDialogScreen(
+                            callback: () {
+                              controller.dashboardScaffoldKey.currentState
+                                  ?.openDrawer();
+                            },
+                          ));
                         },
                       ),
                     ],

@@ -19,7 +19,7 @@ class WalletController extends GetxController
   RxBool isNetConnLogs = true.obs;
   RxList logs = [].obs;
   RxList userData = [].obs;
-  ValueNotifier<String?> userImage = ValueNotifier<String?>(null);
+  RxString userImage = "".obs;
   RxString fname = "".obs;
   RxList filterLogs = [].obs;
   Timer? _timer;

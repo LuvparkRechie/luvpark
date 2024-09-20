@@ -114,6 +114,7 @@ class ParkingController extends GetxController
         } else {
           List itemData = returnData["items"];
           itemData = itemData.where((element) {
+            print("invalid date $element");
             DateTime timeNow = DateTime.now();
             DateTime timeOut = DateTime.parse(element["dt_out"].toString());
             return timeNow.isBefore(timeOut);

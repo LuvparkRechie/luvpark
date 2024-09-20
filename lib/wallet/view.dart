@@ -81,7 +81,7 @@ class WalletScreen extends GetView<WalletController> {
                                   padding: const EdgeInsets.only(left: 15),
                                   child: CustomParagraph(
                                     text: controller.userData.isEmpty
-                                        ? "Loading..."
+                                        ? "........"
                                         : toCurrencyString(controller
                                             .userData[0]["amount_bal"]),
                                     color: Color(0xFFF8F8F8),
@@ -380,30 +380,28 @@ class WalletScreen extends GetView<WalletController> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        ValueListenableBuilder<String?>(
-          valueListenable: controller.userImage,
-          builder: (context, userImage, child) {
-            return Container(
-              padding: EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                image: userImage != null
-                    ? DecorationImage(
-                        image: MemoryImage(base64Decode(userImage)),
-                        fit: BoxFit.cover,
-                      )
-                    : null,
-              ),
-              child: userImage == null
-                  ? Center(
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.blueAccent,
-                      ),
-                    )
-                  : null,
-            );
-          },
+        Container(
+          padding: EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+          ),
+          child: controller.userImage.value.isEmpty
+              ? Center(
+                  child: Icon(
+                    Icons.person,
+                    color: Colors.blueAccent,
+                  ),
+                )
+              : ClipRRect(
+                  borderRadius: BorderRadius.circular(25),
+                  child: Image.memory(
+                    base64Decode(controller.userImage.value),
+                    gaplessPlayback: true,
+                    width: 50,
+                    height: 50,
+                    fit: BoxFit.cover,
+                  ),
+                ),
         ),
         SizedBox(
           width: 10,
