@@ -43,7 +43,7 @@ class RegistrationController extends GetxController
   Future<void> onSubmit(
       BuildContext context, dynamic parameters, Function cb) async {
     if (isAgree) {
-      CustomDialog().confirmationDialog(context, "Confirm Registration",
+      CustomDialog().confirmationDialog(context, "Create Account",
           "Are you sure you want to proceed?", "No", "Yes", () {
         cb([
           {"has_net": true, "success": false, "items": []}
@@ -81,6 +81,7 @@ class RegistrationController extends GetxController
               ]);
               Get.back();
             });
+
             return;
           } else {
             cb([

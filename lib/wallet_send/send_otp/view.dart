@@ -171,7 +171,8 @@ class SendOtp extends GetView<SendOtpController> {
                 Obx(
                   () => InkWell(
                     onTap: () {
-                      if (controller.seconds.value == 0) {
+                      if (controller.minutes.value < 1 &&
+                          controller.seconds.value <= 59) {
                         controller.restartTimer();
                       }
                     },

@@ -189,7 +189,8 @@ class ActivateAccount extends GetView<ActivateAccountController> {
                               ),
                               InkWell(
                                 onTap: () {
-                                  if (controller.minutes.value <= 2) {
+                                  if (controller.minutes.value < 1 &&
+                                      controller.seconds.value <= 59) {
                                     controller.restartTimer();
                                   }
                                 },

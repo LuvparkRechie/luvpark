@@ -163,7 +163,9 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                   onTap: getFilteredLogs,
                 )
               : filterLogs.isEmpty
-                  ? NoDataFound()
+                  ? NoDataFound(
+                      text: "No transaction found",
+                    )
                   : StretchingOverscrollIndicator(
                       axisDirection: AxisDirection.down,
                       child: ScrollConfiguration(

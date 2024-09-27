@@ -12,7 +12,8 @@ import '../../controller.dart';
 
 class SuggestionsScreen extends StatefulWidget {
   final List data;
-  SuggestionsScreen({super.key, required this.data});
+  final VoidCallback cb;
+  SuggestionsScreen({super.key, required this.data, required this.cb});
 
   @override
   State<SuggestionsScreen> createState() => _SuggestionsScreenState();
@@ -191,11 +192,12 @@ class _SuggestionsScreenState extends State<SuggestionsScreen> {
                             },
                           ),
                         ),
-                        SizedBox(height: 22),
+                        Container(height: 10),
                         CustomButton(
                             text: "Okay",
                             onPressed: () {
                               Get.back();
+                              widget.cb();
                             })
                       ],
                     ),

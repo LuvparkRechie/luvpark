@@ -264,7 +264,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                         // ignore: use_build_context_synchronously
                                         CustomDialog().successDialog(
                                             context,
-                                            "Activate account",
+                                            "Success",
                                             "We have sent an activation code to your mobile number.",
                                             "Continue", () async {
                                           Get.back();

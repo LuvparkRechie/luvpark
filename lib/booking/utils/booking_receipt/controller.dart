@@ -169,28 +169,29 @@ class BookingReceiptController extends GetxController
       HttpRequest(api: ApiKeys.gApiCancelAutoExtend, parameters: param)
           .postBody()
           .then((objData) async {
-        Get.back();
-
         if (objData == "No Internet") {
+          Get.back();
           CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();
           });
           return;
         }
         if (objData == null) {
+          Get.back();
           CustomDialog().serverErrorDialog(Get.context!, () {
             Get.back();
           });
         }
         if (objData["success"] == "Y") {
+          Get.back();
           CustomDialog().successDialog(
               Get.context!, "Success", objData["msg"], "Okay", () {
-            Get.back();
             Get.back();
             Get.back();
             parameters["onRefresh"]();
           });
         } else {
+          Get.back();
           CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
               () {
             Get.back();

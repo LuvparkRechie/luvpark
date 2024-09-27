@@ -70,7 +70,6 @@ class ApiKeys {
   static const gApiSubFolderGetIdleTime = '/ords/$luvApi/base/userpref/';
 //Post Login
   static const gApiSubFolderPostLogin = '/ords/$luvApi/auth/login/'; //post
-
 //$parkSpaceApi api
   //get vehicles
   static const gApiSubFolderGetVehicleType =

@@ -260,7 +260,7 @@ class MyVehiclesController extends GetxController {
     final pickedFile = await picker.pickImage(
         source: source,
         imageQuality: isIOs ? 20 : 25,
-        maxWidth: isIOs ? 300 : 640,
+        maxWidth: isIOs ? 300 : 500,
         requestFullMetadata: false);
 
     imageFile = pickedFile != null ? File(pickedFile.path) : null;
@@ -359,7 +359,7 @@ class MyVehiclesController extends GetxController {
         if (returnPost["success"] == 'Y') {
           onRefresh();
           CustomDialog().successDialog(
-              Get.context!, "Success", "Successfully added vehicle", "Okay",
+              Get.context!, "Success", "Successfully added vehicle.", "Okay",
               () {
             Get.back();
             Get.back();

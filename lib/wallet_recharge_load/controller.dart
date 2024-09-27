@@ -60,7 +60,7 @@ class WalletRechargeLoadController extends GetxController
     amountController = TextEditingController(text: tokenAmount);
     fullName.value = "";
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getData();
+      getBankUrl();
     });
     super.onInit();
   }
@@ -72,8 +72,8 @@ class WalletRechargeLoadController extends GetxController
     onSearchChanged(mobNum.text, true);
   }
 
-  Future<void> getBankUrl(String bankCode, int ind) async {
-    String subApi = "${ApiKeys.gApiSubFolderGetUbDetails}?code=$bankCode";
+  Future<void> getBankUrl() async {
+    String subApi = "${ApiKeys.gApiSubFolderGetUbDetails}?code=UB";
     CustomDialog().loadingDialog(Get.context!);
 
     try {
@@ -89,7 +89,7 @@ class WalletRechargeLoadController extends GetxController
       }
 
       await getBankData(
-          objData["items"][0]["app_id"], objData["items"][0]["page_url"], ind);
+          objData["items"][0]["app_id"], objData["items"][0]["page_url"], 0);
     } catch (e) {
       handleServerError();
     }
@@ -100,8 +100,7 @@ class WalletRechargeLoadController extends GetxController
     selectedBankType.value = null;
     selectedBankTracker.value = null;
     Get.back();
-    CustomDialog().errorDialog(Get.context!, "luvpark",
-        "Please check your internet connection and try again.", () {
+    CustomDialog().internetErrorDialog(Get.context!, () {
       Get.back();
     });
   }
@@ -112,8 +111,7 @@ class WalletRechargeLoadController extends GetxController
     selectedBankType.value = null;
     selectedBankTracker.value = null;
     Get.back();
-    CustomDialog().errorDialog(Get.context!, "luvpark",
-        "Error while connecting to server, Please try again.", () {
+    CustomDialog().serverErrorDialog(Get.context!, () {
       Get.back();
     });
   }
@@ -128,8 +126,7 @@ class WalletRechargeLoadController extends GetxController
         selectedBankTracker.value = null;
 
         Get.back();
-        CustomDialog().errorDialog(Get.context!, "luvpark",
-            "Please check your internet connection and try again.", () {
+        CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
         });
         return;
@@ -142,8 +139,7 @@ class WalletRechargeLoadController extends GetxController
         selectedBankType.value = null;
         selectedBankTracker.value = null;
 
-        CustomDialog().errorDialog(Get.context!, "luvpark",
-            "Error while connecting to server, Please try again.", () {
+        CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
 
@@ -164,6 +160,7 @@ class WalletRechargeLoadController extends GetxController
         isSelectedPartner.value = true;
         aesKeys.value = dataObj["AES_KEY"];
         pageUrl.value = Uri.decodeFull(url);
+        getData();
         if (!isValidNumber.value) {
           isActiveBtn.value = false;
         } else {
@@ -307,12 +304,8 @@ class WalletRechargeLoadController extends GetxController
           userName.text = "";
 
           Get.back();
-          CustomDialog().errorDialog(Get.context!, "luvpark",
-              "Please check your internet connection and try again.", () {
+          CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();
-            if (Navigator.canPop(Get.context!)) {
-              Get.back();
-            }
           });
           return;
         }
@@ -324,8 +317,7 @@ class WalletRechargeLoadController extends GetxController
           fullName.value = "";
           userName.text = "";
 
-          CustomDialog().errorDialog(Get.context!, "luvpark",
-              "Error while connecting to server, Please try again.", () {
+          CustomDialog().serverErrorDialog(Get.context!, () {
             Get.back();
           });
           return;
@@ -339,9 +331,8 @@ class WalletRechargeLoadController extends GetxController
           fullName.value = "";
           isValidNumber.value = false;
 
-          CustomDialog().errorDialog(Get.context!, "luvpark",
+          CustomDialog().errorDialog(Get.context!, "Error",
               "Sorry, we're unable to find your account.", () {
-            //  onChangeText();
             Get.back();
           });
           return;

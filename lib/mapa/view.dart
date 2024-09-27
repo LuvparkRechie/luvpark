@@ -16,6 +16,7 @@ import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/voice_search/view.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 
+import '../custom_widgets/variables.dart';
 import 'controller.dart';
 import 'utils/filter_map/view.dart';
 
@@ -23,6 +24,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
   const DashboardMapScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    Variables.init(context);
     Get.put(DashboardMapController());
 
     return Obx(() {
@@ -138,14 +140,20 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                   //   Get.dialog(LegendDialogScreen());
                                   // }),
                                   // const SizedBox(width: 10),
-                                  _buildDialItem("parking", () {
-                                    Get.toNamed(Routes.parkingAreas,
-                                        arguments: controller.dataNearest);
-                                  }),
+                                  Container(
+                                    key: controller.parkKey,
+                                    child: _buildDialItem("parking", () {
+                                      Get.toNamed(Routes.parkingAreas,
+                                          arguments: controller.dataNearest);
+                                    }),
+                                  ),
                                   const SizedBox(width: 10),
-                                  _buildDialItem("gps", () {
-                                    controller.getCurrentLoc();
-                                  }),
+                                  Container(
+                                    key: controller.locKey,
+                                    child: _buildDialItem("gps", () {
+                                      controller.getCurrentLoc();
+                                    }),
+                                  ),
                                 ],
                               ),
                             ),
@@ -158,6 +166,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 top: 40,
                                 right: 20,
                                 child: InkWell(
+                                  key: controller.walletKey,
                                   onTap: () {
                                     Get.toNamed(Routes.wallet);
                                   },
@@ -257,6 +266,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                     ],
                                   ),
                                   child: IconButton(
+                                    key: controller.menubarKey,
                                     icon: AnimatedIcon(
                                       icon: AnimatedIcons.menu_close,
                                       progress:
@@ -326,8 +336,17 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                   InkWell(
                       onTap: () async {
                         FocusManager.instance.primaryFocus!.unfocus();
-                        controller.panelController.close();
                         CustomDialog().loadingDialog(context);
+                        controller.panelController.close();
+                        controller.addressText.value = controller
+                                .suggestions[index]
+                                .split("=structured=")[1]
+                                .contains(",")
+                            ? controller.suggestions[index]
+                                .split("=structured=")[1]
+                                .split(",")[0]
+                            : controller.suggestions[index]
+                                .split("=structured=")[1];
                         await Functions.searchPlaces(context,
                             controller.suggestions[index].split("=Rechie=")[0],
                             (searchedPlace) {
@@ -338,8 +357,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                             controller.searchCoordinates =
                                 LatLng(searchedPlace[0], searchedPlace[1]);
                             controller.ddRadius.value = "2";
-                            controller
-                                .bridgeLocation(controller.searchCoordinates);
+                            controller.isSearched.value = true;
+                            controller.bridgeLocation(
+                                LatLng(searchedPlace[0], searchedPlace[1]));
                           }
                         });
                       },
@@ -464,9 +484,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           onTap: () {
                             FocusManager.instance.primaryFocus!.unfocus();
                             controller.searchCon.clear();
-
-                            controller.suggestions.clear();
-                            controller.panelController.close();
                           },
                           child: SvgPicture.asset(
                               "assets/dashboard_icon/close.svg")),

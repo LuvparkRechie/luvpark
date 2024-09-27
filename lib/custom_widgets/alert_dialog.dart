@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
+import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 
 class CustomDialog {
@@ -12,66 +14,39 @@ class CustomDialog {
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/pu_nointernet.png', // Use the static image name
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
+          Center(
+            child: SvgPicture.asset("assets/images/no_net.svg"),
           ),
-          // Title
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: CustomTitle(
-              text: "No Internet",
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          Container(height: 20),
+          CustomTitle(
+            text: "Internet Error",
+            color: Color(0xFF0D0E0E),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            maxlines: 1,
           ),
+          const SizedBox(height: 15),
           // Paragraph
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
-              text: "Please check your internet connection and try again.",
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          CustomParagraph(
+            text: "Please check your internet connection and try again.",
+            fontWeight: FontWeight.w600,
+            textAlign: TextAlign.center,
           ),
-          // Single Button
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 25, right: 15, left: 15, bottom: 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: TextButton(
-                onPressed: onTapConfirm,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: AppColor.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: const CustomParagraph(
-                  text: "Close",
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.408,
-                  textAlign: TextAlign.center,
+          // Buttons
+          Container(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child: CustomDialogButton(
+                  btnColor: AppColor.primaryColor,
+                  txtColor: Colors.white,
+                  borderColor: AppColor.primaryColor,
+                  text: "Okay",
+                  onTap: onTapConfirm,
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -85,67 +60,41 @@ class CustomDialog {
     Get.dialog(dialogBody(
       Column(
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/pu_servererror.png', // Use the static image name
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
+          Center(
+            child: SvgPicture.asset("assets/images/server_error.svg"),
           ),
-          // Title
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: CustomTitle(
-              text: "Server Error",
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          Container(height: 20),
+          CustomTitle(
+            text: "Server Error",
+            color: Color(0xFF0D0E0E),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            maxlines: 1,
           ),
+          const SizedBox(height: 15),
           // Paragraph
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
-              text: "Error while connecting to server, Please try again.",
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          CustomParagraph(
+            text: "Error while connecting to server, Please try again.",
+            fontWeight: FontWeight.w600,
+            textAlign: TextAlign.center,
           ),
-          // Single Button
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 25, right: 15, left: 15, bottom: 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: TextButton(
-                onPressed: onTapConfirm,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor: AppColor.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: const CustomParagraph(
-                  text: "Close",
-                  color: Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.408,
-                  textAlign: TextAlign.center,
+          // Buttons
+          Container(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child: CustomDialogButton(
+                  btnColor: AppColor.primaryColor,
+                  txtColor: Colors.white,
+                  borderColor: AppColor.primaryColor,
+                  text: "Okay",
+                  onTap: onTapConfirm,
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -160,75 +109,68 @@ class CustomDialog {
     Color? btnOkBackgroundColor,
     Color? btnOkTextColor,
   }) {
-    Get.dialog(dialogBody(
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/pu_confirmation.png', // Use the static image name
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
-          ),
-          // Title
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomTitle(
-              text: title,
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
-          ),
-          // Paragraph
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
-              text: paragraph,
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
-          ),
-          // Single Button
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 25, right: 15, left: 15, bottom: 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: TextButton(
-                onPressed: onTapConfirm,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor:
-                      btnOkBackgroundColor ?? AppColor.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
+    Get.dialog(
+      PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 22),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
                 ),
-                child: CustomParagraph(
-                  text: "Close",
-                  color: btnOkTextColor ?? Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.408,
-                  textAlign: TextAlign.center,
+                width: MediaQuery.of(Get.context!).size.width,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: SvgPicture.asset("assets/images/error.svg"),
+                    ),
+                    Container(height: 20),
+                    CustomTitle(
+                      text: title,
+                      color: Color(0xFF0D0E0E),
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                      maxlines: 1,
+                    ),
+                    const SizedBox(height: 15),
+                    // Paragraph
+                    CustomParagraph(
+                      text: paragraph,
+                      color: Color(0xFF666666),
+                      fontWeight: FontWeight.w600,
+                      textAlign: TextAlign.center,
+                    ),
+                    // Single Button
+                    Container(height: 25),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Expanded(
+                          child: CustomDialogButton(
+                            btnColor: AppColor.primaryColor,
+                            txtColor: Colors.white,
+                            borderColor: AppColor.primaryColor,
+                            text: "Okay",
+                            onTap: onTapConfirm,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
-            ),
-          ),
-        ],
+            )
+          ]),
+        ),
       ),
-    ));
+    );
   }
 
   void infoDialog(
@@ -242,67 +184,40 @@ class CustomDialog {
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/pu_info.png', // Use the static image name
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
+          Center(
+            child: SvgPicture.asset("assets/images/info.svg"),
           ),
-          // Title
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomTitle(
-              text: title,
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          Container(height: 20),
+          CustomTitle(
+            text: title,
+            color: Color(0xFF0D0E0E),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            maxlines: 1,
           ),
+          const SizedBox(height: 15),
           // Paragraph
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
-              text: paragraph,
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          CustomParagraph(
+            text: paragraph,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w600,
+            textAlign: TextAlign.center,
           ),
           // Single Button
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 25, right: 15, left: 15, bottom: 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: TextButton(
-                onPressed: onTapConfirm,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor:
-                      btnOkBackgroundColor ?? AppColor.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: CustomParagraph(
-                  text: "Close",
-                  color: btnOkTextColor ?? Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.408,
-                  textAlign: TextAlign.center,
+          Container(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child: CustomDialogButton(
+                  btnColor: AppColor.primaryColor,
+                  txtColor: Colors.white,
+                  borderColor: AppColor.primaryColor,
+                  text: "Okay",
+                  onTap: onTapConfirm,
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),
@@ -322,71 +237,115 @@ class CustomDialog {
       Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/pu_success.png', // Use the static image name
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
+          Center(
+            child: SvgPicture.asset("assets/images/success.svg"),
           ),
-          // Title
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomTitle(
-              text: title,
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          Container(height: 20),
+          CustomTitle(
+            text: title,
+            color: Color(0xFF0D0E0E),
+            fontSize: 20,
+            maxlines: 1,
+            fontWeight: FontWeight.w700,
           ),
+          const SizedBox(height: 15),
           // Paragraph
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
-              text: paragraph,
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
+          CustomParagraph(
+            text: paragraph,
+            fontWeight: FontWeight.w600,
+            textAlign: TextAlign.center,
           ),
+          // Buttons
+          Container(height: 25),
           // Single Button
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 25, right: 15, left: 15, bottom: 16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 40,
-              child: TextButton(
-                onPressed: onTapConfirm,
-                style: TextButton.styleFrom(
-                  foregroundColor: Colors.white,
-                  backgroundColor:
-                      btnOkBackgroundColor ?? AppColor.primaryColor,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                ),
-                child: CustomParagraph(
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child: CustomDialogButton(
+                  btnColor: AppColor.primaryColor,
+                  txtColor: Colors.white,
+                  borderColor: AppColor.primaryColor,
                   text: btnOk,
-                  color: btnOkTextColor ?? Colors.white,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  letterSpacing: -0.408,
-                  textAlign: TextAlign.center,
+                  onTap: onTapConfirm,
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),
     ));
+  }
+
+  void bookingNotice(
+    String title,
+    String paragraph,
+    VoidCallback onClose,
+    VoidCallback onConfirm,
+  ) {
+    Get.dialog(
+      noticeBody(
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: SvgPicture.asset("assets/images/info.svg"),
+            ),
+            Container(height: 20),
+            CustomTitle(
+              text: title,
+              color: Color(0xFF0D0E0E),
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              maxlines: 1,
+              textAlign: TextAlign.center,
+            ),
+            Expanded(
+              child: StretchingOverscrollIndicator(
+                axisDirection: AxisDirection.down,
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 15),
+                      // Paragraph
+                      CustomParagraph(
+                        text: paragraph,
+                        fontWeight: FontWeight.w600,
+                        textAlign: TextAlign.start,
+                      ),
+                      // Buttons
+                      Container(height: 25),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                Expanded(
+                  child: CustomDialogButton(
+                      text: "Close",
+                      onTap: () {
+                        onClose();
+                      }),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: CustomDialogButton(
+                    btnColor: AppColor.primaryColor,
+                    txtColor: Colors.white,
+                    borderColor: AppColor.primaryColor,
+                    text: "Proceed Booking",
+                    onTap: onConfirm,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
 //FInished
@@ -403,107 +362,50 @@ class CustomDialog {
     Color? btnNotTextColor,
     Color? btnOkTextColor,
   }) {
-    Get.dialog(dialogBody(
-      Column(
-        children: [
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/pu_info.png', // Use the static image name
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
-          ),
-          // Title
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomTitle(
+    Get.dialog(
+      dialogBody(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CustomTitle(
               text: title,
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
+              color: Color(0xFF0D0E0E),
+              fontSize: 20,
+              fontWeight: FontWeight.w700,
+              maxlines: 1,
             ),
-          ),
-          // Paragraph
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
+            const SizedBox(height: 15),
+            // Paragraph
+            CustomParagraph(
               text: paragraph,
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
+              fontWeight: FontWeight.w600,
+              textAlign: TextAlign.left,
             ),
-          ),
-          // Buttons
-          Container(height: 10),
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 30, right: 15, left: 15, bottom: 16),
-            child: Row(
+            // Buttons
+            Container(height: 25),
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
                 Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextButton(
-                      onPressed: onTapClose,
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor:
-                            btnOkBackgroundColor ?? AppColor.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: CustomParagraph(
-                        text: btnNot,
-                        color: btnOkTextColor ?? Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: -0.408,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
+                  child: CustomDialogButton(text: btnNot, onTap: onTapClose),
                 ),
-                const SizedBox(width: 8),
+                const SizedBox(width: 10),
                 Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextButton(
-                      onPressed: onTapConfirm,
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor:
-                            btnNotBackgroundColor ?? AppColor.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: CustomParagraph(
-                        text: btnOk,
-                        color: btnNotTextColor ?? Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: -0.408,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                  child: CustomDialogButton(
+                    btnColor: AppColor.primaryColor,
+                    txtColor: Colors.white,
+                    borderColor: AppColor.primaryColor,
+                    text: btnOk,
+                    onTap: onTapConfirm,
                   ),
                 ),
               ],
             ),
-          ),
-          Container(height: 20),
-        ],
+          ],
+        ),
       ),
-    ));
+    );
   }
 
   void loadingDialog(
@@ -541,6 +443,29 @@ class CustomDialog {
         barrierColor: Colors.black.withOpacity(0.2));
   }
 
+  Widget noticeBody(Widget? child) {
+    return PopScope(
+      canPop: false,
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 15),
+            child: Container(
+                height: MediaQuery.of(Get.context!).size.height * .70,
+                width: MediaQuery.of(Get.context!).size.width,
+                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.white,
+                ),
+                child: child),
+          )
+        ]),
+      ),
+    );
+  }
+
   Widget loadingBody(Widget? child) {
     return PopScope(
       canPop: false,
@@ -560,6 +485,7 @@ class CustomDialog {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 40),
             child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 22),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
                   color: Colors.white,
@@ -672,146 +598,5 @@ class CustomDialog {
         ),
       ),
     );
-  }
-
-  void customPopUp(
-    BuildContext context,
-    String title,
-    String paragraph,
-    String? btnNot,
-    String? btnOk, {
-    VoidCallback? onTapClose,
-    VoidCallback? onTapConfirm,
-    Color? btnNotBackgroundColor,
-    Color? btnOkBackgroundColor,
-    Color? btnNotTextColor,
-    Color? btnOkTextColor,
-    bool showTwoButtons = true,
-    required String imageName, // Add this parameter for the dynamic image name
-  }) {
-    Get.dialog(dialogBody2(
-      Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16.0)),
-            ),
-            clipBehavior: Clip.hardEdge,
-            child: Image.asset(
-              'assets/images/$imageName.png', // Use the dynamic image name here
-              fit: BoxFit.cover,
-              height: 100,
-              width: double.infinity,
-            ),
-          ),
-          // Title
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: CustomTitle(
-              text: title,
-              fontSize: 16,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
-          ),
-          // Paragraph
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: CustomParagraph(
-              text: paragraph,
-              fontWeight: FontWeight.normal,
-              fontSize: 14,
-              color: Colors.black54,
-              textAlign: TextAlign.center,
-              letterSpacing: -0.408,
-            ),
-          ),
-          // Buttons
-          Padding(
-            padding:
-                const EdgeInsets.only(top: 25, right: 15, left: 15, bottom: 16),
-            child: showTwoButtons
-                ? Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: <Widget>[
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          child: TextButton(
-                            onPressed: onTapClose,
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  btnNotBackgroundColor ?? Colors.red,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            child: CustomParagraph(
-                              text: btnNot!,
-                              color: btnNotTextColor ?? Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.408,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: SizedBox(
-                          height: 40,
-                          child: TextButton(
-                            onPressed: onTapConfirm,
-                            style: TextButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              backgroundColor:
-                                  btnOkBackgroundColor ?? AppColor.primaryColor,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                            ),
-                            child: CustomParagraph(
-                              text: btnOk!,
-                              color: btnOkTextColor ?? Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.408,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                : SizedBox(
-                    width: double.infinity,
-                    height: 40,
-                    child: TextButton(
-                      onPressed: onTapConfirm,
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor:
-                            btnOkBackgroundColor ?? AppColor.primaryColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: CustomParagraph(
-                        text: btnOk!,
-                        color: btnOkTextColor ?? Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        letterSpacing: -0.408,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
-          ),
-        ],
-      ),
-    ));
   }
 }

@@ -100,11 +100,7 @@ class WalletSend extends GetView<WalletSendController> {
                         controller.onTextChange();
                       },
                       controller: controller.recipient,
-                      inputFormatters: <TextInputFormatter>[
-                        FilteringTextInputFormatter.digitsOnly,
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d*$')),
-                      ],
+                      inputFormatters: [Variables.maskFormatter],
                       keyboardType: Platform.isAndroid
                           ? TextInputType.number
                           : const TextInputType.numberWithOptions(
@@ -114,15 +110,13 @@ class WalletSend extends GetView<WalletSendController> {
                         if (value!.isEmpty) {
                           return 'Field is required';
                         }
-                        if (value.toString().replaceAll(" ", "").length <
-                            10) {
+                        if (value.toString().replaceAll(" ", "").length < 10) {
                           return 'Invalid mobile number';
                         }
-                        if (value.toString().replaceAll(" ", "")[0] ==
-                            '0') {
+                        if (value.toString().replaceAll(" ", "")[0] == '0') {
                           return 'Invalid mobile number';
                         }
-        
+
                         return null;
                       },
                     ),
@@ -145,19 +139,18 @@ class WalletSend extends GetView<WalletSendController> {
                         if (value == null || value.isEmpty) {
                           return "Amount is required";
                         }
-        
+
                         double parsedValue;
                         try {
                           parsedValue = double.parse(value);
                         } catch (e) {
                           return "Invalid amount";
                         }
-        
+
                         double availableBalance;
                         try {
-                          availableBalance = double.parse(controller
-                              .userData[0]["amount_bal"]
-                              .toString());
+                          availableBalance = double.parse(
+                              controller.userData[0]["amount_bal"].toString());
                         } catch (e) {
                           return "Error retrieving balance";
                         }
@@ -167,7 +160,7 @@ class WalletSend extends GetView<WalletSendController> {
                         if (parsedValue > availableBalance) {
                           return "You don't have enough balance to proceed";
                         }
-        
+
                         return null;
                       },
                     ),
@@ -180,9 +173,7 @@ class WalletSend extends GetView<WalletSendController> {
                       labelText: "Note",
                       controller: controller.message,
                     ),
-                    for (int i = 0;
-                        i < controller.padNumbers.length;
-                        i += 4)
+                    for (int i = 0; i < controller.padNumbers.length; i += 4)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -206,9 +197,10 @@ class WalletSend extends GetView<WalletSendController> {
                                 .validate()) {
                               final item =
                                   await Authentication().getUserLogin();
-        
+
                               if (item["mobile_no"].toString() ==
                                   "63${controller.recipient.text.replaceAll(" ", "")}") {
+                                // ignore: use_build_context_synchronously
                                 CustomDialog().snackbarDialog(
                                     context,
                                     "Please use another number.",
@@ -222,13 +214,12 @@ class WalletSend extends GetView<WalletSendController> {
                                   double.parse(controller.tokenAmount.text
                                       .toString()
                                       .removeAllWhitespace)) {
-                                CustomDialog().snackbarDialog(
-                                    context,
-                                    "Insuficient balance.",
-                                    Colors.red,
-                                    () {});
+                                // ignore: use_build_context_synchronously
+                                CustomDialog().snackbarDialog(context,
+                                    "Insuficient balance.", Colors.red, () {});
                                 return;
                               }
+                              // ignore: use_build_context_synchronously
                               CustomDialog().confirmationDialog(
                                   context,
                                   "Confirmation",

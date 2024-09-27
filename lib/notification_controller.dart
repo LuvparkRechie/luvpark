@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/sqlite/notification_model.dart';
 import 'package:luvpark_get/sqlite/pa_message_model.dart';
 import 'package:luvpark_get/sqlite/pa_message_table.dart';
 import 'package:luvpark_get/sqlite/reserve_notification_table.dart';
@@ -20,6 +19,7 @@ import 'package:timezone/timezone.dart' as tzz;
 
 import 'http/api_keys.dart';
 import 'routes/routes.dart';
+import 'sqlite/notification_model.dart';
 
 class NotificationController {
   static ReceivedAction? initialAction;
@@ -228,7 +228,7 @@ class NotificationController {
     if (receivedAction.payload!["notificationId"] == "parking") {
       Get.toNamed(Routes.parking, arguments: "N");
     }
-    if (receivedAction.payload!["notificationId"] == "message") {
+    if (receivedAction.buttonKeyPressed.toLowerCase() == "message") {
       Get.toNamed(Routes.message);
     }
   }
@@ -301,80 +301,90 @@ Future<void> getParkingTrans(int ctr) async {
     }
     if (notificationData["items"].isEmpty) {
       NotificationDatabase.instance.deleteAll();
+      AwesomeNotifications().cancelAllSchedules();
       return;
     }
-    if (notificationData != null) {
-      List itemData = notificationData["items"];
-      itemData = itemData.where((element) {
-        DateTime timeNow = DateTime.now();
+    if (notificationData != null && notificationData["items"] != null) {
+      List itemData = notificationData["items"].where((element) {
         DateTime timeOut = DateTime.parse(element["dt_out"].toString());
-        return timeNow.isBefore(timeOut);
+        return DateTime.now().isBefore(timeOut);
       }).toList();
-
       for (var dataRow in itemData) {
-        await NotificationDatabase.instance
-            .readNotificationByDateOut(
-                dataRow["dt_in"].toString(), dataRow["reservation_id"])
-            .then((returnData) async {
-          DateTime pdt = DateTime.parse(dataRow["dt_in"].toString());
+        int resIdInatay = int.parse(dataRow["mreservation_id"]?.toString() ??
+            dataRow["reservation_id"].toString());
 
-          DateTime targetDate =
-              DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
+        var returnData = await NotificationDatabase.instance
+            .readNotificationByResId(resIdInatay);
+        DateTime pdt = DateTime.parse(dataRow["dt_in"].toString());
+        DateTime targetDate =
+            DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
 
-          if (!Variables.withinOneHourRange(targetDate)) return;
+        if (!Variables.withinOneHourRange(targetDate)) continue;
+        var resData = {
+          NotificationDataFields.reservedId: resIdInatay,
+          NotificationDataFields.userId: int.parse(akongId.toString()),
+          NotificationDataFields.mTicketId: dataRow["mticket_id"] ?? 0,
+          NotificationDataFields.mreservedId: dataRow["mreservation_id"] ?? 0,
+          NotificationDataFields.notifDate: dataRow["dt_out"].toString(),
+          NotificationDataFields.dtIn: dataRow["dt_in"].toString(),
+        };
 
-          if (returnData == null) {
-            // Insert process check in
-            var resData = {
-              NotificationDataFields.reservedId:
-                  int.parse(dataRow["reservation_id"].toString()),
-              NotificationDataFields.userId: int.parse(akongId.toString()),
-              NotificationDataFields.description:
-                  "Your Parking at ${dataRow["park_area_name"]} is about to expire.",
-              NotificationDataFields.notifDate: dataRow["dt_out"].toString(),
-              NotificationDataFields.status: dataRow["status"].toString(),
-              NotificationDataFields.isActive: "Y",
-              NotificationDataFields.dtIn: dataRow["dt_in"].toString(),
-            };
-
-            if (dataRow["status"] == "U") {
-              ctr++;
-
-              NotificationController.parkingNotif(
-                  int.parse(dataRow["reservation_id"].toString()),
-                  0,
-                  'Check In',
-                  "Great! You have successfully checked in to ${dataRow["park_area_name"].toString()} parking area",
-                  "parking");
-
-              NotificationController.scheduleNewNotification(
-                  int.parse(dataRow["reservation_id"].toString()),
-                  "luvpark",
-                  "Your Parking at ${dataRow["park_area_name"]} is about to expire.",
-                  dataRow["dt_out"].toString(),
-                  "parking");
-
-              NotificationController.scheduleNewNotification(
-                  0,
-                  "luvpark",
-                  "Your parking at ${dataRow["park_area_name"]} will be closing soon",
-                  dataRow["end_time"].toString(),
-                  "");
-
-              await NotificationDatabase.instance.insertUpdate(resData);
-            }
+        if (returnData == null) {
+          NotificationController.parkingNotif(
+            int.parse(dataRow["reservation_id"].toString()),
+            0,
+            'Check In',
+            "Great! You have successfully checked in to ${dataRow["park_area_name"]} parking area.",
+            "parking",
+          );
+          NotificationController.scheduleNewNotification(
+            int.parse(dataRow["reservation_id"].toString()) + 1,
+            "luvpark",
+            "Your Parking at ${dataRow["park_area_name"]} is about to expire.",
+            dataRow["dt_out"].toString(),
+            "parking",
+          );
+          //closing schedule
+          NotificationController.scheduleNewNotification(
+            int.parse(dataRow["reservation_id"].toString()) + 2,
+            "luvpark",
+            "Your parking at ${dataRow["park_area_name"]} will be closing soon.",
+            dataRow["end_time"].toString(),
+            "",
+          );
+          await NotificationDatabase.instance.insertUpdate(resData);
+        } else {
+          if (dataRow["dt_in"].toString().toLowerCase() !=
+              returnData["dt_in"].toString().toLowerCase()) {
+            NotificationController.cancelNotificationsById(
+                dataRow["mreservation_id"] + 1);
+            NotificationController.parkingNotif(
+              int.parse(dataRow["reservation_id"].toString()),
+              0,
+              'Parking Auto Extend',
+              "You've paid ${dataRow["amount"]} for your parking. Please check your balance.",
+              "parking",
+            );
+            NotificationController.scheduleNewNotification(
+              int.parse(dataRow["reservation_id"].toString()) + 1,
+              "luvpark",
+              "Your Parking at ${dataRow["park_area_name"]} is about to expire.",
+              dataRow["dt_out"].toString(),
+              "parking",
+            );
+            await NotificationDatabase.instance.insertUpdate(resData);
           }
-        });
+        }
       }
     }
   });
 }
+
 //GET PARKING QUE
 
 Future<void> getParkingQueue() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var akongId = prefs.getString('myId');
-  if (akongId == null) return;
+  var akongId = await Authentication().getUserId();
+
   HttpRequest(
     api: "${ApiKeys.gApiLuvParkResQueue}?user_id=${akongId.toString()}",
   ).get().then((queueData) async {
@@ -387,7 +397,6 @@ Future<void> getParkingQueue() async {
 
 //GET MEssage from PA
 Future<void> getMessNotif() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
   var akongId = await Authentication().getUserId();
 
   HttpRequest(
@@ -397,50 +406,32 @@ Future<void> getMessNotif() async {
       return;
     }
     if (messageData["items"].isNotEmpty) {
-      List<Map<String, dynamic>> convertedItems = [];
-      if (messageData["items"] is List<dynamic>) {
-        if (messageData["items"]
-            .every((item) => item is Map<String, dynamic>)) {
-          convertedItems = messageData["items"].cast<Map<String, dynamic>>();
-        }
-      }
+      for (dynamic dataRow in messageData["items"]) {
+        PaMessageDatabase.instance
+            .readNotificationById(dataRow["push_msg_id"])
+            .then((objData) {
+          if (objData == null) {
+            Object json = {
+              PaMessageDataFields.pushMsgId: dataRow["push_msg_id"],
+              PaMessageDataFields.userId: dataRow["user_id"],
+              PaMessageDataFields.message: dataRow["message"],
+              PaMessageDataFields.createdDate: dataRow["created_on"],
+              PaMessageDataFields.status: dataRow["push_status"],
+              PaMessageDataFields.runOn: dataRow["run_on"],
+              PaMessageDataFields.isRead: "N",
+            };
 
-      Map<String, dynamic> lastDatabaseRow = convertedItems.last;
-      int lastDatabaseId = int.parse(lastDatabaseRow["push_msg_id"].toString());
-      var lsMsgId = prefs.getInt("last_sync_msg_id");
-
-      if (lsMsgId == null || int.parse(lsMsgId.toString()) < lastDatabaseId) {
-        prefs.setInt("last_sync_msg_id", lastDatabaseId);
-        if (lsMsgId != null) {
-          NotificationController.cancelNotificationsById(
-              int.parse(lsMsgId.toString()));
-          AwesomeNotifications().dismiss(int.parse(lsMsgId.toString()));
-        }
-        NotificationController.createInformationMessage(
-            lastDatabaseId,
-            0,
-            'Attention',
-            "You have ${messageData["items"].length} message from your parking attendant",
-            "message");
-        for (dynamic dataRow in messageData["items"]) {
-          PaMessageDatabase.instance
-              .readNotificationById(dataRow["push_msg_id"])
-              .then((objData) {
-            if (objData == null) {
-              Object json = {
-                PaMessageDataFields.pushMsgId: dataRow["push_msg_id"],
-                PaMessageDataFields.userId: dataRow["user_id"],
-                PaMessageDataFields.message: dataRow["message"],
-                PaMessageDataFields.createdDate: dataRow["created_on"],
-                PaMessageDataFields.status: dataRow["push_status"],
-                PaMessageDataFields.runOn: dataRow["run_on"],
-              };
-              PaMessageDatabase.instance
-                  .insertUpdate(json)
-                  .then((value) => null);
-            }
-          });
-        }
+            PaMessageDatabase.instance.insertUpdate(json).then((value) {
+              Variables.tts.speak(dataRow["message"]);
+              NotificationController.createInformationMessage(
+                  dataRow["push_msg_id"],
+                  0,
+                  'Attention',
+                  "You have new message from your parking attendant",
+                  "message");
+            });
+          }
+        });
       }
     }
   });

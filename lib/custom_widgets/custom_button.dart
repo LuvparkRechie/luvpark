@@ -119,3 +119,46 @@ class _CustomButtonCancelState extends State<CustomButtonCancel> {
     );
   }
 }
+
+class CustomDialogButton extends StatelessWidget {
+  final String text;
+  final Color? borderColor;
+  final Color? btnColor;
+  final Color? txtColor;
+  final Function onTap;
+  const CustomDialogButton({
+    super.key,
+    required this.text,
+    this.borderColor,
+    this.btnColor,
+    this.txtColor,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: () {
+        onTap();
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+        decoration: ShapeDecoration(
+          color: btnColor ?? Color(0xFFF9FBFC),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(74),
+          ),
+        ),
+        child: CustomParagraph(
+          text: text,
+          color: txtColor ?? Color(0xFF0078FF),
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.50,
+          textAlign: TextAlign.center,
+          maxlines: 1,
+        ),
+      ),
+    );
+  }
+}

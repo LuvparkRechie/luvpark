@@ -183,8 +183,14 @@ class SendOtpController extends GetxController {
   }
 
   void onVerify() {
-    if (isLoading.value) return;
-    if (inputPin.isEmpty) return;
+    if (inputPin.value.length != 6) {
+      CustomDialog().errorDialog(
+          Get.context!, "Invalid OTP", "Please complete the 6-digits OTP", () {
+        isLoading.value = false;
+        Get.back();
+      });
+      return;
+    }
     if ((int.parse(inputPin.toString()) !=
             int.parse(paramArgs[0]["otp"].toString())) ||
         inputPin.value.length != 6) {

@@ -17,10 +17,13 @@ import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/location_auth/location_auth.dart';
 import 'package:luvpark_get/mapa/utils/legend/legend_dialog.dart';
+import 'package:luvpark_get/mapa/utils/target.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../custom_widgets/app_color.dart';
+import '../sqlite/pa_message_table.dart';
 import 'utils/marker_data_dialog/marker_data_dialog.dart';
 import 'utils/suggestions/suggestions.dart';
 
@@ -36,6 +39,7 @@ class DashboardMapController extends GetxController
   late AnimationController animationController;
 
   bool isFilter = false;
+
   GoogleMapController? gMapController;
   CameraPosition? initialCameraPosition;
   RxList<Marker> markers = <Marker>[].obs;
@@ -70,6 +74,7 @@ class DashboardMapController extends GetxController
   RxBool netConnected = true.obs;
   RxBool isLoading = true.obs;
   RxBool isGetNearData = false.obs;
+  RxBool isSearched = false.obs;
   //Last Booking variables
   RxBool hasLastBooking = false.obs;
   RxString plateNo = "".obs;
@@ -81,8 +86,18 @@ class DashboardMapController extends GetxController
   RxDouble fabHeight = 0.0.obs;
   RxDouble panelHeightClosed = 60.0.obs;
 
+//Drawer
+  RxInt unreadMsg = 0.obs;
+
   Timer? debounce;
-  Timer? debounceIdle;
+  Timer? debouncePanel;
+
+  late TutorialCoachMark tutorialCoachMark;
+  RxBool isFromDrawer = false.obs;
+  final GlobalKey menubarKey = GlobalKey();
+  final GlobalKey walletKey = GlobalKey();
+  final GlobalKey parkKey = GlobalKey();
+  final GlobalKey locKey = GlobalKey();
 
   @override
   void onInit() {
@@ -104,6 +119,7 @@ class DashboardMapController extends GetxController
     getLastBooking();
     getUserData();
     getDefaultLocation();
+    initTargetTutorial();
   }
 
   @override
@@ -113,16 +129,20 @@ class DashboardMapController extends GetxController
     animationController.dispose();
 
     debounce?.cancel();
+    debouncePanel?.cancel();
     WidgetsBinding.instance.removeObserver(this);
   }
 
   @override
   void didChangeMetrics() {
     final bottomInset = View.of(Get.context!).viewInsets.bottom;
-
-    if (bottomInset > 0) {
+    print("bottom insets $bottomInset");
+    // if (bottomInset > 0) {
+    //   panelController.open();
+    // } else {}
+    if (!isLoading.value) {
       panelController.open();
-    } else {}
+    }
 
     update();
     super.didChangeMetrics();
@@ -188,6 +208,10 @@ class DashboardMapController extends GetxController
 
   void getBalance() async {
     final item = await Authentication().getUserId();
+    List<dynamic> msgdata =
+        await PaMessageDatabase.instance.getUnreadMessages();
+    unreadMsg.value = msgdata.length;
+
     String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$item";
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
@@ -218,6 +242,7 @@ class DashboardMapController extends GetxController
   getDefaultLocation() {
     isLoading.value = true;
     isFilter = false;
+    isSearched.value = false;
     LocationService.grantPermission(Get.context!, (isGranted) async {
       if (isGranted) {
         List ltlng = await Functions.getCurrentPosition();
@@ -253,7 +278,7 @@ class DashboardMapController extends GetxController
 
   void getNearest(dynamic userData, LatLng coordinates) async {
     String params =
-        "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${coordinates.latitude}&search_longitude=${coordinates.longitude}&radius=${Variables.convertToMeters(ddRadius.value.toString())}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
+        "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${Variables.convertToMeters(ddRadius.value.toString())}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
     print(" params$params");
     try {
       var returnData = await HttpRequest(api: params).get();
@@ -282,17 +307,22 @@ class DashboardMapController extends GetxController
   void handleNoInternet() {
     netConnected.value = false;
     isLoading.value = false;
+    dataNearest.value = [];
     CustomDialog().internetErrorDialog(Get.context!, () {
       Get.back();
+      panelController.open();
     });
+
     return;
   }
 
   void handleServerError() {
     netConnected.value = true;
     isLoading.value = false;
+    dataNearest.value = [];
     CustomDialog().serverErrorDialog(Get.context!, () {
       Get.back();
+      panelController.open();
     });
     return;
   }
@@ -300,13 +330,14 @@ class DashboardMapController extends GetxController
   void handleNoParkingFound(dynamic nearData) {
     netConnected.value = true;
     isLoading.value = false;
+    dataNearest.value = [];
     markers.clear();
     bool isDouble = ddRadius.value.contains(".");
     String message = isFilter
         ? "There are no parking areas available based on your filter."
         : "No parking area found within \n${(isDouble ? double.parse(ddRadius.value) : int.parse(ddRadius.value)) >= 1 ? '${ddRadius.value} Km' : '${double.parse(ddRadius.value) * 1000} meters'}, please change location.";
 
-    CustomDialog().errorDialog(Get.context!, "Luvpark", message, () {
+    CustomDialog().infoDialog("Map Filter", message, () {
       Get.back();
       showDottedCircle(nearData);
     });
@@ -325,11 +356,12 @@ class DashboardMapController extends GetxController
       if (dataNearest.isNotEmpty && !isShowPopUp) {
         Future.delayed(const Duration(seconds: 1), () {
           Authentication().setShowPopUpNearest(true);
-
           showLegend(() {
             showNearestSuggestDialog();
           });
         });
+      } else {
+        panelController.open();
       }
     }
 
@@ -495,22 +527,20 @@ class DashboardMapController extends GetxController
     vtypeId = "";
     addressText = "".obs;
     isAllowOverNight = "";
-
+    suggestions.clear();
     getDefaultLocation();
   }
 
   //get curr location
   Future<void> getFilterNearest(data) async {
-    List ltlng = await Functions.getCurrentPosition();
-    LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
     ddRadius.value = data[0]["radius"];
     pTypeCode = data[0]["park_type"];
     amenities = data[0]["amen"];
     vtypeId = data[0]["vh_type"];
     isAllowOverNight = data[0]["ovp"];
-    searchCoordinates = coordinates;
+
     isFilter = true;
-    bridgeLocation(coordinates);
+    bridgeLocation(searchCoordinates);
   }
 
 //MAP SETUP
@@ -528,60 +558,58 @@ class DashboardMapController extends GetxController
   void onCameraMoveStarted() {
     isGetNearData.value = false;
     panelController.close();
-    print("on camerag move started");
+
     update();
   }
 
   void onCameraIdle() async {
     isGetNearData.value = true;
-    if (debounceIdle?.isActive ?? false) debounceIdle?.cancel();
+    if (debouncePanel?.isActive ?? false) debouncePanel?.cancel();
 
-    Duration duration = const Duration(seconds: 2);
+    Duration duration = const Duration(seconds: 3);
 
-    debounceIdle = Timer(duration, () {
+    debouncePanel = Timer(duration, () {
       panelController.open();
       update();
     });
   }
 
-  void animateCamera() {
+  void animateCamera() async {
     double filterRadius = Variables.convertToMeters(ddRadius.value);
 
-    // polyline = Polyline(
-    //   polylineId: const PolylineId('dottedCircle'),
-    //   color: AppColor.mainColor,
-    //   width: 4,
-    //   patterns: [
-    //     PatternItem.dash(20),
-    //     PatternItem.gap(20),
-    //   ],
-    //   points: List<LatLng>.generate(
-    //     360,
-    //     (index) => calculateNewCoordinates(
-    //       searchCoordinates.latitude,
-    //       searchCoordinates.longitude,
-    //       filterRadius,
-    //       double.parse(
-    //         index.toString(),
-    //       ),
-    //     ),
-    //   ),
-    // );
     polyline = Polyline(
-      polylineId: const PolylineId('solidCircle'),
+      polylineId: const PolylineId('dottedCircle'),
       color: AppColor.mainColor,
       width: 4,
+      patterns: [
+        PatternItem.dash(20),
+        PatternItem.gap(20),
+      ],
       points: List<LatLng>.generate(
         360,
         (index) => calculateNewCoordinates(
           searchCoordinates.latitude,
           searchCoordinates.longitude,
           filterRadius,
-          double.parse(index.toString()),
+          double.parse(
+            index.toString(),
+          ),
         ),
       ),
     );
+
     isLoading.value = false;
+    if (isSearched.value) {
+      final Uint8List availabeMarkIcons =
+          await Functions.getSearchMarker(searchImage[0], 90);
+      markers.add(Marker(
+        infoWindow: InfoWindow(title: addressText.value),
+        markerId: MarkerId(addressText.value),
+        position: LatLng(initialCameraPosition!.target.latitude,
+            initialCameraPosition!.target.longitude),
+        icon: BitmapDescriptor.fromBytes(availabeMarkIcons),
+      ));
+    }
 
     if (gMapController != null) {
       gMapController!.animateCamera(
@@ -602,8 +630,8 @@ class DashboardMapController extends GetxController
 
     userProfile = item;
     myProfPic.value = profPic;
-
     userProfile = item;
+
     if (jsonDecode(userData!)["first_name"] == null) {
       myName.value = "";
     } else {
@@ -800,6 +828,10 @@ class DashboardMapController extends GetxController
   void showNearestSuggestDialog() {
     Get.dialog(SuggestionsScreen(
       data: dataNearest,
+      cb: () {
+        panelController.open();
+        showTargetTutorial(Variables.ctxt!, false);
+      },
     ));
   }
 
@@ -843,5 +875,45 @@ class DashboardMapController extends GetxController
     );
   }
 
-  //on[ anel slide]
+  void showTargetTutorial(BuildContext context, bool isDrawer) {
+    isFromDrawer.value = isDrawer;
+
+    Future.delayed(
+      const Duration(milliseconds: 300),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
+
+  void initTargetTutorial() {
+    tutorialCoachMark = TutorialCoachMark(
+      targets: addTargetsPage(
+        menubar: menubarKey,
+        wallet: walletKey,
+        parkinginformation: parkKey,
+        currentlocation: locKey,
+      ),
+      textStyleSkip: const TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w600,
+        wordSpacing: 4,
+        fontSize: 14,
+      ),
+      colorShadow: Colors.black54,
+      paddingFocus: 10,
+      opacityShadow: 0.8,
+      onFinish: () {
+        if (isFromDrawer.value) {
+          dashboardScaffoldKey.currentState?.openDrawer();
+        }
+      },
+      onSkip: () {
+        if (isFromDrawer.value) {
+          dashboardScaffoldKey.currentState?.openDrawer();
+        }
+        return true;
+      },
+    );
+  }
 }

@@ -358,17 +358,6 @@ class BookingPage extends GetView<BookingController> {
                                               WidgetsBinding.instance
                                                   .addPostFrameCallback((_) {
                                                 controller.getMyVehicle();
-                                                Get.bottomSheet(
-                                                  isScrollControlled: true,
-                                                  VehicleOption(
-                                                    callback: (data) {
-                                                      controller.selectedVh
-                                                          .value = data;
-                                                      controller
-                                                          .routeToComputation();
-                                                    },
-                                                  ),
-                                                );
                                               });
                                             },
                                             child: Row(
@@ -944,56 +933,6 @@ class BookingPage extends GetView<BookingController> {
                                                       .selectedVh.isEmpty
                                                   ? () {}
                                                   : () {
-                                                      // final String timeString =
-                                                      //     controller
-                                                      //         .dialogData[0][
-                                                      //             "opened_time"]
-                                                      //         .toString();
-
-                                                      // // Parse the time string
-                                                      // final List<String>
-                                                      //     timeParts =
-                                                      //     timeString.split(':');
-                                                      // final int hour =
-                                                      //     int.parse(
-                                                      //         timeParts[0]);
-                                                      // final int minute =
-                                                      //     int.parse(
-                                                      //         timeParts[1]);
-
-                                                      // // Create the opening time using the current date and parsed time
-                                                      // final DateTime now =
-                                                      //     DateTime.now();
-                                                      // final DateTime
-                                                      //     openingTime =
-                                                      //     DateTime(
-                                                      //   now.year,
-                                                      //   now.month,
-                                                      //   now.day,
-                                                      //   17,
-                                                      //   38,
-                                                      // );
-
-                                                      // // Calculate the difference in minutes
-                                                      // final int
-                                                      //     differenceInMinutes =
-                                                      //     openingTime
-                                                      //         .difference(now)
-                                                      //         .inMinutes;
-
-                                                      // // Check if the difference is within the acceptable range
-                                                      // print(
-                                                      //     "  $differenceInMinutes");
-                                                      // if (differenceInMinutes <=
-                                                      //         30 &&
-                                                      //     differenceInMinutes >=
-                                                      //         0) {
-                                                      //   print("can book");
-                                                      // } else {
-                                                      //   print(
-                                                      //       "can't book $differenceInMinutes");
-                                                      // }
-
                                                       var dateIn = DateTime.parse(
                                                           "${controller.startDate.text} ${controller.timeInParam.text}");
 

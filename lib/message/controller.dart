@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/http/http_request.dart';
@@ -9,11 +11,27 @@ class MessageScreenController extends GetxController {
   MessageScreenController();
   RxBool isLoading = true.obs;
   RxList messages = [].obs;
+  Timer? debounce;
 
   @override
   void onInit() {
     refresher();
+    startTimer();
     super.onInit();
+  }
+
+  @override
+  void onClose() {
+    debounce?.cancel();
+    super.onClose();
+  }
+
+  Future<void> startTimer() async {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+
+    debounce = Timer.periodic(Duration(seconds: 2), (timer) {
+      refresher();
+    });
   }
 
   Future<void> refresher() async {
@@ -28,7 +46,7 @@ class MessageScreenController extends GetxController {
   }
 
   Future<void> deleteMessage(int index) async {
-    CustomDialog().confirmationDialog(Get.context!, "luvpark",
+    CustomDialog().confirmationDialog(Get.context!, "Delete Message",
         "Are you sure you want to delete this message?", "Cancel", "Yes", () {
       Get.back();
     }, () {

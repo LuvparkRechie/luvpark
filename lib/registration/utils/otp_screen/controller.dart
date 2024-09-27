@@ -21,8 +21,8 @@ class OtpController extends GetxController
 
   RxString inputPin = "".obs;
   Timer? timer;
-  int initialMinutes = 5;
-  RxInt minutes = 5.obs;
+  int initialMinutes = 1;
+  RxInt minutes = 1.obs;
   RxInt seconds = 0.obs;
   bool isRunning = false;
 
@@ -126,7 +126,7 @@ class OtpController extends GetxController
   void onVerify() {
     if (inputPin.value.length != 6) {
       CustomDialog().errorDialog(
-          Get.context!, "luvpark", "Please complete the 6-digits OTP", () {
+          Get.context!, "Invalid OTP", "Please complete the 6-digits OTP", () {
         isLoading.value = false;
         Get.back();
       });

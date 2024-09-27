@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark_get/custom_widgets/variables.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? labelText;
@@ -162,7 +163,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
       padding: const EdgeInsets.only(top: 10.0, bottom: 10),
       child: TextFormField(
         autofocus: false,
-        inputFormatters: widget.inputFormatters,
+        inputFormatters: [Variables.maskFormatter],
         controller: widget.controller,
         textInputAction: TextInputAction.done,
         readOnly: !widget.isEnabled || widget.isReadOnly!,

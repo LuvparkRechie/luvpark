@@ -142,8 +142,7 @@ class LoginScreenController extends GetxController {
             return;
           }
           if (returnPost["success"] == "N") {
-            CustomDialog().errorDialog(context, "luvpark", returnPost["msg"],
-                () {
+            CustomDialog().errorDialog(context, "Error", returnPost["msg"], () {
               Get.back();
               cb([
                 {"has_net": true, "items": []}

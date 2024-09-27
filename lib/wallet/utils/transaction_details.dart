@@ -34,7 +34,6 @@ class TransactionDetails extends StatelessWidget {
                   ),
                   color: Colors.white,
                 ),
-                height: 450,
                 width: MediaQuery.of(context).size.width,
                 padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
                 child: Column(

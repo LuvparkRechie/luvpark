@@ -1,15 +1,21 @@
 import 'dart:convert';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/page_loader.dart';
 import 'package:luvpark_get/profile/controller.dart';
 import 'package:luvpark_get/routes/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../auth/authentication.dart';
+import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/custom_text.dart';
+import '../sqlite/reserve_notification_table.dart';
 
 class Profile extends GetView<ProfileScreenController> {
   const Profile({Key? key}) : super(key: key);
@@ -197,7 +203,58 @@ class Profile extends GetView<ProfileScreenController> {
                                     Get.toNamed(Routes.security);
                                   },
                                 ),
-                                // Add more ListTiles here if needed
+                                const Divider(),
+                                ListTile(
+                                  leading: Icon(
+                                    LucideIcons.logOut,
+                                    color: AppColor.primaryColor,
+                                  ),
+                                  title: const CustomTitle(
+                                    text: "Logout",
+                                    fontSize: 14,
+                                    fontStyle: FontStyle.normal,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: -0.408,
+                                    color: Color(0xFF1C1C1E),
+                                  ),
+                                  trailing: Icon(Icons.chevron_right_sharp,
+                                      color: AppColor.primaryColor),
+                                  onTap: () async {
+                                    CustomDialog().confirmationDialog(
+                                        context,
+                                        "Logout",
+                                        "Are you sure you want to logout?",
+                                        "No",
+                                        "Yes", () {
+                                      Get.back();
+                                    }, () async {
+                                      Get.back();
+                                      CustomDialog().loadingDialog(context);
+                                      await Future.delayed(
+                                          const Duration(seconds: 3));
+                                      final userLogin =
+                                          await Authentication().getUserLogin();
+                                      List userData = [userLogin];
+                                      userData = userData.map((e) {
+                                        e["is_login"] = "N";
+                                        return e;
+                                      }).toList();
+                                      await NotificationDatabase.instance
+                                          .deleteAll();
+                                      await Authentication()
+                                          .setLogin(jsonEncode(userData[0]));
+                                      final prefs =
+                                          await SharedPreferences.getInstance();
+                                      prefs.remove("last_booking");
+                                      Authentication().setLogoutStatus(true);
+                                      AwesomeNotifications()
+                                          .dismissAllNotifications();
+                                      AwesomeNotifications().cancelAll();
+                                      Get.back();
+                                      Get.offAllNamed(Routes.splash);
+                                    });
+                                  },
+                                ),
                               ],
                             ),
                           ),

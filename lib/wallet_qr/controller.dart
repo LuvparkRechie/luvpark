@@ -18,6 +18,9 @@ import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../custom_widgets/app_color.dart';
+import '../custom_widgets/custom_cutter.dart';
+import '../custom_widgets/custom_cutter_top_bottom.dart';
 import '../routes/routes.dart';
 
 class QrWalletController extends GetxController
@@ -188,37 +191,69 @@ class QrWalletController extends GetxController
   }
 
   Widget myWidget() => Container(
-        color: const Color(0xFFffffff),
+        color: Colors.grey.shade300,
         child: Padding(
-          padding: const EdgeInsets.all(10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 15),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Image(
-                  width: 100,
-                  height: 100,
-                  image: AssetImage("assets/images/logo.png")),
               Container(
-                height: 20,
-              ),
-              QrImageView(
-                data: currentPage.value == 1 ? mobNum.value : payKey.value,
-                version: QrVersions.auto,
-                size: MediaQuery.of(Get.context!).size.width * .50,
-                gapless: false,
-                backgroundColor: const Color(0xFFffffff),
-              ),
-              Container(
-                height: 20,
-              ),
-              Text(
-                currentPage.value == 1 ? "Scan QR Code to receive" : "QR Pay",
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF787878),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8.0),
+                  color: AppColor.bodyColor,
                 ),
-              )
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TopRowDecoration(color: Colors.grey.shade300),
+                    Image(
+                      height: 60,
+                      fit: BoxFit.cover,
+                      image: AssetImage("assets/images/login_logo.png"),
+                    ),
+                    LineCutter(),
+                    const SizedBox(height: 10),
+                    Container(
+                      width: 200,
+                      height: 200,
+                      decoration: ShapeDecoration(
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                            width: 2,
+                            color: Color(0x162563EB),
+                          ),
+                          borderRadius: BorderRadius.circular(28),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(15.0),
+                        child: QrImageView(
+                          data: currentPage.value == 1
+                              ? mobNum.value
+                              : payKey.value,
+                          version: QrVersions.auto,
+                          size: MediaQuery.of(Get.context!).size.width * .50,
+                          gapless: false,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      height: 20,
+                    ),
+                    Text(
+                      currentPage.value == 1
+                          ? "Scan QR Code to receive"
+                          : "QR Pay",
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF787878),
+                      ),
+                    ),
+                    BottomRowDecoration(color: Colors.grey.shade300)
+                  ],
+                ),
+              ),
             ],
           ),
         ),

@@ -6,6 +6,7 @@ class PaMessageDataFields {
     userId,
     status,
     runOn,
+    isRead,
   ];
 
   static const String pushMsgId = 'push_msg_id';
@@ -14,4 +15,5 @@ class PaMessageDataFields {
   static const String createdDate = 'created_on';
   static const String status = 'push_status';
   static const String runOn = 'run_on';
+  static const String isRead = "is_read";
 }

@@ -22,7 +22,7 @@ class PaMessageDatabase {
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path, version: 2, onCreate: _createDB);
   }
 
   Future _createDB(Database db, int version) async {
@@ -36,6 +36,7 @@ class PaMessageDatabase {
         ${PaMessageDataFields.message} $textType,
         ${PaMessageDataFields.createdDate} $textType, 
         ${PaMessageDataFields.status} $textType, 
+         ${PaMessageDataFields.isRead} $textType, 
         ${PaMessageDataFields.runOn} $textType
         )
       ''');
@@ -49,14 +50,16 @@ class PaMessageDatabase {
         '${PaMessageDataFields.message},'
         '${PaMessageDataFields.createdDate},'
         '${PaMessageDataFields.status},'
+        '${PaMessageDataFields.isRead},'
         '${PaMessageDataFields.runOn}';
     final insertValues = "${json[PaMessageDataFields.pushMsgId]},"
         "${json[PaMessageDataFields.userId]},"
-        "'${json[PaMessageDataFields.message]}',"
+        "'${json[PaMessageDataFields.message].toString().replaceAll("'", "''")}',"
         "'${json[PaMessageDataFields.createdDate]}',"
         "'${json[PaMessageDataFields.status]}',"
+        "'${json[PaMessageDataFields.isRead]}',"
         "'${json[PaMessageDataFields.runOn]}'";
-
+    print("insertValues $insertValues");
     final existingData = await PaMessageDatabase.instance
         .readNotificationById(json[PaMessageDataFields.pushMsgId]);
 
@@ -64,21 +67,14 @@ class PaMessageDatabase {
       await db!.transaction((txn) async {
         var batch = txn.batch();
 
-        // batch.rawUpdate('''
-        //   UPDATE ${Variables.paMessageTable}
-        //   SET ${PaMessageDataFields.pushMsgId} = ?,  ${PaMessageDataFields.updatedDate} = ?
-        //   WHERE ${PaMessageDataFields.pushMsgId} = ?
-        //   ''', [
-        //   json[PaMessageDataFields.pushMsgId],
-        //   json[PaMessageDataFields.pushMsgId],
-        // ]);
         batch.rawUpdate('''
-          UPDATE ${Variables.notifTable}
+          UPDATE ${Variables.paMessageTable}
           SET ${PaMessageDataFields.pushMsgId} = ?, 
               ${PaMessageDataFields.userId} = ?, 
               ${PaMessageDataFields.message} = ?, 
               ${PaMessageDataFields.createdDate} = ? , 
-               ${PaMessageDataFields.status} = ? ,  
+               ${PaMessageDataFields.status} = ? , 
+                  ${PaMessageDataFields.isRead} = ? ,  
               ${PaMessageDataFields.runOn} = ? 
           WHERE ${PaMessageDataFields.pushMsgId} = ?
           ''', [
@@ -87,6 +83,7 @@ class PaMessageDatabase {
           json[PaMessageDataFields.message],
           json[PaMessageDataFields.createdDate],
           json[PaMessageDataFields.status],
+          json[PaMessageDataFields.isRead],
           json[PaMessageDataFields.runOn],
           json[PaMessageDataFields.pushMsgId],
         ]);
@@ -139,6 +136,19 @@ class PaMessageDatabase {
     } else {
       return null;
     }
+  }
+
+  Future<List<dynamic>> getUnreadMessages() async {
+    final db = await instance.database;
+
+    final maps = await db!.query(
+      Variables.paMessageTable,
+      columns: PaMessageDataFields.values,
+      where: '${PaMessageDataFields.isRead} = ?',
+      whereArgs: ['N'],
+    );
+
+    return maps;
   }
 
   Future<List<dynamic>> readAllMessage() async {

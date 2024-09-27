@@ -184,17 +184,25 @@ class PayQr extends GetView<QrWalletController> {
                               padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
                               child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 40,
-                                    backgroundImage: controller.userImage !=
-                                            null
-                                        ? MemoryImage(
+                                  controller.userImage == null
+                                      ? Container(
+                                          height: 70,
+                                          width: 70,
+                                          decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                  color: AppColor.primaryColor
+                                                      .withOpacity(.6))),
+                                          child: Icon(
+                                            Icons.person,
+                                            color: Colors.blueAccent,
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 40,
+                                          backgroundImage: MemoryImage(
                                             base64Decode(controller.userImage!),
-                                          )
-                                        : AssetImage(
-                                                "assets/images/profIcon.png")
-                                            as ImageProvider,
-                                  ),
+                                          )),
                                   SizedBox(
                                     height: 10,
                                   ),
@@ -436,15 +444,26 @@ class ReceiveQr extends GetView<QrWalletController> {
                 padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius: 40,
-                      backgroundImage: controller.userImage != null
-                          ? MemoryImage(
+                    controller.userImage == null
+                        ? Container(
+                            height: 70,
+                            width: 70,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                    color:
+                                        AppColor.primaryColor.withOpacity(.6))),
+                            child: Icon(
+                              Icons.person,
+                              color: Colors.blueAccent,
+                            ),
+                          )
+                        : CircleAvatar(
+                            radius: 40,
+                            backgroundImage: MemoryImage(
                               base64Decode(controller.userImage!),
-                            )
-                          : AssetImage("assets/images/profIcon.png")
-                              as ImageProvider,
-                    ),
+                            ),
+                          ),
                     SizedBox(
                       height: 10,
                     ),

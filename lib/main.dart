@@ -7,9 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/routes/pages.dart';
 import 'package:luvpark_get/routes/routes.dart';
@@ -96,12 +94,6 @@ class _MyAppState extends State<MyApp> {
       title: 'MyApp',
       theme: ThemeData(
         useMaterial3: false,
-        primarySwatch: Colors.blue,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: AppColor.primaryColor,
-          primary: AppColor.primaryColor,
-        ),
-        textTheme: GoogleFonts.quicksandTextTheme(),
       ),
       initialRoute: Routes.splash,
       getPages: AppPages.pages,

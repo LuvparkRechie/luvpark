@@ -15,7 +15,7 @@ class ActivateAccountController extends GetxController {
   RxBool isLoading = false.obs;
   RxString? password;
   TextEditingController pinController = TextEditingController();
-  Duration countdownDuration = const Duration(minutes: 5);
+  Duration countdownDuration = const Duration(minutes: 2);
   Duration duration = const Duration();
   bool isCountdown = false;
   Timer? timer;
@@ -28,9 +28,9 @@ class ActivateAccountController extends GetxController {
   RxBool isLoadingPage = true.obs;
   RxString inputPin = "".obs;
   bool isOtpValid = true;
-  RxInt minutes = 5.obs;
+  RxInt minutes = 2.obs;
   RxInt seconds = 0.obs;
-  RxInt initialMinutes = 5.obs;
+  RxInt initialMinutes = 2.obs;
   RxBool isRunning = false.obs;
   RxInt otpCode = 0.obs;
 
@@ -203,7 +203,14 @@ class ActivateAccountController extends GetxController {
   }
 
   Future<void> verifyAccount() async {
-    if (pinController.text.isEmpty) return;
+    if (inputPin.value.length != 6) {
+      CustomDialog().errorDialog(
+          Get.context!, "Invalid OTP", "Please complete the 6-digits OTP", () {
+        isLoading.value = false;
+        Get.back();
+      });
+      return;
+    }
 
     CustomDialog().loadingDialog(Get.context!);
     var otpData = {
@@ -248,8 +255,8 @@ class ActivateAccountController extends GetxController {
         );
       } else {
         Get.back();
-        CustomDialog().errorDialog(Get.context!, "Error",
-            "Invalid OTP code. Please try again.. Please try again.", () {
+        CustomDialog().errorDialog(
+            Get.context!, "Error", "Invalid OTP code. Please try again.", () {
           pinController.text = "";
           Get.back();
         });

@@ -1,5 +1,3 @@
-// ignore_for_file: depend_on_referenced_packages
-
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/sqlite/notification_model.dart';
 import 'package:path/path.dart';
@@ -35,10 +33,9 @@ class NotificationDatabase {
       CREATE TABLE ${Variables.notifTable} (  
         ${NotificationDataFields.reservedId} $integerType, 
         ${NotificationDataFields.userId} $integerType, 
-        ${NotificationDataFields.description} $textType,
-        ${NotificationDataFields.notifDate} $textType, 
-        ${NotificationDataFields.status} $textType,
-        ${NotificationDataFields.isActive} $textType,
+        ${NotificationDataFields.mTicketId} $integerType, 
+        ${NotificationDataFields.mreservedId} $integerType,  
+        ${NotificationDataFields.notifDate} $textType,  
         ${NotificationDataFields.dtIn} $textType
         )
       ''');
@@ -49,17 +46,15 @@ class NotificationDatabase {
 
     const columns = '${NotificationDataFields.reservedId},'
         '${NotificationDataFields.userId},'
-        '${NotificationDataFields.description},'
+        '${NotificationDataFields.mTicketId},'
+        '${NotificationDataFields.mreservedId},'
         '${NotificationDataFields.notifDate},'
-        '${NotificationDataFields.status},'
-        '${NotificationDataFields.isActive},'
         '${NotificationDataFields.dtIn}';
     final insertValues = "${json[NotificationDataFields.reservedId]},"
         "${json[NotificationDataFields.userId]},"
-        "'${json[NotificationDataFields.description]}',"
+        "${json[NotificationDataFields.mTicketId]},"
+        "${json[NotificationDataFields.mreservedId]},"
         "'${json[NotificationDataFields.notifDate]}',"
-        "'${json[NotificationDataFields.status]}',"
-        "'${json[NotificationDataFields.isActive]}',"
         "'${json[NotificationDataFields.dtIn]}'";
 
     final existingData = await NotificationDatabase.instance
@@ -73,19 +68,18 @@ class NotificationDatabase {
           UPDATE ${Variables.notifTable}
           SET ${NotificationDataFields.reservedId} = ?, 
               ${NotificationDataFields.userId} = ?, 
-              ${NotificationDataFields.description} = ?, 
+                ${NotificationDataFields.mTicketId} = ?, 
+                  ${NotificationDataFields.mreservedId} = ?,  
               ${NotificationDataFields.notifDate} = ? , 
-               ${NotificationDataFields.status} = ? , 
-                 ${NotificationDataFields.isActive} = ? , 
+             
               ${NotificationDataFields.dtIn} = ? 
           WHERE ${NotificationDataFields.reservedId} = ?
           ''', [
           json[NotificationDataFields.reservedId],
           json[NotificationDataFields.userId],
-          json[NotificationDataFields.description],
+          json[NotificationDataFields.mTicketId],
+          json[NotificationDataFields.mreservedId],
           json[NotificationDataFields.notifDate],
-          json[NotificationDataFields.status],
-          json[NotificationDataFields.isActive],
           json[NotificationDataFields.dtIn],
           json[NotificationDataFields.reservedId],
         ]);
@@ -121,15 +115,14 @@ class NotificationDatabase {
     }
   }
 
-  Future<dynamic> readNotificationByDateOut(String date, int reserveId) async {
+  Future<dynamic> readNotificationByResId(int reserveId) async {
     final db = await instance.database;
 
     final maps = await db!.query(
       Variables.notifTable,
       columns: NotificationDataFields.values,
-      where:
-          '${NotificationDataFields.dtIn} = ? AND ${NotificationDataFields.reservedId} = ?',
-      whereArgs: [date, reserveId],
+      where: '${NotificationDataFields.reservedId} = ?',
+      whereArgs: [reserveId],
     );
 
     if (maps.isNotEmpty) {

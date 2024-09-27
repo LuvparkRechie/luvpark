@@ -20,6 +20,8 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../custom_widgets/app_color.dart';
+import '../../../custom_widgets/custom_cutter.dart';
+import '../../../custom_widgets/custom_cutter_top_bottom.dart';
 import '../../../custom_widgets/custom_text.dart';
 
 class BookingReceipt extends GetView<BookingReceiptController> {
@@ -399,8 +401,13 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                           Get.back();
 
                           GallerySaver.saveImage(imagePath.path).then((result) {
-                            CustomDialog().snackbarDialog(Get.context!,
-                                "Successfully saved.", Colors.green, () {});
+                            CustomDialog().successDialog(
+                                Get.context!,
+                                "Success",
+                                "QR code has been saved. Please check your gallery.",
+                                "Okay", () {
+                              Get.back();
+                            });
                           });
                         });
                       }),
@@ -519,42 +526,67 @@ class BookingReceipt extends GetView<BookingReceiptController> {
 
   Widget printScreen() {
     return Container(
-      color: AppColor.bodyColor,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            Center(
-              child: Container(
-                width: 150,
-                height: 150,
-                decoration: ShapeDecoration(
-                  shape: RoundedRectangleBorder(
-                    side: const BorderSide(width: 2, color: Color(0x162563EB)),
-                    borderRadius: BorderRadius.circular(28),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: QrImageView(
-                    data: controller.parameters["refno"],
-                    version: QrVersions.auto,
-                    gapless: false,
-                  ),
-                ),
-              ),
+      padding: const EdgeInsets.symmetric(horizontal: 15),
+      color: Colors.grey.shade300,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8.0),
+              color: AppColor.bodyColor,
             ),
-            const SizedBox(height: 10),
-            Center(
-              child: Text("Scan QR code", style: paragraphStyle()),
+            child: Column(
+              children: [
+                TopRowDecoration(color: Colors.grey.shade300),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(height: 20),
+                    Image(
+                      height: 50,
+                      fit: BoxFit.cover,
+                      image: AssetImage("assets/images/login_logo.png"),
+                    ),
+                    const SizedBox(height: 20),
+                    Center(
+                      child: Container(
+                        width: 200,
+                        height: 200,
+                        decoration: ShapeDecoration(
+                          shape: RoundedRectangleBorder(
+                            side: const BorderSide(
+                              width: 2,
+                              color: Color(0x162563EB),
+                            ),
+                            borderRadius: BorderRadius.circular(28),
+                          ),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: QrImageView(
+                            data: controller.parameters["refno"],
+                            version: QrVersions.auto,
+                            gapless: false,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Text("Scan QR code", style: paragraphStyle()),
+                    const SizedBox(height: 10),
+                    LineCutter(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
+                      child: _buildDetailsSection(true),
+                    ),
+                  ],
+                ),
+                BottomRowDecoration(color: Colors.grey.shade300)
+              ],
             ),
-            const SizedBox(height: 38),
-            _buildDetailsSection(true),
-            const SizedBox(height: 10),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

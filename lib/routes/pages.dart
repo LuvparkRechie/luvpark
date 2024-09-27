@@ -15,7 +15,6 @@ import 'package:luvpark_get/wallet_recharge_load/index.dart';
 import '../activate_acc/index.dart';
 import '../booking/index.dart';
 import '../booking/utils/booking_receipt/index.dart';
-import '../booking_notice/index.dart';
 import '../forgot_password/index.dart';
 import '../forgot_password/utils/create_new/index.dart';
 import '../forgot_password/utils/forgot_otp/utils/forgot_pass_success.dart';
@@ -118,11 +117,7 @@ class AppPages {
       page: () => const BookingPage(),
       binding: BookingBinding(),
     ),
-    GetPage(
-      name: Routes.bookingNotice,
-      page: () => const BookingNotice(),
-      binding: BookingNoticeBinding(),
-    ),
+
     GetPage(
       name: Routes.bookingReceipt,
       page: () => BookingReceipt(),

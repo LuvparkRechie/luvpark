@@ -22,7 +22,7 @@ class CustomTitle extends StatelessWidget {
     this.color,
     this.fontWeight = FontWeight.w700,
     this.fontStyle = FontStyle.normal,
-    this.letterSpacing = -1,
+    this.letterSpacing = 0,
     this.maxlines,
     this.height,
     this.wordspacing = 2, // Set Normal to 4
@@ -44,7 +44,8 @@ class CustomTitle extends StatelessWidget {
       ),
       maxLines: maxlines,
       textAlign: textAlign,
-      minFontSize: 10,
+      minFontSize: 12,
+      overflow: TextOverflow.ellipsis,
     );
   }
 }
@@ -83,6 +84,8 @@ class CustomParagraph extends StatelessWidget {
   Widget build(BuildContext context) {
     return AutoSizeText(
       text,
+      softWrap: true,
+      group: AutoSizeGroup(),
       style: paragraphStyle(
         fontSize: fontSize,
         color: color ?? Colors.grey[600], //AppColor.paragraphColor,
@@ -95,7 +98,7 @@ class CustomParagraph extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxlines,
       overflow: overflow,
-      minFontSize: 10,
+      minFontSize: 12,
     );
   }
 }
@@ -185,7 +188,7 @@ TextStyle titleStyle({
   Color? color,
   FontWeight fontWeight = FontWeight.w700,
   FontStyle fontStyle = FontStyle.normal,
-  double letterSpacing = -1.0,
+  double letterSpacing = 0,
   double wordSpacing = 2.0,
   double? height,
 }) {

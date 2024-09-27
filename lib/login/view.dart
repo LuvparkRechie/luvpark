@@ -171,7 +171,7 @@ class LoginScreen extends GetView<LoginScreenController> {
                                             !controller.isLoading.value);
                                         CustomDialog().confirmationDialog(
                                             context,
-                                            "Information",
+                                            "Activate account",
                                             "Your account is currently inactive. Would you like to activate it now?",
                                             "No",
                                             "Yes", () {

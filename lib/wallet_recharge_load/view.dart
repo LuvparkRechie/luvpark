@@ -18,7 +18,7 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-        title: "Load",
+        title: "Top-up",
       ),
       backgroundColor: AppColor.scafColor,
       body: Form(
@@ -30,77 +30,6 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomTitle(
-                  textAlign: TextAlign.start,
-                  text: 'Payment Method',
-                  fontSize: 15,
-                  color: Colors.black87,
-                  letterSpacing: 1,
-                  fontWeight: FontWeight.w600,
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: [
-                    for (int index = 0;
-                        index < controller.bankPartner.length;
-                        index++)
-                      Obx(
-                        () => Padding(
-                          padding: const EdgeInsets.only(right: 5),
-                          child: InkWell(
-                            onTap: () {
-                              controller.getBankUrl(
-                                  controller.bankPartner[index]["value"],
-                                  index);
-                            },
-                            child: Container(
-                              height: 70,
-                              width: 120,
-                              decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: controller.selectedBankType.value ==
-                                            null
-                                        ? Colors.black12
-                                        : controller.selectedBankType.value ==
-                                                index
-                                            ? AppColor.primaryColor
-                                            : Colors.black12),
-                                borderRadius: BorderRadius.circular(12),
-                                color: const Color(0xFFffffff),
-                                image: DecorationImage(
-                                  fit: BoxFit.contain,
-                                  image: AssetImage(
-                                      controller.bankPartner[index]["img_url"]),
-                                ),
-                              ),
-                              child: Stack(children: [
-                                Align(
-                                  alignment: const Alignment(1.0, 1.0),
-                                  child:
-                                      controller.selectedBankType.value == null
-                                          ? SizedBox()
-                                          : controller.selectedBankType.value ==
-                                                  index
-                                              ? const Icon(
-                                                  Icons.check_circle_outline,
-                                                  color: Colors.green,
-                                                  size: 25,
-                                                )
-                                              : const SizedBox(),
-                                )
-                              ]),
-                            ),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-                SizedBox(
-                  height: 15,
-                ),
-                Divider(),
                 SizedBox(
                   height: 15,
                 ),
@@ -109,50 +38,47 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                   fontSize: 18,
                   letterSpacing: 1,
                 ),
+                SizedBox(
+                  height: 20,
+                ),
                 Container(
                   decoration: BoxDecoration(
                       color: const Color(0xFFffffff),
                       borderRadius: BorderRadius.circular(15)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 15,
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        CustomMobileNumber(
-                          labelText: "Recipient Number",
-                          controller: controller.mobNum,
-                          inputFormatters: [Variables.maskFormatter],
-                          onChange: (value) {
-                            controller.isActiveBtn.value = true;
-                            controller.onSearchChanged(
-                                value.replaceAll(" ", ""), false);
-                          },
-                        ),
-                        SizedBox(height: 10),
-                        CustomTextField(
-                          isReadOnly: true,
-                          controller: controller.rname,
-                          labelText: "Recipient Name",
-                        ),
-                        CustomTextField(
-                          isReadOnly: true,
-                          controller: controller.amountController,
-                          labelText: "Amount",
-                        ),
-                      ],
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      CustomMobileNumber(
+                        labelText: "Recipient Number",
+                        controller: controller.mobNum,
+                        inputFormatters: [Variables.maskFormatter],
+                        onChange: (value) {
+                          controller.isActiveBtn.value = true;
+                          controller.onSearchChanged(
+                              value.replaceAll(" ", ""), false);
+                        },
+                      ),
+                      CustomTextField(
+                        isReadOnly: true,
+                        controller: controller.rname,
+                        labelText: "Recipient Name",
+                      ),
+                      CustomTextField(
+                        isReadOnly: true,
+                        controller: controller.amountController,
+                        labelText: "Amount",
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(
                   height: 20,
                 ),
-                if (MediaQuery.of(context).viewInsets.bottom == 0) //hide button
+                if (MediaQuery.of(context).viewInsets.bottom ==
+                    0) //hide custombutton
                   Obx(() => CustomButton(
                         text: "Pay Now",
                         btnColor: !controller.isActiveBtn.value

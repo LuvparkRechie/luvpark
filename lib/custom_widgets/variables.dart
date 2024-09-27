@@ -13,10 +13,10 @@ import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pointycastle/export.dart' as crypto;
 import 'package:screenshot/screenshot.dart';
-
-BuildContext? ctxt;
+import 'package:text_to_speech/text_to_speech.dart';
 
 class Variables {
+  static BuildContext? ctxt;
   static late Size screenSize;
   static void init(BuildContext context) {
     ctxt = context;
@@ -576,4 +576,18 @@ class Variables {
       return 'Invalid time'; // Return a default value or error message
     }
   }
+
+  //TEXT TO SPEECH Variables
+  static TextToSpeech tts = TextToSpeech();
+  static String defaultLanguage = 'en-US';
+
+  static double volume = 1; // Range: 0-1
+  static double rate = 1.0; // Range: 0-2
+  static double pitch = 1.0; // Range: 0-2
+
+  static String? language;
+  static String? languageCode;
+  static List<String> languages = <String>[];
+  static List<String> languageCodes = <String>[];
+  static String? voice;
 }

@@ -15,7 +15,7 @@ import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import '../custom_widgets/app_color.dart';
+import 'index.dart';
 
 class BookingController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -120,8 +120,8 @@ class BookingController extends GetxController
     if (isShowNotice.value) {
       Get.back();
     }
-    CustomDialog().errorDialog(Get.context!, "No Interaction Detected",
-        "No Gestures were detected within the last minute. Reloading the page",
+    CustomDialog().errorDialog(Get.context!, "Screen Idle",
+        "No Gestures were detected within the last minute. Reloading the page.",
         () {
       Get.back();
       _reloadPage();
@@ -232,6 +232,7 @@ class BookingController extends GetxController
 
   //GET my registered vehicle
   Future<void> getMyVehicle() async {
+    CustomDialog().loadingDialog(Get.context!);
     if (selectedVh.isEmpty) {
       isBtnLoading.value = true;
     }
@@ -246,7 +247,8 @@ class BookingController extends GetxController
     HttpRequest(api: api).get().then((myVehicles) async {
       if (myVehicles == "No Internet") {
         isNetConnVehicles.value = false;
-        isLoadingVehicles.value = true;
+        isLoadingVehicles.value = false;
+        Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
         });
@@ -256,6 +258,7 @@ class BookingController extends GetxController
       if (myVehicles == null) {
         isNetConnVehicles.value = true;
         isLoadingVehicles.value = true;
+        Get.back();
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
@@ -293,7 +296,7 @@ class BookingController extends GetxController
       if (returnData == "No Internet") {
         isNetConnVehicles.value = false;
         isLoadingVehicles.value = true;
-
+        Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
         });
@@ -303,15 +306,17 @@ class BookingController extends GetxController
       if (returnData == null) {
         isNetConnVehicles.value = true;
         isLoadingVehicles.value = true;
+        Get.back();
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
         return;
       }
+
       isNetConnVehicles.value = true;
       isLoadingVehicles.value = false;
       ddVehiclesData.value = [];
-
+      Get.back();
       if (returnData["items"].length > 0) {
         dynamic items = returnData["items"];
         ddVehiclesData.value = items.map((item) {
@@ -324,6 +329,15 @@ class BookingController extends GetxController
           };
         }).toList();
       }
+      Get.bottomSheet(
+        isScrollControlled: true,
+        VehicleOption(
+          callback: (data) {
+            selectedVh.value = data;
+            routeToComputation();
+          },
+        ),
+      );
     });
   }
 
@@ -633,24 +647,14 @@ class BookingController extends GetxController
         isLoadingPage.value = false;
         noticeData.value = retDataNotice["items"];
         Timer(Duration(milliseconds: 500), () {
-          CustomDialog().customPopUp(
-            Get.context!,
-            noticeData[0]["msg_title"],
-            noticeData[0]["msg"],
-            '',
-            'Proceed Booking',
-            imageName: 'pu_info',
-            btnNotBackgroundColor: Colors.transparent,
-            btnNotTextColor: AppColor.primaryColor,
-            btnOkTextColor: Colors.white,
-            btnOkBackgroundColor: AppColor.primaryColor,
-            onTapClose: () async {},
-            onTapConfirm: () async {
-              isShowNotice.value = false;
-              Get.back();
-            },
-            showTwoButtons: false,
-          );
+          CustomDialog().bookingNotice(
+              noticeData[0]["msg_title"], noticeData[0]["msg"], () {
+            Get.back();
+            Get.back();
+          }, () {
+            isShowNotice.value = false;
+            Get.back();
+          });
         });
       } else {
         isInternetConn.value = true;

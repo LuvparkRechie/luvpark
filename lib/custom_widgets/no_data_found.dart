@@ -31,7 +31,7 @@ class NoDataFound extends StatelessWidget {
             ),
             CustomParagraph(
               text: text ?? "No data found",
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
               textAlign: TextAlign.center,
             ),
             Container(

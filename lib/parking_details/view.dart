@@ -5,16 +5,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/parking_details/controller.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../custom_widgets/variables.dart';
 
 class ParkingDetails extends GetView<ParkingDetailsController> {
   const ParkingDetails({super.key});
@@ -156,7 +156,7 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                                     zoomGesturesEnabled: true,
                                     mapToolbarEnabled: false,
                                     zoomControlsEnabled: false,
-                                    myLocationEnabled: true,
+                                    myLocationEnabled: false,
                                     myLocationButtonEnabled: false,
                                     compassEnabled: false,
                                     buildingsEnabled: false,
@@ -175,16 +175,12 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                                   ),
                                   DraggableScrollableSheet(
                                       initialChildSize: 0.4,
-                                      minChildSize: 0.2,
+                                      minChildSize: 0.15,
                                       maxChildSize: 0.8,
                                       controller: controller.dragController,
                                       builder: (BuildContext context,
                                           ScrollController scrollController) {
                                         return Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 15,
-                                            vertical: 10,
-                                          ),
                                           decoration: BoxDecoration(
                                             borderRadius: BorderRadius.vertical(
                                               top: Radius.circular(15),
@@ -193,414 +189,297 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                                           ),
                                           child: Column(
                                             children: [
-                                              SingleChildScrollView(
-                                                controller: scrollController,
-                                                child: SizedBox(
-                                                  height: 20,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  child: Center(
-                                                    child: Container(
-                                                      width: 71,
-                                                      height: 6,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(56),
-                                                        color: const Color(
-                                                            0xffd9d9d9),
-                                                      ),
+                                              Container(
+                                                decoration: BoxDecoration(
+                                                  border: Border(
+                                                    bottom: BorderSide(
+                                                      width: 1,
+                                                      // strokeAlign: BorderSide
+                                                      //     .strokeAlignCenter,
+                                                      color: Color(0xFFF3EAEA),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                              Container(height: 10),
-                                              Expanded(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 15,
+                                                  horizontal: 15,
+                                                ),
                                                 child: SingleChildScrollView(
-                                                  controller: scrollController,
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      // Row(
-                                                      //   children: [
-                                                      //     Expanded(
-                                                      //       child: Column(
-                                                      //         crossAxisAlignment:
-                                                      //             CrossAxisAlignment
-                                                      //                 .start,
-                                                      //         children: [
-                                                      //           CustomTitle(
-                                                      //             text: controller
-                                                      //                     .dataNearest[
-                                                      //                 "park_area_name"],
-                                                      //             fontSize: 20,
-                                                      //           ),
-                                                      //           CustomParagraph(
-                                                      //             text: controller
-                                                      //                     .dataNearest[
-                                                      //                 "address"],
-                                                      //             fontWeight:
-                                                      //                 FontWeight
-                                                      //                     .w600,
-                                                      //             maxlines: 2,
-                                                      //           ),
-                                                      //         ],
-                                                      //       ),
-                                                      //     ),
-                                                      //   ],
-                                                      // ),
-                                                      Row(
-                                                        children: [
-                                                          LayoutBuilder(
-                                                            builder: ((context,
-                                                                constraints) {
-                                                              return iconAsset
-                                                                      .contains(
-                                                                          "png")
-                                                                  ? Image(
-                                                                      image: AssetImage(
-                                                                          iconAsset),
-                                                                      height:
-                                                                          50,
-                                                                      width: 50,
-                                                                    )
-                                                                  : SvgPicture.asset(
-                                                                      height:
-                                                                          50,
-                                                                      width: 50,
-                                                                      iconAsset);
-                                                            }),
+                                                    controller:
+                                                        scrollController,
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        CustomTitle(
+                                                          text:
+                                                              "Parking Details",
+                                                          fontSize: 14,
+                                                        ),
+                                                        Align(
+                                                          alignment: Alignment
+                                                              .topRight,
+                                                          child: InkWell(
+                                                            onTap: () {
+                                                              Get.back();
+                                                            },
+                                                            child: Container(
+                                                              decoration:
+                                                                  ShapeDecoration(
+                                                                color: Color(
+                                                                    0xFFF6F5F5),
+                                                                shape:
+                                                                    RoundedRectangleBorder(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              37.39),
+                                                                ),
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        10),
+                                                                child: Icon(
+                                                                  Icons.close,
+                                                                  color: Color(
+                                                                      0xFF747579),
+                                                                  size: 15,
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ),
-                                                          Container(width: 10),
-                                                          Expanded(
+                                                        ),
+                                                      ],
+                                                    )),
+                                              ),
+                                              Expanded(
+                                                child: ScrollConfiguration(
+                                                  behavior: ScrollBehavior()
+                                                      .copyWith(
+                                                          overscroll: false),
+                                                  child:
+                                                      StretchingOverscrollIndicator(
+                                                    axisDirection:
+                                                        AxisDirection.down,
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      padding: EdgeInsets.zero,
+                                                      controller:
+                                                          scrollController,
+                                                      child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Padding(
+                                                            padding: EdgeInsets
+                                                                .fromLTRB(15,
+                                                                    10, 15, 0),
                                                             child: Column(
                                                               crossAxisAlignment:
                                                                   CrossAxisAlignment
                                                                       .start,
                                                               children: [
-                                                                CustomTitle(
-                                                                  text: controller
-                                                                          .dataNearest[
-                                                                      "park_area_name"],
-                                                                  fontSize: 20,
-                                                                ),
-                                                                CustomParagraph(
-                                                                  text: controller
-                                                                          .dataNearest[
-                                                                      "address"],
-                                                                  maxlines: 2,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                  fontSize: 12,
-                                                                )
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Container(width: 10),
-                                                          Align(
-                                                            alignment: Alignment
-                                                                .topRight,
-                                                            child: InkWell(
-                                                              onTap: () {
-                                                                Get.back();
-                                                              },
-                                                              child: Container(
-                                                                decoration:
-                                                                    ShapeDecoration(
-                                                                  color: Color(
-                                                                      0xFFF3F4F6),
-                                                                  shape:
-                                                                      RoundedRectangleBorder(
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            37.39),
-                                                                  ),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          10),
-                                                                  child: Icon(
-                                                                    Icons.close,
-                                                                    color: Color(
-                                                                        0xFF747579),
-                                                                    size: 15,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Container(height: 20),
-                                                      Container(height: 15),
-                                                      Text.rich(
-                                                        TextSpan(
-                                                          children: [
-                                                            TextSpan(
-                                                              text: controller
-                                                                      .isOpen
-                                                                      .value
-                                                                  ? "Open"
-                                                                  : "Close",
-                                                              style:
-                                                                  paragraphStyle(
-                                                                color: controller
-                                                                        .isOpen
-                                                                        .value
-                                                                    ? const Color(
-                                                                        0xFF7BB56C)
-                                                                    : Colors
-                                                                        .red,
-                                                              ),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  ' ●  ${Variables.timeFormatter(controller.dataNearest["opened_time"].toString())} - ${Variables.timeFormatter(controller.dataNearest["closed_time"]).toString()}  ●  ',
-                                                              style:
-                                                                  paragraphStyle(),
-                                                            ),
-                                                            TextSpan(
-                                                              text:
-                                                                  '${int.parse(controller.dataNearest["ps_vacant_count"].toString())} ${int.parse(controller.dataNearest["ps_vacant_count"].toString()) > 1 ? "Slots" : "Slot"} left',
-                                                              style: paragraphStyle(
-                                                                  color: const Color(
-                                                                      0xFFE03C20)),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        maxLines: 1,
-                                                      ),
-                                                      Container(height: 15),
-                                                      const CustomTitle(
-                                                        text:
-                                                            "Available Vehicles",
-                                                        color: Colors.black87,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        fontSize: 16,
-                                                      ),
-                                                      Container(height: 15),
-                                                      Obx(
-                                                        () =>
-                                                            SingleChildScrollView(
-                                                          scrollDirection:
-                                                              Axis.horizontal,
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: controller
-                                                                .vehicleTypes
-                                                                .map((type) {
-                                                              final color = Color(int.parse(
-                                                                      type['color']
-                                                                          .substring(
-                                                                              1),
-                                                                      radix:
-                                                                          16) +
-                                                                  0xFF000000);
-
-                                                              return Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        right:
-                                                                            8.0),
-                                                                child:
+                                                                Row(
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          CustomTitle(
+                                                                            text:
+                                                                                controller.dataNearest["park_area_name"],
+                                                                            fontSize:
+                                                                                20,
+                                                                          ),
+                                                                          CustomParagraph(
+                                                                            text:
+                                                                                controller.dataNearest["address"],
+                                                                            maxlines:
+                                                                                2,
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ),
                                                                     Container(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          10),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: color
-                                                                        .withOpacity(
-                                                                            .2),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(5),
-                                                                  ),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      SizedBox(
                                                                         width:
-                                                                            25,
-                                                                        height:
-                                                                            25,
-                                                                        child:
-                                                                            Image(
-                                                                          image:
-                                                                              AssetImage("assets/dashboard_icon/${type["icon"]}.png"),
-                                                                          color:
-                                                                              color,
+                                                                            10),
+                                                                    LayoutBuilder(
+                                                                      builder:
+                                                                          ((context,
+                                                                              constraints) {
+                                                                        return iconAsset.contains(
+                                                                                "png")
+                                                                            ? Image(
+                                                                                image: AssetImage(iconAsset),
+                                                                                height: 50,
+                                                                                width: 50,
+                                                                              )
+                                                                            : SvgPicture.asset(
+                                                                                height: 50,
+                                                                                width: 50,
+                                                                                iconAsset);
+                                                                      }),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                Container(
+                                                                    height: 20),
+                                                                Text.rich(
+                                                                  TextSpan(
+                                                                    children: [
+                                                                      TextSpan(
+                                                                        text: controller.isOpen.value
+                                                                            ? "Open"
+                                                                            : "Close",
+                                                                        style:
+                                                                            paragraphStyle(
+                                                                          color: controller.isOpen.value
+                                                                              ? const Color(0xFF7BB56C)
+                                                                              : Colors.red,
                                                                         ),
                                                                       ),
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      CustomParagraph(
+                                                                      TextSpan(
                                                                         text:
-                                                                            '${type['name']} [ ${type['count']} ]',
-                                                                        fontWeight:
-                                                                            FontWeight.w700,
-                                                                        color:
-                                                                            color,
-                                                                      )
+                                                                            ' ● ${Variables.timeFormatter(controller.dataNearest["opened_time"].toString())} - ${Variables.timeFormatter(controller.dataNearest["closed_time"]).toString()} ● ',
+                                                                        style:
+                                                                            paragraphStyle(),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            '${int.parse(controller.dataNearest["ps_vacant_count"].toString())} ${int.parse(controller.dataNearest["ps_vacant_count"].toString()) > 1 ? "Slots" : "Slot"}',
+                                                                        style: paragraphStyle(
+                                                                            color:
+                                                                                const Color(0xFFE03C20)),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            ' ● ',
+                                                                        style:
+                                                                            paragraphStyle(),
+                                                                      ),
+                                                                      TextSpan(
+                                                                        text:
+                                                                            ' ${controller.dataNearest["distance_display"]} away',
+                                                                        style: paragraphStyle(
+                                                                            color:
+                                                                                AppColor.primaryColor),
+                                                                      ),
                                                                     ],
                                                                   ),
+                                                                  maxLines: 1,
                                                                 ),
-                                                              );
-                                                            }).toList(),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      Container(height: 25),
-                                                      const Divider(
-                                                        height: 3,
-                                                      ),
-                                                      Container(height: 15),
-                                                      const CustomTitle(
-                                                        text:
-                                                            "Parking Amenities",
-                                                        color: Colors.black87,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        fontSize: 16,
-                                                      ),
-                                                      Container(height: 15),
-                                                      SingleChildScrollView(
-                                                        scrollDirection:
-                                                            Axis.horizontal,
-                                                        child: Row(
-                                                          children: [
-                                                            for (int i = 0;
-                                                                i <
-                                                                    controller
-                                                                        .amenData
-                                                                        .length;
-                                                                i++)
-                                                              _buildColumn(
-                                                                  controller
-                                                                          .amenData[i]
-                                                                      [
-                                                                      "parking_amenity_desc"],
-                                                                  controller
-                                                                          .amenData[i]
-                                                                      ["icon"]),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                      Container(height: 20),
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          AnimatedCrossFade(
-                                                            firstChild:
-                                                                const SizedBox
-                                                                    .shrink(),
-                                                            secondChild: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                const CustomTitle(
+                                                                Container(
+                                                                    height: 12),
+                                                                CustomTitle(
                                                                   text:
-                                                                      "Parking Rates",
-                                                                  color: Colors
-                                                                      .black87,
+                                                                      "Available Vehicle Slots",
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w700,
-                                                                  fontSize: 16,
+                                                                  fontSize: 14,
                                                                 ),
                                                                 Container(
+                                                                    height: 10),
+                                                                _vehicles(),
+                                                                Container(
                                                                     height: 15),
-                                                                for (int i = 0;
-                                                                    i <
-                                                                        controller
-                                                                            .vehicleRates
-                                                                            .length;
-                                                                    i++)
-                                                                  Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
+                                                                Container(
+                                                                    height: 50,
+                                                                    width: double
+                                                                        .infinity,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      border:
+                                                                          Border(
                                                                         bottom:
-                                                                            10),
-                                                                    child:
-                                                                        Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        CustomParagraph(
-                                                                          text: controller.vehicleRates[i]
-                                                                              [
-                                                                              "vehicle_type"],
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
+                                                                            BorderSide(
+                                                                          width:
+                                                                              1,
                                                                           color:
-                                                                              Colors.black87,
+                                                                              Color(0xFFEAEBF3),
                                                                         ),
-                                                                        Container(
-                                                                            height:
-                                                                                10),
-                                                                        Container(
-                                                                          width: MediaQuery.of(Get.context!)
-                                                                              .size
-                                                                              .width,
-                                                                          padding: const EdgeInsets
-                                                                              .symmetric(
-                                                                              horizontal: 5,
-                                                                              vertical: 15),
-                                                                          decoration:
-                                                                              ShapeDecoration(
-                                                                            color:
-                                                                                const Color(0xFFE2F0FF),
-                                                                            shape:
-                                                                                RoundedRectangleBorder(
-                                                                              side: const BorderSide(width: 1, color: Color(0xFF7FB2EC)),
-                                                                              borderRadius: BorderRadius.circular(5),
-                                                                            ),
-                                                                          ),
-                                                                          child:
-                                                                              SingleChildScrollView(
-                                                                            scrollDirection:
-                                                                                Axis.horizontal,
-                                                                            child:
-                                                                                Row(
-                                                                              children: [
-                                                                                _buildRatesContent(controller.vehicleRates[i]["base_rate"].toString(), "Base Rate"),
-                                                                                _buildRatesContent(controller.vehicleRates[i]["succeeding_rate"].toString(), "Succeeding Rate"),
-                                                                                _buildRatesContent(controller.vehicleRates[i]["first_hr_penalty_rate"].toString(), "Penalty Rate"),
-                                                                              ],
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                      ],
+                                                                      ),
                                                                     ),
+                                                                    child:
+                                                                        Obx(() {
+                                                                      return TabBar(
+                                                                        controller:
+                                                                            controller.tabController,
+                                                                        padding:
+                                                                            EdgeInsets.zero,
+                                                                        labelPadding:
+                                                                            EdgeInsets.only(right: 15),
+                                                                        isScrollable:
+                                                                            true,
+                                                                        onTap:
+                                                                            (index) {
+                                                                          controller
+                                                                              .tabIndex
+                                                                              .value = index;
+                                                                        },
+                                                                        tabs: [
+                                                                          CustomParagraph(
+                                                                            text:
+                                                                                "Parking Amenities",
+                                                                            maxlines:
+                                                                                1,
+                                                                            fontStyle:
+                                                                                FontStyle.normal,
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: controller.tabIndex.value == 0
+                                                                                ? AppColor.primaryColor
+                                                                                : Color(0xFF666666),
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                          ),
+                                                                          CustomParagraph(
+                                                                            text:
+                                                                                "Parking Rates",
+                                                                            maxlines:
+                                                                                1,
+                                                                            fontStyle:
+                                                                                FontStyle.normal,
+                                                                            fontWeight:
+                                                                                FontWeight.w700,
+                                                                            color: controller.tabIndex.value == 1
+                                                                                ? AppColor.primaryColor
+                                                                                : Color(0xFF666666),
+                                                                            textAlign:
+                                                                                TextAlign.left,
+                                                                          ),
+                                                                        ],
+                                                                      );
+                                                                    })),
+                                                                SizedBox(
+                                                                  height: 300,
+                                                                  child:
+                                                                      TabBarView(
+                                                                    physics:
+                                                                        NeverScrollableScrollPhysics(),
+                                                                    controller:
+                                                                        controller
+                                                                            .tabController,
+                                                                    children: [
+                                                                      _amenities(),
+                                                                      _parkRates(),
+                                                                    ],
                                                                   ),
+                                                                ),
                                                               ],
                                                             ),
-                                                            crossFadeState:
-                                                                CrossFadeState
-                                                                    .showSecond,
-                                                            duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
                                                           ),
                                                         ],
                                                       ),
-                                                    ],
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -611,10 +490,9 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
                                 ],
                               ),
                             ),
-                            // _buildDetails()
-
+                            Container(height: 10),
                             Padding(
-                              padding: const EdgeInsets.fromLTRB(15, 1, 15, 20),
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
                               child: Row(
                                 children: [
                                   Expanded(
@@ -673,270 +551,202 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
     );
   }
 
-  Widget moreDetails() {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
+  Widget _vehicles() {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+        decoration: ShapeDecoration(
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: BorderSide(width: 1, color: Color(0xFFE8E8E8)),
+            borderRadius: BorderRadius.all(
+              Radius.circular(5),
+            ),
+          ),
+        ),
+        child: LayoutBuilder(builder: (context, constraints) {
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              for (int j = 0; j < controller.vehicleTypes.length; j++) ...[
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: Image(
+                          image: AssetImage(
+                              "assets/dashboard_icon/${controller.vehicleTypes[j]["icon"]}.png"),
+                          color: Color(int.parse(
+                                  controller.vehicleTypes[j]['color']
+                                      .substring(1),
+                                  radix: 16) +
+                              0xFF000000),
+                        ),
+                      ),
+                      Container(width: 10),
+                      CustomParagraph(
+                        text: '${controller.vehicleTypes[j]['count']}',
+                        color: Color(int.parse(
+                                controller.vehicleTypes[j]['color']
+                                    .substring(1),
+                                radix: 16) +
+                            0xFF000000),
+                      ),
+                      Container(width: 5),
+                      CustomParagraph(
+                        text: '${controller.vehicleTypes[j]['name']}',
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w700,
+                        color: Color(int.parse(
+                                controller.vehicleTypes[j]['color']
+                                    .substring(1),
+                                radix: 16) +
+                            0xFF000000),
+                      ),
+                      Container(width: 10),
+                    ],
+                  ),
+                ),
+                if (j < controller.vehicleTypes.length - 1)
+                  Row(
+                    children: [
+                      Container(
+                        height: 25,
+                        width: 2,
+                        color: Colors.black12,
+                      ),
+                      if (j < controller.vehicleTypes.length - 1)
+                        Container(width: 10)
+                    ],
+                  )
+              ],
+            ],
+          );
+        }),
+      ),
+    );
+  }
+
+  Widget _amenities() {
+    return SingleChildScrollView(
+      padding: EdgeInsets.only(top: 20),
+      child: Column(
+        children: [
+          for (int i = 0; i < controller.amenData.length; i += 3)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                for (int j = i; j < i + 3; j++)
+                  j < controller.amenData.length
+                      ? _buildColumn(
+                          controller.amenData[j]["parking_amenity_desc"],
+                          controller.amenData[j]["icon"],
+                        )
+                      : _buildPlaceholder(),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return SizedBox(
+      width: MediaQuery.of(Get.context!).size.width / 3.5,
+      child: Padding(
+        padding: const EdgeInsets.all(5), // Padding to ensure spacing
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Expanded(
-              child: InkWell(
-                onTap: controller.btnLoading.value
-                    ? () {}
-                    : () {
-                        Get.back();
-                      },
-                child: Row(
+            Container(
+              width: 70,
+              height: 70,
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+              ),
+            ),
+            const SizedBox(height: 10),
+            CustomParagraph(
+              text: "",
+              textAlign: TextAlign.center,
+              fontWeight: FontWeight.w600,
+              maxlines: 2,
+              fontSize: 12,
+            ),
+            const SizedBox(height: 10),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _parkRates() {
+    return AnimatedCrossFade(
+      firstChild: const SizedBox.shrink(),
+      secondChild: SingleChildScrollView(
+        padding: EdgeInsets.only(top: 20, left: 10, right: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (int i = 0; i < controller.vehicleRates.length; i++)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.chevron_left,
-                      size: 24,
-                      color: AppColor.primaryColor,
+                    CustomParagraph(
+                      text: controller.vehicleRates[i]["vehicle_type"],
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87,
                     ),
-                    const SizedBox(width: 3),
-                    Text(
-                      'Back',
-                      style: TextStyle(
-                        color: AppColor.primaryColor,
-                        fontSize: 16,
-                        fontFamily: 'Manrope',
-                        fontWeight: FontWeight.w600,
+                    Container(height: 10),
+                    Container(
+                      width: MediaQuery.of(Get.context!).size.width,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 5, vertical: 15),
+                      decoration: ShapeDecoration(
+                        color: const Color(0xFFE2F0FF),
+                        shape: RoundedRectangleBorder(
+                          side: const BorderSide(
+                              width: 1, color: Color(0xFF7FB2EC)),
+                          borderRadius: BorderRadius.circular(5),
+                        ),
+                      ),
+                      child: SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            _buildRatesContent(
+                                controller.vehicleRates[i]["base_rate"]
+                                    .toString(),
+                                "Base Rate"),
+                            _buildRatesContent(
+                                controller.vehicleRates[i]["succeeding_rate"]
+                                    .toString(),
+                                "Succeeding Rate"),
+                            _buildRatesContent(
+                                controller.vehicleRates[i]
+                                        ["first_hr_penalty_rate"]
+                                    .toString(),
+                                "Penalty Rate"),
+                          ],
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-            ),
-            CustomParagraph(
-              text: controller.dataNearest["distance_display"],
-            )
           ],
         ),
-        Container(height: 20),
-        Expanded(
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CustomTitle(
-                            text: controller.dataNearest["park_area_name"],
-                            fontSize: 20,
-                          ),
-                          CustomParagraph(
-                            text: controller.dataNearest["address"],
-                            fontWeight: FontWeight.w600,
-                            maxlines: 2,
-                          ),
-                        ],
-                      ),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Iconsax.heart,
-                        color: Colors.blueGrey,
-                      ),
-                    ),
-                  ],
-                ),
-                Container(height: 15),
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: controller.isOpen.value ? "Open" : "Close",
-                        style: paragraphStyle(
-                          color: controller.isOpen.value
-                              ? const Color(0xFF7BB56C)
-                              : Colors.red,
-                        ),
-                      ),
-                      TextSpan(
-                        text:
-                            ' ●  ${Variables.timeFormatter(controller.dataNearest["opened_time"].toString())} - ${Variables.timeFormatter(controller.dataNearest["closed_time"]).toString()}  ●  ',
-                        style: paragraphStyle(),
-                      ),
-                      TextSpan(
-                        text:
-                            '${int.parse(controller.dataNearest["ps_vacant_count"].toString())} ${int.parse(controller.dataNearest["ps_vacant_count"].toString()) > 1 ? "Slots" : "Slot"} left',
-                        style: paragraphStyle(color: const Color(0xFFE03C20)),
-                      ),
-                    ],
-                  ),
-                  maxLines: 1,
-                ),
-                Container(height: 15),
-                const CustomTitle(
-                  text: "Available Vehicles",
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-                Container(height: 15),
-                Obx(
-                  () => SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: controller.vehicleTypes.map((type) {
-                        final color = Color(
-                            int.parse(type['color'].substring(1), radix: 16) +
-                                0xFF000000);
-
-                        return Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                              color: color.withOpacity(.2),
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Row(
-                              children: [
-                                SizedBox(
-                                  width: 25,
-                                  height: 25,
-                                  child: Image(
-                                    image: AssetImage(
-                                        "assets/dashboard_icon/${type["icon"]}.png"),
-                                    color: color,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                CustomParagraph(
-                                  text: '${type['name']} [ ${type['count']} ]',
-                                  fontWeight: FontWeight.w700,
-                                  color: color,
-                                )
-                              ],
-                            ),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ),
-                ),
-                Container(height: 25),
-                const Divider(
-                  height: 3,
-                ),
-                Container(height: 15),
-                const CustomTitle(
-                  text: "Parking Amenities",
-                  color: Colors.black87,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 16,
-                ),
-                Container(height: 15),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (int i = 0; i < controller.amenData.length; i++)
-                        _buildColumn(
-                            controller.amenData[i]["parking_amenity_desc"],
-                            controller.amenData[i]["icon"]),
-                    ],
-                  ),
-                ),
-                Container(height: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AnimatedCrossFade(
-                      firstChild: const SizedBox.shrink(),
-                      secondChild: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const CustomTitle(
-                            text: "Parking Rates",
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                          ),
-                          Container(height: 15),
-                          for (int i = 0;
-                              i < controller.vehicleRates.length;
-                              i++)
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  CustomParagraph(
-                                    text: controller.vehicleRates[i]
-                                        ["vehicle_type"],
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                  Container(height: 10),
-                                  Container(
-                                    width:
-                                        MediaQuery.of(Get.context!).size.width,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 5, vertical: 15),
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFFE2F0FF),
-                                      shape: RoundedRectangleBorder(
-                                        side: const BorderSide(
-                                            width: 1, color: Color(0xFF7FB2EC)),
-                                        borderRadius: BorderRadius.circular(5),
-                                      ),
-                                    ),
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: [
-                                          _buildRatesContent(
-                                              controller.vehicleRates[i]
-                                                      ["base_rate"]
-                                                  .toString(),
-                                              "Base Rate"),
-                                          _buildRatesContent(
-                                              controller.vehicleRates[i]
-                                                      ["succeeding_rate"]
-                                                  .toString(),
-                                              "Succeeding Rate"),
-                                          _buildRatesContent(
-                                              controller.vehicleRates[i]
-                                                      ["first_hr_penalty_rate"]
-                                                  .toString(),
-                                              "Penalty Rate"),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-                      crossFadeState: CrossFadeState.showSecond,
-                      duration: const Duration(milliseconds: 300),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        Container(height: 20),
-        Obx(
-          () => CustomButton(
-            text: "Book now",
-            loading: controller.btnLoading.value,
-            onPressed: controller.onClickBooking,
-          ),
-        ),
-        if (Platform.isIOS) Container(height: 20),
-      ],
+      ),
+      crossFadeState: CrossFadeState.showSecond,
+      duration: const Duration(milliseconds: 300),
     );
   }
 
@@ -965,26 +775,10 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
   }
 
   Widget _buildColumn(String text, String icon) {
-    final mediaQuery = MediaQuery.of(Get.context!);
-    final screenWidth = mediaQuery.size.width;
-    final screenHeight = mediaQuery.size.height;
-
-    // Fixed size in pixels
-    const double fixedSizeInPixels = 100.0;
-    const double fixedSizeInPixelsW = 80.0;
-
-    // Convert fixed size to a fraction of the screen width or height
-    final double widthFraction = fixedSizeInPixelsW / screenWidth;
-    final double heightFraction = fixedSizeInPixels / screenHeight;
-
-    // Calculate dimensions based on screen fractions (optional)
-    final double widthAsFraction = screenWidth * widthFraction;
-    final double heightAsFraction = screenHeight * heightFraction;
     return SizedBox(
-      width: widthAsFraction,
-      height: heightAsFraction,
+      width: MediaQuery.of(Get.context!).size.width / 3.5,
       child: Padding(
-        padding: const EdgeInsets.only(right: 10), // Padding to ensure spacing
+        padding: const EdgeInsets.all(5), // Padding to ensure spacing
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -1010,6 +804,7 @@ class ParkingDetails extends GetView<ParkingDetailsController> {
               maxlines: 2,
               fontSize: 12,
             ),
+            const SizedBox(height: 5),
           ],
         ),
       ),

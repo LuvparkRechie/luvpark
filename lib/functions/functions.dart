@@ -784,4 +784,14 @@ class Functions {
     }).toList();
     return data;
   }
+
+//sort json data by key
+  static List<dynamic> sortJsonList(List<dynamic> jsonList, String key,
+      {bool ascending = true}) {
+    jsonList.sort((a, b) {
+      final comparison = a[key].compareTo(b[key]);
+      return ascending ? comparison : -comparison;
+    });
+    return jsonList;
+  }
 }
