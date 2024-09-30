@@ -262,7 +262,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           Container(height: 5),
                                           CustomParagraph(
                                               text:
-                                                  "${controller.userData[0]['address1'] ?? "No adress provided"}"),
+                                                  "${controller.userData[0]['address1'] ?? "No address provided"}"),
                                           Divider(
                                             color: Colors.grey.shade500,
                                           ),

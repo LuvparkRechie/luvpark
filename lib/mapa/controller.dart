@@ -345,7 +345,7 @@ class DashboardMapController extends GetxController
 
   void handleData(dynamic nearData) async {
     markers.clear();
-
+    dynamic lastBookData = await Authentication().getLastBooking();
     if (double.parse(userBal[0]["amount_bal"].toString()) >=
         double.parse(userBal[0]["min_wallet_bal"].toString())) {
       showDottedCircle(nearData);
@@ -356,9 +356,14 @@ class DashboardMapController extends GetxController
       if (dataNearest.isNotEmpty && !isShowPopUp) {
         Future.delayed(const Duration(seconds: 1), () {
           Authentication().setShowPopUpNearest(true);
-          showLegend(() {
+          print("lastBookData $lastBookData");
+          if (lastBookData.isEmpty || lastBookData == null) {
+            showLegend(() {
+              showNearestSuggestDialog();
+            });
+          } else {
             showNearestSuggestDialog();
-          });
+          }
         });
       } else {
         panelController.open();
@@ -830,7 +835,9 @@ class DashboardMapController extends GetxController
       data: dataNearest,
       cb: () {
         panelController.open();
-        showTargetTutorial(Variables.ctxt!, false);
+        if (!hasLastBooking.value) {
+          showTargetTutorial(Variables.ctxt!, false);
+        }
       },
     ));
   }

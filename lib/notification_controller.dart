@@ -226,7 +226,10 @@ class NotificationController {
   static Future<void> onActionReceivedImplementationMethod(
       ReceivedAction receivedAction) async {
     if (receivedAction.payload!["notificationId"] == "parking") {
-      Get.toNamed(Routes.parking, arguments: "N");
+      if (Get.currentRoute == Routes.bookingReceipt) {
+      } else {
+        Get.toNamed(Routes.parking, arguments: "N");
+      }
     }
     if (receivedAction.buttonKeyPressed.toLowerCase() == "message") {
       Get.toNamed(Routes.message);
@@ -302,6 +305,7 @@ Future<void> getParkingTrans(int ctr) async {
     if (notificationData["items"].isEmpty) {
       NotificationDatabase.instance.deleteAll();
       AwesomeNotifications().cancelAllSchedules();
+      Authentication().setLastBooking('');
       return;
     }
     if (notificationData != null && notificationData["items"] != null) {

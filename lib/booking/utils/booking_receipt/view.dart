@@ -494,8 +494,9 @@ class BookingReceipt extends GetView<BookingReceiptController> {
               ticketDetailsWidget('Duration',
                   "${controller.parameters["hours"]} ${int.parse(controller.parameters["hours"].toString()) > 1 ? "Hours" : "Hour"}"),
               const SizedBox(height: 5),
-              ticketDetailsWidget(
-                  'Reference No.', controller.parameters["refno"]),
+
+              // ticketDetailsWidget(
+              //     'Reference No.', controller.parameters["refno"]),
             ],
           ),
         ),
@@ -517,6 +518,7 @@ class BookingReceipt extends GetView<BookingReceiptController> {
               text: firstDesc,
               fontWeight: FontWeight.w700,
               maxlines: 1,
+              minFontSize: 10,
             ),
           ),
         ),
@@ -572,8 +574,24 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    Text("Scan QR code", style: paragraphStyle()),
+                    const SizedBox(height: 15),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CustomParagraph(
+                          text: controller.parameters["refno"],
+                          fontWeight: FontWeight.w700,
+                          maxlines: 1,
+                          textAlign: TextAlign.center,
+                          minFontSize: 10,
+                        ),
+                        CustomParagraph(
+                          text: "Reference No.",
+                          fontSize: 12,
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: 10),
                     LineCutter(),
                     Padding(

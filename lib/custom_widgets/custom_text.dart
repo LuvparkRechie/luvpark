@@ -62,6 +62,7 @@ class CustomParagraph extends StatelessWidget {
   final int? maxlines;
   final TextAlign? textAlign;
   final TextOverflow? overflow;
+  final double? minFontSize;
   final TextDecoration? textDecoration;
 
   const CustomParagraph({
@@ -78,6 +79,7 @@ class CustomParagraph extends StatelessWidget {
     this.textAlign,
     this.overflow,
     this.textDecoration,
+    this.minFontSize = 12,
   });
 
   @override
@@ -98,7 +100,7 @@ class CustomParagraph extends StatelessWidget {
       textAlign: textAlign,
       maxLines: maxlines,
       overflow: overflow,
-      minFontSize: 12,
+      minFontSize: minFontSize!,
     );
   }
 }

@@ -148,6 +148,9 @@ class Authentication {
     if (data == null) {
       return "";
     }
+    if (data == '') {
+      return "";
+    }
     return jsonDecode(data);
   }
 

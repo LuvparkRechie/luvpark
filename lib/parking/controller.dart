@@ -7,7 +7,8 @@ import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/routes/routes.dart';
+
+import '../routes/routes.dart';
 
 class ParkingController extends GetxController
     with GetTickerProviderStateMixin {
@@ -22,6 +23,7 @@ class ParkingController extends GetxController
   RxBool hasNet = false.obs;
   RxDouble tabHeight = 0.0.obs;
   bool isAllowToSync = true;
+  RxInt tabIndex = 0.obs;
 
   RxBool isLoading = false.obs;
   ParkingController();
@@ -89,6 +91,7 @@ class ParkingController extends GetxController
         return;
       }
       final id = await Authentication().getUserId();
+
       String api =
           "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
 
@@ -112,6 +115,7 @@ class ParkingController extends GetxController
           });
           return;
         } else {
+          resData.value = [];
           List itemData = returnData["items"];
           if (itemData.isNotEmpty) {
             itemData = itemData.where((element) {
@@ -182,6 +186,7 @@ class ParkingController extends GetxController
         onRefresh();
       }
     };
+
     Get.toNamed(Routes.bookingReceipt, arguments: args);
   }
 }

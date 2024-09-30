@@ -2,7 +2,7 @@ name: luvpark_get
 description: "A new Flutter project."
 publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
-version: 1.25.45+46
+version: 1.25.46+47
 # ios version version: 2.1.1+2
 
 environment:
