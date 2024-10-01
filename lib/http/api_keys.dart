@@ -1,6 +1,10 @@
 const String luvApi = "luv";
 const String parkSpaceApi = "parkspace";
 
+// production api
+// https://app.luvpark.ph/ords/lpw/
+// https://app.luvpark.ph/ords/ps/
+
 class ApiKeys {
   //Prod Path
   static const gApiURLProd = 'dddijnzn.adb.ap-singapore-1.oraclecloudapps.com';

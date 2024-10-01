@@ -3,7 +3,8 @@ import 'package:get/get.dart';
 class ParkingAreasController extends GetxController {
   ParkingAreasController();
   bool isInternetConnected = true;
-  final dataNearest = Get.arguments;
+  final dataNearest = Get.arguments["data"];
+  final Function callback = Get.arguments["callback"];
   RxList searchedZone = [].obs;
   RxBool isLoading = false.obs;
   RxList markerData = [].obs;

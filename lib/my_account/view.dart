@@ -148,19 +148,23 @@ class MyAccount extends GetView<MyAccountScreenController> {
                           Container(height: 24),
                           Row(
                             children: [
-                              CustomTitle(
-                                text: "Personal Details",
-                                fontSize: 20,
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.primaryColor,
+                              Expanded(
+                                child: CustomTitle(
+                                  text: "Personal\nDetails",
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColor.primaryColor,
+                                  maxlines: 2,
+                                ),
                               ),
-                              const Spacer(),
+                              Container(width: 15),
                               InkWell(
                                 onTap: () {
                                   controller.getRegions();
                                 },
                                 child: Container(
-                                  padding: const EdgeInsets.all(10),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 10),
                                   decoration: BoxDecoration(
                                     border: Border.all(
                                       color: AppColor.primaryColor,

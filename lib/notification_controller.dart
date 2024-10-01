@@ -305,6 +305,7 @@ Future<void> getParkingTrans(int ctr) async {
     if (notificationData["items"].isEmpty) {
       NotificationDatabase.instance.deleteAll();
       AwesomeNotifications().cancelAllSchedules();
+      AwesomeNotifications().cancelAll();
       Authentication().setLastBooking('');
       return;
     }
@@ -406,6 +407,8 @@ Future<void> getMessNotif() async {
   HttpRequest(
     api: "${ApiKeys.gApiLuvParkMessageNotif}?user_id=$akongId",
   ).get().then((messageData) async {
+    // PaMessageDatabase.instance.deleteAll();
+
     if (messageData == "No Internet" || messageData == null) {
       return;
     }
@@ -415,6 +418,11 @@ Future<void> getMessNotif() async {
             .readNotificationById(dataRow["push_msg_id"])
             .then((objData) {
           if (objData == null) {
+            DateTime pdt = DateTime.parse(dataRow["created_on"].toString());
+            DateTime targetDate =
+                DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
+
+            if (!Variables.withinDayRange(targetDate)) return;
             Object json = {
               PaMessageDataFields.pushMsgId: dataRow["push_msg_id"],
               PaMessageDataFields.userId: dataRow["user_id"],

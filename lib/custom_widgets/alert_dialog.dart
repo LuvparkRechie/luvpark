@@ -444,77 +444,93 @@ class CustomDialog {
   }
 
   Widget noticeBody(Widget? child) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 15),
-            child: Container(
-                height: MediaQuery.of(Get.context!).size.height * .70,
-                width: MediaQuery.of(Get.context!).size.width,
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 22),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.white,
-                ),
-                child: child),
-          )
-        ]),
+    return MediaQuery(
+      data: MediaQuery.of(Get.context!)
+          .copyWith(textScaler: TextScaler.linear(1)),
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 15),
+              child: Container(
+                  height: MediaQuery.of(Get.context!).size.height * .70,
+                  width: MediaQuery.of(Get.context!).size.width,
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 22),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                  ),
+                  child: child),
+            )
+          ]),
+        ),
       ),
     );
   }
 
   Widget loadingBody(Widget? child) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: child,
+    return MediaQuery(
+      data: MediaQuery.of(Get.context!)
+          .copyWith(textScaler: TextScaler.linear(1)),
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: child,
+        ),
       ),
     );
   }
 
   Widget dialogBody(Widget? child) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40),
-            child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 22),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.white,
-                ),
-                width: MediaQuery.of(Get.context!).size.width,
-                child: child),
-          )
-        ]),
+    return MediaQuery(
+      data: MediaQuery.of(Get.context!)
+          .copyWith(textScaler: TextScaler.linear(1)),
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 22),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                  ),
+                  width: MediaQuery.of(Get.context!).size.width,
+                  child: child),
+            )
+          ]),
+        ),
       ),
     );
   }
 
   Widget dialogBody2(Widget? child) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(16),
-                  color: Colors.white,
-                ),
-                width: MediaQuery.of(Get.context!).size.width,
-                child: child),
-          )
-        ]),
+    return MediaQuery(
+      data: MediaQuery.of(Get.context!)
+          .copyWith(textScaler: TextScaler.linear(1)),
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    color: Colors.white,
+                  ),
+                  width: MediaQuery.of(Get.context!).size.width,
+                  child: child),
+            )
+          ]),
+        ),
       ),
     );
   }

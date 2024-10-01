@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
@@ -25,7 +26,6 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../sqlite/pa_message_table.dart';
-import 'utils/marker_data_dialog/marker_data_dialog.dart';
 import 'utils/suggestions/suggestions.dart';
 
 // ignore: deprecated_member_use
@@ -36,7 +36,10 @@ class DashboardMapController extends GetxController
       GlobalKey<ScaffoldState>();
 
   final TextEditingController searchCon = TextEditingController();
-  final PanelController panelController = PanelController();
+  PanelController panelController = PanelController();
+  DraggableScrollableController dragController =
+      DraggableScrollableController();
+  late TabController tabController;
   late AnimationController animationController;
 
   bool isFilter = false;
@@ -44,7 +47,8 @@ class DashboardMapController extends GetxController
   GoogleMapController? gMapController;
   CameraPosition? initialCameraPosition;
   RxList<Marker> markers = <Marker>[].obs;
-  RxList<dynamic> userBal = <dynamic>[].obs;
+  RxList<Marker> filteredMarkers = <Marker>[].obs;
+  RxString userBal = "".obs;
   RxList<dynamic> dataNearest = [].obs;
   List markerData = [];
 
@@ -86,7 +90,7 @@ class DashboardMapController extends GetxController
   RxDouble initFabHeight = 80.0.obs;
   RxDouble fabHeight = 0.0.obs;
   RxDouble panelHeightClosed = 60.0.obs;
-
+  RxBool isHidePanel = false.obs;
 //Drawer
   RxInt unreadMsg = 0.obs;
 
@@ -100,6 +104,29 @@ class DashboardMapController extends GetxController
   final GlobalKey parkKey = GlobalKey();
   final GlobalKey locKey = GlobalKey();
 
+  //amenities
+  List iconAmen = [
+    {"code": "D", "icon": "dimension"},
+    {"code": "V", "icon": "covered_area"},
+    {"code": "C", "icon": "concrete"},
+    {"code": "T", "icon": "cctv"},
+    {"code": "G", "icon": "grass_area"},
+    {"code": "A", "icon": "asphalt"},
+    {"code": "S", "icon": "security"},
+    {"code": "P", "icon": "pwd"},
+    {"code": "XXX", "icon": "no_image"},
+  ];
+  RxList<dynamic> amenData = <dynamic>[].obs;
+  RxList<dynamic> carsInfo = <dynamic>[].obs;
+  String finalSttime = "";
+  String finalEndtime = "";
+  String parkSched = "";
+  RxList<dynamic> vehicleTypes = <dynamic>[].obs;
+  RxList<dynamic> vehicleRates = <dynamic>[].obs;
+  RxBool isOpen = false.obs;
+  RxInt tabIndex = 0.obs;
+  LatLng lastLatlng = LatLng(0, 0);
+  RxString lastRouteName = "".obs;
   @override
   void onInit() {
     super.onInit();
@@ -116,7 +143,9 @@ class DashboardMapController extends GetxController
     );
     fabHeight.value = panelHeightOpen.value + 30;
     WidgetsBinding.instance.addObserver(this);
-
+    panelController = PanelController();
+    dragController = DraggableScrollableController();
+    tabController = TabController(length: 2, vsync: this);
     getLastBooking();
     getUserData();
     getDefaultLocation();
@@ -144,10 +173,10 @@ class DashboardMapController extends GetxController
   //   if (!isLoading.value) {
   //     panelController.open();
   //   }
-
   //   update();
   //   super.didChangeMetrics();
   // }
+
   @override
   void didChangeMetrics() {
     final bottomInset = View.of(Get.context!).viewInsets.bottom;
@@ -234,7 +263,7 @@ class DashboardMapController extends GetxController
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
       if (returnBalance["items"].isNotEmpty) {
-        userBal.value = returnBalance["items"];
+        userBal.value = returnBalance["items"][0]["amount_bal"];
       }
     });
   }
@@ -243,7 +272,7 @@ class DashboardMapController extends GetxController
     String? userData = await Authentication().getUserData();
     final item = await Authentication().getUserData2();
     final profPic = await Authentication().getUserProfilePic();
-
+    userBal.value = item["amount_bal"];
     userProfile = item;
     myProfPic.value = profPic;
 
@@ -278,23 +307,11 @@ class DashboardMapController extends GetxController
   void bridgeLocation(coordinates) {
     CustomDialog().mapLoading(
         Variables.convertDistance(ddRadius.value.toString()).toString());
-    Functions.getUserBalance(Get.context!, (dataBalance) async {
-      userBal.value = dataBalance[0]["items"];
-      if (!dataBalance[0]["has_net"]) {
-        Get.back();
-        netConnected.value = false;
-        isLoading.value = false;
-        gMapController!.dispose();
-
-        animationController.dispose();
-      } else {
-        isLoading.value = false;
-        getNearest(dataBalance[0]["items"], coordinates);
-      }
-    });
+    isLoading.value = false;
+    getNearest(coordinates);
   }
 
-  void getNearest(dynamic userData, LatLng coordinates) async {
+  void getNearest(LatLng coordinates) async {
     String params =
         "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${Variables.convertToMeters(ddRadius.value.toString())}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
     print(" params$params");
@@ -364,28 +381,24 @@ class DashboardMapController extends GetxController
   void handleData(dynamic nearData) async {
     markers.clear();
     dynamic lastBookData = await Authentication().getLastBooking();
-    if (double.parse(userBal[0]["amount_bal"].toString()) >=
-        double.parse(userBal[0]["min_wallet_bal"].toString())) {
-      showDottedCircle(nearData);
-
-      buildMarkers(nearData);
-      netConnected.value = true;
-      bool isShowPopUp = await Authentication().getPopUpNearest();
-      if (dataNearest.isNotEmpty && !isShowPopUp) {
-        Future.delayed(const Duration(seconds: 1), () {
-          Authentication().setShowPopUpNearest(true);
-          print("lastBookData $lastBookData");
-          if (lastBookData.isEmpty || lastBookData == null) {
-            showLegend(() {
-              showNearestSuggestDialog();
-            });
-          } else {
+    showDottedCircle(nearData);
+    buildMarkers(nearData);
+    netConnected.value = true;
+    bool isShowPopUp = await Authentication().getPopUpNearest();
+    if (dataNearest.isNotEmpty && !isShowPopUp) {
+      Future.delayed(const Duration(seconds: 1), () {
+        Authentication().setShowPopUpNearest(true);
+        print("lastBookData $lastBookData");
+        if (lastBookData.isEmpty || lastBookData == null) {
+          showLegend(() {
             showNearestSuggestDialog();
-          }
-        });
-      } else {
-        panelController.open();
-      }
+          });
+        } else {
+          showNearestSuggestDialog();
+        }
+      });
+    } else {
+      panelController.open();
     }
 
     update();
@@ -393,17 +406,14 @@ class DashboardMapController extends GetxController
 
 //Based on radius
   void showDottedCircle(nearData) {
-    if (double.parse(userBal[0]["amount_bal"].toString()) >=
-        double.parse(userBal[0]["min_wallet_bal"].toString())) {
-      initialCameraPosition = CameraPosition(
-        target: searchCoordinates,
-        zoom: nearData.isEmpty ? 14 : 16,
-        tilt: 0,
-        bearing: 0,
-      );
+    initialCameraPosition = CameraPosition(
+      target: searchCoordinates,
+      zoom: nearData.isEmpty ? 14 : 16,
+      tilt: 0,
+      bearing: 0,
+    );
 
-      animateCamera();
-    }
+    animateCamera();
   }
 
   //Get last available booking
@@ -482,66 +492,6 @@ class DashboardMapController extends GetxController
     });
   }
 
-  //Book marker dialog
-  Future<void> bookMarkerNow(data, Function cb) async {
-    CustomDialog().loadingDialog(Get.context!);
-    LatLng destLoc = LatLng(data[0]["pa_latitude"], data[0]["pa_longitude"]);
-
-    if (data[0]["is_allow_reserve"] == "N") {
-      cb(true);
-      Get.back();
-      CustomDialog().errorDialog(
-        Get.context!,
-        "LuvPark",
-        "This area is not available at the moment.",
-        () {
-          Get.back();
-        },
-      );
-      return;
-    }
-
-    Functions.getUserBalance(Get.context!, (dataBalance) async {
-      final userdata = dataBalance[0];
-      final items = userdata["items"];
-
-      if (userdata["success"]) {
-        if (double.parse(items[0]["amount_bal"].toString()) <
-            double.parse(items[0]["min_wallet_bal"].toString())) {
-          cb(true);
-          Get.back();
-          CustomDialog().errorDialog(
-            Get.context!,
-            "Attention",
-            "Your balance is below the required minimum for this feature. "
-                "Please ensure a minimum balance of ${items[0]["min_wallet_bal"]} tokens to access the requested service.",
-            () {
-              Get.back();
-            },
-          );
-          return;
-        } else {
-          Functions.computeDistanceResorChckIN(Get.context!, destLoc,
-              (success) {
-            cb(true);
-            Get.back();
-            if (success["success"]) {
-              Get.toNamed(Routes.booking, arguments: {
-                "currentLocation": success["location"],
-                "areaData": data[0],
-                "canCheckIn": success["can_checkIn"],
-                "userData": items,
-              });
-            }
-          });
-        }
-      } else {
-        cb(true);
-        Get.back();
-      }
-    });
-  }
-
   //get curr location
   Future<void> getCurrentLoc() async {
     ddRadius.value = "10";
@@ -574,7 +524,7 @@ class DashboardMapController extends GetxController
       controller.setMapStyle(style);
     });
     gMapController = controller;
-    panelController.open();
+
     animateCamera();
   }
 
@@ -592,7 +542,10 @@ class DashboardMapController extends GetxController
     Duration duration = const Duration(seconds: 3);
 
     debouncePanel = Timer(duration, () {
-      panelController.open();
+      // if (!isHidePanel.value) {
+
+      // }
+
       update();
     });
   }
@@ -735,11 +688,9 @@ class DashboardMapController extends GetxController
 
   Future<void> buildMarkers(data) async {
     dataNearest.value = data;
-    int ctr = 0;
 
     if (dataNearest.isNotEmpty) {
       for (int i = 0; i < dataNearest.length; i++) {
-        ctr++;
         var items = dataNearest[i];
 
         final String isPwd = items["is_pwd"] ?? "N";
@@ -762,7 +713,7 @@ class DashboardMapController extends GetxController
             infoWindow: InfoWindow(title: items["park_area_name"]),
             // ignore: deprecated_member_use
             icon: BitmapDescriptor.fromBytes(markerIcon),
-            markerId: MarkerId(ctr.toString()),
+            markerId: MarkerId(items["park_area_id"].toString()),
             position: LatLng(double.parse(items["pa_latitude"].toString()),
                 double.parse(items["pa_longitude"].toString())),
             onTap: () async {
@@ -781,21 +732,25 @@ class DashboardMapController extends GetxController
               markerData = markerData.map((e) {
                 e["distance_display"] = "${estimatedData[0]["distance"]} away";
                 e["time_arrival"] = estimatedData[0]["time"];
+                e["polyline"] = estimatedData[0]['poly_line'];
                 return e;
               }).toList();
-              Get.back();
 
               if (estimatedData[0]["error"] == "No Internet") {
+                Get.back();
                 CustomDialog().internetErrorDialog(Get.context!, () {
                   Get.back();
                 });
 
                 return;
               }
-              Get.toNamed(Routes.parkingDetails, arguments: markerData[0]);
+              lastRouteName.value = "";
+              filterMarkersData(markerData[0]["park_area_name"], "");
+              // Get.toNamed(Routes.parkingDetails, arguments: markerData[0]);
             },
           ),
         );
+        filteredMarkers.assignAll(markers);
       }
     }
   }
@@ -851,10 +806,19 @@ class DashboardMapController extends GetxController
   void showNearestSuggestDialog() {
     Get.dialog(SuggestionsScreen(
       data: dataNearest,
-      cb: () {
-        panelController.open();
-        if (!hasLastBooking.value) {
-          showTargetTutorial(Variables.ctxt!, false);
+      cb: (data) {
+        if (data == "yowo") {
+          panelController.show();
+          panelController.open();
+          if (!hasLastBooking.value) {
+            showTargetTutorial(Variables.ctxt!, false);
+          }
+          return;
+        } else {
+          markerData = data;
+          lastRouteName.value = "suggestions";
+          CustomDialog().loadingDialog(Get.context!);
+          filterMarkersData(markerData[0]["park_area_name"], "suggestion");
         }
       },
     ));
@@ -880,24 +844,6 @@ class DashboardMapController extends GetxController
     if (newLon < -180.0) newLon += 360.0;
 
     return LatLng(newLat, newLon);
-  }
-
-  //onMarker tapped
-  void onMarkerTapped(data) {
-    isGetNearData.value = true;
-
-    // isMarkerTapped.value = !isMarkerTapped.value;
-    // isGetNearData.value = !isGetNearData.value;
-
-    Get.bottomSheet(
-      DialogMarker(
-          markerData: data,
-          cb: (datas) {
-            isGetNearData.value = true;
-          }),
-      barrierColor: Colors.black.withOpacity(.1),
-      isScrollControlled: true, // Ensure the height is respected
-    );
   }
 
   void showTargetTutorial(BuildContext context, bool isDrawer) {
@@ -940,5 +886,410 @@ class DashboardMapController extends GetxController
         return true;
       },
     );
+  }
+
+  void routeToParkingAreas() async {
+    Get.toNamed(
+      Routes.parkingAreas,
+      arguments: {
+        "data": dataNearest,
+        "callback": (objData) async {
+          lastRouteName.value = "park_areas";
+          CustomDialog().loadingDialog(Get.context!);
+          await Future.delayed(const Duration(seconds: 1));
+          markerData = objData;
+          filterMarkersData(markerData[0]["park_area_name"], "");
+        }
+      },
+    );
+  }
+
+  void filterMarkersData(String query, String param) async {
+    if (query.isEmpty) {
+      panelController.show();
+      filteredMarkers.assignAll(markers);
+      if (lastRouteName.value == "suggestions") {
+        showNearestSuggestDialog();
+      } else if (lastRouteName.value == "park_areas") {
+        routeToParkingAreas();
+      }
+      isHidePanel.value = false;
+
+      await Future.delayed(const Duration(milliseconds: 500), () {
+        gMapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(target: lastLatlng, zoom: 14),
+          ),
+        );
+      });
+    } else {
+      panelController.hide();
+      filteredMarkers.assignAll(
+        markers.where((marker) {
+          return marker.infoWindow.title!.toLowerCase().trim() ==
+              query.toLowerCase().trim();
+        }),
+      );
+      lastLatlng = filteredMarkers[0].position;
+      gMapController!.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(target: filteredMarkers[0].position, zoom: 17),
+        ),
+      );
+      isHidePanel.value = true;
+
+      getAmenities(filteredMarkers[0].markerId.value);
+    }
+  }
+
+  //Get amenities
+  Future<void> getAmenities(parkId) async {
+    final response = await HttpRequest(
+            api: "${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=$parkId")
+        .get();
+
+    if (response == "No Internet") {
+      Get.back();
+      CustomDialog().internetErrorDialog(Get.context!, () => Get.back());
+      return;
+    }
+
+    if (response == null || response["items"] == null) {
+      Get.back();
+      CustomDialog().errorDialog(
+        Get.context!,
+        "Error",
+        "Error while connecting to server, Please contact support.",
+        () => Get.back(),
+      );
+      return;
+    }
+
+    if (response["items"].isNotEmpty) {
+      List<dynamic> item = response["items"];
+      item = item.map((element) {
+        List<dynamic> icon = iconAmen.where((e) {
+          return e["code"] == element["parking_amenity_code"];
+        }).toList();
+        element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
+
+        return element;
+      }).toList();
+      if (markerData[0]["park_orientation"] != null) {
+        item.insert(0, {
+          "zone_amenity_id": 0,
+          "zone_id": 0,
+          "parking_amenity_code": "D",
+          "parking_amenity_desc":
+              "${markerData[0]["park_size"]} ${markerData[0]["park_orientation"]}",
+          "icon": "dimension"
+        });
+      }
+
+      amenData.value = item;
+      getParkingRates(parkId);
+    } else {
+      Get.back();
+      CustomDialog().errorDialog(
+        Get.context!,
+        "luvpark",
+        "No amenities found in this area.",
+        () => Get.back(),
+      );
+    }
+  }
+
+  Future<void> getParkingRates(parkId) async {
+    HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
+        .get()
+        .then((returnData) async {
+      if (returnData == "No Internet") {
+        Get.back();
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+
+      if (returnData == null) {
+        Get.back();
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+
+      if (returnData["items"].length > 0) {
+        Get.back();
+        List<dynamic> item = returnData["items"];
+        vehicleRates.value = item;
+      } else {
+        Get.back();
+        CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
+            () {
+          Get.back();
+        });
+      }
+    });
+  }
+
+  String getIconAssetForPwdDetails(
+      String parkingTypeCode, String vehicleTypes) {
+    switch (parkingTypeCode) {
+      case "S":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/blue/blue_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/blue/blue_mp.svg';
+        } else {
+          return 'assets/details_logo/blue/blue_cp.svg';
+        }
+      case "P":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/orange/orange_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/orange/orange_mp.svg';
+        } else {
+          return 'assets/details_logo/orange/orange_cp.svg';
+        }
+      case "C":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/green/green_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/green/green_mp.svg';
+        } else {
+          return 'assets/details_logo/green/green_cp.svg';
+        }
+      default:
+        return 'assets/details_logo/violet/violet.svg'; // Valet
+    }
+  }
+
+  String getIconAssetForNonPwdDetails(
+      String parkingTypeCode, String vehicleTypes) {
+    switch (parkingTypeCode) {
+      case "S":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/blue/blue_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/blue/blue_motor.svg';
+        } else {
+          return 'assets/details_logo/blue/blue_car.svg';
+        }
+      case "P":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/orange/orange_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/orange/orange_motor.svg';
+        } else {
+          return 'assets/details_logo/orange/orange_car.svg';
+        }
+      case "C":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/green/green_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/green/green_motor.svg';
+        } else {
+          return 'assets/details_logo/green/green_car.svg';
+        }
+      case "V":
+        return 'assets/details_logo/violet/violet.svg'; // Valet
+      default:
+        return 'assets/images/no_image.png'; // Fallback icon
+    }
+  }
+
+  Future<void> goingBackToTheCornerWhenIFirstSawYou() async {
+    final vehicleTypesList = markerData[0]['vehicle_types_list'] as String;
+
+    List inataya = _parseVehicleTypes(vehicleTypesList).map((e) {
+      String eName;
+
+      if (e["name"].toString().toLowerCase().contains("trikes")) {
+        eName = e["count"].toString().length > 1 ? "Cars" : "Car";
+      } else if (e["name"].toString().toLowerCase().contains("motor")) {
+        eName = e["count"].toString().length > 1 ? "Motors" : "Motor";
+      } else {
+        eName = e["name"].toString();
+      }
+      e["name"] = eName;
+      return e;
+    }).toList();
+    inataya = inataya.where((element) {
+      return int.parse(element["count"].toString()) != 0;
+    }).toList();
+    vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
+    print("inatay $vehicleTypes");
+    finalSttime = formatTime(markerData[0]["start_time"]);
+    finalEndtime = formatTime(markerData[0]["end_time"]);
+    isOpen.value = Functions.checkAvailability(finalSttime, finalEndtime);
+  }
+
+  String formatTime(String time) {
+    return "${time.substring(0, 2)}:${time.substring(2)}";
+  }
+
+  List<Map<String, dynamic>> _parseVehicleTypes(String vhTpList) {
+    final types = vhTpList.split(' | ');
+    final parsedTypes = <Map<String, String>>[];
+    Color color;
+
+    for (var type in types) {
+      final parts = type.split('(');
+      if (parts.length < 2) continue;
+
+      final name = parts[0].trim();
+      final count = parts[1].split('/')[0].trim();
+
+      final lowerCaseName = name.toLowerCase();
+      String iconKey;
+      if (lowerCaseName.contains("motorcycle")) {
+        color = const Color(0xFFD65F5F);
+        iconKey = "scooter";
+      } else if (lowerCaseName.contains("trikes")) {
+        color = const Color(0xFF21B979);
+        iconKey = "car";
+      } else {
+        color = const Color(0x7F616161);
+        iconKey = "delivery";
+      }
+
+      final colorString = '#${color.value.toRadixString(16).padLeft(8, '0')}';
+      parsedTypes.add({
+        'name': name,
+        'count': count,
+        'color': colorString,
+        'icon': iconKey,
+      });
+    }
+
+    return parsedTypes;
+  }
+
+  void onClickBooking() {
+    CustomDialog().loadingDialog(Get.context!);
+    if (markerData[0]["is_allow_reserve"] == "N") {
+      Get.back();
+      CustomDialog().infoDialog("Not Open to Public Yet",
+          "This area is currently unavailable. Please try again later.", () {
+        Get.back();
+      });
+
+      return;
+    }
+
+    if (markerData[0]["is_24_hrs"] == "N") {
+      final now = DateTime.now();
+      int getDiff(String time) {
+        DateTime specifiedTime = DateFormat("HH:mm").parse(time);
+        DateTime todaySpecifiedTime = DateTime(now.year, now.month, now.day,
+            specifiedTime.hour, specifiedTime.minute);
+        Duration difference = todaySpecifiedTime.difference(now);
+        return difference.inMinutes;
+      }
+
+      int diffBook(time) {
+        DateTime specifiedTime = DateFormat("HH:mm").parse(time);
+        final DateTime openingTime = DateTime(now.year, now.month, now.day,
+            specifiedTime.hour, specifiedTime.minute); // Opening at 2:30 PM
+
+        int diff = openingTime.difference(now).inMinutes;
+
+        return diff;
+      }
+
+      String ctime = markerData[0]["closed_time"].toString().trim();
+      String otime = markerData[0]["opened_time"].toString().trim();
+
+      if (diffBook(otime) > 30) {
+        Get.back();
+
+        DateTime st = DateFormat("HH:mm").parse(otime);
+        final DateTime ot =
+            DateTime(now.year, now.month, now.day, st.hour, st.minute)
+                .subtract(const Duration(minutes: 30));
+        String formattedTime = DateFormat.jm().format(ot);
+
+        CustomDialog().infoDialog("Booking",
+            "Booking will start at $formattedTime.\nPlease come back later.\nThank you",
+            () {
+          Get.back();
+        });
+        return;
+      }
+      // Convert the difference to minutes
+      int minutesClose = getDiff(ctime);
+
+      if (minutesClose <= 0) {
+        Get.back();
+        CustomDialog().infoDialog(
+            "luvpark", "Apologies, but we are closed for bookings right now.",
+            () {
+          Get.back();
+        });
+        return;
+      }
+
+      if (minutesClose <= 29) {
+        Get.back();
+        CustomDialog().errorDialog(
+          Get.context!,
+          "luvpark",
+          "You cannot make a booking within 30 minutes of our closing time.",
+          () {
+            Get.back();
+          },
+        );
+        return;
+      }
+    }
+
+    Functions.getUserBalance(Get.context!, (dataBalance) async {
+      print("data balance $dataBalance");
+      final userdata = dataBalance[0];
+      final items = userdata["items"];
+
+      if (userdata["success"]) {
+        if (double.parse(items[0]["amount_bal"].toString()) <
+            double.parse(items[0]["min_wallet_bal"].toString())) {
+          Get.back();
+          CustomDialog().errorDialog(
+            Get.context!,
+            "Attention",
+            "Your balance is below the required minimum for this feature. "
+                "Please ensure a minimum balance of ${items[0]["min_wallet_bal"]} tokens to access the requested service.",
+            () {
+              Get.back();
+            },
+          );
+          return;
+        } else {
+          Functions.computeDistanceResorChckIN(
+              Get.context!,
+              LatLng(
+                  markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
+              (success) {
+            Get.back();
+
+            if (success["success"]) {
+              Get.toNamed(Routes.booking, arguments: {
+                "currentLocation": success["location"],
+                "areaData": markerData[0],
+                "canCheckIn": success["can_checkIn"],
+                "userData": items,
+              });
+            }
+          });
+        }
+      } else {
+        Get.back();
+      }
+    });
   }
 }

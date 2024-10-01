@@ -25,93 +25,97 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Container(
-          padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-          width: MediaQuery.of(context).size.width,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width,
-                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-                decoration: ShapeDecoration(
-                  color: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
+      child: PopScope(
+        canPop: false,
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          body: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                  decoration: ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: InkWell(
-                        onTap: () {
-                          Get.back();
-                          widget.callback!();
-                        },
-                        child: Container(
-                          decoration: ShapeDecoration(
-                            color: Color(0xFFF3F4F6),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(37.39),
+                  child: Column(
+                    children: [
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: InkWell(
+                          onTap: () {
+                            Get.back();
+                            widget.callback!();
+                          },
+                          child: Container(
+                            decoration: ShapeDecoration(
+                              color: Color(0xFFF3F4F6),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(37.39),
+                              ),
                             ),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(10),
-                            child: Icon(
-                              Icons.close,
-                              color: Color(0xFF747579),
-                              size: 15,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * .60,
-                      child: ScrollConfiguration(
-                        behavior: ScrollBehavior().copyWith(overscroll: false),
-                        child: StretchingOverscrollIndicator(
-                          axisDirection: AxisDirection.right,
-                          child: PageView(
-                            controller: pageController,
-                            onPageChanged: (index) {
-                              setState(() {
-                                currentPage = index;
-                              });
-                            },
-                            children: [page1(), page2()],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: List.generate(
-                          2,
-                          (index) => Container(
-                            width: 10,
-                            height: 10,
-                            margin: const EdgeInsets.symmetric(horizontal: 2),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: currentPage == index
-                                  ? AppColor.primaryColor
-                                  : const Color(0xFFD9D9D9),
+                            child: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Icon(
+                                Icons.close,
+                                color: Color(0xFF747579),
+                                size: 15,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            ],
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * .60,
+                        child: ScrollConfiguration(
+                          behavior:
+                              ScrollBehavior().copyWith(overscroll: false),
+                          child: StretchingOverscrollIndicator(
+                            axisDirection: AxisDirection.right,
+                            child: PageView(
+                              controller: pageController,
+                              onPageChanged: (index) {
+                                setState(() {
+                                  currentPage = index;
+                                });
+                              },
+                              children: [page1(), page2()],
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: List.generate(
+                            2,
+                            (index) => Container(
+                              width: 10,
+                              height: 10,
+                              margin: const EdgeInsets.symmetric(horizontal: 2),
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: currentPage == index
+                                    ? AppColor.primaryColor
+                                    : const Color(0xFFD9D9D9),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),

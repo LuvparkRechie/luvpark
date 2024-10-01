@@ -10,7 +10,6 @@ import 'package:luvpark_get/parking_areas/controller.dart';
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/showup_animation.dart';
 import '../functions/functions.dart';
-import '../routes/routes.dart';
 
 class ParkingAreas extends GetView<ParkingAreasController> {
   const ParkingAreas({super.key});
@@ -162,7 +161,6 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                 return e;
                               }).toList();
                               Get.back();
-
                               if (estimatedData[0]["error"] == "No Internet") {
                                 CustomDialog().internetErrorDialog(Get.context!,
                                     () {
@@ -170,10 +168,11 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                 });
 
                                 return;
+                              } else {
+                                Get.back();
+                                controller
+                                    .callback([controller.markerData[index]]);
                               }
-
-                              Get.toNamed(Routes.parkingDetails,
-                                  arguments: controller.markerData[index]);
                             },
                             child: Container(
                               padding: const EdgeInsets.fromLTRB(0, 15, 15, 15),

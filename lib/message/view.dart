@@ -175,9 +175,6 @@ class MessageScreen extends GetView<MessageScreenController> {
                                 ));
                               });
                             },
-                            onLongPress: () {
-                              controller.deleteMessage(index);
-                            },
                             child: ListTile(
                               title: CustomTitle(
                                 fontWeight: FontWeight.w600,
@@ -214,6 +211,23 @@ class MessageScreen extends GetView<MessageScreenController> {
                                               message["created_on"])),
                                     ),
                                   ],
+                                ),
+                              ),
+                              trailing: InkWell(
+                                onTap: () {
+                                  controller.deleteMessage(index);
+                                },
+                                child: Container(
+                                  decoration: const BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xFFF9D9D9),
+                                  ),
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: const Icon(
+                                    Icons.delete,
+                                    color: Color(0xFFD34949),
+                                    size: 15.0,
+                                  ),
                                 ),
                               ),
                             ),

@@ -86,6 +86,13 @@ class Variables {
         targetDateTime.isBefore(currentDateTime);
   }
 
+  static bool withinDayRange(DateTime targetDateTime) {
+    DateTime currentDateTime = DateTime.now();
+    DateTime oneHourAgo = currentDateTime.subtract(const Duration(hours: 1));
+    return targetDateTime.isAfter(oneHourAgo) &&
+        targetDateTime.isBefore(currentDateTime);
+  }
+
   static String formatDateLocal(String dateString) {
     DateTime timestamp = DateTime.parse(dateString);
     String formattedTime = DateFormat('MMM d, yyyy hh:mm a').format(timestamp);
