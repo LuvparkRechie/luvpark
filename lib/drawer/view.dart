@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors, deprecated_member_use
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
@@ -297,7 +298,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                   height: 0,
                 ),
               ),
-              Container(height: 10),
+              Container(height: Platform.isIOS ? 25 : 10),
             ],
           ),
         ),

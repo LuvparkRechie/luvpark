@@ -2,6 +2,7 @@
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -133,15 +134,32 @@ class DashboardMapController extends GetxController
     WidgetsBinding.instance.removeObserver(this);
   }
 
+  // @override
+  // void didChangeMetrics() {
+  //   final bottomInset = View.of(Get.context!).viewInsets.bottom;
+  //   print("bottom insets $bottomInset");
+  //   // if (bottomInset > 0) {
+  //   //   panelController.open();
+  //   // } else {}
+  //   if (!isLoading.value) {
+  //     panelController.open();
+  //   }
+
+  //   update();
+  //   super.didChangeMetrics();
+  // }
   @override
   void didChangeMetrics() {
     final bottomInset = View.of(Get.context!).viewInsets.bottom;
     print("bottom insets $bottomInset");
-    // if (bottomInset > 0) {
-    //   panelController.open();
-    // } else {}
-    if (!isLoading.value) {
-      panelController.open();
+    if (Platform.isIOS) {
+      if (bottomInset > 0) {
+        panelController.open();
+      } else {}
+    } else {
+      if (!isLoading.value) {
+        panelController.open();
+      }
     }
 
     update();
