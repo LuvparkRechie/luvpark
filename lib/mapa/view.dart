@@ -69,14 +69,44 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             drawer: const CustomDrawer(),
             body: controller.initialCameraPosition == null
                 ? Container()
-                : Material(
-                    child: Stack(
-                      children: [
-                        SlidingUpPanel(
-                          maxHeight: controller.getPanelHeight(),
-                          minHeight: controller.panelHeightClosed.value,
-                          panelSnapping: true,
-                          collapsed: Container(
+                : Stack(
+                    children: [
+                      SlidingUpPanel(
+                        maxHeight: controller.getPanelHeight(),
+                        minHeight: controller.panelHeightClosed.value,
+                        panelSnapping: true,
+                        collapsed: Container(
+                          decoration: const ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(17),
+                                topRight: Radius.circular(17),
+                              ),
+                            ),
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: Container(
+                              width: 71,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(56),
+                                color: const Color(0xffd9d9d9),
+                              ),
+                            ),
+                          ),
+                        ),
+                        parallaxEnabled: true,
+                        controller: controller.panelController,
+                        parallaxOffset: .3,
+                        onPanelOpened: () {},
+                        body: _mapa(),
+                        panelBuilder: (sc) => panelSearchedList(sc),
+                        header: LayoutBuilder(builder: (context, constraints) {
+                          return Container(
+                            width: MediaQuery.of(Get.context!).size.width,
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             decoration: const ShapeDecoration(
                               color: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -86,171 +116,63 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 ),
                               ),
                             ),
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Container(
-                                width: 71,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(56),
-                                  color: const Color(0xffd9d9d9),
-                                ),
-                              ),
-                            ),
-                          ),
-                          parallaxEnabled: true,
-                          controller: controller.panelController,
-                          parallaxOffset: .3,
-                          onPanelOpened: () {},
-                          body: _mapa(),
-                          panelBuilder: (sc) => panelSearchedList(sc),
-                          header:
-                              LayoutBuilder(builder: (context, constraints) {
-                            return Container(
-                              width: MediaQuery.of(Get.context!).size.width,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 25.0),
-                              decoration: const ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(17),
-                                    topRight: Radius.circular(17),
-                                  ),
-                                ),
-                              ),
-                              child: searchPanel(),
-                            );
-                          }),
-                          borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(17.0),
-                              topRight: Radius.circular(17.0)),
-                          onPanelSlide: (double pos) {
-                            controller.onPanelSlide(pos);
-                          },
-                        ),
+                            child: searchPanel(),
+                          );
+                        }),
+                        borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(17.0),
+                            topRight: Radius.circular(17.0)),
+                        onPanelSlide: (double pos) {
+                          controller.onPanelSlide(pos);
+                        },
+                      ),
 
-                        if (MediaQuery.of(Get.context!).viewInsets.bottom == 0)
-                          Visibility(
-                            visible: !controller.isHidePanel.value,
-                            child: Positioned(
-                              right: 20.0,
-                              bottom: controller.fabHeight.value,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  // _buildDialItem("lightbulb", () {
-                                  //   Get.dialog(LegendDialogScreen());
-                                  // }),
-                                  // const SizedBox(width: 10),
-                                  Container(
-                                    key: controller.parkKey,
-                                    child: _buildDialItem("parking", () {
-                                      controller.routeToParkingAreas();
-                                    }),
-                                  ),
-                                  const SizedBox(width: 10),
-                                  Container(
-                                    key: controller.locKey,
-                                    child: _buildDialItem("gps", () {
-                                      controller.getCurrentLoc();
-                                    }),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        //My balance
-                        if (MediaQuery.of(context).viewInsets.bottom == 0)
-                          Visibility(
-                            visible:
-                                controller.isGetNearData.value ? true : false,
-                            child: Positioned(
-                              top: 40,
-                              right: 20,
-                              child: InkWell(
-                                key: controller.walletKey,
-                                onTap: () {
-                                  Get.toNamed(Routes.wallet);
-                                },
-                                child: Container(
-                                  width: 178,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(7, 5, 7, 5),
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFDFE7EF)),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    shadows: const [
-                                      BoxShadow(
-                                        color: Color(0x0C000000),
-                                        blurRadius: 15,
-                                        offset: Offset(0, 5),
-                                        spreadRadius: 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 45,
-                                        height: 38,
-                                        child: Image(
-                                          image: AssetImage(
-                                              "assets/images/logo.png"),
-                                          width: 37,
-                                          height: 32,
-                                        ),
-                                      ),
-                                      Container(width: 5),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const CustomParagraph(
-                                              text: "My balance",
-                                              maxlines: 1,
-                                              fontWeight: FontWeight.w800,
-                                              minFontSize: 8,
-                                            ),
-                                            Obx(() => CustomTitle(
-                                                  text: toCurrencyString(
-                                                      controller.userBal
-                                                          .toString()),
-                                                  maxlines: 1,
-                                                  letterSpacing: -0.41,
-                                                  fontWeight: FontWeight.w900,
-                                                ))
-                                          ],
-                                        ),
-                                      ),
-                                      Container(width: 5),
-                                      Icon(
-                                        Icons.chevron_right_outlined,
-                                        color: AppColor.secondaryColor,
-                                      ),
-                                    ],
-                                  ),
+                      if (MediaQuery.of(Get.context!).viewInsets.bottom == 0)
+                        Visibility(
+                          visible: !controller.isHidePanel.value,
+                          child: Positioned(
+                            right: 20.0,
+                            bottom: controller.fabHeight.value,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                // _buildDialItem("lightbulb", () {
+                                //   Get.dialog(LegendDialogScreen());
+                                // }),
+                                // const SizedBox(width: 10),
+                                Container(
+                                  key: controller.parkKey,
+                                  child: _buildDialItem("parking", () {
+                                    controller.routeToParkingAreas();
+                                  }),
                                 ),
-                              ),
+                                const SizedBox(width: 10),
+                                Container(
+                                  key: controller.locKey,
+                                  child: _buildDialItem("gps", () {
+                                    controller.getCurrentLoc();
+                                  }),
+                                ),
+                              ],
                             ),
                           ),
-                        //Drawer
-                        if (MediaQuery.of(context).viewInsets.bottom == 0)
-                          Visibility(
-                            visible:
-                                controller.isGetNearData.value ? true : false,
-                            child: Positioned(
-                              top: 40,
-                              left: 20,
+                        ),
+                      //My balance
+                      if (MediaQuery.of(context).viewInsets.bottom == 0)
+                        Visibility(
+                          visible:
+                              controller.isGetNearData.value ? true : false,
+                          child: Positioned(
+                            top: 40,
+                            right: 20,
+                            child: InkWell(
+                              key: controller.walletKey,
+                              onTap: () {
+                                Get.toNamed(Routes.wallet);
+                              },
                               child: Container(
-                                width: 45,
-                                height: 45,
+                                width: 178,
+                                padding: const EdgeInsets.fromLTRB(7, 5, 7, 5),
                                 clipBehavior: Clip.antiAlias,
                                 decoration: ShapeDecoration(
                                   color: Colors.white,
@@ -268,29 +190,102 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                     )
                                   ],
                                 ),
-                                child: IconButton(
-                                  key: controller.menubarKey,
-                                  icon: AnimatedIcon(
-                                    icon: AnimatedIcons.menu_close,
-                                    progress:
-                                        controller.animationController.view,
-                                    color: Colors.blue,
-                                    size: 30,
-                                  ),
-                                  onPressed: () {
-                                    controller.dashboardScaffoldKey.currentState
-                                        ?.openDrawer();
-                                  },
+                                child: Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 45,
+                                      height: 38,
+                                      child: Image(
+                                        image: AssetImage(
+                                            "assets/images/logo.png"),
+                                        width: 37,
+                                        height: 32,
+                                      ),
+                                    ),
+                                    Container(width: 5),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const CustomParagraph(
+                                            text: "My balance",
+                                            maxlines: 1,
+                                            fontWeight: FontWeight.w800,
+                                            minFontSize: 8,
+                                          ),
+                                          Obx(() => CustomTitle(
+                                                text: toCurrencyString(
+                                                    controller.userBal
+                                                        .toString()),
+                                                maxlines: 1,
+                                                letterSpacing: -0.41,
+                                                fontWeight: FontWeight.w900,
+                                              ))
+                                        ],
+                                      ),
+                                    ),
+                                    Container(width: 5),
+                                    Icon(
+                                      Icons.chevron_right_outlined,
+                                      color: AppColor.secondaryColor,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                           ),
-                        //Show details
+                        ),
+                      //Drawer
+                      if (MediaQuery.of(context).viewInsets.bottom == 0)
                         Visibility(
-                            visible: controller.isHidePanel.value,
-                            child: const DraggableDetailsSheet()),
-                      ],
-                    ),
+                          visible:
+                              controller.isGetNearData.value ? true : false,
+                          child: Positioned(
+                            top: 40,
+                            left: 20,
+                            child: Container(
+                              width: 45,
+                              height: 45,
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  side: const BorderSide(
+                                      width: 1, color: Color(0xFFDFE7EF)),
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
+                                shadows: const [
+                                  BoxShadow(
+                                    color: Color(0x0C000000),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 5),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: IconButton(
+                                key: controller.menubarKey,
+                                icon: AnimatedIcon(
+                                  icon: AnimatedIcons.menu_close,
+                                  progress: controller.animationController.view,
+                                  color: Colors.blue,
+                                  size: 30,
+                                ),
+                                onPressed: () {
+                                  FocusManager.instance.primaryFocus!.unfocus();
+                                  controller.dashboardScaffoldKey.currentState
+                                      ?.openDrawer();
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                      //Show details
+                      Visibility(
+                          visible: controller.isHidePanel.value,
+                          child: const DraggableDetailsSheet()),
+                    ],
                   ),
           ),
         );
@@ -444,8 +439,8 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             height: 54,
             child: TextField(
               controller: controller.searchCon,
-
               autofocus: false,
+              focusNode: controller.focusNode,
               style: paragraphStyle(color: Colors.black, fontSize: 16),
               maxLines: 1, // Ensures single line input
               textAlign: TextAlign.left,
@@ -485,6 +480,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           onTap: () {
                             FocusManager.instance.primaryFocus!.unfocus();
                             controller.searchCon.text = "";
+                            controller.panelController.close();
+                            Future.delayed(Duration(milliseconds: 100), () {
+                              controller.panelController.open();
+                            });
                           },
                           child: SvgPicture.asset(
                               "assets/dashboard_icon/close.svg")),

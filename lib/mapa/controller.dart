@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -127,6 +126,7 @@ class DashboardMapController extends GetxController
   RxInt tabIndex = 0.obs;
   LatLng lastLatlng = LatLng(0, 0);
   RxString lastRouteName = "".obs;
+  final FocusNode focusNode = FocusNode();
   @override
   void onInit() {
     super.onInit();
@@ -142,10 +142,21 @@ class DashboardMapController extends GetxController
       duration: const Duration(milliseconds: 300),
     );
     fabHeight.value = panelHeightOpen.value + 30;
-    WidgetsBinding.instance.addObserver(this);
+
     panelController = PanelController();
     dragController = DraggableScrollableController();
     tabController = TabController(length: 2, vsync: this);
+    focusNode.addListener(() {
+      if (!focusNode.hasFocus && searchCon.text.isEmpty) {
+        suggestions.clear();
+        panelController.close();
+
+        Future.delayed(Duration(milliseconds: 100), () {
+          panelController.open();
+        });
+        update();
+      }
+    });
     getLastBooking();
     getUserData();
     getDefaultLocation();
@@ -157,42 +168,9 @@ class DashboardMapController extends GetxController
     super.onClose();
     gMapController!.dispose();
     animationController.dispose();
-
     debounce?.cancel();
     debouncePanel?.cancel();
-    WidgetsBinding.instance.removeObserver(this);
-  }
-
-  // @override
-  // void didChangeMetrics() {
-  //   final bottomInset = View.of(Get.context!).viewInsets.bottom;
-  //   print("bottom insets $bottomInset");
-  //   // if (bottomInset > 0) {
-  //   //   panelController.open();
-  //   // } else {}
-  //   if (!isLoading.value) {
-  //     panelController.open();
-  //   }
-  //   update();
-  //   super.didChangeMetrics();
-  // }
-
-  @override
-  void didChangeMetrics() {
-    final bottomInset = View.of(Get.context!).viewInsets.bottom;
-    print("bottom insets $bottomInset");
-    if (Platform.isIOS) {
-      if (bottomInset > 0) {
-        panelController.open();
-      } else {}
-    } else {
-      if (!isLoading.value) {
-        panelController.open();
-      }
-    }
-
-    update();
-    super.didChangeMetrics();
+    focusNode.dispose(); //
   }
 
   Future<void> onSearchChanged() async {
@@ -221,13 +199,11 @@ class DashboardMapController extends GetxController
 
   double getPanelHeight() {
     double bottomInset = MediaQuery.of(Get.context!).viewInsets.bottom;
-    double height = suggestions.isEmpty
-        ? bottomInset != 0
-            ? bottomInset + 20
-            : 180
-        : bottomInset != 0
-            ? bottomInset + 20
-            : MediaQuery.of(Get.context!).size.height * 0.70;
+    double height = bottomInset == 0
+        ? suggestions.isEmpty
+            ? 180
+            : MediaQuery.of(Get.context!).size.height * .70
+        : 180;
 
     panelHeightOpen.value = height;
     update();
@@ -717,7 +693,9 @@ class DashboardMapController extends GetxController
             position: LatLng(double.parse(items["pa_latitude"].toString()),
                 double.parse(items["pa_longitude"].toString())),
             onTap: () async {
+              FocusManager.instance.primaryFocus!.unfocus();
               markerData.clear();
+
               CustomDialog().loadingDialog(Get.context!);
 
               markerData.add(items);
@@ -915,7 +893,7 @@ class DashboardMapController extends GetxController
       }
       isHidePanel.value = false;
 
-      await Future.delayed(const Duration(milliseconds: 500), () {
+      await Future.delayed(const Duration(milliseconds: 200), () {
         gMapController!.animateCamera(
           CameraUpdate.newCameraPosition(
             CameraPosition(target: lastLatlng, zoom: 14),
