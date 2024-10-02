@@ -151,7 +151,7 @@ class DashboardMapController extends GetxController
         suggestions.clear();
         panelController.close();
 
-        Future.delayed(Duration(milliseconds: 100), () {
+        Future.delayed(Duration(milliseconds: 200), () {
           panelController.open();
         });
         update();
@@ -177,12 +177,16 @@ class DashboardMapController extends GetxController
     if (debounce?.isActive ?? false) debounce?.cancel();
 
     Duration duration = const Duration(seconds: 1);
-
     debounce = Timer(duration, () {
+      FocusManager.instance.primaryFocus!.unfocus();
       fetchSuggestions((cbData) {
-        FocusManager.instance.primaryFocus!.unfocus();
-
         panelController.open();
+        Future.delayed(Duration(milliseconds: 200), () {
+          if (suggestions.isNotEmpty) {
+            fabHeight.value =
+                MediaQuery.of(Get.context!).size.height * .70 + 30;
+          }
+        });
         update();
       });
     });
@@ -192,7 +196,9 @@ class DashboardMapController extends GetxController
     fetchSuggestions((cbData) {
       FocusManager.instance.primaryFocus!.unfocus();
 
-      panelController.open();
+      Future.delayed(Duration(milliseconds: 200), () {
+        panelController.open();
+      });
       update();
     });
   }
@@ -321,7 +327,9 @@ class DashboardMapController extends GetxController
     dataNearest.value = [];
     CustomDialog().internetErrorDialog(Get.context!, () {
       Get.back();
-      panelController.open();
+      Future.delayed(Duration(milliseconds: 200), () {
+        panelController.open();
+      });
     });
 
     return;
@@ -333,7 +341,9 @@ class DashboardMapController extends GetxController
     dataNearest.value = [];
     CustomDialog().serverErrorDialog(Get.context!, () {
       Get.back();
-      panelController.open();
+      Future.delayed(Duration(milliseconds: 200), () {
+        panelController.open();
+      });
     });
     return;
   }
@@ -374,7 +384,9 @@ class DashboardMapController extends GetxController
         }
       });
     } else {
-      panelController.open();
+      Future.delayed(Duration(milliseconds: 200), () {
+        panelController.open();
+      });
     }
 
     update();
@@ -786,8 +798,11 @@ class DashboardMapController extends GetxController
       data: dataNearest,
       cb: (data) {
         if (data == "yowo") {
-          panelController.show();
-          panelController.open();
+          Future.delayed(Duration(milliseconds: 200), () {
+            panelController.show();
+            panelController.open();
+          });
+
           if (!hasLastBooking.value) {
             showTargetTutorial(Variables.ctxt!, false);
           }

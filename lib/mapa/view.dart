@@ -273,7 +273,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                   size: 30,
                                 ),
                                 onPressed: () {
-                                  FocusManager.instance.primaryFocus!.unfocus();
                                   controller.dashboardScaffoldKey.currentState
                                       ?.openDrawer();
                                 },
@@ -858,7 +857,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                             ),
                                             TextSpan(
                                               text:
-                                                  ' ${controller.markerData[0]["distance_display"]} away',
+                                                  ' ${controller.markerData[0]["distance_display"]}',
                                               style: paragraphStyle(
                                                   color: AppColor.primaryColor),
                                             ),

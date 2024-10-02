@@ -259,7 +259,7 @@ class MyVehiclesController extends GetxController {
     bool isIOs = Platform.isIOS;
     final pickedFile = await picker.pickImage(
         source: source,
-        imageQuality: isIOs ? 20 : 25,
+        imageQuality: isIOs ? 18 : 25,
         maxWidth: isIOs ? 300 : 500,
         requestFullMetadata: false);
 
