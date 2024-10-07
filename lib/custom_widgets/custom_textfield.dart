@@ -128,6 +128,8 @@ class CustomMobileNumber extends StatefulWidget {
   final String labelText;
   final bool? isReadOnly;
   final Widget? prefix;
+  final IconData? suffixIcon;
+  final Function? onIconTap;
   final TextEditingController controller;
   final ValueChanged<String>? onChange;
   final List<TextInputFormatter>? inputFormatters;
@@ -150,6 +152,8 @@ class CustomMobileNumber extends StatefulWidget {
     this.onTap,
     this.isEnabled = true,
     this.validator,
+    this.suffixIcon,
+    this.onIconTap,
   });
 
   @override
@@ -183,6 +187,14 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide(color: Color(0xFFDF0000))),
           labelText: widget.labelText,
+          suffixIcon: widget.suffixIcon != null
+              ? InkWell(
+                  onTap: () {
+                    widget.onIconTap!();
+                  },
+                  child: Icon(widget.suffixIcon!),
+                )
+              : null,
           prefixIcon: Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.only(
