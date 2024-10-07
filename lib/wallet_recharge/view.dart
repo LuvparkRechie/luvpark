@@ -89,7 +89,7 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                   Container(
                     height: 20,
                   ),
-                  const CustomTitle(
+                  const CustomParagraph(
                       text:
                           'Enter a desired amount or choose from any denominations below.',
                       color: Colors.black87,

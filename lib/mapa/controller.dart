@@ -83,7 +83,6 @@ class DashboardMapController extends GetxController
   RxBool hasLastBooking = false.obs;
   RxString plateNo = "".obs;
   RxString brandName = "".obs;
-
 //panel gg
   RxDouble panelHeightOpen = 180.0.obs;
   RxDouble initFabHeight = 80.0.obs;
@@ -296,7 +295,7 @@ class DashboardMapController extends GetxController
   void getNearest(LatLng coordinates) async {
     String params =
         "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${Variables.convertToMeters(ddRadius.value.toString())}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-    print(" params$params");
+    print("params $params");
     try {
       var returnData = await HttpRequest(api: params).get();
 
@@ -349,10 +348,11 @@ class DashboardMapController extends GetxController
   }
 
   void handleNoParkingFound(dynamic nearData) {
+    markers.clear();
+    dataNearest.value = [];
     netConnected.value = true;
     isLoading.value = false;
-    dataNearest.value = [];
-    markers.clear();
+    showDottedCircle(nearData);
     bool isDouble = ddRadius.value.contains(".");
     String message = isFilter
         ? "There are no parking areas available based on your filter."
@@ -360,7 +360,6 @@ class DashboardMapController extends GetxController
 
     CustomDialog().infoDialog("Map Filter", message, () {
       Get.back();
-      showDottedCircle(nearData);
     });
   }
 
@@ -374,7 +373,7 @@ class DashboardMapController extends GetxController
     if (dataNearest.isNotEmpty && !isShowPopUp) {
       Future.delayed(const Duration(seconds: 1), () {
         Authentication().setShowPopUpNearest(true);
-        print("lastBookData $lastBookData");
+
         if (lastBookData.isEmpty || lastBookData == null) {
           showLegend(() {
             showNearestSuggestDialog();
@@ -397,7 +396,7 @@ class DashboardMapController extends GetxController
     initialCameraPosition = CameraPosition(
       target: searchCoordinates,
       zoom: nearData.isEmpty ? 14 : 16,
-      tilt: 0,
+      tilt: 45,
       bearing: 0,
     );
 
@@ -579,9 +578,11 @@ class DashboardMapController extends GetxController
       gMapController!.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-              target: LatLng(initialCameraPosition!.target.latitude,
-                  initialCameraPosition!.target.longitude),
-              zoom: dataNearest.isEmpty ? 14 : 16),
+            target: LatLng(initialCameraPosition!.target.latitude,
+                initialCameraPosition!.target.longitude),
+            zoom: dataNearest.isEmpty ? 14 : 16,
+            tilt: 25,
+          ),
         ),
       );
     }
@@ -911,7 +912,11 @@ class DashboardMapController extends GetxController
       await Future.delayed(const Duration(milliseconds: 200), () {
         gMapController!.animateCamera(
           CameraUpdate.newCameraPosition(
-            CameraPosition(target: lastLatlng, zoom: 14),
+            CameraPosition(
+              target: lastLatlng,
+              zoom: 15,
+              tilt: 25,
+            ),
           ),
         );
       });
@@ -926,7 +931,11 @@ class DashboardMapController extends GetxController
       lastLatlng = filteredMarkers[0].position;
       gMapController!.animateCamera(
         CameraUpdate.newCameraPosition(
-          CameraPosition(target: filteredMarkers[0].position, zoom: 17),
+          CameraPosition(
+            target: filteredMarkers[0].position,
+            zoom: 17,
+            tilt: 25,
+          ),
         ),
       );
       isHidePanel.value = true;
@@ -1118,7 +1127,7 @@ class DashboardMapController extends GetxController
       return int.parse(element["count"].toString()) != 0;
     }).toList();
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
-    print("inatay $vehicleTypes");
+
     finalSttime = formatTime(markerData[0]["start_time"]);
     finalEndtime = formatTime(markerData[0]["end_time"]);
     isOpen.value = Functions.checkAvailability(finalSttime, finalEndtime);
@@ -1244,7 +1253,6 @@ class DashboardMapController extends GetxController
     }
 
     Functions.getUserBalance(Get.context!, (dataBalance) async {
-      print("data balance $dataBalance");
       final userdata = dataBalance[0];
       final items = userdata["items"];
 

@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_constructors, unrelated_type_equality_checks
-
 import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
@@ -16,6 +14,7 @@ import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
 import 'package:luvpark_get/wallet_send/index.dart';
 
 import '../custom_widgets/app_color.dart';
+import '../custom_widgets/scanner.dart';
 import '../custom_widgets/variables.dart';
 
 class WalletSend extends GetView<WalletSendController> {
@@ -118,6 +117,37 @@ class WalletSend extends GetView<WalletSendController> {
                         }
 
                         return null;
+                      },
+                      suffixIcon: Icons.qr_code,
+                      onIconTap: () {
+                        Get.to(ScannerScreen(
+                          onchanged: (ScannedData args) {
+                            String scannedMobileNumber = args.scannedHash;
+                            String formattedNumber = scannedMobileNumber
+                                .replaceAll(RegExp(r'\D'), '');
+
+                            if (formattedNumber.length >= 12) {
+                              formattedNumber = formattedNumber.substring(2);
+                            }
+
+                            if (formattedNumber.isEmpty ||
+                                formattedNumber.length != 10 ||
+                                formattedNumber[0] == '0') {
+                              controller.recipient.text = "";
+                              CustomDialog().errorDialog(
+                                context,
+                                "Invalid QR Code",
+                                "The scanned QR code is invalid. Please try again.",
+                                () {
+                                  Get.back();
+                                },
+                              );
+                            } else {
+                              controller.recipient.text = formattedNumber;
+                              controller.onTextChange();
+                            }
+                          },
+                        ));
                       },
                     ),
                     CustomTextField(
