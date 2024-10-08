@@ -2,6 +2,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
@@ -75,24 +76,29 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                         maxHeight: controller.getPanelHeight(),
                         minHeight: controller.panelHeightClosed.value,
                         panelSnapping: true,
-                        collapsed: Container(
-                          decoration: const ShapeDecoration(
-                            color: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(17),
-                                topRight: Radius.circular(17),
+                        collapsed: InkWell(
+                          onTap: () {
+                            controller.panelController.open();
+                          },
+                          child: Container(
+                            decoration: const ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(17),
+                                  topRight: Radius.circular(17),
+                                ),
                               ),
                             ),
-                          ),
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: Container(
-                              width: 71,
-                              height: 6,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(56),
-                                color: const Color(0xffd9d9d9),
+                            width: MediaQuery.of(context).size.width,
+                            child: Center(
+                              child: Container(
+                                width: 71,
+                                height: 6,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(56),
+                                  color: const Color(0xffd9d9d9),
+                                ),
                               ),
                             ),
                           ),
@@ -104,19 +110,30 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                         body: _mapa(),
                         panelBuilder: (sc) => panelSearchedList(sc),
                         header: LayoutBuilder(builder: (context, constraints) {
-                          return Container(
-                            width: MediaQuery.of(Get.context!).size.width,
-                            padding: const EdgeInsets.symmetric(vertical: 25.0),
-                            decoration: const ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(17),
-                                  topRight: Radius.circular(17),
+                          return InkWell(
+                            onTap: () {
+                              if (MediaQuery.of(Get.context!)
+                                      .viewInsets
+                                      .bottom ==
+                                  0) {
+                                controller.panelController.close();
+                              }
+                            },
+                            child: Container(
+                              width: MediaQuery.of(Get.context!).size.width,
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 25.0),
+                              decoration: const ShapeDecoration(
+                                color: Colors.white,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(17),
+                                    topRight: Radius.circular(17),
+                                  ),
                                 ),
                               ),
+                              child: searchPanel(),
                             ),
-                            child: searchPanel(),
                           );
                         }),
                         borderRadius: const BorderRadius.only(
@@ -163,74 +180,78 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           visible:
                               controller.isGetNearData.value ? true : false,
                           child: Positioned(
-                            top: 40,
+                            top: 0,
                             right: 20,
-                            child: InkWell(
-                              key: controller.walletKey,
-                              onTap: () {
-                                Get.toNamed(Routes.wallet);
-                              },
-                              child: Container(
-                                width: 178,
-                                padding: const EdgeInsets.fromLTRB(7, 5, 7, 5),
-                                clipBehavior: Clip.antiAlias,
-                                decoration: ShapeDecoration(
-                                  color: Colors.white,
-                                  shape: RoundedRectangleBorder(
-                                    side: const BorderSide(
-                                        width: 1, color: Color(0xFFDFE7EF)),
-                                    borderRadius: BorderRadius.circular(7),
+                            child: Padding(
+                              padding: MediaQuery.of(context).padding,
+                              child: InkWell(
+                                key: controller.walletKey,
+                                onTap: () {
+                                  Get.toNamed(Routes.wallet);
+                                },
+                                child: Container(
+                                  width: 178,
+                                  padding:
+                                      const EdgeInsets.fromLTRB(7, 5, 7, 5),
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          width: 1, color: Color(0xFFDFE7EF)),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Color(0x0C000000),
+                                        blurRadius: 15,
+                                        offset: Offset(0, 5),
+                                        spreadRadius: 0,
+                                      )
+                                    ],
                                   ),
-                                  shadows: const [
-                                    BoxShadow(
-                                      color: Color(0x0C000000),
-                                      blurRadius: 15,
-                                      offset: Offset(0, 5),
-                                      spreadRadius: 0,
-                                    )
-                                  ],
-                                ),
-                                child: Row(
-                                  children: [
-                                    const SizedBox(
-                                      width: 45,
-                                      height: 38,
-                                      child: Image(
-                                        image: AssetImage(
-                                            "assets/images/logo.png"),
-                                        width: 37,
-                                        height: 32,
+                                  child: Row(
+                                    children: [
+                                      const SizedBox(
+                                        width: 45,
+                                        height: 38,
+                                        child: Image(
+                                          image: AssetImage(
+                                              "assets/images/logo.png"),
+                                          width: 37,
+                                          height: 32,
+                                        ),
                                       ),
-                                    ),
-                                    Container(width: 5),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const CustomParagraph(
-                                            text: "My balance",
-                                            maxlines: 1,
-                                            fontWeight: FontWeight.w800,
-                                            minFontSize: 8,
-                                          ),
-                                          Obx(() => CustomTitle(
-                                                text: toCurrencyString(
-                                                    controller.userBal
-                                                        .toString()),
-                                                maxlines: 1,
-                                                letterSpacing: -0.41,
-                                                fontWeight: FontWeight.w900,
-                                              ))
-                                        ],
+                                      Container(width: 5),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const CustomParagraph(
+                                              text: "My balance",
+                                              maxlines: 1,
+                                              fontWeight: FontWeight.w800,
+                                              minFontSize: 8,
+                                            ),
+                                            Obx(() => CustomTitle(
+                                                  text: toCurrencyString(
+                                                      controller.userBal
+                                                          .toString()),
+                                                  maxlines: 1,
+                                                  letterSpacing: -0.41,
+                                                  fontWeight: FontWeight.w900,
+                                                ))
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Container(width: 5),
-                                    Icon(
-                                      Icons.chevron_right_outlined,
-                                      color: AppColor.secondaryColor,
-                                    ),
-                                  ],
+                                      Container(width: 5),
+                                      Icon(
+                                        Icons.chevron_right_outlined,
+                                        color: AppColor.secondaryColor,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),
@@ -242,40 +263,45 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           visible:
                               controller.isGetNearData.value ? true : false,
                           child: Positioned(
-                            top: 40,
+                            top: 0,
                             left: 20,
-                            child: Container(
-                              width: 45,
-                              height: 45,
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  side: const BorderSide(
-                                      width: 1, color: Color(0xFFDFE7EF)),
-                                  borderRadius: BorderRadius.circular(7),
-                                ),
-                                shadows: const [
-                                  BoxShadow(
-                                    color: Color(0x0C000000),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 5),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: IconButton(
-                                key: controller.menubarKey,
-                                icon: AnimatedIcon(
-                                  icon: AnimatedIcons.menu_close,
-                                  progress: controller.animationController.view,
-                                  color: Colors.blue,
-                                  size: 30,
-                                ),
-                                onPressed: () {
+                            child: Padding(
+                              padding: MediaQuery.of(context).padding,
+                              child: InkWell(
+                                onTap: () {
                                   controller.dashboardScaffoldKey.currentState
                                       ?.openDrawer();
                                 },
+                                child: Container(
+                                  width: 45,
+                                  height: 45,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: ShapeDecoration(
+                                    color: Colors.white,
+                                    shape: RoundedRectangleBorder(
+                                      side: const BorderSide(
+                                          width: 1, color: Color(0xFFDFE7EF)),
+                                      borderRadius: BorderRadius.circular(7),
+                                    ),
+                                    shadows: const [
+                                      BoxShadow(
+                                        color: Color(0x0C000000),
+                                        blurRadius: 15,
+                                        offset: Offset(0, 5),
+                                        spreadRadius: 0,
+                                      )
+                                    ],
+                                  ),
+                                  child: Center(
+                                    child: AnimatedIcon(
+                                      icon: AnimatedIcons.menu_close,
+                                      progress:
+                                          controller.animationController.view,
+                                      color: Colors.blue,
+                                      size: 30,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
@@ -476,43 +502,46 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                     Container(width: 15),
                     if (controller.searchCon.text.isNotEmpty)
                       InkWell(
+                        onTap: () {
+                          FocusManager.instance.primaryFocus!.unfocus();
+                          controller.searchCon.text = "";
+                          controller.panelController.close();
+                          Future.delayed(Duration(milliseconds: 100), () {
+                            controller.panelController.open();
+                          });
+                        },
+                        child:
+                            SvgPicture.asset("assets/dashboard_icon/close.svg"),
+                      ),
+                    Container(width: 10),
+                    Row(
+                      children: [
+                        InkWell(
                           onTap: () {
-                            FocusManager.instance.primaryFocus!.unfocus();
-                            controller.searchCon.text = "";
-                            controller.panelController.close();
-                            Future.delayed(Duration(milliseconds: 100), () {
-                              controller.panelController.open();
-                            });
+                            showModalBottomSheet(
+                              context: Get.context!,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(
+                                        20.0)), // Rounded corners
+                              ),
+                              clipBehavior: Clip.none,
+                              builder: (BuildContext context) {
+                                // Obtain the screen height
+
+                                return FilterMap(cb: (data) {
+                                  controller.getFilterNearest(data);
+                                });
+                              },
+                              isScrollControlled:
+                                  true, // Ensure the height is respected
+                            );
                           },
                           child: SvgPicture.asset(
-                              "assets/dashboard_icon/close.svg")),
-                    if (controller.searchCon.text.isEmpty)
-                      Row(
-                        children: [
-                          InkWell(
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: Get.context!,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                        top: Radius.circular(
-                                            20.0)), // Rounded corners
-                                  ),
-                                  clipBehavior: Clip.none,
-                                  builder: (BuildContext context) {
-                                    // Obtain the screen height
-
-                                    return FilterMap(cb: (data) {
-                                      controller.getFilterNearest(data);
-                                    });
-                                  },
-                                  isScrollControlled:
-                                      true, // Ensure the height is respected
-                                );
-                              },
-                              child: SvgPicture.asset(
-                                  "assets/dashboard_icon/filter.svg")),
-                          const SizedBox(width: 10),
+                              "assets/dashboard_icon/filter.svg"),
+                        ),
+                        Container(width: 10),
+                        if (controller.searchCon.text.isEmpty)
                           InkWell(
                             onTap: () {
                               FocusManager.instance.primaryFocus?.unfocus();
@@ -527,9 +556,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                             child: SvgPicture.asset(
                                 "assets/dashboard_icon/voice.svg"),
                           ),
-                        ],
-                      ),
-                    Container(width: 15),
+                        Container(width: 15),
+                      ],
+                    ),
                   ],
                 ),
               ),
@@ -672,9 +701,21 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
   @override
   Widget build(BuildContext context) {
     controller.goingBackToTheCornerWhenIFirstSawYou();
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    // Calculate the initial child size as a fraction of the screen height
+    final double initialChildSize = 345 / screenHeight;
+
+    // Set minChildSize (as a fraction of the screen height)
+    final double minChildSize = 0.30;
+
+    // Ensure initialChildSize is not less than minChildSize
+    final double adjustedInitialChildSize =
+        initialChildSize < minChildSize ? minChildSize : initialChildSize;
+
     return DraggableScrollableSheet(
-        initialChildSize: 0.4,
-        minChildSize: 0.27,
+        initialChildSize: adjustedInitialChildSize,
+        minChildSize: minChildSize,
         maxChildSize: 0.8,
         controller: controller.dragController,
         builder: (BuildContext context, ScrollController scrollController) {
@@ -873,7 +914,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                       ),
                                       Container(height: 10),
                                       _vehicles(),
-                                      Container(height: 15),
                                       Container(
                                           height: 50,
                                           width: double.infinity,

@@ -175,7 +175,7 @@ class DashboardMapController extends GetxController
   Future<void> onSearchChanged() async {
     if (debounce?.isActive ?? false) debounce?.cancel();
 
-    Duration duration = const Duration(seconds: 1);
+    Duration duration = const Duration(seconds: 2);
     debounce = Timer(duration, () {
       FocusManager.instance.primaryFocus!.unfocus();
       fetchSuggestions((cbData) {
@@ -289,6 +289,11 @@ class DashboardMapController extends GetxController
     CustomDialog().mapLoading(
         Variables.convertDistance(ddRadius.value.toString()).toString());
     isLoading.value = false;
+    dataNearest.value = [];
+    markerData = [];
+    markers.clear();
+    filteredMarkers.clear();
+
     getNearest(coordinates);
   }
 
@@ -335,9 +340,11 @@ class DashboardMapController extends GetxController
   }
 
   void handleServerError() {
+    showDottedCircle([]);
     netConnected.value = true;
     isLoading.value = false;
     dataNearest.value = [];
+
     CustomDialog().serverErrorDialog(Get.context!, () {
       Get.back();
       Future.delayed(Duration(milliseconds: 200), () {
@@ -348,7 +355,6 @@ class DashboardMapController extends GetxController
   }
 
   void handleNoParkingFound(dynamic nearData) {
-    markers.clear();
     dataNearest.value = [];
     netConnected.value = true;
     isLoading.value = false;
@@ -360,15 +366,21 @@ class DashboardMapController extends GetxController
 
     CustomDialog().infoDialog("Map Filter", message, () {
       Get.back();
+      if (suggestions.isEmpty) {
+        Future.delayed(Duration(milliseconds: 200), () {
+          panelController.show();
+          panelController.open();
+        });
+      }
     });
   }
 
   void handleData(dynamic nearData) async {
-    markers.clear();
     dynamic lastBookData = await Authentication().getLastBooking();
     showDottedCircle(nearData);
     buildMarkers(nearData);
     netConnected.value = true;
+
     bool isShowPopUp = await Authentication().getPopUpNearest();
     if (dataNearest.isNotEmpty && !isShowPopUp) {
       Future.delayed(const Duration(seconds: 1), () {
@@ -383,9 +395,11 @@ class DashboardMapController extends GetxController
         }
       });
     } else {
-      Future.delayed(Duration(milliseconds: 200), () {
-        panelController.open();
-      });
+      if (suggestions.isEmpty) {
+        Future.delayed(Duration(milliseconds: 200), () {
+          panelController.open();
+        });
+      }
     }
 
     update();
@@ -488,6 +502,7 @@ class DashboardMapController extends GetxController
     addressText = "".obs;
     isAllowOverNight = "";
     suggestions.clear();
+    searchCon.text = "";
     getDefaultLocation();
   }
 
@@ -498,8 +513,8 @@ class DashboardMapController extends GetxController
     amenities = data[0]["amen"];
     vtypeId = data[0]["vh_type"];
     isAllowOverNight = data[0]["ovp"];
-
     isFilter = true;
+    focusNode.unfocus();
     bridgeLocation(searchCoordinates);
   }
 
@@ -544,12 +559,8 @@ class DashboardMapController extends GetxController
       polylineId: const PolylineId('dottedCircle'),
       color: AppColor.mainColor,
       width: 4,
-      patterns: [
-        PatternItem.dash(20),
-        PatternItem.gap(20),
-      ],
       points: List<LatLng>.generate(
-        360,
+        365,
         (index) => calculateNewCoordinates(
           searchCoordinates.latitude,
           searchCoordinates.longitude,
@@ -681,7 +692,7 @@ class DashboardMapController extends GetxController
     if (dataNearest.isNotEmpty) {
       for (int i = 0; i < dataNearest.length; i++) {
         var items = dataNearest[i];
-
+        print("items yawa $items");
         final String isPwd = items["is_pwd"] ?? "N";
         final String vehicleTypes = items["vehicle_types_list"];
         String iconAsset;
@@ -708,6 +719,7 @@ class DashboardMapController extends GetxController
             onTap: () async {
               FocusManager.instance.primaryFocus!.unfocus();
               markerData.clear();
+              filteredMarkers.clear();
 
               CustomDialog().loadingDialog(Get.context!);
 
@@ -799,10 +811,12 @@ class DashboardMapController extends GetxController
       data: dataNearest,
       cb: (data) {
         if (data == "yowo") {
-          Future.delayed(Duration(milliseconds: 200), () {
-            panelController.show();
-            panelController.open();
-          });
+          if (suggestions.isEmpty) {
+            Future.delayed(Duration(milliseconds: 200), () {
+              panelController.show();
+              panelController.open();
+            });
+          }
 
           if (!hasLastBooking.value) {
             showTargetTutorial(Variables.ctxt!, false);

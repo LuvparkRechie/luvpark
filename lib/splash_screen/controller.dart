@@ -42,12 +42,12 @@ class SplashController extends GetxController
         }
 
         if (items[0]["is_active"] == "N") {
-          Get.toNamed(Routes.login);
+          Get.offAndToNamed(Routes.login);
         } else {
           final userLogin = await Authentication().getUserLogin();
 
           if (userLogin["is_login"] == "N") {
-            Get.toNamed(Routes.login);
+            Get.offAndToNamed(Routes.login);
           } else {
             final uPass = await Authentication().getPasswordBiometric();
             Map<String, dynamic> postParam = {
@@ -61,7 +61,7 @@ class SplashController extends GetxController
               }
               isNetConn.value = true;
               if (data[0]["items"].isNotEmpty) {
-                Get.toNamed(Routes.map);
+                Get.offAndToNamed(Routes.map);
               }
             });
           }
@@ -71,7 +71,7 @@ class SplashController extends GetxController
       Authentication().setShowPopUpNearest(false);
 
       Timer(const Duration(seconds: 3), () {
-        Get.toNamed(Routes.onboarding);
+        Get.offAndToNamed(Routes.onboarding);
       });
     }
   }

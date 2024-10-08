@@ -119,7 +119,7 @@ class WalletSend extends GetView<WalletSendController> {
                         return null;
                       },
                       suffixIcon: Icons.qr_code,
-                      onIconTap: () {
+                      onTap: () {
                         Get.to(ScannerScreen(
                           onchanged: (ScannedData args) {
                             String scannedMobileNumber = args.scannedHash;

@@ -90,10 +90,12 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                     height: 20,
                   ),
                   const CustomParagraph(
-                      text:
-                          'Enter a desired amount or choose from any denominations below.',
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500),
+                    text:
+                        'Enter a desired amount or choose from any denominations below.',
+                    color: Colors.black87,
+                    fontWeight: FontWeight.w500,
+                    textAlign: TextAlign.center,
+                  ),
                   const SizedBox(
                     height: 20,
                   ),
