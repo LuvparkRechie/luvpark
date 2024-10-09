@@ -64,6 +64,7 @@ class CustomParagraph extends StatelessWidget {
   final TextOverflow? overflow;
   final double? minFontSize;
   final TextDecoration? textDecoration;
+  final double? maxFontSize;
 
   const CustomParagraph({
     super.key,
@@ -80,6 +81,7 @@ class CustomParagraph extends StatelessWidget {
     this.overflow,
     this.textDecoration,
     this.minFontSize = 12,
+    this.maxFontSize = 14,
   });
 
   @override
@@ -101,6 +103,8 @@ class CustomParagraph extends StatelessWidget {
       maxLines: maxlines,
       overflow: overflow,
       minFontSize: minFontSize!,
+      maxFontSize: maxFontSize!,
+      textScaleFactor: 1.1,
     );
   }
 }

@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -69,27 +70,27 @@ class CustomDrawer extends GetView<DashboardMapController> {
                             SizedBox(width: 10),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment
-                                  .start, // Aligns text and button to the left
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 controller.userProfile != null &&
                                         controller.userProfile['first_name'] !=
                                             null
-                                    ? CustomTitle(
+                                    ? CustomParagraph(
                                         text:
                                             '${controller.userProfile['first_name']} ${controller.userProfile['last_name']}',
                                         fontWeight: FontWeight.w700,
+                                        color: Colors.black,
                                         fontStyle: FontStyle.normal,
                                         textAlign: TextAlign.center,
-                                        letterSpacing: -0.408,
+                                        maxlines: 2,
                                       )
-                                    : CustomTitle(
+                                    : CustomParagraph(
                                         text: "NOT VERIFIED",
+                                        color: Colors.black,
                                         fontWeight: FontWeight.w700,
                                         fontStyle: FontStyle.normal,
                                         textAlign: TextAlign.center,
-                                        fontSize: 14,
-                                        letterSpacing: -0.408,
+                                        fontSize: 16,
                                       ),
                                 OutlinedButton(
                                   onPressed: () {
@@ -108,7 +109,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 20.0),
                                   ),
-                                  child: CustomTitle(
+                                  child: CustomParagraph(
                                     text: "View Profile",
                                     fontSize: 14,
                                     fontStyle: FontStyle.normal,
