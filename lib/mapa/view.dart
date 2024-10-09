@@ -452,11 +452,13 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             ),
           ),
           Container(height: 20),
-          const CustomTitle(
+           const CustomParagraph(
+            minFontSize: 8,
+            maxlines: 1,
             text: "Where do you want to go today?",
             color: Color(0xFF131313),
             fontSize: 18,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             letterSpacing: -0.41,
           ),
           Container(height: 20),
