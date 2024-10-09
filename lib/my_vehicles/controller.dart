@@ -337,11 +337,9 @@ class MyVehiclesController extends GetxController {
       "vcr_image_base64": crImageBase64.value,
     };
 
-    print("paramter $parameter");
     HttpRequest(api: ApiKeys.gApiLuvParkAddVehicle, parameters: parameter)
         .postBody()
         .then((returnPost) async {
-      print("paramter $returnPost");
       FocusManager.instance.primaryFocus!.unfocus();
       isBtnLoading.value = false;
 

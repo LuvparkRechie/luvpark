@@ -14,14 +14,12 @@ class Routes {
   static const splash = "/splash";
   static const parking = "/parking";
   static const parkingAreas = "/parking_areas";
-  static const parkingDetails = "/parking_details";
   static const wallet = "/wallet";
   static const qrwallet = "/wallet_qr";
   static const booking = "/booking";
   static const bookingNotice = "/booking_notice";
   static const bookingReceipt = "/booking_receipt";
   static const walletsend = "/wallet_send";
-  static const rateBooking = "/rate_booking";
   static const sendOtp = "/wallet_otp";
   static const customdrawer = "/customdrawer";
   static const walletrecharge = "/wallet_recharge";

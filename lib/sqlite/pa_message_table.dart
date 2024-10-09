@@ -59,7 +59,7 @@ class PaMessageDatabase {
         "'${json[PaMessageDataFields.status]}',"
         "'${json[PaMessageDataFields.isRead]}',"
         "'${json[PaMessageDataFields.runOn]}'";
-    print("insertValues $insertValues");
+
     final existingData = await PaMessageDatabase.instance
         .readNotificationById(json[PaMessageDataFields.pushMsgId]);
 

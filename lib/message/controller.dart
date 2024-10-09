@@ -60,7 +60,6 @@ class MessageScreenController extends GetxController {
               api: ApiKeys.gApiLuvParkPutUpdMessageNotif, parameters: params)
           .put()
           .then((updateData) async {
-        print("updateData $updateData");
         if (updateData == "No Internet") {
           Get.back();
           CustomDialog().internetErrorDialog(Get.context!, () {

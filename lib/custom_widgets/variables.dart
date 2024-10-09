@@ -568,7 +568,6 @@ class Variables {
 
 // '16:30'; format
   static String timeFormatter(String time) {
-    print(time);
     try {
       // Parse the 24-hour time into a DateTime object
       DateFormat format24Hour = DateFormat('HH:mm');
@@ -579,7 +578,7 @@ class Variables {
       return format12Hour.format(dateTime);
     } catch (e) {
       // Handle parsing errors if necessary
-      print("Error parsing time: $e");
+
       return 'Invalid time'; // Return a default value or error message
     }
   }

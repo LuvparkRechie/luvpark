@@ -54,6 +54,7 @@ class SplashController extends GetxController
               "mobile_no": data["mobile_no"],
               "pwd": uPass,
             };
+            print("postParam $postParam");
             lgCt.postLogin(Get.context, postParam, (data) {
               if (!data[0]["has_net"]) {
                 isNetConn.value = false;

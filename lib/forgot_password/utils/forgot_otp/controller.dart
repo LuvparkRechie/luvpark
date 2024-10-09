@@ -7,6 +7,8 @@ import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/routes/routes.dart';
 
+import '../../../auth/authentication.dart';
+
 class ForgotPassOtpController extends GetxController {
   ForgotPassOtpController();
   List paramArgs = Get.arguments;
@@ -263,7 +265,7 @@ class ForgotPassOtpController extends GetxController {
             api: ApiKeys.gApiSubFolderPostPutGetResetPass,
             parameters: parameters)
         .put()
-        .then((retvalue) {
+        .then((retvalue) async {
       if (retvalue == "No Internet") {
         Get.back();
         CustomDialog().errorDialog(Get.context!, "Error",
@@ -280,8 +282,8 @@ class ForgotPassOtpController extends GetxController {
         });
       } else {
         if (retvalue["success"] == "Y") {
+          Authentication().setPasswordBiometric(paramArgs[0]["new_pass"]);
           Get.back();
-
           Get.toNamed(Routes.forgotPassSuccess);
         } else {
           Get.back();

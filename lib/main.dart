@@ -5,7 +5,6 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
@@ -40,12 +39,9 @@ Future<void> backgroundFunc() async {
 void main() async {
   tz.initializeTimeZones();
   DartPingIOS.register();
-  await dotenv.load();
   WidgetsFlutterBinding.ensureInitialized();
-
   final packageInfo = await PackageInfo.fromPlatform();
   Variables.version = packageInfo.version;
-
   final status = await Permission.notification.status;
   if (status.isDenied) {
     await Permission.notification.request();
@@ -54,11 +50,8 @@ void main() async {
   if (!isAllowed) {
     AwesomeNotifications().requestPermissionToSendNotifications();
   }
-
   NotificationController.initializeLocalNotifications();
   NotificationController.initializeIsolateReceivePort();
-
-  // ForegroundNotif.initializeForeground();
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
@@ -74,7 +67,6 @@ void main() async {
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
-
   @override
   State<MyApp> createState() => _MyAppState();
 }

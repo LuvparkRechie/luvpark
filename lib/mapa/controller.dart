@@ -25,7 +25,6 @@ import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../sqlite/pa_message_table.dart';
-import 'utils/suggestions/suggestions.dart';
 
 // ignore: deprecated_member_use
 class DashboardMapController extends GetxController
@@ -153,7 +152,6 @@ class DashboardMapController extends GetxController
         Future.delayed(Duration(milliseconds: 200), () {
           panelController.open();
         });
-        update();
       }
     });
     getLastBooking();
@@ -376,33 +374,29 @@ class DashboardMapController extends GetxController
   }
 
   void handleData(dynamic nearData) async {
-    dynamic lastBookData = await Authentication().getLastBooking();
+    // dynamic lastBookData = await Authentication().getLastBooking();
     showDottedCircle(nearData);
     buildMarkers(nearData);
     netConnected.value = true;
 
-    bool isShowPopUp = await Authentication().getPopUpNearest();
-    if (dataNearest.isNotEmpty && !isShowPopUp) {
-      Future.delayed(const Duration(seconds: 1), () {
-        Authentication().setShowPopUpNearest(true);
+    // bool isShowPopUp = await Authentication().getPopUpNearest();
+    // if (dataNearest.isNotEmpty && !isShowPopUp) {
+    //   Future.delayed(const Duration(seconds: 1), () {
+    //     Authentication().setShowPopUpNearest(true);
 
-        if (lastBookData.isEmpty || lastBookData == null) {
-          showLegend(() {
-            showNearestSuggestDialog();
-          });
-        } else {
-          showNearestSuggestDialog();
-        }
-      });
-    } else {
-      if (suggestions.isEmpty) {
-        Future.delayed(Duration(milliseconds: 200), () {
-          panelController.open();
-        });
-      }
-    }
+    //     if (lastBookData.isEmpty || lastBookData == null) {
+    //       showLegend(() {
+    //         showNearestSuggestDialog();
+    //       });
+    //     } else {
+    //       showNearestSuggestDialog();
+    //     }
+    //   });
+    // } else {
+    //   if (suggestions.isEmpty) {
 
-    update();
+    //   }
+    // }
   }
 
 //Based on radius
@@ -527,29 +521,20 @@ class DashboardMapController extends GetxController
     });
     gMapController = controller;
 
+    Future.delayed(Duration(milliseconds: 200), () {
+      panelController.open();
+    });
     animateCamera();
   }
 
   void onCameraMoveStarted() {
     isGetNearData.value = false;
     panelController.close();
-
     update();
   }
 
   void onCameraIdle() async {
     isGetNearData.value = true;
-    if (debouncePanel?.isActive ?? false) debouncePanel?.cancel();
-
-    Duration duration = const Duration(seconds: 3);
-
-    debouncePanel = Timer(duration, () {
-      // if (!isHidePanel.value) {
-
-      // }
-
-      update();
-    });
   }
 
   void animateCamera() async {
@@ -651,6 +636,7 @@ class DashboardMapController extends GetxController
   }
 
   String getIconAssetForNonPwd(String parkingTypeCode, String vehicleTypes) {
+    print("parkingTypeCode $parkingTypeCode");
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
@@ -692,7 +678,7 @@ class DashboardMapController extends GetxController
     if (dataNearest.isNotEmpty) {
       for (int i = 0; i < dataNearest.length; i++) {
         var items = dataNearest[i];
-        print("items yawa $items");
+
         final String isPwd = items["is_pwd"] ?? "N";
         final String vehicleTypes = items["vehicle_types_list"];
         String iconAsset;
@@ -806,31 +792,31 @@ class DashboardMapController extends GetxController
     ));
   }
 
-  void showNearestSuggestDialog() {
-    Get.dialog(SuggestionsScreen(
-      data: dataNearest,
-      cb: (data) {
-        if (data == "yowo") {
-          if (suggestions.isEmpty) {
-            Future.delayed(Duration(milliseconds: 200), () {
-              panelController.show();
-              panelController.open();
-            });
-          }
+  // void showNearestSuggestDialog() {
+  //   Get.dialog(SuggestionsScreen(
+  //     data: dataNearest,
+  //     cb: (data) {
+  //       if (data == "yowo") {
+  //         if (suggestions.isEmpty) {
+  //           Future.delayed(Duration(milliseconds: 200), () {
+  //             panelController.show();
+  //             panelController.open();
+  //           });
+  //         }
 
-          if (!hasLastBooking.value) {
-            showTargetTutorial(Variables.ctxt!, false);
-          }
-          return;
-        } else {
-          markerData = data;
-          lastRouteName.value = "suggestions";
-          CustomDialog().loadingDialog(Get.context!);
-          filterMarkersData(markerData[0]["park_area_name"], "suggestion");
-        }
-      },
-    ));
-  }
+  //         if (!hasLastBooking.value) {
+  //           showTargetTutorial(Variables.ctxt!, false);
+  //         }
+  //         return;
+  //       } else {
+  //         markerData = data;
+  //         lastRouteName.value = "suggestions";
+  //         CustomDialog().loadingDialog(Get.context!);
+  //         filterMarkersData(markerData[0]["park_area_name"], "suggestion");
+  //       }
+  //     },
+  //   ));
+  // }
 
   LatLng calculateNewCoordinates(
       double lat, double lon, double radiusInMeters, double angleInDegrees) {
@@ -916,9 +902,7 @@ class DashboardMapController extends GetxController
     if (query.isEmpty) {
       panelController.show();
       filteredMarkers.assignAll(markers);
-      if (lastRouteName.value == "suggestions") {
-        showNearestSuggestDialog();
-      } else if (lastRouteName.value == "park_areas") {
+      if (lastRouteName.value == "park_areas") {
         routeToParkingAreas();
       }
       isHidePanel.value = false;
@@ -1086,6 +1070,7 @@ class DashboardMapController extends GetxController
 
   String getIconAssetForNonPwdDetails(
       String parkingTypeCode, String vehicleTypes) {
+    print("vehicleTypes $vehicleTypes = $parkingTypeCode");
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
@@ -1137,9 +1122,7 @@ class DashboardMapController extends GetxController
       e["name"] = eName;
       return e;
     }).toList();
-    inataya = inataya.where((element) {
-      return int.parse(element["count"].toString()) != 0;
-    }).toList();
+
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
 
     finalSttime = formatTime(markerData[0]["start_time"]);

@@ -108,13 +108,14 @@ class QrWallet extends GetView<QrWalletController> {
                                 ? decor2()
                                 : decor1(),
                             child: Center(
-                                child: CustomParagraph(
-                              text: "Receive",
-                              fontSize: 10,
-                              color: controller.currentPage.value != 1
-                                  ? Colors.white38
-                                  : Colors.white,
-                            )),
+                              child: CustomParagraph(
+                                text: "My QR",
+                                fontSize: 10,
+                                color: controller.currentPage.value != 1
+                                    ? Colors.white38
+                                    : Colors.white,
+                              ),
+                            ),
                           ),
                         ),
                       ),

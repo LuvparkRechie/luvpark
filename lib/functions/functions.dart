@@ -792,6 +792,6 @@ class Functions {
       final comparison = a[key].compareTo(b[key]);
       return ascending ? comparison : -comparison;
     });
-    return jsonList;
+    return jsonList.reversed.toList();
   }
 }

@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
@@ -119,7 +118,8 @@ class WalletSend extends GetView<WalletSendController> {
                         return null;
                       },
                       suffixIcon: Icons.qr_code,
-                      onTap: () {
+                      onIconTap: () {
+                        FocusNode().unfocus();
                         Get.to(ScannerScreen(
                           onchanged: (ScannedData args) {
                             String scannedMobileNumber = args.scannedHash;
@@ -203,12 +203,12 @@ class WalletSend extends GetView<WalletSendController> {
                       labelText: "Note",
                       controller: controller.message,
                     ),
-                    for (int i = 0; i < controller.padNumbers.length; i += 4)
+                    for (int i = 0; i < controller.padNumbers.length; i += 3)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           for (int j = i;
-                              j < i + 4 && j < controller.padNumbers.length;
+                              j < i + 3 && j < controller.padNumbers.length;
                               j++)
                             myPads((controller.padNumbers[j]), j),
                         ],
@@ -297,17 +297,12 @@ class WalletSend extends GetView<WalletSendController> {
               crossAxisAlignment: CrossAxisAlignment.center,
               mainAxisSize: MainAxisSize.min, // Equivalent to flex-shrink: 0
               children: [
-                AutoSizeText(
-                  "$value",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: controller.indexbtn.value == value
-                        ? Colors.white
-                        : Colors.black,
-                    fontSize: 20,
-                  ),
-                  maxLines: 1,
-                  softWrap: false,
+                CustomTitle(
+                  text: "$value",
+                  fontWeight: FontWeight.w700,
+                  color: controller.indexbtn.value == value
+                      ? Colors.white
+                      : Colors.black,
                 ),
                 CustomTitle(
                   text: "Token",
@@ -315,8 +310,7 @@ class WalletSend extends GetView<WalletSendController> {
                   color: controller.indexbtn.value == value
                       ? Colors.white
                       : Colors.black,
-                  fontSize: 12,
-                  maxlines: 1,
+                  fontSize: 11,
                 ),
               ],
             ),

@@ -28,7 +28,6 @@ import '../my_vehicles/utils/add_vehicle.dart';
 import '../onboarding/index.dart';
 import '../parking/index.dart';
 import '../parking_areas/index.dart';
-import '../parking_details/index.dart';
 import '../permission/permission.dart';
 import '../registration/index.dart';
 import '../registration/utils/otp_screen/index.dart';
@@ -92,11 +91,7 @@ class AppPages {
       page: () => const ParkingAreas(),
       binding: ParkingAreasBinding(),
     ),
-    GetPage(
-      name: Routes.parkingDetails,
-      page: () => const ParkingDetails(),
-      binding: ParkingDetailsBinding(),
-    ),
+
     GetPage(
       name: Routes.map,
       page: () => const DashboardMapScreen(),

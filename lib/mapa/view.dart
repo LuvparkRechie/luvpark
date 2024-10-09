@@ -2,7 +2,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
@@ -452,7 +451,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             ),
           ),
           Container(height: 20),
-           const CustomParagraph(
+          const CustomParagraph(
             minFontSize: 8,
             maxlines: 1,
             text: "Where do you want to go today?",
@@ -1043,6 +1042,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
   }
 
   Widget _vehicles() {
+    print(controller.vehicleTypes);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Container(

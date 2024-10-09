@@ -227,6 +227,7 @@ class NotificationController {
       ReceivedAction receivedAction) async {
     if (receivedAction.payload!["notificationId"] == "parking") {
       if (Get.currentRoute == Routes.bookingReceipt) {
+        Get.back();
       } else {
         Get.toNamed(Routes.parking, arguments: "N");
       }

@@ -166,11 +166,10 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                   children: [
                     CustomTitle(
                       text: value,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: controller.denoInd.value == index
                           ? Colors.white
                           : Colors.black,
-                      fontSize: 20,
                     ),
                     CustomTitle(
                       text: "Token",

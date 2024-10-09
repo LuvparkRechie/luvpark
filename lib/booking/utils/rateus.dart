@@ -126,9 +126,9 @@ class _RateUsState extends State<RateUs> {
                 ),
               ),
               Container(height: 10),
-              CustomTitle(
+              CustomParagraph(
                 text:
-                    "Your feedback is important to us, please rate your experience.",
+                    "Your feedback is important to us,\nplease rate your experience.",
                 fontWeight: FontWeight.w500,
                 textAlign: TextAlign.center,
               ),

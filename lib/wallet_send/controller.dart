@@ -28,7 +28,7 @@ class WalletSendController extends GetxController
   RxInt denoInd = 0.obs;
 
   RxInt indexbtn = 0.obs;
-  RxList<int> padNumbers = [10, 20, 30, 40, 50, 100, 200, 250].obs;
+  RxList<int> padNumbers = [10, 20, 30, 40, 50, 100, 200, 250, 500].obs;
   Timer? _timer;
 
 // //naa

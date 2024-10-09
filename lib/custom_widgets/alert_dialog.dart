@@ -336,7 +336,7 @@ class CustomDialog {
                     btnColor: AppColor.primaryColor,
                     txtColor: Colors.white,
                     borderColor: AppColor.primaryColor,
-                    text: "Proceed Booking",
+                    text: "Proceed",
                     onTap: onConfirm,
                   ),
                 ),

@@ -142,6 +142,7 @@ class ParkingController extends GetxController
     dateOutRelated = data["dt_out"];
     DateTime now = DateTime.now();
     DateTime resDate = DateTime.parse(data["reservation_date"].toString());
+    print("resDate $resDate");
 
     Map<String, dynamic> parameters = {
       "client_id": userId,
@@ -153,7 +154,8 @@ class ParkingController extends GetxController
       "no_hours": data["no_hours"].toString(),
       "tran_type": "E",
     };
-
+    print(
+        "can canccle ${int.parse(now.difference(resDate).inMinutes.toString()) <= int.parse(data["cancel_minutes"].toString())}");
     dynamic args = {
       'spaceName': data["park_area_name"],
       'parkArea': data["park_area_name"],
