@@ -177,241 +177,254 @@ class PayQr extends GetView<QrWalletController> {
                 ? NoInternetConnected(onTap: controller.getQrData)
                 : controller.isLoading.value
                     ? PageLoader()
-                    : SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
-                              child: Column(
+                    : ScrollConfiguration(
+                        behavior: ScrollBehavior().copyWith(overscroll: false),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
+                                child: Column(
+                                  children: [
+                                    controller.userImage == null
+                                        ? Container(
+                                            height: 70,
+                                            width: 70,
+                                            decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                border: Border.all(
+                                                    color: AppColor.primaryColor
+                                                        .withOpacity(.6))),
+                                            child: Icon(
+                                              Icons.person,
+                                              color: Colors.blueAccent,
+                                            ),
+                                          )
+                                        : CircleAvatar(
+                                            radius: 40,
+                                            backgroundImage: MemoryImage(
+                                              base64Decode(
+                                                  controller.userImage!),
+                                            )),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    CustomTitle(
+                                      text: controller.fullName.value,
+                                      maxlines: 1,
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    Container(height: 5),
+                                    CustomParagraph(
+                                      text: controller.mono.value,
+                                      fontWeight: FontWeight.w600,
+                                      color: Color(0xFF616161),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              TicketStyle(
+                                dtColor: AppColor.primaryColor,
+                              ),
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  controller.userImage == null
-                                      ? Container(
-                                          height: 70,
-                                          width: 70,
-                                          decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  color: AppColor.primaryColor
-                                                      .withOpacity(.6))),
-                                          child: Icon(
-                                            Icons.person,
-                                            color: Colors.blueAccent,
-                                          ),
-                                        )
-                                      : CircleAvatar(
-                                          radius: 40,
-                                          backgroundImage: MemoryImage(
-                                            base64Decode(controller.userImage!),
-                                          )),
-                                  SizedBox(
-                                    height: 10,
+                                  QrImageView(
+                                    data: controller.payKey.value,
+                                    version: QrVersions.auto,
+                                    size: 200,
+                                    gapless: false,
                                   ),
                                   CustomTitle(
-                                    text: controller.fullName.value,
-                                    maxlines: 1,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  Container(height: 5),
-                                  CustomParagraph(
-                                    text: controller.mono.value,
+                                    text: controller.isLoading.value
+                                        ? ""
+                                        : 'Scan QR code to pay',
+                                    fontSize: 12,
                                     fontWeight: FontWeight.w600,
-                                    color: Color(0xFF616161),
+                                    color: const Color(0xFF070707),
                                   ),
                                 ],
                               ),
-                            ),
-                            TicketStyle(
-                              dtColor: AppColor.primaryColor,
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                QrImageView(
-                                  data: controller.payKey.value,
-                                  version: QrVersions.auto,
-                                  size: 200,
-                                  gapless: false,
-                                ),
-                                CustomTitle(
-                                  text: controller.isLoading.value
-                                      ? ""
-                                      : 'Scan QR code to pay',
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  color: const Color(0xFF070707),
-                                ),
-                              ],
-                            ),
-                            Container(height: 20),
-                            TicketStyle(
-                              dtColor: AppColor.primaryColor,
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                              child: Column(
-                                children: [
-                                  InkWell(
-                                    onTap: () {
-                                      controller.generateQr();
-                                    },
-                                    child: Center(
-                                      child: Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                .60,
-                                        padding: const EdgeInsets.all(
-                                            10), // Padding values
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          border: Border.all(
-                                            color: Color(0xFF0078FF),
-                                            width: 1.0, // 1-pixel width
+                              Container(height: 20),
+                              TicketStyle(
+                                dtColor: AppColor.primaryColor,
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 10, 15, 10),
+                                child: Column(
+                                  children: [
+                                    InkWell(
+                                      onTap: () {
+                                        controller.generateQr();
+                                      },
+                                      child: Center(
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .60,
+                                          padding: const EdgeInsets.all(
+                                              10), // Padding values
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            border: Border.all(
+                                              color: Color(0xFF0078FF),
+                                              width: 1.0, // 1-pixel width
+                                            ),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
                                           ),
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: const [
-                                            Icon(
-                                              Icons.sync_outlined,
-                                              size: 28.0,
-                                              color: Color(0xFF0078FF),
-                                            ),
-                                            SizedBox(width: 5),
-                                            CustomTitle(
-                                              text: 'Generate QR code',
-                                              color: Color(0xFF0078FF),
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                            ),
-                                          ],
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: const [
+                                              Icon(
+                                                Icons.sync_outlined,
+                                                size: 28.0,
+                                                color: Color(0xFF0078FF),
+                                              ),
+                                              SizedBox(width: 5),
+                                              Expanded(
+                                                child: CustomParagraph(
+                                                  textAlign: TextAlign.center,
+                                                  minFontSize: 8,
+                                                  maxlines: 1,
+                                                  text: 'Generate QR code',
+                                                  color: Color(0xFF0078FF),
+                                                  fontWeight: FontWeight.w600,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 15),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      InkWell(
-                                        onTap: () {
-                                          controller.shareQr();
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(7)),
-                                              border: Border.all(
-                                                color: Color(0xFF0078FF),
-                                              )),
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                20, 14, 20, 14),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Share",
-                                                  style: Platform.isAndroid
-                                                      ? GoogleFonts.dmSans(
-                                                          color:
-                                                              Color(0xFF0078FF),
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          letterSpacing: 1,
-                                                          fontSize: 14)
-                                                      : TextStyle(
-                                                          color:
-                                                              Color(0xFF0078FF),
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          letterSpacing: 1,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "SFProTextReg",
-                                                        ),
-                                                ),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                const Icon(
-                                                  Icons.ios_share_outlined,
+                                    SizedBox(height: 15),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            controller.shareQr();
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(7)),
+                                                border: Border.all(
                                                   color: Color(0xFF0078FF),
-                                                  size: 25,
-                                                ),
-                                              ],
+                                                )),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      20, 14, 20, 14),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    "Share",
+                                                    style: Platform.isAndroid
+                                                        ? GoogleFonts.dmSans(
+                                                            color: Color(
+                                                                0xFF0078FF),
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            letterSpacing: 1,
+                                                            fontSize: 14)
+                                                        : TextStyle(
+                                                            color: Color(
+                                                                0xFF0078FF),
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            letterSpacing: 1,
+                                                            fontSize: 14,
+                                                            fontFamily:
+                                                                "SFProTextReg",
+                                                          ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 8,
+                                                  ),
+                                                  const Icon(
+                                                    Icons.ios_share_outlined,
+                                                    color: Color(0xFF0078FF),
+                                                    size: 25,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width: 20,
-                                      ),
-                                      InkWell(
-                                        onTap: () {
-                                          controller.saveQr();
-                                        },
-                                        child: Container(
-                                          width: 117,
-                                          decoration: BoxDecoration(
-                                              borderRadius: BorderRadius.all(
-                                                  Radius.circular(7)),
-                                              border: Border.all(
-                                                color: Color(0xFF0078FF),
-                                              )),
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                20, 14, 20, 14),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  "Save",
-                                                  style: Platform.isAndroid
-                                                      ? GoogleFonts.dmSans(
-                                                          color:
-                                                              Color(0xFF0078FF),
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          letterSpacing: 1,
-                                                          fontSize: 14)
-                                                      : TextStyle(
-                                                          color:
-                                                              Color(0xFF0078FF),
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          letterSpacing: 1,
-                                                          fontSize: 14,
-                                                          fontFamily:
-                                                              "SFProTextReg",
-                                                        ),
-                                                ),
-                                                SizedBox(
-                                                  width: 8,
-                                                ),
-                                                const Icon(
-                                                  Icons.download,
+                                        SizedBox(
+                                          width: 20,
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            controller.saveQr();
+                                          },
+                                          child: Container(
+                                            width: 117,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(7)),
+                                                border: Border.all(
                                                   color: Color(0xFF0078FF),
-                                                  size: 25,
-                                                ),
-                                              ],
+                                                )),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.fromLTRB(
+                                                      20, 14, 20, 14),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                    maxLines: 1,
+                                                    "Save",
+                                                    style: Platform.isAndroid
+                                                        ? GoogleFonts.dmSans(
+                                                            color: Color(
+                                                                0xFF0078FF),
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            letterSpacing: 1,
+                                                            fontSize: 12)
+                                                        : TextStyle(
+                                                            color: Color(
+                                                                0xFF0078FF),
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            letterSpacing: 1,
+                                                            fontSize: 12,
+                                                            fontFamily:
+                                                                "SFProTextReg",
+                                                          ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: 5,
+                                                  ),
+                                                  const Icon(
+                                                    Icons.download,
+                                                    color: Color(0xFF0078FF),
+                                                    size: 25,
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: 15),
-                                ],
+                                      ],
+                                    ),
+                                    SizedBox(height: 15),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
           ),
@@ -437,173 +450,176 @@ class ReceiveQr extends GetView<QrWalletController> {
                 color: AppColor.primaryColor.withOpacity(.5),
               )
             ]),
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
-                child: Column(
+        child: ScrollConfiguration(
+          behavior: ScrollBehavior().copyWith(overscroll: false),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
+                  child: Column(
+                    children: [
+                      controller.userImage == null
+                          ? Container(
+                              height: 70,
+                              width: 70,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: AppColor.primaryColor
+                                          .withOpacity(.6))),
+                              child: Icon(
+                                Icons.person,
+                                color: Colors.blueAccent,
+                              ),
+                            )
+                          : CircleAvatar(
+                              radius: 40,
+                              backgroundImage: MemoryImage(
+                                base64Decode(controller.userImage!),
+                              ),
+                            ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      CustomTitle(
+                        text: controller.fullName.value,
+                        maxlines: 1,
+                        textAlign: TextAlign.center,
+                      ),
+                      SizedBox(height: 5),
+                      CustomParagraph(
+                        text: controller.mono.value,
+                        fontWeight: FontWeight.w600,
+                        color: Color(0xFF616161),
+                      ),
+                    ],
+                  ),
+                ),
+                TicketStyle(
+                  dtColor: AppColor.primaryColor,
+                ),
+                Column(
                   children: [
-                    controller.userImage == null
-                        ? Container(
-                            height: 70,
-                            width: 70,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                    color:
-                                        AppColor.primaryColor.withOpacity(.6))),
-                            child: Icon(
-                              Icons.person,
-                              color: Colors.blueAccent,
-                            ),
-                          )
-                        : CircleAvatar(
-                            radius: 40,
-                            backgroundImage: MemoryImage(
-                              base64Decode(controller.userImage!),
-                            ),
-                          ),
-                    SizedBox(
-                      height: 10,
+                    QrImageView(
+                      data: controller.mobNum.value,
+                      version: QrVersions.auto,
+                      gapless: false,
+                      size: 200,
                     ),
                     CustomTitle(
-                      text: controller.fullName.value,
-                      maxlines: 1,
-                      textAlign: TextAlign.center,
-                    ),
-                    SizedBox(height: 5),
-                    CustomParagraph(
-                      text: controller.mono.value,
+                      text: 'Scan QR code to receive',
+                      fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: Color(0xFF616161),
+                      color: const Color(0xFF070707),
                     ),
                   ],
                 ),
-              ),
-              TicketStyle(
-                dtColor: AppColor.primaryColor,
-              ),
-              Column(
-                children: [
-                  QrImageView(
-                    data: controller.mobNum.value,
-                    version: QrVersions.auto,
-                    gapless: false,
-                    size: 200,
-                  ),
-                  CustomTitle(
-                    text: 'Scan QR code to receive',
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: const Color(0xFF070707),
-                  ),
-                ],
-              ),
-              Container(height: 20),
-              TicketStyle(
-                dtColor: AppColor.primaryColor,
-              ),
-              Container(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  InkWell(
-                    onTap: () {
-                      controller.shareQr();
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          border: Border.all(
-                            color: Color(0xFF0078FF),
-                          )),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Share",
-                              style: Platform.isAndroid
-                                  ? GoogleFonts.dmSans(
-                                      color: Color(0xFF0078FF),
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 1,
-                                      fontSize: 14)
-                                  : TextStyle(
-                                      color: Color(0xFF0078FF),
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 1,
-                                      fontSize: 14,
-                                      fontFamily: "SFProTextReg",
-                                    ),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            const Icon(
-                              Icons.ios_share_outlined,
+                Container(height: 20),
+                TicketStyle(
+                  dtColor: AppColor.primaryColor,
+                ),
+                Container(height: 40),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        controller.shareQr();
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            border: Border.all(
                               color: Color(0xFF0078FF),
-                              size: 25,
-                            ),
-                          ],
+                            )),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Share",
+                                style: Platform.isAndroid
+                                    ? GoogleFonts.dmSans(
+                                        color: Color(0xFF0078FF),
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1,
+                                        fontSize: 12)
+                                    : TextStyle(
+                                        color: Color(0xFF0078FF),
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1,
+                                        fontSize: 12,
+                                        fontFamily: "SFProTextReg",
+                                      ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              const Icon(
+                                Icons.ios_share_outlined,
+                                color: Color(0xFF0078FF),
+                                size: 25,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 20,
-                  ),
-                  InkWell(
-                    onTap: () {
-                      controller.saveQr();
-                    },
-                    child: Container(
-                      width: 117,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.all(Radius.circular(7)),
-                          border: Border.all(
-                            color: Color(0xFF0078FF),
-                          )),
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              "Save",
-                              style: Platform.isAndroid
-                                  ? GoogleFonts.dmSans(
-                                      color: Color(0xFF0078FF),
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 1,
-                                      fontSize: 14)
-                                  : TextStyle(
-                                      color: Color(0xFF0078FF),
-                                      fontWeight: FontWeight.w500,
-                                      letterSpacing: 1,
-                                      fontSize: 14,
-                                      fontFamily: "SFProTextReg",
-                                    ),
-                            ),
-                            SizedBox(
-                              width: 8,
-                            ),
-                            const Icon(
-                              Icons.download,
+                    SizedBox(
+                      width: 20,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        controller.saveQr();
+                      },
+                      child: Container(
+                        width: 117,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(7)),
+                            border: Border.all(
                               color: Color(0xFF0078FF),
-                              size: 25,
-                            ),
-                          ],
+                            )),
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Save",
+                                style: Platform.isAndroid
+                                    ? GoogleFonts.dmSans(
+                                        color: Color(0xFF0078FF),
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1,
+                                        fontSize: 12)
+                                    : TextStyle(
+                                        color: Color(0xFF0078FF),
+                                        fontWeight: FontWeight.w500,
+                                        letterSpacing: 1,
+                                        fontSize: 12,
+                                        fontFamily: "SFProTextReg",
+                                      ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              const Icon(
+                                Icons.download,
+                                color: Color(0xFF0078FF),
+                                size: 25,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

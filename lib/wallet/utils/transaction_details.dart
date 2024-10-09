@@ -41,9 +41,10 @@ class TransactionDetails extends StatelessWidget {
                   children: [
                     Container(height: 30),
                     Center(
-                      child: CustomTitle(
+                      child: CustomParagraph(
+                        minFontSize: 8,
                         text: 'Transaction Details',
-                        fontSize: 22,
+                        fontSize: 20,
                         maxlines: 1,
                         color: Color(0xFF070707),
                         fontWeight: FontWeight.w800,
@@ -59,6 +60,7 @@ class TransactionDetails extends StatelessWidget {
                         fontWeight: FontWeight.w400,
                         textAlign: TextAlign.left,
                         fontSize: 16,
+                        minFontSize: 8,
                         maxlines: 1,
                       ),
                     ),
@@ -69,27 +71,27 @@ class TransactionDetails extends StatelessWidget {
                       color: Color(0xFFD9D9D9),
                     ),
                     Container(
-                      height: 20,
+                      height: 10,
                     ),
                     rowWidget("Date",
                         Variables.formatDateLocal(data[index]["tran_date"])),
                     Container(
-                      height: 10,
+                      height: 5,
                     ),
                     rowWidget("Amount",
                         toCurrencyString(data[index]["amount"].toString())),
                     Container(
-                      height: 10,
+                      height: 5,
                     ),
                     rowWidget("Previous Balance",
                         toCurrencyString(data[index]["bal_before"].toString())),
                     Container(
-                      height: 10,
+                      height: 5,
                     ),
                     rowWidget("Current Balance",
                         toCurrencyString(data[index]["bal_after"].toString())),
                     Container(
-                      height: 20,
+                      height: 10,
                     ),
                     const MySeparator(
                       color: Color(0xFFD9D9D9),
@@ -102,6 +104,8 @@ class TransactionDetails extends StatelessWidget {
                       children: [
                         Center(
                           child: CustomParagraph(
+                            maxlines: 1,
+                            minFontSize: 8,
                             color: Color(0xFF070707),
                             fontSize: 12,
                             text: "Reference No: ",
@@ -130,7 +134,7 @@ class TransactionDetails extends StatelessWidget {
                       ],
                     ),
                     Container(
-                      height: 25,
+                      height: 15,
                     ),
                     CustomButton(
                       text: 'Close',
@@ -138,9 +142,6 @@ class TransactionDetails extends StatelessWidget {
                         Navigator.of(context).pop();
                       },
                       btnHeight: 12,
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 20.5,
                     ),
                   ],
                 ),
@@ -178,6 +179,8 @@ class TransactionDetails extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         CustomParagraph(
+          maxlines: 1,
+          minFontSize: 8,
           fontWeight: FontWeight.w400,
           color: Color(0xFF070707),
           text: label,

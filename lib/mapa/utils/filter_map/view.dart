@@ -309,6 +309,7 @@ class _FilterMapState extends State<FilterMap> {
                                     ],
                                   ),
                                 ),
+                                Container(height: 10),
                                 const CustomParagraph(
                                   text: "Radius",
                                   color: Colors.black87,
@@ -423,7 +424,7 @@ class _FilterMapState extends State<FilterMap> {
                                     ),
                                   ],
                                 ),
-                                Container(height: 5),
+                                Container(height: 10),
                                 SizedBox(
                                   width: double.infinity,
                                   child: CustomButton(
@@ -472,31 +473,30 @@ class _FilterMapState extends State<FilterMap> {
             child: SizedBox(
               width: MediaQuery.of(Get.context!).size.width / 4,
               height: MediaQuery.of(Get.context!).size.width / 4,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                child: Column(
-                  children: [
-                    SvgPicture.asset(
-                      _getSvgForVehicle(
-                        vhTypeData[i]["text"].toString(),
-                        sfVt.contains(
-                          vhTypeData[i]["value"].toString(),
-                        ),
+              child: Column(
+                children: [
+                  SvgPicture.asset(
+                    _getSvgForVehicle(
+                      vhTypeData[i]["text"].toString(),
+                      sfVt.contains(
+                        vhTypeData[i]["value"].toString(),
                       ),
-                      width: 40.0,
-                      height: 40.0,
                     ),
-                    const SizedBox(height: 5.0),
-                    CustomParagraph(
-                      textAlign: TextAlign.center,
-                      fontSize: 12,
-                      text: vhTypeData[i]["text"].toString(),
-                      color: sfVt.contains(vhTypeData[i]["value"].toString())
-                          ? Colors.black
-                          : Colors.grey,
-                    ),
-                  ],
-                ),
+                    width: 40.0,
+                    height: 40.0,
+                  ),
+                  const SizedBox(height: 5.0),
+                  CustomParagraph(
+                    minFontSize: 8,
+                    maxlines: 2,
+                    textAlign: TextAlign.center,
+                    fontSize: 10,
+                    text: vhTypeData[i]["text"].toString(),
+                    color: sfVt.contains(vhTypeData[i]["value"].toString())
+                        ? Colors.black
+                        : Colors.grey,
+                  ),
+                ],
               ),
             ),
           ),
@@ -570,8 +570,9 @@ class _FilterMapState extends State<FilterMap> {
                         ),
                         const SizedBox(height: 5.0),
                         CustomParagraph(
+                          minFontSize: 8, maxlines: 2,
                           textAlign: TextAlign.center,
-                          fontSize: 12,
+                          fontSize: 10,
                           text: capitalizeWords(
                             parkTypeData[i]["parking_type_name"].toString(),
                           ),
@@ -668,11 +669,13 @@ class _FilterMapState extends State<FilterMap> {
                         ),
                         const SizedBox(height: 5.0),
                         CustomParagraph(
+                          minFontSize: 8,
+                          maxlines: 2,
                           textAlign: TextAlign.center,
                           text: _capitalTextAmen(
                             amenitiesData[i]["parking_amenity_desc"].toString(),
                           ),
-                          fontSize: 12,
+                          fontSize: 10,
                           fontWeight: FontWeight.w600,
                           color: sfAmen.contains(amenitiesData[i]
                                       ["parking_amenity_code"]

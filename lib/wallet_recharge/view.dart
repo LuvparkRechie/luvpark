@@ -90,6 +90,7 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                     height: 20,
                   ),
                   const CustomParagraph(
+                    maxlines: 2,
                     text:
                         'Enter a desired amount or choose from any denominations below.',
                     color: Colors.black87,
@@ -164,20 +165,23 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    CustomTitle(
+                    CustomParagraph(
+                      maxlines: 1,
+                      minFontSize: 8,
                       text: value,
                       fontWeight: FontWeight.w700,
                       color: controller.denoInd.value == index
                           ? Colors.white
                           : Colors.black,
                     ),
-                    CustomTitle(
+                    CustomParagraph(
                       text: "Token",
+                      maxlines: 1,
                       fontWeight: FontWeight.w500,
                       color: controller.denoInd.value == index
                           ? Colors.white
                           : Colors.black,
-                      fontSize: 11,
+                      minFontSize: 8,
                     ),
                   ],
                 ),

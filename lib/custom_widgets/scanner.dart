@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
+import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:scan/scan.dart';
 
 class ScannedData {
@@ -94,9 +95,11 @@ class _ScannerScreenState extends State<ScannerScreen> {
                       const SizedBox(
                         height: 5,
                       ),
-                      Text(
-                        'Upload QR Code',
-                        style: GoogleFonts.openSans(color: Colors.black),
+                      CustomParagraph(
+                        maxlines: 1,
+                        minFontSize: 8,
+                        textAlign: TextAlign.center,
+                        text: 'Upload QR Code',
                       )
                     ],
                   ),

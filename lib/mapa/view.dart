@@ -476,7 +476,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 hintStyle: paragraphStyle(
                   color: Color(0xFF6A6161),
                   fontWeight: FontWeight.w600,
-                  fontSize: 16,
+                  fontSize: 14,
                 ),
                 filled: true,
                 fillColor: const Color(0xFFFBFBFB),

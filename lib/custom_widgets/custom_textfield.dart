@@ -166,6 +166,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
     return Padding(
       padding: const EdgeInsets.only(top: 10.0, bottom: 10),
       child: TextFormField(
+        maxLines: 1,
         autofocus: false,
         inputFormatters: [Variables.maskFormatter],
         controller: widget.controller,
@@ -175,6 +176,11 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         enabled: widget.isEnabled,
         keyboardType: widget.keyboardType!,
         decoration: InputDecoration(
+          label: CustomParagraph(
+            minFontSize: 8,
+            maxlines: 1,
+            text: widget.labelText,
+          ),
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           focusedBorder: OutlineInputBorder(
@@ -186,7 +192,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide(color: Color(0xFFDF0000))),
-          labelText: widget.labelText,
+          // labelText: widget.labelText,
           suffixIcon: widget.suffixIcon != null
               ? InkWell(
                   onTap: () {
