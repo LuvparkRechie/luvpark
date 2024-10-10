@@ -149,8 +149,8 @@ class UpdateProfileController extends GetxController {
 
   void getSuffixes() {
     suffixes.value = [
-      {"text": "Jr", "value": "jr"},
-      {"text": "Sr", "value": "sr"},
+      {"text": "Jr.", "value": "jr"},
+      {"text": "Sr.", "value": "sr"},
       {"text": "II", "value": "II"},
       {"text": "III", "value": "III"}
     ];

@@ -150,27 +150,51 @@ class MyAccount extends GetView<MyAccountScreenController> {
                             children: [
                               Expanded(
                                 child: CustomTitle(
-                                  text: "Personal\nDetails",
-                                  fontSize: 20,
+                                  text: "Personal Details",
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w700,
                                   color: AppColor.primaryColor,
                                   maxlines: 2,
                                 ),
                               ),
                               Container(width: 15),
-                              InkWell(
-                                onTap: () {
+                              // InkWell(
+                              //   onTap: () {
+                              //     controller.getRegions();
+                              //   },
+                              //   child: Container(
+                              //     padding: EdgeInsets.symmetric(
+                              //         horizontal: 10, vertical: 10),
+                              //     decoration: BoxDecoration(
+                              //       border: Border.all(
+                              //         color: AppColor.primaryColor,
+                              //       ),
+                              //       borderRadius: BorderRadius.circular(20),
+                              //     ),
+                              //     child: const Center(
+                              //       child:
+                              //           CustomLinkLabel(text: "Edit Profile"),
+                              //     ),
+                              //   ),
+                              // )
+                              OutlinedButton(
+                                onPressed: () {
                                   controller.getRegions();
                                 },
+                                style: OutlinedButton.styleFrom(
+                                  padding: EdgeInsets
+                                      .zero, // Rely on container for padding
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                        20), // Rounded corners
+                                  ),
+                                  side: BorderSide(
+                                      color: AppColor
+                                          .primaryColor), // Custom border color
+                                ),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 10),
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                      color: AppColor.primaryColor,
-                                    ),
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
                                   child: const Center(
                                     child:
                                         CustomLinkLabel(text: "Edit Profile"),
@@ -204,10 +228,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                                     const CustomParagraph(
                                                       text: "Civil Status",
                                                       color: Colors.black,
-                                                      fontSize: 16,
+                                                      fontSize: 14,
                                                     ),
                                                     Container(height: 5),
                                                     CustomParagraph(
+                                                      fontSize: 12,
                                                       text: controller
                                                           .civilStatus.value,
                                                     ),
@@ -228,10 +253,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                                     const CustomParagraph(
                                                       text: "Gender",
                                                       color: Colors.black,
-                                                      fontSize: 16,
+                                                      fontSize: 14,
                                                     ),
                                                     Container(height: 5),
                                                     CustomParagraph(
+                                                        fontSize: 12,
                                                         text: controller
                                                             .gender.value),
                                                     Divider(
@@ -247,10 +273,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Birthday",
                                             color: Colors.black,
-                                            fontSize: 16,
+                                            fontSize: 14,
                                           ),
                                           Container(height: 5),
                                           CustomParagraph(
+                                              fontSize: 12,
                                               text: Variables.convertBday(
                                                   controller.userData[0]
                                                       ['birthday'])),
@@ -261,10 +288,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Address",
                                             color: Colors.black,
-                                            fontSize: 16,
+                                            fontSize: 14,
                                           ),
                                           Container(height: 5),
                                           CustomParagraph(
+                                              fontSize: 12,
                                               text:
                                                   "${controller.userData[0]['address1'] ?? "No address provided"}"),
                                           Divider(
@@ -274,10 +302,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Province",
                                             color: Colors.black,
-                                            fontSize: 16,
+                                            fontSize: 14,
                                           ),
                                           Container(height: 5),
                                           CustomParagraph(
+                                              fontSize: 12,
                                               text: controller.province.value),
                                           Divider(
                                             color: Colors.grey.shade500,
@@ -286,10 +315,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Zip Code",
                                             color: Colors.black,
-                                            fontSize: 16,
+                                            fontSize: 14,
                                           ),
                                           Container(height: 5),
                                           CustomParagraph(
+                                              fontSize: 12,
                                               text: controller.userData[0]
                                                       ['zip_code']
                                                   .toString()),

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
@@ -134,10 +135,14 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 onChange: (value) {
                   if (value.isNotEmpty) {
                     controller.firstName.value = TextEditingValue(
-                        text: Variables.capitalizeAllWord(value),
-                        selection: controller.firstName.selection);
+                      text: Variables.capitalizeAllWord(value),
+                      selection: controller.firstName.selection,
+                    );
                   }
                 },
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "First name is required";
@@ -157,6 +162,9 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 labelText: "Middle Name",
                 title: "Middle Name",
                 controller: controller.middleName,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                ],
                 onChange: (value) {
                   if (value.isNotEmpty) {
                     controller.middleName.value = TextEditingValue(
@@ -176,6 +184,9 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                         selection: controller.lastName.selection);
                   }
                 },
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Last name is required";
