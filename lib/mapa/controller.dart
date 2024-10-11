@@ -168,6 +168,7 @@ class DashboardMapController extends GetxController
     debounce?.cancel();
     debouncePanel?.cancel();
     focusNode.dispose(); //
+    tabController.dispose();
   }
 
   Future<void> onSearchChanged() async {

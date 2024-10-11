@@ -7,6 +7,7 @@ import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/web_view/webview.dart';
 
+import '../functions/functions.dart';
 import '../login/controller.dart';
 import '../routes/routes.dart';
 
@@ -76,7 +77,7 @@ class HelpandFeedbackController extends GetxController {
           final lc = Get.find<LoginScreenController>();
           final userData = await Authentication().getUserData2();
 
-          lc.getAccountStatus(Get.context!, userData["mobile_no"], (obj) {
+          Functions.getAccountStatus(userData["mobile_no"], (obj) {
             Get.back();
             final items = obj[0]["items"];
 

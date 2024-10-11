@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/auth/authentication.dart';
+import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/login/controller.dart';
 import 'package:luvpark_get/routes/routes.dart';
 
@@ -31,7 +32,7 @@ class SplashController extends GetxController
     if (data != null) {
       final LoginScreenController lgCt = Get.find<LoginScreenController>();
 
-      lgCt.getAccountStatus(Get.context, data["mobile_no"], (obj) async {
+      Functions.getAccountStatus(data["mobile_no"], (obj) async {
         final items = obj[0]["items"];
         if (!obj[0]["has_net"]) {
           isNetConn.value = false;

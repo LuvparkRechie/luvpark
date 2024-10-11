@@ -20,6 +20,7 @@ import '../forgot_password/utils/create_new/index.dart';
 import '../forgot_password/utils/forgot_otp/utils/forgot_pass_success.dart';
 import '../help_feedback/index.dart';
 import '../landing/index.dart';
+import '../lock_screen/index.dart';
 import '../login/index.dart';
 import '../mapa/index.dart';
 import '../message/index.dart';
@@ -228,6 +229,11 @@ class AppPages {
       name: Routes.helpfeedback,
       page: () => const HelpandFeedback(),
       binding: HelpandFeedbackBinding(),
+    ),
+    GetPage(
+      name: Routes.lockScreen,
+      page: () => const LockScreen(),
+      binding: LockScreenBinding(),
     ),
   ];
 }

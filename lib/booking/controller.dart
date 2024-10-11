@@ -34,7 +34,7 @@ class BookingController extends GetxController
 
   RxString hintTextLabel = "Plate No.".obs;
   RxString vehicleText = "Tap to add vehicle".obs;
-  RxString inputTimeLabel = 'Input a Duration'.obs;
+  RxString inputTimeLabel = '1 Hour'.obs;
   RxBool isBtnLoading = false.obs;
   RxBool isHideBottom = true.obs;
 
@@ -52,7 +52,7 @@ class BookingController extends GetxController
   RxList numbersList = [].obs;
   RxList selectedVh = [].obs;
   RxList vehicleTypeData = [].obs;
-  RxInt selectedNumber = RxInt(0);
+  RxInt selectedNumber = RxInt(1);
   RxString totalAmount = "0.0".obs;
   RxString vehicleTypeValue = "".obs;
 
@@ -71,6 +71,7 @@ class BookingController extends GetxController
   RxBool isSubmitBooking = false.obs;
 
   Timer? inactivityTimer;
+  Timer? debounce;
   final int timeoutDuration = 180; //3 mins
 
   //Rewards param
@@ -88,11 +89,7 @@ class BookingController extends GetxController
         int.parse(parameters["areaData"]["res_max_hours"].toString());
     numbersList.value = List.generate(
         endNumber - numberOfhours + 1, (index) => numberOfhours + index);
-    if (numbersList.isNotEmpty) {
-      selectedNumber.value = 0;
-      noHours.text =
-          "1 ${int.parse(selectedNumber.value.toString()) > 1 ? "hours" : "hour"}";
-    }
+
     displayRewards.value =
         double.parse(parameters["userData"][0]["points_bal"].toString());
     timeInParam = TextEditingController();
@@ -103,6 +100,7 @@ class BookingController extends GetxController
     endTime = TextEditingController();
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
+    noHours.text = selectedNumber.value.toString();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       timeComputation();
       getAvailabeAreaVh();
@@ -136,7 +134,7 @@ class BookingController extends GetxController
   }
 
   void onUserInteraction() {
-    _startInactivityTimer(); // Reset timer on any interaction
+    _startInactivityTimer();
   }
 
   void _updateMaskFormatter(mask) {
@@ -157,15 +155,36 @@ class BookingController extends GetxController
     startTime.text = DateFormat('h:mm a').format(now).toString();
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.text);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
+    print("selectedNumber $selectedNumber");
     endTime.text = DateFormat('h:mm a')
-        .format(parsedTime.add(Duration(hours: numberOfhours)))
+        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
         .toString();
+
+    print("endTime ${endTime.text}");
   }
 
-  void onTapChanged(int i) {
-    selectedNumber.value = numbersList[i];
-    noHours.text =
-        "${selectedNumber.value} ${int.parse(selectedNumber.value.toString()) > 1 ? "hours" : "hour"}";
+  void onTapChanged(bool isIncrement) {
+    if (isIncrement) {
+      if (selectedNumber.value == numbersList.length) return;
+      selectedNumber.value++;
+      timeComputation();
+    } else {
+      if (selectedNumber.value == 1) return;
+      selectedNumber--;
+      timeComputation();
+    }
+
+    if (debounce?.isActive ?? false) debounce?.cancel();
+
+    Duration duration = const Duration(seconds: 1);
+    debounce = Timer(duration, () {
+      CustomDialog().loadingDialog(Get.context!);
+      Future.delayed(Duration(milliseconds: 500), () {
+        routeToComputation();
+        Get.back();
+      });
+      update();
+    });
 
     update();
   }
@@ -220,7 +239,6 @@ class BookingController extends GetxController
         vehicleTypeData.value = dataVehicle;
         _updateMaskFormatter(vehicleTypeData[0]["format"]);
       }
-
       getNotice();
     });
   }
@@ -232,14 +250,13 @@ class BookingController extends GetxController
 
   //GET my registered vehicle
   Future<void> getMyVehicle() async {
+    final item = await Authentication().getUserData();
     CustomDialog().loadingDialog(Get.context!);
     if (selectedVh.isEmpty) {
       isBtnLoading.value = true;
     }
-
     isFirstScreen.value = true;
     plateNo.text = "";
-    final item = await Authentication().getUserData();
     int userId = jsonDecode(item!)["user_id"];
     String api =
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
@@ -411,7 +428,7 @@ class BookingController extends GetxController
       "points_used": double.parse(usedRewards.toString()),
       "auto_extend": isExtendchecked.value ? "Y" : "N"
     };
-    print("das bookoing param $dynamicBookParam");
+
     CustomDialog().confirmationDialog(
         Get.context!,
         "Confirm Booking",
@@ -674,5 +691,6 @@ class BookingController extends GetxController
     super.onClose();
     bookKey.currentState?.reset();
     inactivityTimer?.cancel();
+    debounce?.cancel();
   }
 }

@@ -21,8 +21,8 @@ class OtpController extends GetxController
 
   RxString inputPin = "".obs;
   Timer? timer;
-  int initialMinutes = 1;
-  RxInt minutes = 1.obs;
+  int initialMinutes = 2;
+  RxInt minutes = 2.obs;
   RxInt seconds = 0.obs;
   bool isRunning = false;
 
@@ -105,6 +105,7 @@ class OtpController extends GetxController
           return e;
         }).toList();
         inputPin.value = "";
+        pinController.clear();
         minutes.value = initialMinutes;
         seconds.value = 0;
         isRunning = false;
@@ -116,7 +117,7 @@ class OtpController extends GetxController
       } else {
         isInternetConn.value = true;
         isLoading.value = false;
-        CustomDialog().errorDialog(Get.context!, "luvpark", otpData["msg"], () {
+        CustomDialog().errorDialog(Get.context!, "Error", otpData["msg"], () {
           Get.back();
         });
       }
@@ -126,7 +127,7 @@ class OtpController extends GetxController
   void onVerify() {
     if (inputPin.value.length != 6) {
       CustomDialog().errorDialog(
-          Get.context!, "Invalid OTP", "Please complete the 6-digits OTP", () {
+          Get.context!, "OTP", "Please complete the 6-digits OTP", () {
         isLoading.value = false;
         Get.back();
       });
@@ -135,7 +136,7 @@ class OtpController extends GetxController
     if (paramArgs[0]['otp'] != int.parse(inputPin.value)) {
       isLoading.value = false;
       CustomDialog().errorDialog(
-          Get.context!, "luvpark", "Invalid OTP code. Please try again.", () {
+          Get.context!, "OTP", "Invalid OTP code. Please try again.", () {
         Get.back();
       });
       return;
@@ -187,7 +188,7 @@ class OtpController extends GetxController
         });
       } else {
         isLoading.value = false;
-        CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
+        CustomDialog().errorDialog(Get.context!, "Error", returnData["msg"],
             () {
           Get.back();
         });

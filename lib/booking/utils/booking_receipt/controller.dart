@@ -19,7 +19,7 @@ class BookingReceiptController extends GetxController
   @override
   void onInit() {
     super.onInit();
-
+    print("parameters $parameters");
     if (parameters["status"] == "A") {
       startTimer();
     }

@@ -14,10 +14,11 @@ import '../custom_widgets/variables.dart';
 
 class LoginScreenController extends GetxController {
   LoginScreenController();
-  final GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
+  // final GlobalKey<FormState> formKeyLogin = GlobalKey<FormState>();
   RxBool isAgree = false.obs;
   RxBool isShowPass = false.obs;
   RxBool isLoading = false.obs;
+  RxInt counter = 0.obs;
 
   TextEditingController mobileNumber = TextEditingController();
   TextEditingController password = TextEditingController();
@@ -41,44 +42,71 @@ class LoginScreenController extends GetxController {
     update();
   }
 
-  Future<void> getAccountStatus(context, mobile, Function cb) async {
-    String apiParam =
-        "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile";
+  // Future<void> getAccountStatus(context, mobile, Function cb) async {
+  //   String apiParam =
+  //       "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile";
 
-    HttpRequest(api: apiParam).get().then((objData) {
-      if (objData == "No Internet") {
-        isInternetConnected.value = false;
-        cb([
-          {"has_net": false, "items": []}
-        ]);
+  //   HttpRequest(api: apiParam).get().then((objData) {
+  //     print("account status $objData");
+  //     if (objData == "No Internet") {
+  //       isInternetConnected.value = false;
+  //       if (counter.value != 0) {
+  //         counter--;
+  //       }
+  //       cb([
+  //         {"has_net": false, "items": []}
+  //       ]);
 
-        CustomDialog().internetErrorDialog(context, () {
-          Get.back();
-        });
-        return;
-      }
-      if (objData == null) {
-        isInternetConnected.value = false;
-        CustomDialog().errorDialog(context, "luvpark",
-            "Error while connecting to server, Please try again.", () {
-          Get.offAndToNamed(Routes.onboarding);
-        });
+  //       CustomDialog().internetErrorDialog(context, () {
+  //         Get.back();
+  //       });
+  //       return;
+  //     }
+  //     if (objData == null) {
+  //       isInternetConnected.value = false;
+  //       if (counter.value != 0) {
+  //         counter--;
+  //       }
+  //       cb([
+  //         {"has_net": true, "items": []}
+  //       ]);
+  //       CustomDialog().serverErrorDialog(context, () {
+  //         Get.back();
+  //         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
+  //       });
 
-        return;
-      }
-      if (objData["items"].isEmpty) {
-        isInternetConnected.value = true;
-        CustomDialog().errorDialog(context, "luvpark", "Invalid account.", () {
-          Get.offAllNamed(Routes.login);
-        });
-        return;
-      } else {
-        cb([
-          {"has_net": true, "items": objData["items"]}
-        ]);
-      }
-    });
-  }
+  //       return;
+  //     }
+  //     if (objData["items"].isEmpty) {
+  //       isInternetConnected.value = true;
+  //       if (counter.value != 0) {
+  //         counter--;
+  //       }
+  //       cb([
+  //         {"has_net": false, "items": []}
+  //       ]);
+  //       CustomDialog().errorDialog(context, "luvpark", "Invalid account.", () {
+  //         Get.offAllNamed(Routes.login);
+  //       });
+  //       return;
+  //     }
+  //     if (objData["items"][0]["login_attempt"] >= 3) {
+  //       isLoading.value = false;
+  //       mobileNumber.text = "";
+  //       password.text = "";
+  //       Future.delayed(Duration(milliseconds: 200), () {
+  //         Get.offAndToNamed(Routes.lockScreen, arguments: objData["items"]);
+  //       });
+
+  //       return;
+  //     } else {
+  //       cb([
+  //         {"has_net": true, "items": objData["items"]}
+  //       ]);
+  //       return;
+  //     }
+  //   });
+  // }
 
   //POST LOGIN
   postLogin(context, Map<String, dynamic> param, Function cb) async {
@@ -119,9 +147,11 @@ class LoginScreenController extends GetxController {
           await VehicleBrandsTable.instance.insertUpdate(vbData);
         }
 
-        HttpRequest(api: ApiKeys.gApiSubFolderPostLogin, parameters: param)
-            .post()
+        print("param $param");
+        HttpRequest(api: ApiKeys.gApiSubFolderPostLogin2, parameters: param)
+            .postBody()
             .then((returnPost) async {
+          print("returnpost $returnPost");
           if (returnPost == "No Internet") {
             CustomDialog().internetErrorDialog(context, () {
               Get.back();
@@ -132,7 +162,7 @@ class LoginScreenController extends GetxController {
             return;
           }
           if (returnPost == null) {
-            CustomDialog().errorDialog(context, "luvpark",
+            CustomDialog().errorDialog(context, "Error",
                 "Error while connecting to server, Please try again.", () {
               Get.back();
               cb([
@@ -142,17 +172,34 @@ class LoginScreenController extends GetxController {
             return;
           }
           if (returnPost["success"] == "N") {
-            CustomDialog().errorDialog(context, "Error", returnPost["msg"], () {
-              Get.back();
-              cb([
-                {"has_net": true, "items": []}
-              ]);
-            });
+            cb([
+              {"has_net": true, "items": []}
+            ]);
+            if (returnPost["login_attempt"] >= 3) {
+              mobileNumber.text = "";
+              password.text = "";
+              List mapData = [returnPost];
+
+              mapData = mapData.map((e) {
+                e["mobile_no"] = param["mobile_no"];
+                return e;
+              }).toList();
+              print("mapData $mapData");
+              Future.delayed(Duration(milliseconds: 200), () {
+                Get.offAndToNamed(Routes.lockScreen, arguments: mapData);
+              });
+              return;
+            } else {
+              CustomDialog().errorDialog(context, "Error", returnPost["msg"],
+                  () {
+                Get.back();
+              });
+            }
 
             return;
           } else {
             var getApi =
-                "${ApiKeys.gApiSubFolderLogin}?mobile_no=${param["mobile_no"]}&auth_key=${returnPost["auth_key"].toString()}";
+                "${ApiKeys.gApiSubFolderLogin2}?mobile_no=${param["mobile_no"]}&auth_key=${returnPost["auth_key"].toString()}";
 
             HttpRequest(api: getApi).get().then((objData) async {
               if (objData == "No Internet") {
@@ -176,7 +223,7 @@ class LoginScreenController extends GetxController {
               } else {
                 if (objData["items"].length == 0) {
                   CustomDialog().errorDialog(
-                      context, "luvpark", objData["items"]["msg"], () {
+                      context, "Error", objData["items"]["msg"], () {
                     Get.back();
                     cb([
                       {"has_net": true, "items": []}
@@ -224,13 +271,12 @@ class LoginScreenController extends GetxController {
   void onInit() {
     mobileNumber = TextEditingController();
     password = TextEditingController();
-
+    print("ataya sulod controller");
     super.onInit();
   }
 
   @override
   void onClose() {
-    formKeyLogin.currentState?.reset();
     super.onClose();
   }
 }

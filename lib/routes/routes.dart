@@ -43,4 +43,5 @@ class Routes {
   static const otpUpdProfile = "/otp_update_profile";
   static const message = "/message";
   static const helpfeedback = "/help_feedback";
+  static const lockScreen = "/lock_screen";
 }

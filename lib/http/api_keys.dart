@@ -68,12 +68,16 @@ class ApiKeys {
       '/ords/$parkSpaceApi/pm/getAdvancedParkingLogs';
 
 //Login API
-//Get user data
-  static const gApiSubFolderLogin = '/ords/$luvApi/auth/login/';
+  //Get user data
+  static const gApiSubFolderLogin = '/ords/$luvApi/auth/login';
 //wala gi gamit
   static const gApiSubFolderGetIdleTime = '/ords/$luvApi/base/userpref/';
 //Post Login
   static const gApiSubFolderPostLogin = '/ords/$luvApi/auth/login/'; //post
+  //Post Login2
+  static const gApiSubFolderPostLogin2 = '/ords/$luvApi/auth/login'; //post
+  //Get user data
+  static const gApiSubFolderLogin2 = '/ords/$luvApi/auth/login';
 //$parkSpaceApi api
   //get vehicles
   static const gApiSubFolderGetVehicleType =

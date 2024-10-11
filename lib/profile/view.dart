@@ -251,7 +251,7 @@ class Profile extends GetView<ProfileScreenController> {
                                           .dismissAllNotifications();
                                       AwesomeNotifications().cancelAll();
                                       Get.back();
-                                      Get.offAllNamed(Routes.splash);
+                                      Get.offAllNamed(Routes.login);
                                     });
                                   },
                                 ),
