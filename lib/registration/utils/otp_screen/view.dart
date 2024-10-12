@@ -53,163 +53,167 @@ class OtpScreen extends GetView<OtpController> {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(20, 10, 15, 0),
-        child: StretchingOverscrollIndicator(
-          axisDirection: AxisDirection.down,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Center(
-                      child: Image(
-                        image: AssetImage("assets/images/otp_logo.png"),
-                        fit: BoxFit.contain,
-                        width: 200,
-                        height: 200,
+        child: ScrollConfiguration(
+          behavior: ScrollBehavior().copyWith(overscroll: false),
+          child: StretchingOverscrollIndicator(
+            axisDirection: AxisDirection.down,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Center(
+                        child: Image(
+                          image: AssetImage("assets/images/otp_logo.png"),
+                          fit: BoxFit.contain,
+                          width: 200,
+                          height: 200,
+                        ),
                       ),
-                    ),
-                    const Center(
-                      child: CustomTitle(
-                        text: "OTP verification",
-                        fontSize: 24,
+                      const Center(
+                        child: CustomTitle(
+                          text: "OTP verification",
+                          fontSize: 24,
+                        ),
                       ),
-                    ),
-                    Center(
-                      child: RichText(
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                                text:
-                                    "We have sent an OTP to your registered\nmobile number",
-                                style: GoogleFonts.manrope(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: AppColor.paragraphColor,
-                                ),
-                                children: <TextSpan>[
-                                  TextSpan(
-                                    text:
-                                        " +${controller.paramArgs[0]["mobile_no"]}",
-                                    style: GoogleFonts.inter(
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.primaryColor,
-                                      fontSize: 14,
-                                    ),
+                      Center(
+                        child: RichText(
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                  text:
+                                      "We have sent an OTP to your registered\nmobile number",
+                                  style: GoogleFonts.manrope(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                    color: AppColor.paragraphColor,
                                   ),
-                                ]),
+                                  children: <TextSpan>[
+                                    TextSpan(
+                                      text:
+                                          " +${controller.paramArgs[0]["mobile_no"]}",
+                                      style: GoogleFonts.inter(
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColor.primaryColor,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Container(height: 20),
+                  Obx(
+                    () => Directionality(
+                      // Specify direction if desired
+                      textDirection: TextDirection.ltr,
+                      child: Pinput(
+                        length: 6,
+                        controller: controller.pinController,
+                        androidSmsAutofillMethod:
+                            AndroidSmsAutofillMethod.smsUserConsentApi,
+                        listenForMultipleSmsOnAndroid: true,
+                        defaultPinTheme: getDefaultPinTheme(),
+                        hapticFeedbackType: HapticFeedbackType.lightImpact,
+                        onCompleted: (pin) {
+                          if (pin.length == 6) {
+                            controller.onInputChanged(pin);
+                          }
+                        },
+                        onChanged: (value) {
+                          if (value.isEmpty) {
+                            controller.onInputChanged(value);
+                          } else {
+                            controller.onInputChanged(value);
+                          }
+                        },
+                        cursor: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Container(
+                              margin: const EdgeInsets.only(bottom: 9),
+                              width: 22,
+                              height: 1,
+                              color: AppColor.primaryColor,
+                            ),
                           ],
                         ),
+                        focusedPinTheme: getDefaultPinTheme().copyWith(
+                          decoration: getDefaultPinTheme().decoration!.copyWith(
+                                borderRadius: BorderRadius.circular(5),
+                                border: Border.all(
+                                    color: AppColor.primaryColor, width: 2),
+                              ),
+                        ),
                       ),
                     ),
-                  ],
-                ),
-                Container(height: 20),
-                Obx(
-                  () => Directionality(
-                    // Specify direction if desired
-                    textDirection: TextDirection.ltr,
-                    child: Pinput(
-                      length: 6,
-                      controller: controller.pinController,
-                      androidSmsAutofillMethod:
-                          AndroidSmsAutofillMethod.smsUserConsentApi,
-                      listenForMultipleSmsOnAndroid: true,
-                      defaultPinTheme: getDefaultPinTheme(),
-                      hapticFeedbackType: HapticFeedbackType.lightImpact,
-                      onCompleted: (pin) {
-                        if (pin.length == 6) {
-                          controller.onInputChanged(pin);
+                  ),
+                  const VerticalHeight(height: 30),
+                  if (MediaQuery.of(context).viewInsets.bottom == 0)
+                    Obx(
+                      () => CustomButton(
+                        loading: controller.isLoading.value,
+                        text: "Verify",
+                        onPressed: () {
+                          if (controller.isLoading.value) {
+                            controller.onVerify();
+                            return;
+                          }
+                          controller.onVerify();
+                        },
+                      ),
+                    ),
+                  Container(
+                    height: 40,
+                  ),
+                  const Center(
+                    child: CustomTitle(
+                      text: "Didn't you receive any code?",
+                      fontWeight: FontWeight.w600,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Container(
+                    height: 2,
+                  ),
+                  Obx(
+                    () => InkWell(
+                      onTap: () {
+                        if (controller.minutes.value < 1 &&
+                            controller.seconds.value <= 59) {
+                          controller.restartTimer();
                         }
                       },
-                      onChanged: (value) {
-                        if (value.isEmpty) {
-                          controller.onInputChanged(value);
-                        } else {
-                          controller.onInputChanged(value);
-                        }
-                      },
-                      cursor: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Container(
-                            margin: const EdgeInsets.only(bottom: 9),
-                            width: 22,
-                            height: 1,
-                            color: AppColor.primaryColor,
+                          CustomLinkLabel(
+                            text: controller.minutes.value != 0 ||
+                                    controller.seconds.value != 0
+                                ? "Resend OTP in"
+                                : "I didn't get a code",
+                            fontSize: 14,
                           ),
+                          if (controller.minutes.value != 0 ||
+                              controller.seconds.value != 0)
+                            CustomLinkLabel(
+                              text:
+                                  "(${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
+                            ),
                         ],
                       ),
-                      focusedPinTheme: getDefaultPinTheme().copyWith(
-                        decoration: getDefaultPinTheme().decoration!.copyWith(
-                              borderRadius: BorderRadius.circular(5),
-                              border: Border.all(
-                                  color: AppColor.primaryColor, width: 2),
-                            ),
-                      ),
                     ),
                   ),
-                ),
-                const VerticalHeight(height: 30),
-                Obx(
-                  () => CustomButton(
-                    loading: controller.isLoading.value,
-                    text: "Verify",
-                    onPressed: () {
-                      if (controller.isLoading.value) {
-                        controller.onVerify();
-                        return;
-                      }
-                      controller.onVerify();
-                    },
+                  Container(
+                    height: 39,
                   ),
-                ),
-                Container(
-                  height: 40,
-                ),
-                const Center(
-                  child: CustomTitle(
-                    text: "Didn't you receive any code?",
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                  ),
-                ),
-                Container(
-                  height: 2,
-                ),
-                Obx(
-                  () => InkWell(
-                    onTap: () {
-                      if (controller.minutes.value < 1 &&
-                          controller.seconds.value <= 59) {
-                        controller.restartTimer();
-                      }
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomLinkLabel(
-                          text: controller.minutes.value != 0 ||
-                                  controller.seconds.value != 0
-                              ? "Resend OTP in"
-                              : "I didn't get a code",
-                          fontSize: 14,
-                        ),
-                        if (controller.minutes.value != 0 ||
-                            controller.seconds.value != 0)
-                          CustomLinkLabel(
-                            text:
-                                "(${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  height: 39,
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

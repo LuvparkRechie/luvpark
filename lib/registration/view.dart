@@ -224,108 +224,111 @@ class RegistrationPage extends GetView<RegistrationController> {
                                 ),
                               ),
                               const SizedBox(height: 10.0),
-                              CustomButton(
-                                text: "Submit",
-                                loading: controller.isLoading.value,
-                                onPressed: () {
-                                  FocusScope.of(context)
-                                      .requestFocus(FocusNode());
-                                  if (controller.formKeyRegister.currentState!
-                                      .validate()) {
-                                    if (Variables.getPasswordStrengthText(
-                                            controller.passStrength.value) !=
-                                        "Strong Password") {
-                                      CustomDialog().snackbarDialog(
-                                          context,
-                                          'For enhanced security, please create a stronger password.',
-                                          Colors.red,
-                                          () {});
-                                      return;
-                                    }
-                                    if (controller.isLoading.value) return;
-                                    controller.toggleLoading(
-                                        !controller.isLoading.value);
-                                    Map<String, dynamic> parameters = {
-                                      "mobile_no":
-                                          "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
-                                      "pwd": controller.password.text,
-                                    };
-                                    controller.onSubmit(context, parameters,
-                                        (data) async {
+                              if (MediaQuery.of(context).viewInsets.bottom == 0)
+                                CustomButton(
+                                  text: "Submit",
+                                  loading: controller.isLoading.value,
+                                  onPressed: () {
+                                    FocusScope.of(context)
+                                        .requestFocus(FocusNode());
+                                    if (controller.formKeyRegister.currentState!
+                                        .validate()) {
+                                      if (Variables.getPasswordStrengthText(
+                                              controller.passStrength.value) !=
+                                          "Strong Password") {
+                                        CustomDialog().snackbarDialog(
+                                            context,
+                                            'For enhanced security, please create a stronger password.',
+                                            Colors.red,
+                                            () {});
+                                        return;
+                                      }
+                                      if (controller.isLoading.value) return;
                                       controller.toggleLoading(
                                           !controller.isLoading.value);
-                                      final prefs =
-                                          await SharedPreferences.getInstance();
-                                      prefs.setBool('isLoggedIn', false);
-                                      Authentication().setPasswordBiometric(
-                                          controller.password.text);
+                                      Map<String, dynamic> parameters = {
+                                        "mobile_no":
+                                            "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
+                                        "pwd": controller.password.text,
+                                      };
+                                      controller.onSubmit(context, parameters,
+                                          (data) async {
+                                        controller.toggleLoading(
+                                            !controller.isLoading.value);
+                                        final prefs = await SharedPreferences
+                                            .getInstance();
+                                        prefs.setBool('isLoggedIn', false);
+                                        Authentication().setPasswordBiometric(
+                                            controller.password.text);
 
-                                      if (data[0]["success"]) {
-                                        // ignore: use_build_context_synchronously
-                                        CustomDialog().successDialog(
-                                            context,
-                                            "Success",
-                                            "We have sent an activation code to your mobile number.",
-                                            "Continue", () async {
-                                          Get.back();
-                                          List argsParam = [
-                                            {
-                                              "otp": int.parse(
-                                                  data[0]["items"].toString()),
-                                              'mobile_no':
-                                                  parameters["mobile_no"],
-                                              "req_type": "VERIFY",
-                                              "seq_id": 0,
-                                              "seca": "",
-                                              "seq_no": 1,
-                                              "new_pass":
-                                                  controller.password.text,
-                                            }
-                                          ];
-                                          controller
-                                              .formKeyRegister.currentState
-                                              ?.reset();
-                                          Get.toNamed(Routes.otp,
-                                              arguments: argsParam);
-                                        });
-                                      }
-                                    });
-                                  }
-                                },
-                              ),
+                                        if (data[0]["success"]) {
+                                          // ignore: use_build_context_synchronously
+                                          CustomDialog().successDialog(
+                                              context,
+                                              "Success",
+                                              "We have sent an activation code to your mobile number.",
+                                              "Continue", () async {
+                                            Get.back();
+                                            List argsParam = [
+                                              {
+                                                "otp": int.parse(data[0]
+                                                        ["items"]
+                                                    .toString()),
+                                                'mobile_no':
+                                                    parameters["mobile_no"],
+                                                "req_type": "VERIFY",
+                                                "seq_id": 0,
+                                                "seca": "",
+                                                "seq_no": 1,
+                                                "new_pass":
+                                                    controller.password.text,
+                                              }
+                                            ];
+                                            controller
+                                                .formKeyRegister.currentState
+                                                ?.reset();
+                                            Get.toNamed(Routes.otp,
+                                                arguments: argsParam);
+                                          });
+                                        }
+                                      });
+                                    }
+                                  },
+                                ),
                               Container(
                                 height: 20,
                               ),
-                              Center(
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "Already a luvpark user? ",
-                                        style: paragraphStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.w800),
-                                      ),
-                                      TextSpan(
-                                        text: 'Login',
-                                        style: paragraphStyle(
-                                          color: AppColor.primaryColor,
-                                          fontWeight: FontWeight.w800,
+                              if (MediaQuery.of(context).viewInsets.bottom == 0)
+                                Center(
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: "Already a luvpark user? ",
+                                          style: paragraphStyle(
+                                              color: Colors.black,
+                                              fontWeight: FontWeight.w800),
                                         ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = controller.isLoading.value
-                                              ? () {}
-                                              : () async {
-                                                  Get.toNamed(Routes.login);
-                                                },
-                                      ),
-                                    ],
+                                        TextSpan(
+                                          text: 'Login',
+                                          style: paragraphStyle(
+                                            color: AppColor.primaryColor,
+                                            fontWeight: FontWeight.w800,
+                                          ),
+                                          recognizer: TapGestureRecognizer()
+                                            ..onTap = controller.isLoading.value
+                                                ? () {}
+                                                : () async {
+                                                    Get.toNamed(Routes.login);
+                                                  },
+                                        ),
+                                      ],
+                                    ),
+                                    overflow: TextOverflow
+                                        .ellipsis, // Ensures that if the text is too long, it will be truncated with an ellipsis
+                                    maxLines: 1,
                                   ),
-                                  overflow: TextOverflow
-                                      .ellipsis, // Ensures that if the text is too long, it will be truncated with an ellipsis
-                                  maxLines: 1,
                                 ),
-                              ),
                               Container(
                                 height: 30,
                               ),

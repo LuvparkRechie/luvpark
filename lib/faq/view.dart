@@ -61,79 +61,93 @@ class FaqPage extends GetView<FaqPageController> {
                               )
                             : controller.faqsData.isEmpty
                                 ? NoDataFound()
-                                : ListView.separated(
-                                    itemCount: controller.faqsData.length,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10, horizontal: 15),
-                                    separatorBuilder: (context, index) =>
-                                        Divider(
-                                      color: Colors.grey[800],
-                                      height: 1,
-                                    ),
-                                    itemBuilder: (context, index) {
-                                      var faq = controller.faqsData[index];
+                                : ScrollConfiguration(
+                                    behavior: ScrollBehavior()
+                                        .copyWith(overscroll: false),
+                                    child: StretchingOverscrollIndicator(
+                                      axisDirection: AxisDirection.down,
+                                      child: ListView.separated(
+                                        itemCount: controller.faqsData.length,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 10, horizontal: 15),
+                                        separatorBuilder: (context, index) =>
+                                            Divider(
+                                          color: Colors.grey[800],
+                                          height: 1,
+                                        ),
+                                        itemBuilder: (context, index) {
+                                          var faq = controller.faqsData[index];
 
-                                      return ExpansionTile(
-                                        title: CustomParagraph(
-                                          text: faq['faq_text'] ??
-                                              'No text available',
-                                          color: Colors.black,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                        trailing: Icon(
-                                          controller.expandedIndexes
-                                                  .contains(index)
-                                              ? Iconsax.minus
-                                              : Iconsax.add,
-                                          color: AppColor.primaryColor,
-                                        ),
-                                        onExpansionChanged: (onExpand) async {
-                                          controller.onExpand(
-                                              onExpand, index, faq);
-                                        },
-                                        children: [
-                                          if (controller.expandedIndexes
-                                              .contains(index))
-                                            Padding(
-                                              padding: const EdgeInsets.all(15),
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  if (faq['answers'] == null ||
-                                                      (faq['answers'] as List)
-                                                          .isEmpty)
-                                                    const CustomParagraph(
-                                                      text:
-                                                          'No answers available',
-                                                      color: Colors.black54,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                    )
-                                                  else
-                                                    ...((faq['answers'] as List)
-                                                        .asMap()
-                                                        .entries
-                                                        .map((entry) {
-                                                      int index = entry.key;
-                                                      var answer = entry.value;
-                                                      return CustomParagraph(
-                                                        text:
-                                                            '${index + 1}. ${answer['faq_ans_text'] ?? 'No answer available'}',
-                                                        color: Colors.black,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                      );
-                                                    }).toList()),
-                                                ],
-                                              ),
+                                          return ExpansionTile(
+                                            title: CustomParagraph(
+                                              text: faq['faq_text'] ??
+                                                  'No text available',
+                                              color: Colors.black,
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
                                             ),
-                                        ],
-                                      );
-                                    },
+                                            trailing: Icon(
+                                              controller.expandedIndexes
+                                                      .contains(index)
+                                                  ? Iconsax.minus
+                                                  : Iconsax.add,
+                                              color: AppColor.primaryColor,
+                                            ),
+                                            onExpansionChanged:
+                                                (onExpand) async {
+                                              controller.onExpand(
+                                                  onExpand, index, faq);
+                                            },
+                                            children: [
+                                              if (controller.expandedIndexes
+                                                  .contains(index))
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(15),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      if (faq['answers'] ==
+                                                              null ||
+                                                          (faq['answers']
+                                                                  as List)
+                                                              .isEmpty)
+                                                        const CustomParagraph(
+                                                          text:
+                                                              'No answers available',
+                                                          color: Colors.black54,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        )
+                                                      else
+                                                        ...((faq['answers']
+                                                                as List)
+                                                            .asMap()
+                                                            .entries
+                                                            .map((entry) {
+                                                          int index = entry.key;
+                                                          var answer =
+                                                              entry.value;
+                                                          return CustomParagraph(
+                                                            text:
+                                                                '${index + 1}. ${answer['faq_ans_text'] ?? 'No answer available'}',
+                                                            color: Colors.black,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          );
+                                                        }).toList()),
+                                                    ],
+                                                  ),
+                                                ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   ),
                       ),
                     ),
