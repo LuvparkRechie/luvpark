@@ -103,7 +103,8 @@ class FaqPage extends GetView<FaqPageController> {
                                                   .contains(index))
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.all(15),
+                                                      const EdgeInsets.fromLTRB(
+                                                          15, 0, 15, 15),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment

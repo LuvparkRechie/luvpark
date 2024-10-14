@@ -744,42 +744,45 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                         vertical: 15,
                         horizontal: 15,
                       ),
-                      child: SingleChildScrollView(
-                          controller: scrollController,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const CustomTitle(
-                                text: "Parking Details",
-                                fontSize: 14,
-                              ),
-                              Align(
-                                alignment: Alignment.topRight,
-                                child: InkWell(
-                                  onTap: () {
-                                    controller.filterMarkersData("", "");
-                                  },
-                                  child: Container(
-                                    decoration: ShapeDecoration(
-                                      color: const Color(0xFFF6F5F5),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(37.39),
+                      child: ScrollConfiguration(
+                        behavior: ScrollBehavior().copyWith(overscroll: false),
+                        child: SingleChildScrollView(
+                            controller: scrollController,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const CustomTitle(
+                                  text: "Parking Details",
+                                  fontSize: 14,
+                                ),
+                                Align(
+                                  alignment: Alignment.topRight,
+                                  child: InkWell(
+                                    onTap: () {
+                                      controller.filterMarkersData("", "");
+                                    },
+                                    child: Container(
+                                      decoration: ShapeDecoration(
+                                        color: const Color(0xFFF6F5F5),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(37.39),
+                                        ),
                                       ),
-                                    ),
-                                    child: const Padding(
-                                      padding: EdgeInsets.all(10),
-                                      child: Icon(
-                                        Icons.close,
-                                        color: Color(0xFF747579),
-                                        size: 15,
+                                      child: const Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Icon(
+                                          Icons.close,
+                                          color: Color(0xFF747579),
+                                          size: 15,
+                                        ),
                                       ),
                                     ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )),
+                              ],
+                            )),
+                      ),
                     ),
                     Expanded(
                       child: ScrollConfiguration(
