@@ -32,6 +32,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
               child: Obx(
                 () => Form(
                   key: controller.formVehicleReg,
+                  autovalidateMode: AutovalidateMode.always,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -80,8 +81,12 @@ class AddVehicles extends GetView<MyVehiclesController> {
                         ],
                         controller: controller.plateNo,
                         onChange: (value) {
-                          // Convert value to uppercase and handle text length restriction
-                          final newValue = value.toUpperCase();
+                          var newValue = value
+                              .toUpperCase()
+                              .replaceAll(RegExp(r'[^A-Z0-9-]'), "")
+                              .replaceAll(" ", "")
+                              .replaceAll(RegExp(r'-{2,}'), '-');
+
                           if (newValue.length > 15) {
                             controller.plateNo.text = newValue.substring(0, 15);
                             controller.plateNo.selection =
@@ -98,8 +103,17 @@ class AddVehicles extends GetView<MyVehiclesController> {
                         },
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return "Mobile number is required";
+                            return "Plate No. is required";
                           }
+                          if (!value.contains(RegExp(r'^[A-Z0-9-]+$'))) {
+                            return "Plate No. should only contain letters, numbers, and dashes";
+                          }
+                          if (value.startsWith('-') || value.endsWith('-')) {
+                            return "Plate No. should not start or end with a dash";
+                          }
+                          // if (value.startsWith('TMP') && value.length != 10) {
+                          //   return "Temporary plate number should be 10 characters long";
+                          // }
                           return null;
                         },
                       ),
@@ -108,7 +122,6 @@ class AddVehicles extends GetView<MyVehiclesController> {
                       Container(
                         height: 10,
                       ),
-                      //
                       InkWell(
                         onTap: () {
                           controller.showBottomSheetCamera(true);
@@ -184,7 +197,6 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           width: MediaQuery.of(context).size.width,
                         ),
                       ),
-
                       Container(
                         height: 30,
                       ),

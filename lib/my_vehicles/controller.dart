@@ -45,6 +45,7 @@ class MyVehiclesController extends GetxController {
     'A': RegExp(r'[A-Za-z0-9]'),
     '#': RegExp(r'[A-Za-z0-9]')
   };
+
   Rx<MaskTextInputFormatter?> maskFormatter = Rx<MaskTextInputFormatter?>(null);
 
   @override
@@ -216,6 +217,7 @@ class MyVehiclesController extends GetxController {
 
   void _updateMaskFormatter(mask) {
     hintTextLabel.value = mask ?? "Plate No.";
+    print(mask);
     maskFormatter.value = MaskTextInputFormatter(
       mask: mask,
       filter: _filter,
@@ -246,7 +248,7 @@ class MyVehiclesController extends GetxController {
           ],
           cancelButton: CupertinoActionSheetAction(
             onPressed: () {
-              // ignore: unnecessary_statements
+              Get.back();
             },
             child: const Text('Cancel', style: TextStyle(color: Colors.red)),
           ),
@@ -259,8 +261,8 @@ class MyVehiclesController extends GetxController {
     bool isIOs = Platform.isIOS;
     final pickedFile = await picker.pickImage(
         source: source,
-        imageQuality: isIOs ? 18 : 25,
-        maxWidth: isIOs ? 300 : 500,
+        imageQuality: isIOs ? 18 : 20,
+        maxWidth: isIOs ? 300 : 400,
         requestFullMetadata: false);
 
     imageFile = pickedFile != null ? File(pickedFile.path) : null;
