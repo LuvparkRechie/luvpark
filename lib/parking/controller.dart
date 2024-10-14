@@ -83,7 +83,7 @@ class ParkingController extends GetxController
   //Get Reserve Data
   Future<void> getReserveData(String status) async {
     isLoading.value = true;
-
+    DateTime now = await Functions.getTimeNow();
     Functions.getUserBalance2(Get.context!, (userData) async {
       if (!userData[0]["has_net"]) {
         isLoading.value = false;
@@ -97,7 +97,7 @@ class ParkingController extends GetxController
 
       try {
         final returnData = await HttpRequest(api: api).get();
-
+        print("returnData $returnData");
         if (returnData == "No Internet") {
           isLoading.value = false; // End loading
           hasNet.value = false;
@@ -119,7 +119,7 @@ class ParkingController extends GetxController
           List itemData = returnData["items"];
           if (itemData.isNotEmpty) {
             itemData = itemData.where((element) {
-              DateTime timeNow = DateTime.now();
+              DateTime timeNow = now;
               DateTime timeOut = DateTime.parse(element["dt_out"].toString());
               return timeNow.isBefore(timeOut);
             }).toList();
@@ -140,7 +140,7 @@ class ParkingController extends GetxController
     var dateOutRelated = "";
     dateInRelated = data["dt_in"];
     dateOutRelated = data["dt_out"];
-    DateTime now = DateTime.now();
+    DateTime now = await Functions.getTimeNow();
     DateTime resDate = DateTime.parse(data["reservation_date"].toString());
 
     Map<String, dynamic> parameters = {

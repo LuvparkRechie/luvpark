@@ -12,6 +12,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
+import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
 import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/api_keys.dart';
@@ -100,6 +101,7 @@ class DashboardMapController extends GetxController
   final GlobalKey walletKey = GlobalKey();
   final GlobalKey parkKey = GlobalKey();
   final GlobalKey locKey = GlobalKey();
+  var denoInd = (-1).obs;
 
   //amenities
   List iconAmen = [
@@ -124,7 +126,9 @@ class DashboardMapController extends GetxController
   RxInt tabIndex = 0.obs;
   LatLng lastLatlng = LatLng(0, 0);
   RxString lastRouteName = "".obs;
+  RxList ratesWidget = <Widget>[].obs;
   final FocusNode focusNode = FocusNode();
+
   @override
   void onInit() {
     super.onInit();
@@ -707,6 +711,8 @@ class DashboardMapController extends GetxController
               FocusManager.instance.primaryFocus!.unfocus();
               markerData.clear();
               filteredMarkers.clear();
+              tabIndex.value = 0;
+              tabController = TabController(length: 2, vsync: this);
 
               CustomDialog().loadingDialog(Get.context!);
 
@@ -793,32 +799,6 @@ class DashboardMapController extends GetxController
     ));
   }
 
-  // void showNearestSuggestDialog() {
-  //   Get.dialog(SuggestionsScreen(
-  //     data: dataNearest,
-  //     cb: (data) {
-  //       if (data == "yowo") {
-  //         if (suggestions.isEmpty) {
-  //           Future.delayed(Duration(milliseconds: 200), () {
-  //             panelController.show();
-  //             panelController.open();
-  //           });
-  //         }
-
-  //         if (!hasLastBooking.value) {
-  //           showTargetTutorial(Variables.ctxt!, false);
-  //         }
-  //         return;
-  //       } else {
-  //         markerData = data;
-  //         lastRouteName.value = "suggestions";
-  //         CustomDialog().loadingDialog(Get.context!);
-  //         filterMarkersData(markerData[0]["park_area_name"], "suggestion");
-  //       }
-  //     },
-  //   ));
-  // }
-
   LatLng calculateNewCoordinates(
       double lat, double lon, double radiusInMeters, double angleInDegrees) {
     const double PI = 3.141592653589793;
@@ -839,17 +819,6 @@ class DashboardMapController extends GetxController
     if (newLon < -180.0) newLon += 360.0;
 
     return LatLng(newLat, newLon);
-  }
-
-  void showTargetTutorial(BuildContext context, bool isDrawer) {
-    isFromDrawer.value = isDrawer;
-
-    Future.delayed(
-      const Duration(milliseconds: 300),
-      () {
-        tutorialCoachMark.show(context: context);
-      },
-    );
   }
 
   void initTargetTutorial() {
@@ -943,6 +912,16 @@ class DashboardMapController extends GetxController
     }
   }
 
+  void showTargetTutorial(BuildContext context, bool isDrawer) {
+    print("context $context");
+    Future.delayed(
+      const Duration(seconds: 5),
+      () {
+        tutorialCoachMark.show(context: context);
+      },
+    );
+  }
+
   //Get amenities
   Future<void> getAmenities(parkId) async {
     final response = await HttpRequest(
@@ -1024,6 +1003,7 @@ class DashboardMapController extends GetxController
         Get.back();
         List<dynamic> item = returnData["items"];
         vehicleRates.value = item;
+        print("item $item");
       } else {
         Get.back();
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
@@ -1071,7 +1051,6 @@ class DashboardMapController extends GetxController
 
   String getIconAssetForNonPwdDetails(
       String parkingTypeCode, String vehicleTypes) {
-    print("vehicleTypes $vehicleTypes = $parkingTypeCode");
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
@@ -1114,21 +1093,101 @@ class DashboardMapController extends GetxController
       String eName;
 
       if (e["name"].toString().toLowerCase().contains("trikes")) {
+        e["vh_types"] = e["name"];
         eName = e["count"].toString().length > 1 ? "Cars" : "Car";
       } else if (e["name"].toString().toLowerCase().contains("motor")) {
+        e["vh_types"] = e["name"];
         eName = e["count"].toString().length > 1 ? "Motors" : "Motor";
       } else {
+        e["vh_types"] = e["name"];
         eName = e["name"].toString();
       }
+      e["vh_types"] = e["name"];
       e["name"] = eName;
       return e;
     }).toList();
 
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
+    ratesWidget.clear();
+
+    denoInd.value = 0;
+    getVhRatesData(vehicleTypes[0]["vh_types"]);
 
     finalSttime = formatTime(markerData[0]["start_time"]);
     finalEndtime = formatTime(markerData[0]["end_time"]);
-    isOpen.value = Functions.checkAvailability(finalSttime, finalEndtime);
+    bool openBa = await Functions.checkAvailability(finalSttime, finalEndtime);
+    isOpen.value = openBa;
+  }
+
+  void getVhRatesData(String vhType) {
+    ratesWidget.clear();
+    List data = vehicleRates.where((obj) {
+      return obj["vehicle_type"]
+          .toString()
+          .toLowerCase()
+          .contains(vhType.toLowerCase());
+    }).toList();
+    print("data $data");
+    ratesWidget.add(Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            children: [
+              Expanded(child: CustomParagraph(text: "Base Rate")),
+              Expanded(
+                  child: CustomParagraph(
+                text: "${data[0]["base_rate"]}",
+                color: Colors.black,
+                textAlign: TextAlign.right,
+              ))
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            children: [
+              Expanded(child: CustomParagraph(text: "Base Hours")),
+              Expanded(
+                  child: CustomParagraph(
+                text: "${data[0]["base_hours"]}",
+                color: Colors.black,
+                textAlign: TextAlign.right,
+              ))
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            children: [
+              Expanded(child: CustomParagraph(text: "Succeeding Rate")),
+              Expanded(
+                  child: CustomParagraph(
+                text: "${data[0]["succeeding_rate"]}",
+                color: Colors.black,
+                textAlign: TextAlign.right,
+              ))
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          child: Row(
+            children: [
+              Expanded(child: CustomParagraph(text: "Base Rate")),
+              Expanded(
+                  child: CustomParagraph(
+                text: "${data[0]["base_rate"]}",
+                color: Colors.black,
+                textAlign: TextAlign.right,
+              ))
+            ],
+          ),
+        ),
+      ],
+    ));
   }
 
   String formatTime(String time) {
@@ -1150,13 +1209,13 @@ class DashboardMapController extends GetxController
       final lowerCaseName = name.toLowerCase();
       String iconKey;
       if (lowerCaseName.contains("motorcycle")) {
-        color = const Color(0xFFD65F5F);
+        color = const Color(0xFF21B979);
         iconKey = "scooter";
       } else if (lowerCaseName.contains("trikes")) {
         color = const Color(0xFF21B979);
         iconKey = "car";
       } else {
-        color = const Color(0x7F616161);
+        color = const Color(0xFF21B979);
         iconKey = "delivery";
       }
 
@@ -1172,7 +1231,8 @@ class DashboardMapController extends GetxController
     return parsedTypes;
   }
 
-  void onClickBooking() {
+  void onClickBooking() async {
+    DateTime now = await Functions.getTimeNow();
     CustomDialog().loadingDialog(Get.context!);
     if (markerData[0]["is_allow_reserve"] == "N") {
       Get.back();
@@ -1185,7 +1245,6 @@ class DashboardMapController extends GetxController
     }
 
     if (markerData[0]["is_24_hrs"] == "N") {
-      final now = DateTime.now();
       int getDiff(String time) {
         DateTime specifiedTime = DateFormat("HH:mm").parse(time);
         DateTime todaySpecifiedTime = DateTime(now.year, now.month, now.day,

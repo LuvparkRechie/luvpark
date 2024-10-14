@@ -22,6 +22,7 @@ class BookingDialog extends StatefulWidget {
 class _BookingDialogState extends State<BookingDialog> {
   @override
   void initState() {
+    print("inatataaa ${widget.data[0]}");
     Future.delayed(
       const Duration(milliseconds: 200),
       () {
@@ -114,7 +115,7 @@ class _BookingDialogState extends State<BookingDialog> {
                         Container(height: 30),
                         Center(
                           child: QrImageView(
-                            data: "",
+                            data: widget.data[0]["refno"],
                             size: 180,
                           ),
                         ),

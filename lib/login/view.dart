@@ -19,6 +19,7 @@ class LoginScreen extends GetView<LoginScreenController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(LoginScreenController());
     return PopScope(
       canPop: false,
       child: Scaffold(

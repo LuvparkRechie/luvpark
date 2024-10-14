@@ -14,7 +14,6 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/drawer/view.dart';
 import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/voice_search/view.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,9 +27,8 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
   const DashboardMapScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Variables.init(context);
     Get.put(DashboardMapController());
-
+    Variables.init(context);
     return Obx(() {
       if (!controller.netConnected.value) {
         return CustomScaffold(
@@ -186,7 +184,8 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               child: InkWell(
                                 key: controller.walletKey,
                                 onTap: () {
-                                  Get.toNamed(Routes.wallet);
+                                  controller.showTargetTutorial(context, false);
+                                  // Get.toNamed(Routes.wallet);
                                 },
                                 child: Container(
                                   width: 178,
@@ -938,6 +937,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                               onTap: (index) {
                                                 controller.tabIndex.value =
                                                     index;
+                                                controller
+                                                    .goingBackToTheCornerWhenIFirstSawYou();
                                               },
                                               tabs: [
                                                 CustomParagraph(
@@ -1180,88 +1181,80 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
   Widget _parkRates() {
     return AnimatedCrossFade(
       firstChild: const SizedBox.shrink(),
-      secondChild: SingleChildScrollView(
+      secondChild: Padding(
         padding: const EdgeInsets.only(top: 20, left: 10, right: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (int i = 0; i < controller.vehicleRates.length; i++)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    CustomParagraph(
-                      text: controller.vehicleRates[i]["vehicle_type"],
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
-                    ),
-                    Container(height: 10),
-                    Container(
-                      width: MediaQuery.of(Get.context!).size.width,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 15),
-                      decoration: ShapeDecoration(
-                        color: const Color(0xFFE2F0FF),
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                              width: 1, color: Color(0xFF7FB2EC)),
-                          borderRadius: BorderRadius.circular(5),
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: controller.vehicleTypes.length >= 3
+                    ? MainAxisAlignment.spaceBetween
+                    : MainAxisAlignment.start,
+                children: [
+                  for (int i = 0; i < controller.vehicleTypes.length; i++)
+                    Padding(
+                      padding: controller.vehicleTypes.length >= 3
+                          ? const EdgeInsets.all(0)
+                          : EdgeInsets.only(right: 8),
+                      child: InkWell(
+                        onTap: () {
+                          controller.denoInd.value = i;
+                          controller.getVhRatesData(
+                              controller.vehicleTypes[i]["vh_types"]);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 5),
+                            decoration: ShapeDecoration(
+                              color: controller.denoInd.value == i
+                                  ? AppColor.primaryColor.withOpacity(.1)
+                                  : AppColor.bodyColor, //,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1,
+                                    color: controller.denoInd.value == i
+                                        ? AppColor.primaryColor.withOpacity(.1)
+                                        : Color(0xFFDFE7EF)),
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0x0C000000),
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: CustomParagraph(
+                              text: controller.vehicleTypes[i]["name"],
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                              color: controller.denoInd.value == i
+                                  ? AppColor.primaryColor
+                                  : Colors.black87,
+                            ),
+                          ),
                         ),
                       ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: Row(
-                          children: [
-                            _buildRatesContent(
-                                controller.vehicleRates[i]["base_rate"]
-                                    .toString(),
-                                "Base Rate"),
-                            _buildRatesContent(
-                                controller.vehicleRates[i]["succeeding_rate"]
-                                    .toString(),
-                                "Succeeding Rate"),
-                            _buildRatesContent(
-                                controller.vehicleRates[i]
-                                        ["first_hr_penalty_rate"]
-                                    .toString(),
-                                "Penalty Rate"),
-                          ],
-                        ),
-                      ),
                     ),
-                  ],
-                ),
+                ],
               ),
-          ],
+              Container(height: 20),
+              Column(
+                children: [
+                  ...controller.ratesWidget.toList(),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
       crossFadeState: CrossFadeState.showSecond,
       duration: const Duration(milliseconds: 300),
-    );
-  }
-
-  Widget _buildRatesContent(String title, String name) {
-    return SizedBox(
-      width: MediaQuery.of(Get.context!).size.width / 3.3,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          CustomTitle(
-            text: title,
-            textAlign: TextAlign.center,
-            color: const Color(0xFF2563EB),
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-          ),
-          CustomParagraph(
-            text: name,
-            textAlign: TextAlign.center,
-            fontWeight: FontWeight.w700,
-            maxlines: 1,
-          ),
-        ],
-      ),
     );
   }
 

@@ -15,6 +15,8 @@ import 'package:pointycastle/export.dart' as crypto;
 import 'package:screenshot/screenshot.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 
+import '../functions/functions.dart';
+
 class Variables {
   static BuildContext? ctxt;
   static late Size screenSize;
@@ -79,15 +81,16 @@ class Variables {
     return Uint8List.fromList(cipherText);
   }
 
-  static bool withinOneHourRange(DateTime targetDateTime) {
-    DateTime currentDateTime = DateTime.now();
+  static Future<bool> withinOneHourRange(DateTime targetDateTime) async {
+    DateTime currentDateTime = await Functions.getTimeNow();
+
     DateTime oneHourAgo = currentDateTime.subtract(const Duration(hours: 1));
     return targetDateTime.isAfter(oneHourAgo) &&
         targetDateTime.isBefore(currentDateTime);
   }
 
-  static bool withinDayRange(DateTime targetDateTime) {
-    DateTime currentDateTime = DateTime.now();
+  static Future<bool> withinDayRange(DateTime targetDateTime) async {
+    DateTime currentDateTime = await Functions.getTimeNow();
     DateTime oneHourAgo = currentDateTime.subtract(const Duration(hours: 1));
     return targetDateTime.isAfter(oneHourAgo) &&
         targetDateTime.isBefore(currentDateTime);

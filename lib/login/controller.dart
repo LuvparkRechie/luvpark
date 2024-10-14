@@ -175,7 +175,10 @@ class LoginScreenController extends GetxController {
             cb([
               {"has_net": true, "items": []}
             ]);
-            if (returnPost["login_attempt"] >= 3) {
+            print("ss ${returnPost["success"]}");
+            if (returnPost["login_attempt"] != null &&
+                returnPost["login_attempt"] >= 3) {
+              print("iff");
               mobileNumber.text = "";
               password.text = "";
               List mapData = [returnPost];
@@ -190,6 +193,7 @@ class LoginScreenController extends GetxController {
               });
               return;
             } else {
+              print("elsee");
               CustomDialog().errorDialog(context, "Error", returnPost["msg"],
                   () {
                 Get.back();

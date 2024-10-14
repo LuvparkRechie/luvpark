@@ -23,6 +23,7 @@ import 'package:luvpark_get/sqlite/pa_message_table.dart';
 import 'package:luvpark_get/sqlite/reserve_notification_table.dart';
 import 'package:luvpark_get/sqlite/share_location_table.dart';
 import 'package:luvpark_get/sqlite/vehicle_brands_table.dart';
+import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 
@@ -501,9 +502,11 @@ class Functions {
   }
 
   //Checking if open area
-  static bool checkAvailability(String startTimeStr, String endTimeStr) {
+  static Future<bool> checkAvailability(
+      String startTimeStr, String endTimeStr) async {
     // Get the current time
-    DateTime currentTime = DateTime.now();
+
+    DateTime currentTime = await Functions.getTimeNow();
 
     // Parse start and end times
     List<String> startParts = startTimeStr.split(':');
@@ -616,7 +619,7 @@ class Functions {
 
   static Future<String?> getAddress(double lat, double long) async {
     try {
-      final startTime = DateTime.now();
+      DateTime startTime = await Functions.getTimeNow();
 
       List<Placemark> placemarks = await placemarkFromCoordinates(lat, long);
       Placemark placemark = placemarks[0];
@@ -626,8 +629,8 @@ class Functions {
       String subAdministrativeArea = placemark.subAdministrativeArea.toString();
       String myAddress =
           "$street,$subLocality,$locality,$subAdministrativeArea.";
-      final endTime = DateTime.now();
-      final duration = endTime.difference(startTime);
+
+      final duration = startTime.difference(startTime);
 
       // Use the duration as the delay
       await Future.delayed(duration);
@@ -846,5 +849,10 @@ class Functions {
         return;
       }
     });
+  }
+
+  static Future<DateTime> getTimeNow() async {
+    DateTime timeNow = await NTP.now();
+    return timeNow;
   }
 }

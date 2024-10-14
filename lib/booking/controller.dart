@@ -83,6 +83,8 @@ class BookingController extends GetxController
   void onInit() {
     super.onInit();
 
+    print("area data ${parameters["areaData"]}");
+
     _startInactivityTimer();
     _updateMaskFormatter("");
     int endNumber =
@@ -119,7 +121,7 @@ class BookingController extends GetxController
       Get.back();
     }
     CustomDialog().errorDialog(Get.context!, "Screen Idle",
-        "No Gestures were detected within the last minute. Reloading the page.",
+        "No Gestures were detected in the last minute. Reloading the page.",
         () {
       Get.back();
       _reloadPage();
@@ -149,18 +151,16 @@ class BookingController extends GetxController
     );
   }
 
-  void timeComputation() {
-    DateTime now = DateTime.now();
-    startDate.text = DateTime.now().toString().split(" ")[0].toString();
+  void timeComputation() async {
+    DateTime now = await Functions.getTimeNow();
+    startDate.text = now.toString().split(" ")[0].toString();
     startTime.text = DateFormat('h:mm a').format(now).toString();
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.text);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
-    print("selectedNumber $selectedNumber");
+
     endTime.text = DateFormat('h:mm a')
         .format(parsedTime.add(Duration(hours: selectedNumber.value)))
         .toString();
-
-    print("endTime ${endTime.text}");
   }
 
   void onTapChanged(bool isIncrement) {
@@ -350,7 +350,20 @@ class BookingController extends GetxController
         isScrollControlled: true,
         VehicleOption(
           callback: (data) {
-            selectedVh.value = data;
+            List objData = data;
+
+            List filterData = ddVehiclesData.where((obj) {
+              return obj["value"] == data[0]["vehicle_type_id"];
+            }).toList();
+            if (filterData.isEmpty) {
+              selectedVh.value = objData;
+            } else {
+              objData = objData.map((e) {
+                e["vehicle_type"] = filterData[0]["text"];
+                return e;
+              }).toList();
+              selectedVh.value = objData;
+            }
             routeToComputation();
           },
         ),

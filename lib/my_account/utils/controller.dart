@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
+import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/routes/routes.dart';
 
 import '../../http/api_keys.dart';
@@ -99,19 +100,20 @@ class UpdateProfileController extends GetxController {
   }
 
   Future<void> selectDate(BuildContext context) async {
+    DateTime timeNow = await Functions.getTimeNow();
     DateTime? datePicker = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(DateTime.now().year - 80),
-      lastDate: DateTime.now(),
+      initialDate: timeNow,
+      firstDate: DateTime(timeNow.year - 80),
+      lastDate: timeNow,
       initialDatePickerMode: DatePickerMode.day,
     );
-    if (datePicker != null && datePicker != DateTime.now()) {
+    if (datePicker != null && datePicker != timeNow) {
       bday.clear();
 
       selectedDate = datePicker;
 
-      final today = DateTime.now();
+      final today = timeNow;
       final age = today.year -
           selectedDate!.year -
           (today.month > selectedDate!.month ||

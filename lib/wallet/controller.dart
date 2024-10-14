@@ -31,11 +31,15 @@ class WalletController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    DateTime timeNow = DateTime.now();
+    getCurrentTime();
+    getUlala();
+  }
+
+  void getCurrentTime() async {
+    DateTime timeNow = await Functions.getTimeNow();
     toDate.text = timeNow.toString().split(" ")[0];
     fromDate.text =
         timeNow.subtract(const Duration(days: 1)).toString().split(" ")[0];
-    getUlala();
   }
 
   Future<void> getUlala() async {
@@ -96,7 +100,7 @@ class WalletController extends GetxController
     String subApi =
         "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
 
-    HttpRequest(api: subApi).get().then((response) {
+    HttpRequest(api: subApi).get().then((response) async {
       if (response == "No Internet") {
         isLoadingLogs.value = false;
         isNetConnLogs.value = false;
@@ -110,7 +114,9 @@ class WalletController extends GetxController
       }
 
       if (response["items"].isNotEmpty) {
-        DateTime today = DateTime.now().toUtc();
+        DateTime timeNow = await Functions.getTimeNow();
+        DateTime today = timeNow.toUtc();
+
         String todayString = today.toIso8601String().substring(0, 10);
 
         List filteredTransactions = response["items"].where((transaction) {
@@ -141,7 +147,7 @@ class WalletController extends GetxController
   }
 
   Future<void> selectDate(BuildContext context, bool isStartDate) async {
-    final DateTime today = DateTime.now();
+    final DateTime today = await Functions.getTimeNow();
     final DateTime firstDateLimit = today.subtract(const Duration(days: 29));
 
     DateTime? firstDate;

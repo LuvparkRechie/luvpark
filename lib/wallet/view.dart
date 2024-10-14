@@ -534,12 +534,10 @@ class WalletScreen extends GetView<WalletController> {
         ),
         Expanded(
           child: CustomParagraph(
-            minFontSize: 8,
-            fontSize: 20,
+            fontSize: 18,
             color: AppColor.titleColor,
             text: controller.fname.value,
             fontWeight: FontWeight.w800,
-            letterSpacing: -0.41,
             maxlines: 1,
           ),
         ),

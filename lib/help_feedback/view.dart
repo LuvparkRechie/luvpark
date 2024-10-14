@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/web_view/webview.dart';
 
@@ -167,12 +169,22 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                       ),
                       trailing: const Icon(Icons.chevron_right_sharp,
                           color: Color(0xFF1C1C1E)),
-                      onTap: () {
-                        Get.to(const WebviewPage(
-                          urlDirect: "https://luvpark.ph/terms-of-use/",
-                          label: "Terms of Use",
-                          isBuyToken: false,
-                        ));
+                      onTap: () async {
+                        CustomDialog().loadingDialog(context);
+                        final response =
+                            await HttpRequest(api: "").linkToPage();
+                        Get.back();
+                        if (response == "Success") {
+                          Get.to(const WebviewPage(
+                            urlDirect: "https://luvpark.ph/terms-of-use/",
+                            label: "Terms of Use",
+                            isBuyToken: false,
+                          ));
+                        } else {
+                          CustomDialog().internetErrorDialog(context, () {
+                            Get.back();
+                          });
+                        }
                       },
                     ),
                     const Divider(),
@@ -204,12 +216,22 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                       ),
                       trailing: const Icon(Icons.chevron_right_sharp,
                           color: Color(0xFF1C1C1E)),
-                      onTap: () {
-                        Get.to(const WebviewPage(
-                          urlDirect: "https://luvpark.ph/privacy-policy/",
-                          label: "Privacy Policy",
-                          isBuyToken: false,
-                        ));
+                      onTap: () async {
+                        CustomDialog().loadingDialog(context);
+                        final response =
+                            await HttpRequest(api: "").linkToPage();
+                        Get.back();
+                        if (response == "Success") {
+                          Get.to(const WebviewPage(
+                            urlDirect: "https://luvpark.ph/privacy-policy/",
+                            label: "Terms of Use",
+                            isBuyToken: false,
+                          ));
+                        } else {
+                          CustomDialog().internetErrorDialog(context, () {
+                            Get.back();
+                          });
+                        }
                       },
                     ),
                   ],

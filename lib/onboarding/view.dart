@@ -96,7 +96,7 @@ class MyOnboardingPage extends StatelessWidget {
                       CustomButton(
                         text: "Log in",
                         onPressed: () {
-                          Get.toNamed(Routes.login);
+                          Get.offAndToNamed(Routes.login);
                         },
                       ),
                       Container(height: 10),
@@ -106,7 +106,7 @@ class MyOnboardingPage extends StatelessWidget {
                         textColor: AppColor.primaryColor,
                         text: "Create Account",
                         onPressed: () {
-                          Get.toNamed(Routes.landing);
+                          Get.offAndToNamed(Routes.landing);
                         },
                       ),
                     ],

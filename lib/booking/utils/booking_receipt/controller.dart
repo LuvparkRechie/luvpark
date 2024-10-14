@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark_get/booking/utils/extend.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
+import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 
@@ -25,14 +26,15 @@ class BookingReceiptController extends GetxController
     }
   }
 
-  void startTimer() {
+  void startTimer() async {
+    DateTime timeNow = await Functions.getTimeNow();
     DateTime startTime =
         DateTime.parse(parameters["paramsCalc"]["dt_in"].toString());
     DateTime endTime =
         DateTime.parse(parameters["paramsCalc"]["dt_out"].toString());
 
     _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
-      DateTime currentTime = DateTime.now();
+      DateTime currentTime = timeNow;
       Duration timeElapsed = currentTime.difference(startTime);
       Duration totalTime = endTime.difference(startTime);
       progress.value = timeElapsed.inSeconds / totalTime.inSeconds;
@@ -95,8 +97,8 @@ class BookingReceiptController extends GetxController
     update();
   }
 
-  void cancelAdvanceParking() {
-    DateTime now = DateTime.now();
+  void cancelAdvanceParking() async {
+    DateTime now = await Functions.getTimeNow();
     DateTime resDate = DateTime.parse(parameters["startDate"].toString());
 
     if (int.parse(now.difference(resDate).inMinutes.toString()) >

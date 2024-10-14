@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 
+import '../functions/functions.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
 import '../routes/routes.dart';
@@ -12,6 +13,7 @@ import '../routes/routes.dart';
 class LockScreenController extends GetxController {
   LockScreenController();
   final parameter = Get.arguments;
+  RxBool hasNet = true.obs;
 
   RxString formattedTime = "".obs;
 
@@ -24,7 +26,8 @@ class LockScreenController extends GetxController {
   }
 
   void getParamData() async {
-    DateTime timeNow = DateTime.now();
+    DateTime timeNow = await Functions.getTimeNow();
+
     DateTime localDate = DateTime.parse(parameter[0]["locked_expiry_on"]);
 
     DateTime parsedDateNow = DateTime(
@@ -42,8 +45,8 @@ class LockScreenController extends GetxController {
   }
 
   void timeout(DateTime localDate) {
-    Timer.periodic(Duration(seconds: 3), (timer) {
-      DateTime timeNow = DateTime.now();
+    Timer.periodic(Duration(seconds: 3), (timer) async {
+      DateTime timeNow = await Functions.getTimeNow();
 
       if (timeNow.isAfter(localDate) || timeNow.isAtSameMomentAs(localDate)) {
         timer.cancel(); // Stop the timer
@@ -53,6 +56,7 @@ class LockScreenController extends GetxController {
   }
 
   void unlockAccount() async {
+    hasNet.value = true;
     CustomDialog().loadingDialog(Get.context!);
     HttpRequest(
             api: ApiKeys.gApiSubFolderPutClearLockTimer,
@@ -61,18 +65,20 @@ class LockScreenController extends GetxController {
         .then((returnPost) {
       Get.back();
       if (returnPost == "No Internet") {
+        hasNet.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
-          unlockAccount();
         });
         return;
       }
       if (returnPost == null) {
+        hasNet.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
           unlockAccount();
         });
       } else {
+        hasNet.value = true;
         if (returnPost["success"] == 'Y') {
           Get.back();
           Get.offAndToNamed(Routes.login);

@@ -9,6 +9,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/variables.dart';
+import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/sqlite/pa_message_model.dart';
 import 'package:luvpark_get/sqlite/pa_message_table.dart';
@@ -295,7 +296,7 @@ Future<void> updateLocation(LatLng position) async {
 
 Future<void> getParkingTrans(int ctr) async {
   var akongId = await Authentication().getUserId();
-
+  DateTime timeNow = await Functions.getTimeNow();
   HttpRequest(
     api:
         "${ApiKeys.gApiSubFolderGetActiveParking}?luvpay_id=${akongId.toString()}",
@@ -313,7 +314,7 @@ Future<void> getParkingTrans(int ctr) async {
     if (notificationData != null && notificationData["items"] != null) {
       List itemData = notificationData["items"].where((element) {
         DateTime timeOut = DateTime.parse(element["dt_out"].toString());
-        return DateTime.now().isBefore(timeOut);
+        return timeNow.isBefore(timeOut);
       }).toList();
       for (var dataRow in itemData) {
         int resIdInatay = int.parse(dataRow["mreservation_id"]?.toString() ??
@@ -325,7 +326,9 @@ Future<void> getParkingTrans(int ctr) async {
         DateTime targetDate =
             DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
 
-        if (!Variables.withinOneHourRange(targetDate)) continue;
+        bool dugago = await Variables.withinOneHourRange(targetDate);
+
+        if (!dugago) continue;
         var resData = {
           NotificationDataFields.reservedId: resIdInatay,
           NotificationDataFields.userId: int.parse(akongId.toString()),
@@ -417,13 +420,13 @@ Future<void> getMessNotif() async {
       for (dynamic dataRow in messageData["items"]) {
         PaMessageDatabase.instance
             .readNotificationById(dataRow["push_msg_id"])
-            .then((objData) {
+            .then((objData) async {
           if (objData == null) {
             DateTime pdt = DateTime.parse(dataRow["created_on"].toString());
             DateTime targetDate =
                 DateTime(pdt.year, pdt.month, pdt.day, pdt.hour, pdt.minute);
-
-            if (!Variables.withinDayRange(targetDate)) return;
+            bool dugaga = await Variables.withinDayRange(targetDate);
+            if (!dugaga) return;
             Object json = {
               PaMessageDataFields.pushMsgId: dataRow["push_msg_id"],
               PaMessageDataFields.userId: dataRow["user_id"],

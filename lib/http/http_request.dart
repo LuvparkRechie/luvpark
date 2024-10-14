@@ -110,4 +110,19 @@ class HttpRequest {
       return "No Internet";
     }
   }
+
+  Future<dynamic> linkToPage() async {
+    var links = http.get(Uri.https("luvpark.ph", "/terms-of-use"),
+        headers: {"Content-Type": 'application/json; charset=utf-8'});
+    try {
+      final response = await fetchDataWithTimeout(links);
+      if (response.statusCode == 200) {
+        return "Success";
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return "No Internet";
+    }
+  }
 }
