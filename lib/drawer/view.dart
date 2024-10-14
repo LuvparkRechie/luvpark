@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -31,102 +30,98 @@ class CustomDrawer extends GetView<DashboardMapController> {
               SizedBox(
                 height: 70,
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment
-                          .spaceBetween, // Space between elements
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.white,
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                radius: 30,
-                                backgroundColor: Colors.grey[200],
-                                backgroundImage: controller.myProfPic.isNotEmpty
-                                    ? MemoryImage(
-                                        base64Decode(
-                                            controller.myProfPic.value),
-                                      )
-                                    : null,
-                                child: controller.myProfPic.isEmpty
-                                    ? Icon(
-                                        Icons.person,
-                                        size: 32,
-                                        color: AppColor.primaryColor,
-                                      )
-                                    : null,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                controller.userProfile != null &&
-                                        controller.userProfile['first_name'] !=
-                                            null
-                                    ? CustomParagraph(
-                                        text:
-                                            '${controller.userProfile['first_name']} ${controller.userProfile['last_name']}',
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
-                                        fontStyle: FontStyle.normal,
-                                        textAlign: TextAlign.center,
-                                        maxlines: 2,
-                                      )
-                                    : CustomParagraph(
-                                        text: "NOT VERIFIED",
-                                        color: Colors.black,
-                                        fontWeight: FontWeight.w700,
-                                        fontStyle: FontStyle.normal,
-                                        textAlign: TextAlign.center,
-                                        fontSize: 16,
-                                      ),
-                                OutlinedButton(
-                                  onPressed: () {
-                                    Get.toNamed(Routes.profile, arguments: () {
-                                      controller.getUserData();
-                                    });
-                                  },
-                                  style: OutlinedButton.styleFrom(
-                                    backgroundColor:
-                                        AppColor.primaryColor.withOpacity(0.1),
-                                    side: const BorderSide(
-                                        color: Colors.white, width: 1.0),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(58.0),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 20.0),
-                                  ),
-                                  child: CustomParagraph(
-                                    text: "View Profile",
-                                    fontSize: 14,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    textAlign: TextAlign.center,
-                                    letterSpacing: -0.408,
-                                    color: AppColor.primaryColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0),
+                child: Row(
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.white,
+                          width: 2.0,
                         ),
-                      ],
+                      ),
+                      child: CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.grey[200],
+                        backgroundImage: controller.myProfPic.isNotEmpty
+                            ? MemoryImage(
+                                base64Decode(controller.myProfPic.value),
+                              )
+                            : null,
+                        child: controller.myProfPic.isEmpty
+                            ? Icon(
+                                Icons.person,
+                                size: 32,
+                                color: AppColor.primaryColor,
+                              )
+                            : null,
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          controller.userProfile != null &&
+                                  controller.userProfile['first_name'] != null
+                              ? CustomParagraph(
+                                  text:
+                                      '${controller.userProfile['first_name']} ${controller.userProfile['last_name']}',
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
+                                  textAlign: TextAlign.center,
+                                  fontSize: 16,
+                                  maxlines: 1,
+                                  minFontSize: 8,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                              : CustomParagraph(
+                                  text: "Not Verified",
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w700,
+                                  fontStyle: FontStyle.normal,
+                                  textAlign: TextAlign.center,
+                                  fontSize: 16,
+                                  maxlines: 1,
+                                  minFontSize: 8,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                          OutlinedButton(
+                            onPressed: () {
+                              Get.toNamed(Routes.profile, arguments: () {
+                                controller.getUserData();
+                              });
+                            },
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor:
+                                  AppColor.primaryColor.withOpacity(0.1),
+                              side: const BorderSide(
+                                  color: Colors.white, width: 1.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(58.0),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                            ),
+                            child: CustomParagraph(
+                              text: "View Profile",
+                              fontSize: 14,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w700,
+                              textAlign: TextAlign.center,
+                              letterSpacing: -0.408,
+                              color: AppColor.primaryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
               SizedBox(
                 height: 10,

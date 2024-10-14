@@ -26,6 +26,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
           textColor: Colors.white,
           titleColor: Colors.white,
           bgColor: Colors.transparent,
+          btnColor: null,
           title: "My Profile",
           onTap: () {
             Get.back();
@@ -158,25 +159,6 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                 ),
                               ),
                               Container(width: 15),
-                              // InkWell(
-                              //   onTap: () {
-                              //     controller.getRegions();
-                              //   },
-                              //   child: Container(
-                              //     padding: EdgeInsets.symmetric(
-                              //         horizontal: 10, vertical: 10),
-                              //     decoration: BoxDecoration(
-                              //       border: Border.all(
-                              //         color: AppColor.primaryColor,
-                              //       ),
-                              //       borderRadius: BorderRadius.circular(20),
-                              //     ),
-                              //     child: const Center(
-                              //       child:
-                              //           CustomLinkLabel(text: "Edit Profile"),
-                              //     ),
-                              //   ),
-                              // )
                               OutlinedButton(
                                 onPressed: () {
                                   controller.getRegions();

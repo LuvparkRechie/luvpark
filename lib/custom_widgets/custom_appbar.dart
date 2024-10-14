@@ -14,6 +14,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   final Color? titleColor;
   final Color? textColor;
   final Color? btnColor;
+  final Brightness? statusBarBrightness;
   final PreferredSizeWidget? bottom;
   final double elevation;
   final bool hasBtnColor;
@@ -32,7 +33,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       this.textColor,
       this.preferredSize = const Size.fromHeight(kToolbarHeight),
       this.btnColor = const Color(0xFF0078FF),
-      this.hasBtnColor = true});
+      this.hasBtnColor = true,
+      this.statusBarBrightness});
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +44,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: bgColor ?? Color(0xFFE8F0F9),
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: bgColor ?? Color(0xFFE8F0F9),
-        statusBarBrightness: Brightness.light,
-        statusBarIconBrightness:
-            bgColor != null ? Brightness.light : Brightness.dark,
+        statusBarBrightness: statusBarBrightness ?? Brightness.light,
+        statusBarIconBrightness: statusBarBrightness ?? Brightness.dark,
       ),
       leading: InkWell(
         onTap: () {

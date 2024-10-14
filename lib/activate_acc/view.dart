@@ -52,8 +52,12 @@ class ActivateAccount extends GetView<ActivateAccountController> {
 
     return Scaffold(
         backgroundColor: Colors.white,
-        appBar: CustomAppbar(
+        appBar: const CustomAppbar(
           elevation: 0,
+          bgColor: Colors.white,
+          textColor: Colors.black,
+          titleColor: Colors.black,
+          statusBarBrightness: Brightness.dark,
         ),
         body: Obx(
           () => controller.isLoading.value

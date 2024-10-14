@@ -101,6 +101,7 @@ class OtpUpdateController extends GetxController {
           return e;
         }).toList();
         inputPin.value = "";
+        pinController.clear();
         minutes.value = initialMinutes.value;
         seconds.value = 0;
         isRunning.value = false;
@@ -121,10 +122,12 @@ class OtpUpdateController extends GetxController {
 
   Future<void> verifyOtp() async {
     CustomDialog().loadingDialog(Get.context!);
+    print('submitParam $submitParam');
     HttpRequest(
             api: ApiKeys.gApiSubFolderPutUpdateProf, parameters: submitParam)
         .put()
         .then((res) async {
+      print("res $res");
       Get.back();
       if (res == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {

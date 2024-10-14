@@ -24,8 +24,10 @@ class UpdateProfile extends GetView<UpdateProfileController> {
           ? const Scaffold(body: PageLoader())
           : Scaffold(
               appBar: CustomAppbar(
-                title:
-                    controller.currentPage.value == 0 ? "Update Profile" : null,
+                elevation: 0,
+                bgColor: Colors.white,
+                statusBarBrightness: Brightness.dark,
+                title: "Update Profile",
                 onTap: () {
                   if (controller.currentPage.value == 0) {
                     Get.back();
@@ -133,10 +135,18 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "First Name",
                 controller: controller.firstName,
                 onChange: (value) {
-                  if (value.isNotEmpty) {
+                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+
+                  if (trimmedValue.isNotEmpty) {
                     controller.firstName.value = TextEditingValue(
-                      text: Variables.capitalizeAllWord(value),
+                      text: Variables.capitalizeAllWord(trimmedValue),
                       selection: controller.firstName.selection,
+                    );
+                  } else {
+                    // If the trimmed value is empty, just keep the selection unchanged
+                    controller.firstName.value = TextEditingValue(
+                      text: "",
+                      selection: TextSelection.collapsed(offset: 0),
                     );
                   }
                 },
@@ -150,14 +160,14 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   return null;
                 },
               ),
-              CustomDropdown(
-                labelText: "Suffix",
-                ddData: controller.suffixes,
-                ddValue: controller.selectedSuffix.value,
-                onChange: (String? newValue) {
-                  controller.selectedSuffix.value = newValue;
-                },
-              ),
+              // CustomDropdown(
+              //   labelText: "Suffix",
+              //   ddData: controller.suffixes,
+              //   ddValue: controller.selectedSuffix.value,
+              //   onChange: (String? newValue) {
+              //     controller.selectedSuffix.value = newValue;
+              //   },
+              // ),
               CustomTextField(
                 labelText: "Middle Name",
                 title: "Middle Name",
@@ -166,10 +176,19 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
                 ],
                 onChange: (value) {
-                  if (value.isNotEmpty) {
+                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+
+                  if (trimmedValue.isNotEmpty) {
                     controller.middleName.value = TextEditingValue(
-                        text: Variables.capitalizeAllWord(value),
-                        selection: controller.middleName.selection);
+                      text: Variables.capitalizeAllWord(trimmedValue),
+                      selection: controller.middleName.selection,
+                    );
+                  } else {
+                    // If the trimmed value is empty, just keep the selection unchanged
+                    controller.middleName.value = TextEditingValue(
+                      text: "",
+                      selection: TextSelection.collapsed(offset: 0),
+                    );
                   }
                 },
               ),
@@ -178,10 +197,19 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "Last Name",
                 controller: controller.lastName,
                 onChange: (value) {
-                  if (value.isNotEmpty) {
+                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+
+                  if (trimmedValue.isNotEmpty) {
                     controller.lastName.value = TextEditingValue(
-                        text: Variables.capitalizeAllWord(value),
-                        selection: controller.lastName.selection);
+                      text: Variables.capitalizeAllWord(trimmedValue),
+                      selection: controller.lastName.selection,
+                    );
+                  } else {
+                    // If the trimmed value is empty, just keep the selection unchanged
+                    controller.lastName.value = TextEditingValue(
+                      text: "",
+                      selection: TextSelection.collapsed(offset: 0),
+                    );
                   }
                 },
                 inputFormatters: [
@@ -198,6 +226,18 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 labelText: "Email",
                 title: "Email",
                 controller: controller.email,
+                onChange: (value) {
+                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+
+                  if (trimmedValue.isNotEmpty) {
+                  } else {
+                    // If the trimmed value is empty, just keep the selection unchanged
+                    controller.email.value = TextEditingValue(
+                      text: "",
+                      selection: TextSelection.collapsed(offset: 0),
+                    );
+                  }
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Email adress is required';
@@ -320,7 +360,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   if (value == null || value.isEmpty) {
                     return 'Region is required';
                   }
-
                   return null;
                 },
                 onChange: (data) {
@@ -392,28 +431,48 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                         controller.selectedBrgy.value = data.toString();
                       },
                     ),
-              CustomTextField(
-                labelText: 'House No./Bldg (optional)',
-                controller: controller.address1,
-                onChange: (value) {
-                  if (value.isNotEmpty) {
-                    controller.address1.value = TextEditingValue(
-                        text: Variables.capitalizeAllWord(value),
-                        selection: controller.address1.selection);
-                  }
-                },
-              ),
+              // CustomTextField(
+              //   labelText: 'House No./Bldg (optional)',
+              //   controller: controller.address1,
+              //   onChange: (value) {
+              //     String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+
+              //     if (trimmedValue.isNotEmpty) {
+              //       if (value.isNotEmpty) {
+              //         controller.address1.value = TextEditingValue(
+              //             text: Variables.capitalizeAllWord(value),
+              //             selection: controller.address1.selection);
+              //       }
+              //     } else {
+              //       // If the trimmed value is empty, just keep the selection unchanged
+              //       controller.address1.value = TextEditingValue(
+              //         text: "",
+              //         selection: TextSelection.collapsed(offset: 0),
+              //       );
+              //     }
+              //   },
+              // ),
               CustomTextField(
                 labelText: 'Zip Code',
                 controller: controller.zipCode,
                 keyboardType: TextInputType.number,
-                onChange: (value) {},
+                onChange: (value) {
+                  if (value.length > 4) {
+                    controller.zipCode.text = value.substring(0, 4);
+                    controller.zipCode.selection = TextSelection.fromPosition(
+                        TextPosition(offset: controller.zipCode.text.length));
+                  }
+                },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Region is required';
+                  } else if (value.length != 4) {
+                    return 'ZIP code must be 4 digits';
+                  } else if (!RegExp(r'^\d{4}$').hasMatch(value)) {
+                    return 'ZIP code must be numeric';
                   }
 
-                  return null;
+                  return null; // Valid input
                 },
               ),
               Container(height: 10),

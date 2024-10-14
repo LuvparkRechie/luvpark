@@ -42,74 +42,10 @@ class LoginScreenController extends GetxController {
     update();
   }
 
-  // Future<void> getAccountStatus(context, mobile, Function cb) async {
-  //   String apiParam =
-  //       "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile";
-
-  //   HttpRequest(api: apiParam).get().then((objData) {
-  //     print("account status $objData");
-  //     if (objData == "No Internet") {
-  //       isInternetConnected.value = false;
-  //       if (counter.value != 0) {
-  //         counter--;
-  //       }
-  //       cb([
-  //         {"has_net": false, "items": []}
-  //       ]);
-
-  //       CustomDialog().internetErrorDialog(context, () {
-  //         Get.back();
-  //       });
-  //       return;
-  //     }
-  //     if (objData == null) {
-  //       isInternetConnected.value = false;
-  //       if (counter.value != 0) {
-  //         counter--;
-  //       }
-  //       cb([
-  //         {"has_net": true, "items": []}
-  //       ]);
-  //       CustomDialog().serverErrorDialog(context, () {
-  //         Get.back();
-  //         SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-  //       });
-
-  //       return;
-  //     }
-  //     if (objData["items"].isEmpty) {
-  //       isInternetConnected.value = true;
-  //       if (counter.value != 0) {
-  //         counter--;
-  //       }
-  //       cb([
-  //         {"has_net": false, "items": []}
-  //       ]);
-  //       CustomDialog().errorDialog(context, "luvpark", "Invalid account.", () {
-  //         Get.offAllNamed(Routes.login);
-  //       });
-  //       return;
-  //     }
-  //     if (objData["items"][0]["login_attempt"] >= 3) {
-  //       isLoading.value = false;
-  //       mobileNumber.text = "";
-  //       password.text = "";
-  //       Future.delayed(Duration(milliseconds: 200), () {
-  //         Get.offAndToNamed(Routes.lockScreen, arguments: objData["items"]);
-  //       });
-
-  //       return;
-  //     } else {
-  //       cb([
-  //         {"has_net": true, "items": objData["items"]}
-  //       ]);
-  //       return;
-  //     }
-  //   });
-  // }
-
   //POST LOGIN
   postLogin(context, Map<String, dynamic> param, Function cb) async {
+    //String? bio = await Authentication().getPasswordBiometric();
+
     String apiParam = ApiKeys.gApiLuvParkGetVehicleBrand;
 
     HttpRequest(api: apiParam).get().then((returnBrandData) async {
@@ -175,7 +111,23 @@ class LoginScreenController extends GetxController {
             cb([
               {"has_net": true, "items": []}
             ]);
-            print("ss ${returnPost["success"]}");
+            if (returnPost["is_active"] == "N") {
+              CustomDialog().confirmationDialog(
+                  context,
+                  "Activate account",
+                  "Your account is currently inactive. Would you like to activate it now?",
+                  "No",
+                  "Yes", () {
+                Get.back();
+              }, () {
+                Get.back();
+                Get.toNamed(
+                  Routes.activate,
+                  arguments: "63${mobileNumber.text.replaceAll(" ", "")}",
+                );
+              });
+              return;
+            }
             if (returnPost["login_attempt"] != null &&
                 returnPost["login_attempt"] >= 3) {
               print("iff");

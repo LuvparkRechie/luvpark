@@ -46,11 +46,13 @@ class CreateNewPassController extends GetxController {
     Map<String, dynamic> requestParam = {
       "mobile_no": parameters,
     };
+
     HttpRequest(
             api: ApiKeys.gApiSubFolderPostReqOtpShare, parameters: requestParam)
         .post()
         .then(
       (retvalue) {
+        print("retvalue $retvalue");
         if (retvalue == "No Internet") {
           isLoading.value = false;
           CustomDialog().internetErrorDialog(Get.context!, () {

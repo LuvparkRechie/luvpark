@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:luvpark_get/auth/authentication.dart';
+import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
@@ -212,11 +214,35 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                           CustomButton(
                               text: "Create password",
                               loading: controller.isLoading.value,
-                              onPressed: () {
+                              onPressed: () async {
                                 FocusScope.of(context)
                                     .requestFocus(FocusNode());
                                 if (controller.formKeyCreatePass.currentState!
                                     .validate()) {
+                                  String? bio = await Authentication()
+                                      .getPasswordBiometric();
+
+                                  if (controller.newPass.text == bio) {
+                                    CustomDialog().infoDialog(
+                                        "Invalid Password",
+                                        "To continue, please create a new password that you haven't used before.",
+                                        () {
+                                      Get.back();
+                                    });
+                                    return;
+                                  }
+                                  if (Variables.getPasswordStrengthText(
+                                          controller.passStrength.value) !=
+                                      "Strong Password") {
+                                    CustomDialog().infoDialog(
+                                        "Invalid Password",
+                                        "For enhanced security, please create a stronger password.",
+                                        () {
+                                      Get.back();
+                                    });
+
+                                    return;
+                                  }
                                   controller.requestOtp();
                                 }
                               })

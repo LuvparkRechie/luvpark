@@ -236,11 +236,12 @@ class RegistrationPage extends GetView<RegistrationController> {
                                       if (Variables.getPasswordStrengthText(
                                               controller.passStrength.value) !=
                                           "Strong Password") {
-                                        CustomDialog().snackbarDialog(
-                                            context,
-                                            'For enhanced security, please create a stronger password.',
-                                            Colors.red,
-                                            () {});
+                                        CustomDialog().infoDialog(
+                                            "Invalid Password",
+                                            "For enhanced security, please create a stronger password.",
+                                            () {
+                                          Get.back();
+                                        });
                                         return;
                                       }
                                       if (controller.isLoading.value) return;

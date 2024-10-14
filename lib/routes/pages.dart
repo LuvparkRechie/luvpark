@@ -1,6 +1,5 @@
 import 'package:get/get.dart';
 import 'package:luvpark_get/about_us/index.dart';
-import 'package:luvpark_get/change_password/index.dart';
 import 'package:luvpark_get/faq/index.dart';
 import 'package:luvpark_get/forgot_password/utils/forgot_otp/index.dart';
 import 'package:luvpark_get/forgot_password/utils/forgot_verified_acc/index.dart';
@@ -160,11 +159,7 @@ class AppPages {
       page: () => const Security(),
       binding: SecuritySettingsBinding(),
     ),
-    GetPage(
-      name: Routes.changepassword,
-      page: () => const ChangePassword(),
-      binding: ChangePasswordBinding(),
-    ),
+
     GetPage(
       name: Routes.walletrechargeload,
       page: () => const WalletRechargeLoadScreen(),

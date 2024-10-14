@@ -50,6 +50,10 @@ class OtpUpdate extends GetView<OtpUpdateController> {
       backgroundColor: Colors.white,
       appBar: const CustomAppbar(
         elevation: 0,
+        bgColor: Colors.white,
+        textColor: Colors.black,
+        titleColor: Colors.black,
+        statusBarBrightness: Brightness.dark,
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(20, 10, 15, 0),

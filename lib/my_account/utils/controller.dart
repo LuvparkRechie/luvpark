@@ -81,7 +81,6 @@ class UpdateProfileController extends GetxController {
     pageController = PageController();
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      getSuffixes();
       for (dynamic datas in parameters) {
         regionData.add(
           {"text": datas["region_name"], "value": datas["region_id"]},
@@ -90,6 +89,7 @@ class UpdateProfileController extends GetxController {
       for (dynamic item in Variables.civilStatusData) {
         civilData.add({"text": item["status"], "value": item["value"]});
       }
+      getSuffixes();
     });
   }
 
@@ -97,6 +97,96 @@ class UpdateProfileController extends GetxController {
   void onClose() {
     super.onClose();
     pageController.dispose();
+  }
+
+  Future<void> getUserDataFields() async {
+    final userData = await Authentication().getUserData2();
+
+    String getQuestion(id) {
+      String quest = questionData.where((obj) {
+        return obj["secq_id"] == id;
+      }).toList()[0]["question"];
+      return quest;
+    }
+
+    if (userData['first_name'] != null) {
+      firstName.text = userData["first_name"].toString().trim();
+      middleName.text = userData["middle_name"] == null
+          ? ""
+          : userData["middle_name"].toString().trim();
+      lastName.text = userData["last_name"].toString().trim();
+      email.text = userData["email"].toString().trim();
+      bday.text = userData["birthday"].toString().trim();
+      selectedCivil.value = civilData.where((objData) {
+        return objData["value"].toString().toLowerCase() ==
+            userData["civil_status"].toString().toLowerCase();
+      }).toList()[0]["value"];
+      selectedRegion.value = userData["region_id"].toString();
+      selectedProvince.value = userData["province_id"].toString();
+      selectedCity.value = userData["city_id"].toString();
+      selectedBrgy.value = userData["brgy_id"].toString();
+      zipCode.text = userData["zip_code"].toString();
+      seq1.value = userData["secq_id1"];
+      seq2.value = userData["secq_id2"];
+      seq3.value = userData["secq_id3"];
+      answer1.text = userData["seca1"];
+      answer2.text = userData["seca2"];
+      answer3.text = userData["seca3"];
+      question1.value = getQuestion(seq1.value);
+      question2.value = getQuestion(seq2.value);
+      question3.value = getQuestion(seq3.value);
+
+      CustomDialog().loadingDialog(Get.context!);
+      executeCodeAddress(
+          "${ApiKeys.gApiSubFolderGetProvince}?p_region_id=${userData['region_id']}",
+          1, (data) {
+        if (data.isNotEmpty) {
+          provinceData.value = data;
+        }
+        executeCodeAddress(
+            "${ApiKeys.gApiSubFolderGetCity}?p_province_id=${userData['province_id']}",
+            2, (data) {
+          if (data.isNotEmpty) {
+            cityData.value = data;
+          }
+          executeCodeAddress(
+              "${ApiKeys.gApiSubFolderGetBrgy}?p_city_id=${userData['city_id']}",
+              3, (data) {
+            if (data.isNotEmpty) {
+              brgyData.value = data;
+            }
+          });
+        });
+      });
+    }
+  }
+
+  Future<void> executeCodeAddress(String api, int index, Function cb) async {
+    final response = await HttpRequest(api: api).get();
+
+    if (response == "No Internet") {
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    if (response == null) {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    if (response["items"].isNotEmpty) {
+      cb(response["items"]);
+      if (index == 3) {
+        Get.back();
+      }
+      return;
+    } else {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+    }
   }
 
   Future<void> selectDate(BuildContext context) async {
@@ -177,6 +267,7 @@ class UpdateProfileController extends GetxController {
         return;
       } else {
         questionData.value = returnData["items"];
+        getUserDataFields();
       }
     });
   }
@@ -291,14 +382,14 @@ class UpdateProfileController extends GetxController {
       case 0:
         if (formKeyStep1.currentState!.validate()) {
           pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 100),
               curve: Curves.easeInOut);
         }
         break;
       case 1:
         if (formKeyStep2.currentState!.validate()) {
           pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
+              duration: const Duration(milliseconds: 100),
               curve: Curves.easeInOut);
         }
         break;
@@ -317,7 +408,7 @@ class UpdateProfileController extends GetxController {
       "last_name": lastName.text,
       "first_name": firstName.text,
       "middle_name": middleName.text,
-      "birthday": bday.text,
+      "birthday": bday.text.toString().split("T")[0],
       "gender": gender.value,
       "civil_status": selectedCivil.value,
       "address1": address1.text,

@@ -51,6 +51,12 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
       } else {
         return PopScope(
           canPop: false,
+          onPopInvoked: (dd) {
+            if (controller.dashboardScaffoldKey.currentState!.isDrawerOpen) {
+              controller.dashboardScaffoldKey.currentState?.closeDrawer();
+            }
+            return;
+          },
           child: Scaffold(
             extendBodyBehindAppBar: true,
             key: controller.dashboardScaffoldKey,
