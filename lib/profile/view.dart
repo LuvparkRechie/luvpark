@@ -31,6 +31,7 @@ class Profile extends GetView<ProfileScreenController> {
           textColor: Colors.white,
           titleColor: Colors.white,
           bgColor: Colors.transparent,
+          btnColor: null,
           title: "My Account",
           onTap: () {
             Get.back();

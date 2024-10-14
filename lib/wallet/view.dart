@@ -29,6 +29,7 @@ class WalletScreen extends GetView<WalletController> {
     return Scaffold(
         appBar: CustomAppbar(
           title: "My Wallet",
+          hasBtnColor: true,
           onTap: () {
             Get.back();
           },

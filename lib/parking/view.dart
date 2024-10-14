@@ -27,6 +27,7 @@ class ParkingScreen extends GetView<ParkingController> {
           bgColor: AppColor.primaryColor,
           titleColor: Colors.white,
           textColor: Colors.white,
+          hasBtnColor: false,
           elevation: 0,
           onTap: () {
             switch (controller.parameter) {
