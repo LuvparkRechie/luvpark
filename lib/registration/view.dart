@@ -54,6 +54,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
                         child: Form(
+                          autovalidateMode: AutovalidateMode.onUnfocus,
                           key: controller.formKeyRegister,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -68,8 +69,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                               Image(
                                 image: const AssetImage(
                                     "assets/images/onboard5.png"),
-                                width: MediaQuery.of(Get.context!).size.width *
-                                    .55,
+                                width: MediaQuery.of(context).size.width * .55,
                                 fit: BoxFit.contain,
                                 filterQuality: FilterQuality.high,
                               ),
@@ -110,6 +110,22 @@ class RegistrationPage extends GetView<RegistrationController> {
                                   onIconTap: () {
                                     controller.visibilityChanged(
                                         !controller.isShowPass.value);
+                                  },
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(
+                                        RegExp(r'\s')),
+                                    LengthLimitingTextInputFormatter(30),
+                                  ],
+                                  validator: (txtValue) {
+                                    if (txtValue == null || txtValue.isEmpty) {
+                                      return "Field is required";
+                                    }
+                                    if (txtValue.length < 8 ||
+                                        txtValue.length > 32) {
+                                      return "Password must be between 8 and 32 characters";
+                                    }
+
+                                    return null;
                                   },
                                   onChange: (value) {
                                     controller.onPasswordChanged(value);

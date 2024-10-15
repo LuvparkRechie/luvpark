@@ -29,6 +29,7 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
           padding: const EdgeInsets.all(15.0),
           child: Obx(
             () => Form(
+              autovalidateMode: AutovalidateMode.onUnfocus,
               key: controller.formKeyCreatePass,
               child: ScrollConfiguration(
                 behavior: ScrollBehavior().copyWith(overscroll: false),
@@ -51,16 +52,8 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                           text:
                               "Your new password must be different from previous used passwords.",
                         ),
-                        const VerticalHeight(height: 30),
-                        const CustomTitle(
-                          text: "New Password",
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -.1,
-                          wordspacing: 2,
-                        ),
+                        const VerticalHeight(height: 20),
                         CustomTextField(
-                          title: "Password",
                           labelText: "Enter your new password",
                           controller: controller.newPass,
                           isObscure: !controller.isShowNewPass.value,
@@ -74,22 +67,22 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                             controller.onToggleNewPass(
                                 !controller.isShowNewPass.value);
                           },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                            LengthLimitingTextInputFormatter(30),
+                          ],
                           validator: (txtValue) {
                             if (txtValue == null || txtValue.isEmpty) {
                               return "Field is required";
                             }
+                            if (txtValue.length < 8 || txtValue.length > 32) {
+                              return "Password must be between 8 and 32 characters";
+                            }
+
                             return null;
                           },
                         ),
-                        const CustomTitle(
-                          text: "Confirm Password",
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: -.1,
-                          wordspacing: 2,
-                        ),
                         CustomTextField(
-                          title: "Password",
                           labelText: "Confirm your new password",
                           controller: controller.confirmPass,
                           isObscure: !controller.isShowConfirmPass.value,
@@ -100,9 +93,16 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                             controller.onToggleConfirmPass(
                                 !controller.isShowConfirmPass.value);
                           },
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(RegExp(r'\s')),
+                            LengthLimitingTextInputFormatter(30),
+                          ],
                           validator: (txtValue) {
                             if (txtValue == null || txtValue.isEmpty) {
                               return "Field is required";
+                            }
+                            if (txtValue.length < 8 || txtValue.length > 32) {
+                              return "Password must be between 8 and 32 characters";
                             }
                             if (txtValue != controller.newPass.text) {
                               return "Password doesn't match";
