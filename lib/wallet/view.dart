@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructorss, prefer_const_constructors, prefer_const_literals_to_create_immutables
 import 'dart:convert';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
@@ -131,13 +132,6 @@ class WalletScreen extends GetView<WalletController> {
                                                   ),
                                                 ],
                                               ),
-                                              IconButton(
-                                                onPressed: () {},
-                                                icon: Icon(
-                                                  Icons.chevron_right_rounded,
-                                                  color: AppColor.primaryColor,
-                                                ),
-                                              ),
                                             ],
                                           ),
                                         ),
@@ -200,13 +194,6 @@ class WalletScreen extends GetView<WalletController> {
                                               ],
                                             ),
                                           ],
-                                        ),
-                                        IconButton(
-                                          onPressed: () {},
-                                          icon: Icon(
-                                            Icons.chevron_right_rounded,
-                                            color: AppColor.primaryColor,
-                                          ),
                                         ),
                                       ],
                                     ),
@@ -299,13 +286,22 @@ class WalletScreen extends GetView<WalletController> {
                 child: Column(
                   children: [
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(5, 25, 0, 25),
+                          padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                           child: CustomParagraph(
-                            text: "Wallet Transactions",
+                            text: "Current Transactions",
                             color: Colors.black,
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.to(TransactionHistory());
+                          },
+                          child: CustomParagraph(
+                            text: "See all",
+                            color: AppColor.primaryColor,
                           ),
                         ),
                       ],
@@ -361,8 +357,7 @@ class WalletScreen extends GetView<WalletController> {
                                         padding: EdgeInsets.zero,
                                         itemCount: controller.logs.length,
                                         shrinkWrap: true,
-                                        physics:
-                                            NeverScrollableScrollPhysics(), // Prevents scroll conflicts
+                                        physics: NeverScrollableScrollPhysics(),
                                         itemBuilder: (context, index) {
                                           var log = controller.logs[index];
                                           return GestureDetector(
