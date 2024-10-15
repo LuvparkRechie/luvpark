@@ -263,7 +263,10 @@ class WalletSend extends GetView<WalletSendController> {
                                     "Back",
                                     "Yes", () {
                                   Get.back();
+                                  Get.back();
+                                  Get.back();
                                 }, () {
+                                  Get.back();
                                   Get.back();
                                   controller.getVerifiedAcc();
                                 });
