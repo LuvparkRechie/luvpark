@@ -52,53 +52,50 @@ class WalletController extends GetxController
     userProfile = item2;
     unverified.value = [];
     if (item2["first_name"] == null || item2["first_name"].toString().isEmpty) {
-      unverified.add(Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 15.0),
-        child: Container(
-          padding: EdgeInsets.fromLTRB(23, 12, 0, 12),
-          height: 72,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Color(0xFF89C732),
-            borderRadius: BorderRadius.all(
-              Radius.circular(7),
+      unverified.add(Container(
+        padding: EdgeInsets.fromLTRB(23, 12, 0, 12),
+        height: 72,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Color(0xFF89C732),
+          borderRadius: BorderRadius.all(
+            Radius.circular(7),
+          ),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SvgPicture.asset(
+              "assets/images/wallet_user.svg",
+              width: 24,
+              height: 24,
             ),
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SvgPicture.asset(
-                "assets/images/wallet_user.svg",
-                width: 24,
-                height: 24,
-              ),
-              SizedBox(
-                width: 21,
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomParagraph(
-                    text: "Verification incomplete",
-                    textAlign: TextAlign.start,
-                    fontSize: 14,
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  SizedBox(height: 5),
-                  CustomParagraph(
-                    text: "Only a few more steps to go",
-                    textAlign: TextAlign.start,
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ],
-              ),
-            ],
-          ),
+            SizedBox(
+              width: 21,
+            ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomParagraph(
+                  text: "Verification incomplete",
+                  textAlign: TextAlign.start,
+                  fontSize: 14,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+                SizedBox(height: 5),
+                CustomParagraph(
+                  text: "Only a few more steps to go",
+                  textAlign: TextAlign.start,
+                  fontSize: 12,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w400,
+                ),
+              ],
+            ),
+          ],
         ),
       ));
     }
