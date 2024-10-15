@@ -68,10 +68,13 @@ class CustomDrawer extends GetView<DashboardMapController> {
                           controller.userProfile != null &&
                                   controller.userProfile['first_name'] != null
                               ? CustomParagraph(
-                                  text: controller
-                                              .userProfile['last_name'].length >
-                                          10
-                                      ? '${controller.userProfile['first_name']}'
+                                  text: controller.userProfile['last_name']
+                                                  .length >
+                                              15 ||
+                                          controller.userProfile['first_name']
+                                                  .length >
+                                              15
+                                      ? '${controller.userProfile['first_name'].split(" ")[0]}'
                                       : '${controller.userProfile['first_name']} ${controller.userProfile['last_name']}',
                                   color: Colors.black,
                                   fontWeight: FontWeight.w700,

@@ -104,9 +104,13 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                   children: [
                                     CustomTitle(
                                       text: controller.userData[0]['last_name']
-                                                  .length >
-                                              10
-                                          ? '${controller.userData[0]['first_name']}'
+                                                      .length >
+                                                  15 ||
+                                              controller
+                                                      .userData[0]['first_name']
+                                                      .length >
+                                                  15
+                                          ? '${controller.userData[0]['first_name'].split(" ")[0]}'
                                           : '${controller.userData[0]['first_name']} ${controller.userData[0]['last_name']}',
                                       color: Colors.white,
                                       fontSize: 18,

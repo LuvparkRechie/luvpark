@@ -97,10 +97,13 @@ class Profile extends GetView<ProfileScreenController> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CustomTitle(
-                                  text: controller
-                                              .userData[0]['last_name'].length >
-                                          10
-                                      ? '${controller.userData[0]['first_name']}'
+                                  text: controller.userData[0]['last_name']
+                                                  .length >
+                                              15 ||
+                                          controller.userData[0]['first_name']
+                                                  .length >
+                                              15
+                                      ? '${controller.userData[0]['first_name'].split(" ")[0]}'
                                       : '${controller.userData[0]['first_name']} ${controller.userData[0]['last_name']}',
                                   color: Colors.black,
                                   fontSize: 18,
