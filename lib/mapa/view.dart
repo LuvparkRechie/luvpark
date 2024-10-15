@@ -14,6 +14,7 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/drawer/view.dart';
 import 'package:luvpark_get/functions/functions.dart';
+import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/voice_search/view.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -190,8 +191,8 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               child: InkWell(
                                 key: controller.walletKey,
                                 onTap: () {
-                                  controller.showTargetTutorial(context, false);
-                                  // Get.toNamed(Routes.wallet);
+                                  //  controller.showTargetTutorial(context, false);
+                                  Get.toNamed(Routes.wallet);
                                 },
                                 child: Container(
                                   width: 178,
