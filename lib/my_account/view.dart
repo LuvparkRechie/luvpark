@@ -103,8 +103,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CustomTitle(
-                                      text:
-                                          '${controller.userData[0]['first_name']} ${controller.userData[0]['last_name']}',
+                                      text: controller.userData[0]['last_name']
+                                                  .length >
+                                              10
+                                          ? '${controller.userData[0]['first_name']}'
+                                          : '${controller.userData[0]['first_name']} ${controller.userData[0]['last_name']}',
                                       color: Colors.white,
                                       fontSize: 18,
                                       fontStyle: FontStyle.normal,
@@ -116,7 +119,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                     const Icon(
                                       Icons.verified,
                                       color: Colors.white,
-                                    )
+                                    ),
                                   ],
                                 )
                               : const CustomTitle(
