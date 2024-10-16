@@ -1437,13 +1437,18 @@ class VehicleOption extends GetView<BookingController> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         const CustomTitle(
-                                            text: "What's your plate number?"),
+                                          text: "What's your plate number?",
+                                        ),
                                         Container(height: 10),
                                         CustomTextField(
                                           labelText: "Plate No.",
                                           controller: controller.plateNo,
                                           textCapitalization:
                                               TextCapitalization.characters,
+                                          inputFormatters: [
+                                            FilteringTextInputFormatter.deny(
+                                                RegExp(r'\s')),
+                                          ],
                                           validator: (data) {
                                             if (data == null || data.isEmpty) {
                                               return "Plate no is required";

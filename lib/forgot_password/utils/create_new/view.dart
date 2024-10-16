@@ -29,7 +29,7 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
           padding: const EdgeInsets.all(15.0),
           child: Obx(
             () => Form(
-              autovalidateMode: AutovalidateMode.onUnfocus,
+              autovalidateMode: AutovalidateMode.always,
               key: controller.formKeyCreatePass,
               child: ScrollConfiguration(
                 behavior: ScrollBehavior().copyWith(overscroll: false),

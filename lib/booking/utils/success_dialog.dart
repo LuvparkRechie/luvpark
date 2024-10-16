@@ -47,29 +47,12 @@ class _BookingDialogState extends State<BookingDialog> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
+      onPopInvoked: (pop) {
+        if (!pop) {
+          Get.offAllNamed(Routes.parking, arguments: "B");
+        }
+      },
       child: Scaffold(
-        // floatingActionButton: IconButton(
-        //     onPressed: () {
-        //       // showDialog(
-        //       //   context: Get.context!,
-        //       //   builder: (BuildContext context) {
-        //       //     return PopScope(
-        //       //       canPop: false,
-        //       //       child: AlertDialog(
-        //       //         backgroundColor: Colors.white,
-        //       //         surfaceTintColor: Colors.white,
-        //       //         content: FadeIn(
-        //       //             duration: const Duration(seconds: 1),
-        //       //             child: RateUs(
-        //       //               reservationId: widget.data[0]["reservationId"],
-        //       //               callBack: () {},
-        //       //             )),
-        //       //       ),
-        //       //     );
-        //       //   },
-        //       // );
-        //     },
-        //     icon: Icon(Icons.circle)),
         backgroundColor: AppColor.primaryColor,
         appBar: AppBar(
           elevation: 0,

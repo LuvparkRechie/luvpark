@@ -54,7 +54,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                       return Padding(
                         padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
                         child: Form(
-                          autovalidateMode: AutovalidateMode.onUnfocus,
+                          autovalidateMode: AutovalidateMode.always,
                           key: controller.formKeyRegister,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.center,

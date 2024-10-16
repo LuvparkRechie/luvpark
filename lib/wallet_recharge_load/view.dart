@@ -68,7 +68,9 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                       ),
                       CustomTextField(
                         isReadOnly: true,
+                        filledColor: Colors.grey.shade200,
                         controller: controller.amountController,
+                        isFilled: true,
                         labelText: "Amount",
                       ),
                     ],

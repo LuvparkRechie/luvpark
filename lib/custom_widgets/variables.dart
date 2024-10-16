@@ -350,6 +350,16 @@ class Variables {
     return isKilometers ? distanceValue * 1000 : distanceValue;
   }
 
+  static String parseDistance(double distance) {
+    if (distance >= 1000) {
+      // Convert to kilometers
+      double kilometers = distance / 1000;
+      return '${kilometers.toStringAsFixed(1)} km';
+    } else {
+      return '${double.parse(distance.toStringAsFixed(1)).round()} m';
+    }
+  }
+
   //COnvert 12 hours format sample:18:00
   static String convert24HourTo12HourFormat(String time24Hour) {
     List<String> parts = time24Hour.split(':');

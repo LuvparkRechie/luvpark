@@ -513,6 +513,7 @@ class BookingController extends GetxController
           } else {
             isSubmitBooking.value = false;
             inactivityTimer?.cancel();
+            Get.back();
             Get.to(BookingDialog(data: [paramArgs]));
             return;
           }
@@ -602,7 +603,8 @@ class BookingController extends GetxController
       }
       isSubmitBooking.value = false;
       if (returnData["success"] == 'Y') {
-        Get.offNamed(Routes.bookingReceipt, arguments: args);
+        Get.back();
+        Get.to(BookingDialog(data: [args]));
       } else {
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
             () {

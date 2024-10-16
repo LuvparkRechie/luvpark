@@ -133,7 +133,7 @@ class DashboardMapController extends GetxController
   void onInit() {
     super.onInit();
 
-    ddRadius.value = "10";
+    ddRadius.value = "10000";
     pTypeCode = "";
     amenities = "";
     vtypeId = "";
@@ -290,7 +290,8 @@ class DashboardMapController extends GetxController
 
   void bridgeLocation(coordinates) {
     CustomDialog().mapLoading(
-        Variables.convertDistance(ddRadius.value.toString()).toString());
+        Variables.parseDistance(double.parse(ddRadius.value.toString()))
+            .toString());
     isLoading.value = false;
     dataNearest.value = [];
     markerData = [];
@@ -302,7 +303,7 @@ class DashboardMapController extends GetxController
 
   void getNearest(LatLng coordinates) async {
     String params =
-        "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${Variables.convertToMeters(ddRadius.value.toString())}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
+        "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
     print("params $params");
     try {
       var returnData = await HttpRequest(api: params).get();
@@ -332,6 +333,7 @@ class DashboardMapController extends GetxController
     netConnected.value = false;
     isLoading.value = false;
     dataNearest.value = [];
+
     CustomDialog().internetErrorDialog(Get.context!, () {
       Get.back();
       Future.delayed(Duration(milliseconds: 200), () {
@@ -361,12 +363,11 @@ class DashboardMapController extends GetxController
     dataNearest.value = [];
     netConnected.value = true;
     isLoading.value = false;
-    showDottedCircle(nearData);
-    bool isDouble = ddRadius.value.contains(".");
+
     String message = isFilter
         ? "There are no parking areas available based on your filter."
-        : "No parking area found within \n${(isDouble ? double.parse(ddRadius.value) : int.parse(ddRadius.value)) >= 1 ? '${ddRadius.value} Km' : '${double.parse(ddRadius.value) * 1000} meters'}, please change location.";
-
+        : "No parking area found within \n${Variables.parseDistance(double.parse(ddRadius.value.toString()))}, please change location.";
+    showDottedCircle(nearData);
     CustomDialog().infoDialog("Map Filter", message, () {
       Get.back();
       if (suggestions.isEmpty) {
@@ -494,7 +495,7 @@ class DashboardMapController extends GetxController
 
   //get curr location
   Future<void> getCurrentLoc() async {
-    ddRadius.value = "10";
+    ddRadius.value = "10000";
     pTypeCode = "";
     amenities = "";
     vtypeId = "";
@@ -543,8 +544,6 @@ class DashboardMapController extends GetxController
   }
 
   void animateCamera() async {
-    double filterRadius = Variables.convertToMeters(ddRadius.value);
-
     polyline = Polyline(
       polylineId: const PolylineId('dottedCircle'),
       color: AppColor.mainColor,
@@ -554,7 +553,7 @@ class DashboardMapController extends GetxController
         (index) => calculateNewCoordinates(
           searchCoordinates.latitude,
           searchCoordinates.longitude,
-          filterRadius,
+          double.parse(ddRadius.value.toString()),
           double.parse(
             index.toString(),
           ),
@@ -641,7 +640,6 @@ class DashboardMapController extends GetxController
   }
 
   String getIconAssetForNonPwd(String parkingTypeCode, String vehicleTypes) {
-    print("parkingTypeCode $parkingTypeCode");
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
@@ -726,7 +724,8 @@ class DashboardMapController extends GetxController
               final estimatedData = await Functions.fetchETA(coordinates, dest);
 
               markerData = markerData.map((e) {
-                e["distance_display"] = "${estimatedData[0]["distance"]} away";
+                e["distance_display"] =
+                    "${Variables.parseDistance(double.parse(markerData[0]["current_distance"].toString()))} away";
                 e["time_arrival"] = estimatedData[0]["time"];
                 e["polyline"] = estimatedData[0]['poly_line'];
                 return e;
@@ -913,7 +912,6 @@ class DashboardMapController extends GetxController
   }
 
   void showTargetTutorial(BuildContext context, bool isDrawer) {
-    print("context $context");
     Future.delayed(
       const Duration(seconds: 5),
       () {
@@ -1003,7 +1001,6 @@ class DashboardMapController extends GetxController
         Get.back();
         List<dynamic> item = returnData["items"];
         vehicleRates.value = item;
-        print("item $item");
       } else {
         Get.back();
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
@@ -1127,7 +1124,7 @@ class DashboardMapController extends GetxController
           .toLowerCase()
           .contains(vhType.toLowerCase());
     }).toList();
-    print("data $data");
+
     ratesWidget.add(Column(
       children: [
         Padding(

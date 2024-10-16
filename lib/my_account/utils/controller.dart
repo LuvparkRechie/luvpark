@@ -116,7 +116,7 @@ class UpdateProfileController extends GetxController {
           : userData["middle_name"].toString().trim();
       lastName.text = userData["last_name"].toString().trim();
       email.text = userData["email"].toString().trim();
-      bday.text = userData["birthday"].toString().trim();
+      bday.text = userData["birthday"].toString().split("T")[0].trim();
       selectedCivil.value = civilData.where((objData) {
         return objData["value"].toString().toLowerCase() ==
             userData["civil_status"].toString().toLowerCase();
@@ -378,6 +378,7 @@ class UpdateProfileController extends GetxController {
 
   void onNextPage() {
     FocusScope.of(Get.context!).requestFocus(FocusNode());
+
     switch (currentPage.value) {
       case 0:
         if (formKeyStep1.currentState!.validate()) {
@@ -495,5 +496,13 @@ class UpdateProfileController extends GetxController {
         .where((object) => !selectedIds.contains(object["secq_id"]))
         .toList();
     return filteredObjects;
+  }
+
+  void closePage() async {
+    CustomDialog().loadingDialog(Get.context!);
+    await Future.delayed(Duration(seconds: 2), () {
+      Get.back();
+    });
+    Get.back();
   }
 }

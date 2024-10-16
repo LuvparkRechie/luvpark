@@ -82,6 +82,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
               widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
+            filled: widget.isFilled,
+            fillColor: widget.filledColor,
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             focusedBorder: OutlineInputBorder(

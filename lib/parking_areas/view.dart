@@ -10,6 +10,7 @@ import 'package:luvpark_get/parking_areas/controller.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/showup_animation.dart';
+import '../custom_widgets/variables.dart';
 import '../functions/functions.dart';
 
 class ParkingAreas extends GetView<ParkingAreasController> {
@@ -110,19 +111,6 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                               },
                               itemCount: ct.searchedZone.length,
                               itemBuilder: (context, index) {
-                                String getDistanceString() {
-                                  double kmDist = double.parse(ct
-                                      .searchedZone[index]["current_distance"]
-                                      .toString());
-
-                                  if (kmDist >= 1000) {
-                                    double distanceInKilometers = kmDist / 1000;
-                                    return '${distanceInKilometers.round()} km';
-                                  } else {
-                                    return '${kmDist.round()} m';
-                                  }
-                                }
-
                                 final String isPwd =
                                     ct.searchedZone[index]["is_pwd"] ?? "N";
                                 final String vehicleTypes = ct
@@ -169,7 +157,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                       controller.markerData.value =
                                           controller.markerData.map((e) {
                                         e["distance_display"] =
-                                            "${estimatedData[0]["distance"]} away";
+                                            "${Variables.parseDistance(double.parse(e["current_distance"].toString()))} away";
                                         e["time_arrival"] =
                                             estimatedData[0]["time"];
                                         return e;
@@ -232,34 +220,16 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                   maxlines: 2,
                                                   fontWeight: FontWeight.w600,
                                                 ),
-                                                // Container(height: 10),
-                                                // RichText(
-                                                //   text: TextSpan(
-                                                //     children: [
-                                                //       TextSpan(
-                                                //         text:
-                                                //             "${ct.searchedZone[index]["parking_schedule"]}  ●  ",
-                                                //         style: paragraphStyle(
-                                                //             fontSize: 12),
-                                                //       ),
-                                                //       TextSpan(
-                                                //         text: isOpen ? "OPEN" : "CLOSE",
-                                                //         style: paragraphStyle(
-                                                //           fontSize: 12,
-                                                //           color: isOpen
-                                                //               ? Colors.green
-                                                //               : Colors.red,
-                                                //         ),
-                                                //       ),
-                                                //     ],
-                                                //   ),
-                                                // ),
                                               ],
                                             ),
                                           ),
                                           Container(width: 10),
                                           CustomLinkLabel(
-                                              text: getDistanceString())
+                                              text: Variables.parseDistance(
+                                                  double.parse(ct
+                                                      .searchedZone[index]
+                                                          ["current_distance"]
+                                                      .toString())))
                                         ],
                                       ),
                                     ),

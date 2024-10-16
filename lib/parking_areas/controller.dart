@@ -100,6 +100,7 @@ class ParkingAreasController extends GetxController {
   @override
   void onInit() {
     searchedZone.value = dataNearest;
+    print("dataNearest $dataNearest");
 
     super.onInit();
   }

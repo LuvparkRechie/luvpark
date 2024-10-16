@@ -14,13 +14,13 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/drawer/view.dart';
 import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/voice_search/view.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../custom_widgets/custom_button.dart';
 import '../custom_widgets/variables.dart';
+import '../routes/routes.dart';
 import 'controller.dart';
 import 'utils/filter_map/view.dart';
 
@@ -50,41 +50,78 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
           ),
         );
       } else {
-        return PopScope(
-          canPop: false,
-          onPopInvoked: (dd) {
-            if (controller.dashboardScaffoldKey.currentState!.isDrawerOpen) {
-              controller.dashboardScaffoldKey.currentState?.closeDrawer();
-            }
-            return;
-          },
-          child: Scaffold(
-            extendBodyBehindAppBar: true,
-            key: controller.dashboardScaffoldKey,
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.transparent,
-              toolbarHeight: 0,
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarColor: Colors.transparent,
-                statusBarBrightness: Brightness.light,
-                statusBarIconBrightness: Brightness.dark,
-              ),
+        if (!controller.netConnected.value) {
+          return CustomScaffold(
+              children: NoInternetConnected(
+            onTap: controller.refresher,
+          ));
+        }
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          key: controller.dashboardScaffoldKey,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: Colors.transparent,
+            toolbarHeight: 0,
+            systemOverlayStyle: const SystemUiOverlayStyle(
+              statusBarColor: Colors.transparent,
+              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.dark,
             ),
-            drawer: const CustomDrawer(),
-            body: controller.initialCameraPosition == null
-                ? Container()
-                : Stack(
-                    children: [
-                      SlidingUpPanel(
-                        maxHeight: controller.getPanelHeight(),
-                        minHeight: controller.panelHeightClosed.value,
-                        panelSnapping: true,
-                        collapsed: InkWell(
+          ),
+          drawer: const CustomDrawer(),
+          body: controller.initialCameraPosition == null
+              ? Container()
+              : Stack(
+                  children: [
+                    SlidingUpPanel(
+                      maxHeight: controller.getPanelHeight(),
+                      minHeight: controller.panelHeightClosed.value,
+                      panelSnapping: true,
+                      collapsed: InkWell(
+                        onTap: () {
+                          controller.panelController.open();
+                        },
+                        child: Container(
+                          decoration: const ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(17),
+                                topRight: Radius.circular(17),
+                              ),
+                            ),
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: Container(
+                              width: 71,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(56),
+                                color: const Color(0xffd9d9d9),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      parallaxEnabled: true,
+                      controller: controller.panelController,
+                      parallaxOffset: .3,
+                      onPanelOpened: () {},
+                      body: _mapa(),
+                      panelBuilder: (sc) => panelSearchedList(sc),
+                      header: LayoutBuilder(builder: (context, constraints) {
+                        return InkWell(
                           onTap: () {
-                            controller.panelController.open();
+                            if (MediaQuery.of(Get.context!).viewInsets.bottom ==
+                                0) {
+                              controller.panelController.close();
+                            }
                           },
                           child: Container(
+                            width: MediaQuery.of(Get.context!).size.width,
+                            padding: const EdgeInsets.symmetric(vertical: 25.0),
                             decoration: const ShapeDecoration(
                               color: Colors.white,
                               shape: RoundedRectangleBorder(
@@ -94,230 +131,183 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 ),
                               ),
                             ),
-                            width: MediaQuery.of(context).size.width,
-                            child: Center(
-                              child: Container(
-                                width: 71,
-                                height: 6,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(56),
-                                  color: const Color(0xffd9d9d9),
-                                ),
-                              ),
-                            ),
+                            child: searchPanel(),
                           ),
-                        ),
-                        parallaxEnabled: true,
-                        controller: controller.panelController,
-                        parallaxOffset: .3,
-                        onPanelOpened: () {},
-                        body: _mapa(),
-                        panelBuilder: (sc) => panelSearchedList(sc),
-                        header: LayoutBuilder(builder: (context, constraints) {
-                          return InkWell(
-                            onTap: () {
-                              if (MediaQuery.of(Get.context!)
-                                      .viewInsets
-                                      .bottom ==
-                                  0) {
-                                controller.panelController.close();
-                              }
-                            },
-                            child: Container(
-                              width: MediaQuery.of(Get.context!).size.width,
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 25.0),
-                              decoration: const ShapeDecoration(
-                                color: Colors.white,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(17),
-                                    topRight: Radius.circular(17),
-                                  ),
-                                ),
-                              ),
-                              child: searchPanel(),
-                            ),
-                          );
-                        }),
-                        borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(17.0),
-                            topRight: Radius.circular(17.0)),
-                        onPanelSlide: (double pos) {
-                          controller.onPanelSlide(pos);
-                        },
-                      ),
+                        );
+                      }),
+                      borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(17.0),
+                          topRight: Radius.circular(17.0)),
+                      onPanelSlide: (double pos) {
+                        controller.onPanelSlide(pos);
+                      },
+                    ),
 
-                      if (MediaQuery.of(Get.context!).viewInsets.bottom == 0)
-                        Visibility(
-                          visible: !controller.isHidePanel.value,
-                          child: Positioned(
-                            right: 20.0,
-                            bottom: controller.fabHeight.value,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                // _buildDialItem("lightbulb", () {
-                                //   Get.dialog(LegendDialogScreen());
-                                // }),
-                                // const SizedBox(width: 10),
-                                Container(
-                                  key: controller.parkKey,
-                                  child: _buildDialItem("parking", () {
-                                    controller.routeToParkingAreas();
-                                  }),
-                                ),
-                                const SizedBox(width: 10),
-                                Container(
-                                  key: controller.locKey,
-                                  child: _buildDialItem("gps", () {
-                                    controller.getCurrentLoc();
-                                  }),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      //My balance
-                      if (MediaQuery.of(context).viewInsets.bottom == 0)
-                        Visibility(
-                          visible:
-                              controller.isGetNearData.value ? true : false,
-                          child: Positioned(
-                            top: 0,
-                            right: 20,
-                            child: Padding(
-                              padding: MediaQuery.of(context).padding,
-                              child: InkWell(
-                                key: controller.walletKey,
-                                onTap: () {
-                                  //  controller.showTargetTutorial(context, false);
-                                  Get.toNamed(Routes.wallet);
-                                },
-                                child: Container(
-                                  width: 178,
-                                  padding:
-                                      const EdgeInsets.fromLTRB(7, 5, 7, 5),
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFDFE7EF)),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    shadows: const [
-                                      BoxShadow(
-                                        color: Color(0x0C000000),
-                                        blurRadius: 15,
-                                        offset: Offset(0, 5),
-                                        spreadRadius: 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      const SizedBox(
-                                        width: 45,
-                                        height: 38,
-                                        child: Image(
-                                          image: AssetImage(
-                                              "assets/images/logo.png"),
-                                          width: 37,
-                                          height: 32,
-                                        ),
-                                      ),
-                                      Container(width: 5),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const CustomParagraph(
-                                              text: "My balance",
-                                              maxlines: 1,
-                                              fontWeight: FontWeight.w800,
-                                              minFontSize: 8,
-                                            ),
-                                            Obx(() => CustomTitle(
-                                                  text: toCurrencyString(
-                                                      controller.userBal
-                                                          .toString()),
-                                                  maxlines: 1,
-                                                  letterSpacing: -0.41,
-                                                  fontWeight: FontWeight.w900,
-                                                ))
-                                          ],
-                                        ),
-                                      ),
-                                      Container(width: 5),
-                                      Icon(
-                                        Icons.chevron_right_outlined,
-                                        color: AppColor.secondaryColor,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      //Drawer
-                      if (MediaQuery.of(context).viewInsets.bottom == 0)
-                        Visibility(
-                          visible:
-                              controller.isGetNearData.value ? true : false,
-                          child: Positioned(
-                            top: 0,
-                            left: 20,
-                            child: Padding(
-                              padding: MediaQuery.of(context).padding,
-                              child: InkWell(
-                                onTap: () {
-                                  controller.dashboardScaffoldKey.currentState
-                                      ?.openDrawer();
-                                },
-                                child: Container(
-                                  width: 45,
-                                  height: 45,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: ShapeDecoration(
-                                    color: Colors.white,
-                                    shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFDFE7EF)),
-                                      borderRadius: BorderRadius.circular(7),
-                                    ),
-                                    shadows: const [
-                                      BoxShadow(
-                                        color: Color(0x0C000000),
-                                        blurRadius: 15,
-                                        offset: Offset(0, 5),
-                                        spreadRadius: 0,
-                                      )
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: AnimatedIcon(
-                                      icon: AnimatedIcons.menu_close,
-                                      progress:
-                                          controller.animationController.view,
-                                      color: Colors.blue,
-                                      size: 30,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      //Show details
+                    if (MediaQuery.of(Get.context!).viewInsets.bottom == 0)
                       Visibility(
-                          visible: controller.isHidePanel.value,
-                          child: const DraggableDetailsSheet()),
-                    ],
-                  ),
-          ),
+                        visible: !controller.isHidePanel.value,
+                        child: Positioned(
+                          right: 20.0,
+                          bottom: controller.fabHeight.value,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              // _buildDialItem("lightbulb", () {
+                              //   Get.dialog(LegendDialogScreen());
+                              // }),
+                              // const SizedBox(width: 10),
+                              Container(
+                                key: controller.parkKey,
+                                child: _buildDialItem("parking", () {
+                                  controller.routeToParkingAreas();
+                                }),
+                              ),
+                              const SizedBox(width: 10),
+                              Container(
+                                key: controller.locKey,
+                                child: _buildDialItem("gps", () {
+                                  controller.getCurrentLoc();
+                                }),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    //My balance
+                    if (MediaQuery.of(context).viewInsets.bottom == 0)
+                      Visibility(
+                        visible: controller.isGetNearData.value ? true : false,
+                        child: Positioned(
+                          top: 0,
+                          right: 20,
+                          child: Padding(
+                            padding: MediaQuery.of(context).padding,
+                            child: InkWell(
+                              key: controller.walletKey,
+                              onTap: () {
+                                Get.toNamed(Routes.wallet);
+                              },
+                              child: Container(
+                                width: 178,
+                                padding: const EdgeInsets.fromLTRB(7, 5, 7, 5),
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                        width: 1, color: Color(0xFFDFE7EF)),
+                                    borderRadius: BorderRadius.circular(7),
+                                  ),
+                                  shadows: const [
+                                    BoxShadow(
+                                      color: Color(0x0C000000),
+                                      blurRadius: 15,
+                                      offset: Offset(0, 5),
+                                      spreadRadius: 0,
+                                    )
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    const SizedBox(
+                                      width: 45,
+                                      height: 38,
+                                      child: Image(
+                                        image: AssetImage(
+                                            "assets/images/logo.png"),
+                                        width: 37,
+                                        height: 32,
+                                      ),
+                                    ),
+                                    Container(width: 5),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const CustomParagraph(
+                                            text: "My balance",
+                                            maxlines: 1,
+                                            fontWeight: FontWeight.w800,
+                                            minFontSize: 8,
+                                          ),
+                                          Obx(() => CustomTitle(
+                                                text: toCurrencyString(
+                                                    controller.userBal
+                                                        .toString()),
+                                                maxlines: 1,
+                                                letterSpacing: -0.41,
+                                                fontWeight: FontWeight.w900,
+                                              ))
+                                        ],
+                                      ),
+                                    ),
+                                    Container(width: 5),
+                                    Icon(
+                                      Icons.chevron_right_outlined,
+                                      color: AppColor.secondaryColor,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    //Drawer
+                    if (MediaQuery.of(context).viewInsets.bottom == 0)
+                      Visibility(
+                        visible: controller.isGetNearData.value ? true : false,
+                        child: Positioned(
+                          top: 0,
+                          left: 20,
+                          child: Padding(
+                            padding: MediaQuery.of(context).padding,
+                            child: InkWell(
+                              onTap: () {
+                                controller.dashboardScaffoldKey.currentState
+                                    ?.openDrawer();
+                              },
+                              child: Container(
+                                width: 45,
+                                height: 45,
+                                clipBehavior: Clip.antiAlias,
+                                decoration: ShapeDecoration(
+                                  color: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    side: const BorderSide(
+                                        width: 1, color: Color(0xFFDFE7EF)),
+                                    borderRadius: BorderRadius.circular(7),
+                                  ),
+                                  shadows: const [
+                                    BoxShadow(
+                                      color: Color(0x0C000000),
+                                      blurRadius: 15,
+                                      offset: Offset(0, 5),
+                                      spreadRadius: 0,
+                                    )
+                                  ],
+                                ),
+                                child: Center(
+                                  child: AnimatedIcon(
+                                    icon: AnimatedIcons.menu_close,
+                                    progress:
+                                        controller.animationController.view,
+                                    color: Colors.blue,
+                                    size: 30,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    //Show details
+                    Visibility(
+                        visible: controller.isHidePanel.value,
+                        child: const DraggableDetailsSheet()),
+                  ],
+                ),
         );
       }
     });
@@ -382,7 +372,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           } else {
                             controller.searchCoordinates =
                                 LatLng(searchedPlace[0], searchedPlace[1]);
-                            controller.ddRadius.value = "2";
+                            controller.ddRadius.value = "2000";
                             controller.isSearched.value = true;
                             controller.bridgeLocation(
                                 LatLng(searchedPlace[0], searchedPlace[1]));
@@ -555,6 +545,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               Get.dialog(
                                 const VoiceSearchPopup(),
                                 arguments: (data) {
+                                  if (data == "") {
+                                    Get.back();
+                                    return;
+                                  }
                                   controller.searchCon.text = data;
                                   controller.onVoiceGiatay();
                                 },

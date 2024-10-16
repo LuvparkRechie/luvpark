@@ -47,7 +47,7 @@ class _FilterMapState extends State<FilterMap> {
   void initState() {
     super.initState();
     filterParam = filterParam.map((e) {
-      e["radius"] = currentDistance.toStringAsFixed(2);
+      e["radius"] = currentDistance.toStringAsFixed(1);
       return e;
     }).toList();
 
@@ -61,7 +61,7 @@ class _FilterMapState extends State<FilterMap> {
       labelDistance =
           "${(currentDistance * 1000).toDouble().round() / 1000} km";
     } else {
-      labelDistance = "${(currentDistance * 1000).round()} m";
+      labelDistance = "${(currentDistance * 1000).toStringAsFixed(1)} m";
     }
     setState(() {});
   }
@@ -329,10 +329,21 @@ class _FilterMapState extends State<FilterMap> {
                                         label: labelDistance,
                                         onChanged: (value) {
                                           onPickDistance(value);
+                                          String convertSliderValue(
+                                              double value) {
+                                            if (value < 1) {
+                                              int meters = (value * 1000)
+                                                  .round(); // Round to the nearest meter
+                                              return '$meters';
+                                            } else {
+                                              // Use the value as kilometers
+                                              return '${double.parse((value * 1000).toStringAsFixed(1)).round()}';
+                                            }
+                                          }
+
                                           filterParam = filterParam.map((e) {
-                                            e["radius"] = currentDistance
-                                                .roundToDouble()
-                                                .toString();
+                                            e["radius"] =
+                                                convertSliderValue(value);
                                             return e;
                                           }).toList();
                                           setState(() {});
@@ -430,6 +441,7 @@ class _FilterMapState extends State<FilterMap> {
                                   child: CustomButton(
                                     text: "Apply",
                                     onPressed: () {
+                                      print("filter param $filterParam");
                                       Get.back();
                                       widget.cb(filterParam);
                                     },

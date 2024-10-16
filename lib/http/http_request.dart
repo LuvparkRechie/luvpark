@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:dart_ping/dart_ping.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark_get/http/api_keys.dart';
 
@@ -11,21 +10,7 @@ class HttpRequest {
 
   const HttpRequest({required this.api, this.parameters});
 
-  static Future<bool> checkInternetConn() async {
-    final ping = Ping('google.com', count: 5);
-    bool isConnected = false;
-
-    await for (var event in ping.stream) {
-      if (event.response != null) {
-        isConnected = true;
-        break;
-      }
-    }
-    return isConnected;
-  }
-
-  static Future<http.Response> fetchDataWithTimeout(
-      Future<http.Response> link) async {
+  static Future<http.Response> fetchDataWithTimeout(link) async {
     const timeoutDuration = Duration(seconds: 10);
 
     return await link.timeout(timeoutDuration, onTimeout: () {
@@ -35,11 +20,6 @@ class HttpRequest {
   }
 
   Future<dynamic> get() async {
-    bool isNetconn = await checkInternetConn();
-    if (!isNetconn) {
-      return "No Internet";
-    }
-
     var links = http.get(
         Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
         headers: {"Content-Type": 'application/json; charset=utf-8'});
@@ -58,10 +38,6 @@ class HttpRequest {
   }
 
   Future<dynamic> post() async {
-    bool isNetconn = await checkInternetConn();
-    if (!isNetconn) {
-      return "No Internet";
-    }
     var links = http.post(
         Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
         headers: {"Content-Type": 'application/json; charset=utf-8'},
@@ -80,10 +56,6 @@ class HttpRequest {
   }
 
   Future<dynamic> postBody() async {
-    bool isNetconn = await checkInternetConn();
-    if (!isNetconn) {
-      return "No Internet";
-    }
     var links = http.post(
         Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
         headers: {"Content-Type": 'application/json; charset=utf-8'},
@@ -102,10 +74,6 @@ class HttpRequest {
   }
 
   Future<dynamic> put() async {
-    bool isNetconn = await checkInternetConn();
-    if (!isNetconn) {
-      return "No Internet";
-    }
     var links = http.put(
         Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
         headers: {"Content-Type": "application/json"},
@@ -125,10 +93,6 @@ class HttpRequest {
   }
 
   Future<dynamic> deleteData() async {
-    bool isNetconn = await checkInternetConn();
-    if (!isNetconn) {
-      return "No Internet";
-    }
     var links = http.delete(
         Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
         headers: {"Content-Type": 'application/json; charset=utf-8'},
@@ -148,10 +112,6 @@ class HttpRequest {
   }
 
   Future<dynamic> linkToPage() async {
-    bool isNetconn = await checkInternetConn();
-    if (!isNetconn) {
-      return "No Internet";
-    }
     var links = http.get(Uri.https("luvpark.ph", "/terms-of-use"),
         headers: {"Content-Type": 'application/json; charset=utf-8'});
     try {

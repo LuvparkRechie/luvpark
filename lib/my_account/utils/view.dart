@@ -4,6 +4,7 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
@@ -22,91 +23,122 @@ class UpdateProfile extends GetView<UpdateProfileController> {
     return Obx(
       () => controller.isLoading.value
           ? const Scaffold(body: PageLoader())
-          : Scaffold(
-              appBar: CustomAppbar(
-                elevation: 0,
-                bgColor: Colors.white,
-                statusBarBrightness: Brightness.dark,
-                title: "Update Profile",
-                onTap: () {
-                  if (controller.currentPage.value == 0) {
+          : PopScope(
+              canPop: false,
+              onPopInvoked: (pop) {
+                FocusScope.of(context).requestFocus(FocusNode());
+                if (!pop) {
+                  CustomDialog().confirmationDialog(
+                      context,
+                      "Close Page",
+                      "Are you sure you want to close this page?",
+                      "No",
+                      "Yes", () {
                     Get.back();
-                  } else {
+                  }, () {
+                    Get.back();
+                    Get.back();
+                  });
+                }
+              },
+              child: Scaffold(
+                appBar: CustomAppbar(
+                  elevation: 0,
+                  bgColor: Colors.white,
+                  statusBarBrightness: Brightness.dark,
+                  title: "Update Profile",
+                  onTap: () {
                     FocusScope.of(context).requestFocus(FocusNode());
-                    controller.pageController.previousPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut);
-                  }
-                },
-              ),
-              body: Padding(
-                padding: const EdgeInsets.all(15),
-                child: ScrollConfiguration(
-                  behavior: ScrollBehavior().copyWith(overscroll: false),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(height: 20),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: controller.currentPage.value == 0
-                                    ? AppColor.primaryColor
-                                    : Colors.grey.shade300,
+                    if (controller.currentPage.value == 0) {
+                      CustomDialog().confirmationDialog(
+                          context,
+                          "Close Page",
+                          "Are you sure you want to close this page?",
+                          "No",
+                          "Yes", () {
+                        Get.back();
+                      }, () {
+                        Get.back();
+                        Get.back();
+                      });
+                      return;
+                    } else {
+                      controller.pageController.previousPage(
+                        duration: const Duration(milliseconds: 100),
+                        curve: Curves.easeInOut,
+                      );
+                    }
+                  },
+                ),
+                body: Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: ScrollConfiguration(
+                    behavior: ScrollBehavior().copyWith(overscroll: false),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: controller.currentPage.value == 0
+                                      ? AppColor.primaryColor
+                                      : Colors.grey.shade300,
+                                ),
+                                height: 5,
                               ),
-                              height: 5,
                             ),
-                          ),
-                          Container(width: 10),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: controller.currentPage.value == 1
-                                    ? AppColor.primaryColor
-                                    : Colors.grey.shade300,
+                            Container(width: 10),
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: controller.currentPage.value == 1
+                                      ? AppColor.primaryColor
+                                      : Colors.grey.shade300,
+                                ),
+                                height: 5,
                               ),
-                              height: 5,
                             ),
-                          ),
-                          Container(width: 10),
-                          Expanded(
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: controller.currentPage.value == 2
-                                    ? AppColor.primaryColor
-                                    : Colors.grey.shade300,
+                            Container(width: 10),
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: controller.currentPage.value == 2
+                                      ? AppColor.primaryColor
+                                      : Colors.grey.shade300,
+                                ),
+                                height: 5,
                               ),
-                              height: 5,
                             ),
-                          ),
-                        ],
-                      ),
-                      Container(height: 20),
-                      Expanded(
-                          child: PageView(
-                        physics: const NeverScrollableScrollPhysics(),
-                        controller: controller.pageController,
-                        onPageChanged: (value) {
-                          controller.onPageChanged(value);
-                        },
-                        children: [step1(), step2(), step3()],
-                      )),
-                      if (MediaQuery.of(context).viewInsets.bottom == 0)
-                        CustomButton(
-                          text: controller.currentPage.value == 2
-                              ? "Submit"
-                              : "Next",
-                          onPressed: () {
-                            controller.onNextPage();
-                          },
+                          ],
                         ),
-                      if (Platform.isIOS) Container(height: 20),
-                    ],
+                        Container(height: 20),
+                        Expanded(
+                            child: PageView(
+                          physics: const NeverScrollableScrollPhysics(),
+                          controller: controller.pageController,
+                          onPageChanged: (value) {
+                            controller.onPageChanged(value);
+                          },
+                          children: [step1(), step2(), step3()],
+                        )),
+                        if (MediaQuery.of(context).viewInsets.bottom == 0)
+                          CustomButton(
+                            text: controller.currentPage.value == 2
+                                ? "Submit"
+                                : "Next",
+                            onPressed: () {
+                              controller.onNextPage();
+                            },
+                          ),
+                        if (Platform.isIOS) Container(height: 20),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -120,6 +152,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep1,
+          autovalidateMode: AutovalidateMode.always,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -136,7 +169,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 controller: controller.firstName,
                 onChange: (value) {
                   String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-
                   if (trimmedValue.isNotEmpty) {
                     controller.firstName.value = TextEditingValue(
                       text: Variables.capitalizeAllWord(trimmedValue),
@@ -152,6 +184,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                  LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -174,6 +207,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 controller: controller.middleName,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                  LengthLimitingTextInputFormatter(30),
                 ],
                 onChange: (value) {
                   String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
@@ -214,6 +248,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                  LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -247,7 +282,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     controller.focusNode.requestFocus();
                     return "Invalid email format";
                   }
-
                   return null;
                 },
               ),
@@ -342,6 +376,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep2,
+          autovalidateMode: AutovalidateMode.always,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -372,6 +407,13 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       labelText: "Province",
                       controller: TextEditingController(),
                       isReadOnly: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Province is required';
+                        }
+
+                        return null;
+                      },
                     )
                   : CustomDropdown(
                       labelText: "Province",
@@ -394,6 +436,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       labelText: "City",
                       controller: TextEditingController(),
                       isReadOnly: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'City is required';
+                        }
+                        return null;
+                      },
                     )
                   : CustomDropdown(
                       labelText: "City",
@@ -415,6 +463,13 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       labelText: "Barangay",
                       controller: TextEditingController(),
                       isReadOnly: true,
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'City is required';
+                        }
+
+                        return null;
+                      },
                     )
                   : CustomDropdown(
                       labelText: "Barangay",
@@ -431,37 +486,17 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                         controller.selectedBrgy.value = data.toString();
                       },
                     ),
-              // CustomTextField(
-              //   labelText: 'House No./Bldg (optional)',
-              //   controller: controller.address1,
-              //   onChange: (value) {
-              //     String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-
-              //     if (trimmedValue.isNotEmpty) {
-              //       if (value.isNotEmpty) {
-              //         controller.address1.value = TextEditingValue(
-              //             text: Variables.capitalizeAllWord(value),
-              //             selection: controller.address1.selection);
-              //       }
-              //     } else {
-              //       // If the trimmed value is empty, just keep the selection unchanged
-              //       controller.address1.value = TextEditingValue(
-              //         text: "",
-              //         selection: TextSelection.collapsed(offset: 0),
-              //       );
-              //     }
-              //   },
-              // ),
               CustomTextField(
                 labelText: 'Zip Code',
                 controller: controller.zipCode,
                 keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
+                  LengthLimitingTextInputFormatter(4),
+                ],
                 onChange: (value) {
-                  if (value.length > 4) {
-                    controller.zipCode.text = value.substring(0, 4);
-                    controller.zipCode.selection = TextSelection.fromPosition(
-                        TextPosition(offset: controller.zipCode.text.length));
-                  }
+                  controller.zipCode.selection = TextSelection.fromPosition(
+                      TextPosition(offset: controller.zipCode.text.length));
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -489,6 +524,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep3,
+          autovalidateMode: AutovalidateMode.always,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -540,7 +576,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                             labelText: "Answer",
                             controller: controller.answer1,
                             isReadOnly: controller.seq1.value == 0,
-                            isObscure: true,
                             textCapitalization: TextCapitalization.characters,
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -596,7 +631,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           CustomTextField(
                             labelText: "Answer",
                             controller: controller.answer2,
-                            isObscure: true,
                             textCapitalization: TextCapitalization.characters,
                             isReadOnly: controller.seq2.value == 0,
                             validator: (value) {
@@ -652,7 +686,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           Container(height: 10),
                           CustomTextField(
                             labelText: "Answer",
-                            isObscure: true,
                             controller: controller.answer3,
                             textCapitalization: TextCapitalization.characters,
                             isReadOnly: controller.seq3.value == 0,

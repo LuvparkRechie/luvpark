@@ -22,6 +22,12 @@ class VoiceSearchController extends GetxController {
     _initSpeech();
   }
 
+  @override
+  void onClose() {
+    stopListening();
+    super.onClose();
+  }
+
   void _initSpeech() async {
     bool hasSpeech = await speech.initialize();
     if (hasSpeech) {
@@ -32,12 +38,13 @@ class VoiceSearchController extends GetxController {
   void startListening() async {
     isListening.value = true;
     await speech.listen(onResult: _onSpeechResult);
-    _startStopListeningTimer();
   }
 
   void _startStopListeningTimer() {
     _stopListeningTimer?.cancel();
+
     _stopListeningTimer = Timer(const Duration(seconds: 5), () {
+      print("searchText.value  ");
       stopListening();
     });
   }
@@ -60,11 +67,7 @@ class VoiceSearchController extends GetxController {
   void _onSpeechResult(SpeechRecognitionResult result) {
     searchText.value = result.recognizedWords;
     lastWords = searchText.value;
-  }
 
-  @override
-  void onClose() {
-    stopListening();
-    super.onClose();
+    _startStopListeningTimer();
   }
 }
