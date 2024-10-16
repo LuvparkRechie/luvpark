@@ -506,7 +506,9 @@ class Functions {
       String startTimeStr, String endTimeStr) async {
     // Get the current time
 
+    // Get the current time
     DateTime currentTime = await Functions.getTimeNow();
+    print("currentTime: $currentTime");
 
     // Parse start and end times
     List<String> startParts = startTimeStr.split(':');
@@ -514,21 +516,28 @@ class Functions {
 
     int startHour = int.parse(startParts[0]);
     int startMinute = int.parse(startParts[1]);
-
     int endHour = int.parse(endParts[0]);
     int endMinute = int.parse(endParts[1]);
 
-    DateTime startTime = DateTime(currentTime.year, currentTime.month,
-        currentTime.day, startHour, startMinute);
-    DateTime endTime = DateTime(currentTime.year, currentTime.month,
-        currentTime.day, endHour, endMinute);
+    // Create DateTime objects for start and end times
+    DateTime startTime = DateTime(
+      currentTime.year,
+      currentTime.month,
+      currentTime.day,
+      startHour,
+      startMinute,
+    );
+
+    DateTime endTime = DateTime(
+      currentTime.year,
+      currentTime.month,
+      currentTime.day,
+      endHour,
+      endMinute,
+    );
 
     // Check if the current time is between start and end times
-    if (currentTime.isAfter(startTime) && currentTime.isBefore(endTime)) {
-      return true;
-    } else {
-      return false;
-    }
+    return currentTime.isAfter(startTime) && currentTime.isBefore(endTime);
   }
 
   static Future<List<Map<String, dynamic>>> fetchETA(

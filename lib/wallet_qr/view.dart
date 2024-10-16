@@ -31,6 +31,7 @@ class QrWallet extends GetView<QrWalletController> {
                 bgColor: AppColor.primaryColor,
                 titleColor: Colors.white,
                 textColor: Colors.white,
+                btnColor: null,
               ),
               Container(
                 color: AppColor.primaryColor,

@@ -28,7 +28,18 @@ class WalletSendController extends GetxController
   RxInt denoInd = 0.obs;
 
   RxInt indexbtn = 0.obs;
-  RxList<int> padNumbers = [10, 20, 30, 40, 50, 100, 200, 250, 500].obs;
+  RxList padData = [].obs;
+  List dataList = [
+    {"value": 20, "is_active": false},
+    {"value": 30, "is_active": false},
+    {"value": 50, "is_active": false},
+    {"value": 100, "is_active": false},
+    {"value": 200, "is_active": false},
+    {"value": 250, "is_active": false},
+    {"value": 300, "is_active": false},
+    {"value": 500, "is_active": false},
+    {"value": 1000, "is_active": false},
+  ].obs;
   Timer? _timer;
 
 // //naa
@@ -131,10 +142,13 @@ class WalletSendController extends GetxController
     );
   }
 
-//naa
-  Future<void> onBtnChange(int value) async {
+  Future<void> pads(int value) async {
     tokenAmount.text = value.toString();
     indexbtn.value = value;
+    padData.value = dataList.map((obj) {
+      obj["is_active"] = (obj["value"] == value);
+      return obj;
+    }).toList();
   }
 
 //naa
@@ -166,7 +180,7 @@ class WalletSendController extends GetxController
   @override
   void onInit() {
     timerPeriodic();
-
+    padData.value = dataList;
     super.onInit();
   }
 

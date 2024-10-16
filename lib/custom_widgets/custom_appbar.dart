@@ -56,30 +56,33 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           onTap!();
         },
         child: Center(
-          child: Container(
-            width: 44,
-            height: 32,
-            //  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-            clipBehavior: Clip.antiAlias,
-            decoration: ShapeDecoration(
-              color: hasBtnColor ? btnColor : null,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(43),
+          child: Padding(
+            padding: const EdgeInsets.only(left: 10),
+            child: Container(
+              width: 44,
+              height: 32,
+              //  padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              clipBehavior: Clip.antiAlias,
+              decoration: ShapeDecoration(
+                color: hasBtnColor ? btnColor : null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(43),
+                ),
+                shadows: [
+                  BoxShadow(
+                    color: Color(0x0C000000),
+                    blurRadius: 15,
+                    offset: Offset(0, 5),
+                    spreadRadius: 0,
+                  )
+                ],
               ),
-              shadows: [
-                BoxShadow(
-                  color: Color(0x0C000000),
-                  blurRadius: 15,
-                  offset: Offset(0, 5),
-                  spreadRadius: 0,
-                )
-              ],
-            ),
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/images/arrow-left.svg',
-                width: 16.0,
-                height: 16.0,
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/images/arrow-left.svg',
+                  width: 16.0,
+                  height: 16.0,
+                ),
               ),
             ),
           ),

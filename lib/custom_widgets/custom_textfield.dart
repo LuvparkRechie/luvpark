@@ -178,11 +178,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         enabled: widget.isEnabled,
         keyboardType: widget.keyboardType!,
         decoration: InputDecoration(
-          label: CustomParagraph(
-            minFontSize: 8,
-            maxlines: 1,
-            text: widget.labelText,
-          ),
+          labelText: widget.labelText,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           focusedBorder: OutlineInputBorder(

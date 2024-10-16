@@ -26,8 +26,7 @@ class BookingController extends GetxController
   TextEditingController plateNo = TextEditingController();
   TextEditingController startDate = TextEditingController();
   TextEditingController endDate = TextEditingController();
-  TextEditingController startTime = TextEditingController();
-  TextEditingController endTime = TextEditingController();
+
   TextEditingController noHours = TextEditingController();
   TextEditingController inpDisplay = TextEditingController();
   TextEditingController rewardsCon = TextEditingController();
@@ -37,7 +36,8 @@ class BookingController extends GetxController
   RxString inputTimeLabel = '1 Hour'.obs;
   RxBool isBtnLoading = false.obs;
   RxBool isHideBottom = true.obs;
-
+  RxString startTime = "".obs;
+  RxString endTime = "".obs;
   RxBool hasInternetBal = true.obs;
   RxBool isRewardchecked = false.obs;
   RxBool isExtendchecked = false.obs;
@@ -98,15 +98,26 @@ class BookingController extends GetxController
     plateNo = TextEditingController();
     startDate = TextEditingController();
     endDate = TextEditingController();
-    startTime = TextEditingController();
-    endTime = TextEditingController();
+
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      timeComputation();
+      initializeDate();
       getAvailabeAreaVh();
     });
+  }
+
+  void initializeDate() async {
+    DateTime now = await Functions.getTimeNow();
+    startDate.text = now.toString().split(" ")[0].toString();
+    startTime.value = DateFormat('h:mm a').format(now).toString();
+    DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
+    timeInParam.text = DateFormat('HH:mm').format(parsedTime);
+
+    endTime.value = DateFormat('h:mm a')
+        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+        .toString();
   }
 
   void _startInactivityTimer() {
@@ -130,7 +141,7 @@ class BookingController extends GetxController
 
   void _reloadPage() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      timeComputation();
+      initializeDate();
       getAvailabeAreaVh();
     });
   }
@@ -154,13 +165,36 @@ class BookingController extends GetxController
   void timeComputation() async {
     DateTime now = await Functions.getTimeNow();
     startDate.text = now.toString().split(" ")[0].toString();
-    startTime.text = DateFormat('h:mm a').format(now).toString();
-    DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.text);
+    startTime.value = DateFormat('h:mm a').format(now).toString();
+    DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
 
-    endTime.text = DateFormat('h:mm a')
+    endTime.value = DateFormat('h:mm a')
         .format(parsedTime.add(Duration(hours: selectedNumber.value)))
         .toString();
+
+    DateTime sTime = DateFormat('yyyy-MM-dd HH:mm')
+        .parse("${startDate.text} ${timeInParam.text}");
+
+    DateTime pTime = sTime.add(Duration(hours: selectedNumber.value));
+
+    DateTime cTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+        "${now.toString().split(" ")[0]} ${parameters["areaData"]["closed_time"].toString().trim()}");
+
+    if (parameters["areaData"]["is_24_hrs"] == "N") {
+      if (pTime.isAfter(cTime)) {
+        selectedNumber = selectedNumber - 1;
+        CustomDialog().infoDialog("Booking Time Exceeded",
+            "Booking time must not exceed operating hours.", () {
+          initializeDate();
+          Get.back();
+        });
+
+        update();
+        return;
+      }
+      update();
+    }
   }
 
   void onTapChanged(bool isIncrement) {
@@ -173,7 +207,7 @@ class BookingController extends GetxController
       selectedNumber--;
       timeComputation();
     }
-
+    if (selectedVh.isEmpty) return;
     if (debounce?.isActive ?? false) debounce?.cancel();
 
     Duration duration = const Duration(seconds: 1);
@@ -196,7 +230,7 @@ class BookingController extends GetxController
     tokenRewards.value = "0.0";
   }
 
-  void toggleExtendChecked(bool value) {
+  void toggleExtendChecked(bool value) async {
     isExtendchecked.value = value;
   }
 
@@ -374,7 +408,7 @@ class BookingController extends GetxController
   //Compute booking payment
   Future<void> routeToComputation() async {
     isBtnLoading.value = true;
-
+    print("selectedVh $selectedVh");
     int selNoHours = int.parse(selectedNumber.value.toString());
     int selBaseHours = int.parse(selectedVh[0]["base_hours"].toString());
     int selSucceedRate = int.parse(selectedVh[0]["succeeding_rate"].toString());

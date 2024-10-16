@@ -14,20 +14,22 @@ class WalletRechargeController extends GetxController
   RxInt? selectedPaymentType = 0.obs;
   var denoInd = (-1).obs; // no default color for pads
   var ndData = [].obs;
-  final List<String> dataList = [
-    "20",
-    "30",
-    "50",
-    "100",
-    "200",
-    "250",
-    "300",
-    "500",
-    "1000"
-  ];
+  RxList padData = [].obs;
+  List dataList = [
+    {"value": 20, "is_active": false},
+    {"value": 30, "is_active": false},
+    {"value": 50, "is_active": false},
+    {"value": 100, "is_active": false},
+    {"value": 200, "is_active": false},
+    {"value": 250, "is_active": false},
+    {"value": 300, "is_active": false},
+    {"value": 500, "is_active": false},
+    {"value": 1000, "is_active": false},
+  ].obs;
 
   @override
   void onInit() {
+    padData.value = dataList;
     generateBank();
     super.onInit();
   }
@@ -49,10 +51,13 @@ class WalletRechargeController extends GetxController
   }
 
 //function for my pads
-  Future<void> pads(int index) async {
-    FocusScope.of(Get.context!).requestFocus(FocusNode());
-    tokenAmount.text = dataList[index];
-    denoInd.value = index; // Update the selected index
+  Future<void> pads(int value) async {
+    tokenAmount.text = value.toString();
+    padData.value = dataList.map((obj) {
+      obj["is_active"] = (obj["value"] == value);
+      return obj;
+    }).toList();
+
     isActiveBtn.value = true;
   }
 

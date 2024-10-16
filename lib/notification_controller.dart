@@ -343,7 +343,7 @@ Future<void> getParkingTrans(int ctr) async {
             int.parse(dataRow["reservation_id"].toString()),
             0,
             'Check In',
-            "Great! You have successfully checked in to ${dataRow["park_area_name"]} parking area.",
+            "Great! You have successfully checked in at ${dataRow["park_area_name"]} parking area.",
             "parking",
           );
           NotificationController.scheduleNewNotification(

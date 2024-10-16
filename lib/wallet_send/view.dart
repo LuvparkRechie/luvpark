@@ -22,6 +22,7 @@ class WalletSend extends GetView<WalletSendController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
         title: "Send",
         onTap: () {
@@ -104,7 +105,7 @@ class WalletSend extends GetView<WalletSendController> {
                             ? TextInputType.number
                             : const TextInputType.numberWithOptions(
                                 signed: true, decimal: false),
-                        labelText: "Recipient's Mobile Number",
+                        labelText: "Mobile Number",
                         validator: (value) {
                           if (value!.isEmpty) {
                             return 'Field is required';
@@ -165,6 +166,7 @@ class WalletSend extends GetView<WalletSendController> {
                             : const TextInputType.numberWithOptions(
                                 signed: true, decimal: false),
                         onChange: (text) {
+                          controller.pads(int.parse(text.toString()));
                           controller.onTextChange();
                         },
                         validator: (value) {
@@ -206,14 +208,14 @@ class WalletSend extends GetView<WalletSendController> {
                         labelText: "Note",
                         controller: controller.message,
                       ),
-                      for (int i = 0; i < controller.padNumbers.length; i += 3)
+                      for (int i = 0; i < controller.padData.length; i += 3)
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             for (int j = i;
-                                j < i + 3 && j < controller.padNumbers.length;
+                                j < i + 3 && j < controller.padData.length;
                                 j++)
-                              myPads((controller.padNumbers[j]), j),
+                              myPads(controller.padData[j], j)
                           ],
                         ),
                       SizedBox(
@@ -281,53 +283,46 @@ class WalletSend extends GetView<WalletSendController> {
     );
   }
 
-  Widget myPads(int value, int index) {
+  Widget myPads(data, int index) {
     return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          controller.onBtnChange(value);
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(3.0),
-          child: InkWell(
-              // onTap: () => onTapChange("$value", index),
-              child: Container(
-            padding: const EdgeInsets.fromLTRB(20, 17, 20, 17),
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: InkWell(
+          onTap: () {
+            controller.pads(data["value"]);
+          },
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(22, 17, 23, 17),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
-              border: Border.all(
-                  color: Colors.grey.shade200,
-                  width: 1), // Color(0xFF2563EB) corresponds to #2563EB
-              color: controller.indexbtn.value == value
+              border: Border.all(color: Colors.grey.shade200, width: 1),
+              color: data["is_active"]
                   ? AppColor.primaryColor
-                  : AppColor.bodyColor, // Background color
+                  : Colors.white, // Background color changes based on selection
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min, // Equivalent to flex-shrink: 0
+              mainAxisSize: MainAxisSize.min,
               children: [
                 CustomParagraph(
                   maxlines: 1,
                   minFontSize: 8,
-                  text: "$value",
-                  fontWeight: FontWeight.w700,
-                  color: controller.indexbtn.value == value
-                      ? Colors.white
-                      : Colors.black,
+                  text: "${data["value"]}",
+                  fontWeight: FontWeight.w800,
+                  color: data["is_active"] ? Colors.white : Colors.black,
                 ),
                 CustomParagraph(
-                  maxlines: 1,
                   text: "Token",
+                  maxlines: 1,
+                  fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: controller.indexbtn.value == value
-                      ? Colors.white
-                      : Colors.black,
+                  color: data["is_active"] ? Colors.white : Colors.black,
                   minFontSize: 8,
                 ),
               ],
             ),
-          )),
+          ),
         ),
       ),
     );

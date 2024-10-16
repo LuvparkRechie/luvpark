@@ -212,6 +212,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                       ["park_area_name"],
                                                   fontSize: 16,
                                                   maxlines: 1,
+                                                  fontWeight: FontWeight.w800,
                                                 ),
                                                 CustomParagraph(
                                                   text: ct.searchedZone[index]

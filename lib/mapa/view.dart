@@ -1154,7 +1154,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
 
   Widget _buildPlaceholder() {
     return SizedBox(
-      width: MediaQuery.of(Get.context!).size.width / 3.5,
+      width: MediaQuery.of(Get.context!).size.width / 3.4,
+      height: 125,
       child: Padding(
         padding: const EdgeInsets.all(5), // Padding to ensure spacing
         child: Column(
@@ -1265,6 +1266,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
   Widget _buildColumn(String text, String icon) {
     return SizedBox(
       width: MediaQuery.of(Get.context!).size.width / 3.5,
+      height: 125,
       child: Padding(
         padding: const EdgeInsets.all(5), // Padding to ensure spacing
         child: Column(
@@ -1286,11 +1288,17 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
             ),
             const SizedBox(height: 10),
             CustomParagraph(
-              text: text.toUpperCase(),
+              text: text.toLowerCase().trim().contains("perpendicular")
+                  ? text
+                      .trim()
+                      .replaceAll("PERPENDICULAR", "\nPERPENDICULAR")
+                      .trim()
+                  : text.trim().toUpperCase(),
               textAlign: TextAlign.center,
               fontWeight: FontWeight.w600,
               maxlines: 2,
               fontSize: 12,
+              minFontSize: 6,
             ),
             const SizedBox(height: 5),
           ],

@@ -708,6 +708,7 @@ class DashboardMapController extends GetxController
             onTap: () async {
               FocusManager.instance.primaryFocus!.unfocus();
               markerData.clear();
+              markerData = [];
               filteredMarkers.clear();
               tabIndex.value = 0;
               tabController = TabController(length: 2, vsync: this);
@@ -950,7 +951,6 @@ class DashboardMapController extends GetxController
           return e["code"] == element["parking_amenity_code"];
         }).toList();
         element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
-
         return element;
       }).toList();
       if (markerData[0]["park_orientation"] != null) {
@@ -988,7 +988,6 @@ class DashboardMapController extends GetxController
         });
         return;
       }
-
       if (returnData == null) {
         Get.back();
         CustomDialog().serverErrorDialog(Get.context!, () {
@@ -1084,6 +1083,7 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> goingBackToTheCornerWhenIFirstSawYou() async {
+    ratesWidget.clear();
     final vehicleTypesList = markerData[0]['vehicle_types_list'] as String;
 
     List inataya = _parseVehicleTypes(vehicleTypesList).map((e) {
@@ -1108,16 +1108,16 @@ class DashboardMapController extends GetxController
     ratesWidget.clear();
 
     denoInd.value = 0;
-    getVhRatesData(vehicleTypes[0]["vh_types"]);
 
     finalSttime = formatTime(markerData[0]["start_time"]);
     finalEndtime = formatTime(markerData[0]["end_time"]);
     bool openBa = await Functions.checkAvailability(finalSttime, finalEndtime);
     isOpen.value = openBa;
+    update();
+    getVhRatesData(vehicleTypes[0]["vh_types"]);
   }
 
   void getVhRatesData(String vhType) {
-    ratesWidget.clear();
     List data = vehicleRates.where((obj) {
       return obj["vehicle_type"]
           .toString()

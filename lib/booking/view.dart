@@ -13,7 +13,6 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
 import 'package:luvpark_get/custom_widgets/no_data_found.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../custom_widgets/page_loader.dart';
 
@@ -60,11 +59,9 @@ class BookingPage extends GetView<BookingController> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         InkWell(
-                                          onTap: controller.isBtnLoading.value
-                                              ? () {}
-                                              : () {
-                                                  Get.back();
-                                                },
+                                          onTap: () {
+                                            Get.back();
+                                          },
                                           child: Container(
                                               padding: const EdgeInsets.all(10),
                                               clipBehavior: Clip.antiAlias,
@@ -320,7 +317,7 @@ class BookingPage extends GetView<BookingController> {
                                                                 height: 4),
                                                             CustomParagraph(
                                                               text:
-                                                                  "${controller.startTime.text} - ${controller.endTime.text}",
+                                                                  "${controller.startTime.value} - ${controller.endTime.value}",
                                                               fontSize: 10,
                                                               letterSpacing:
                                                                   -0.41,
@@ -508,20 +505,25 @@ class BookingPage extends GetView<BookingController> {
                                           ),
                                         ),
                                         Container(height: 5),
-                                        Container(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 4, horizontal: 6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.blue.shade50,
-                                            borderRadius: BorderRadius.circular(
-                                              12,
+                                        Visibility(
+                                          visible:
+                                              controller.numbersList.isNotEmpty,
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 4, horizontal: 6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue.shade50,
+                                              borderRadius:
+                                                  BorderRadius.circular(
+                                                12,
+                                              ),
                                             ),
-                                          ),
-                                          child: CustomParagraph(
-                                            text:
-                                                "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
-                                            color: AppColor.primaryColor,
-                                            fontSize: 6,
+                                            child: CustomParagraph(
+                                              text:
+                                                  "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
+                                              color: AppColor.primaryColor,
+                                              fontSize: 6,
+                                            ),
                                           ),
                                         ),
 
@@ -1064,119 +1066,111 @@ class BookingPage extends GetView<BookingController> {
                                           ],
                                         ),
                                         Container(height: 20),
-                                        if (controller.isBtnLoading.value)
-                                          Shimmer.fromColors(
-                                            baseColor: Colors.grey.shade300,
-                                            highlightColor:
-                                                const Color(0xFFe6faff),
-                                            child: CustomButton(
-                                              text: " ",
-                                              onPressed: () {},
-                                            ),
-                                          )
-                                        else
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: CustomButton(
-                                                    loading: controller
-                                                        .isSubmitBooking.value,
-                                                    text: controller.parameters[
-                                                            "canCheckIn"]
-                                                        ? "Check In"
-                                                        : "Book now",
-                                                    btnColor: controller
-                                                            .selectedVh.isEmpty
-                                                        ? AppColor.primaryColor
-                                                            .withOpacity(.6)
-                                                        : AppColor.primaryColor,
-                                                    textColor: Colors.white,
-                                                    onPressed:
-                                                        controller.selectedVh
-                                                                .isEmpty
-                                                            ? () {}
-                                                            : () {
-                                                                var dateIn =
-                                                                    DateTime.parse(
-                                                                        "${controller.startDate.text} ${controller.timeInParam.text}");
+                                        Row(
+                                          children: [
+                                            Expanded(
+                                              child: CustomButton(
+                                                  loading: controller
+                                                      .isSubmitBooking.value,
+                                                  text: controller.parameters[
+                                                          "canCheckIn"]
+                                                      ? "Check In"
+                                                      : "Book now",
+                                                  btnColor: controller
+                                                          .selectedVh.isEmpty
+                                                      ? AppColor.primaryColor
+                                                          .withOpacity(.6)
+                                                      : AppColor.primaryColor,
+                                                  textColor: Colors.white,
+                                                  onPressed: controller
+                                                          .selectedVh.isEmpty
+                                                      ? () {}
+                                                      : () {
+                                                          var dateIn =
+                                                              DateTime.parse(
+                                                                  "${controller.startDate.text} ${controller.timeInParam.text}");
 
-                                                                var dateOut = dateIn
-                                                                    .add(Duration(
-                                                                        hours: controller
-                                                                            .numberOfhours));
+                                                          var dateOut =
+                                                              dateIn.add(
+                                                            Duration(
+                                                              hours: controller
+                                                                  .selectedNumber
+                                                                  .value,
+                                                            ),
+                                                          );
 
-                                                                void bongGo() {
-                                                                  Map<String,
-                                                                          dynamic>
-                                                                      parameters =
-                                                                      {
-                                                                    "client_id":
-                                                                        controller.parameters["areaData"]
-                                                                            [
-                                                                            "client_id"],
-                                                                    "park_area_id":
-                                                                        controller.parameters["areaData"]
-                                                                            [
-                                                                            "park_area_id"],
-                                                                    "vehicle_plate_no":
-                                                                        controller.selectedVh[0]
-                                                                            [
-                                                                            "vehicle_plate_no"],
-                                                                    "vehicle_type_id": controller
-                                                                        .selectedVh[
-                                                                            0][
-                                                                            "vehicle_type_id"]
-                                                                        .toString(),
-                                                                    "dt_in": dateIn
-                                                                        .toString()
-                                                                        .toString()
-                                                                        .split(
-                                                                            ".")[0],
-                                                                    "dt_out": dateOut
-                                                                        .toString()
-                                                                        .split(
-                                                                            ".")[0],
-                                                                    "no_hours":
-                                                                        controller
-                                                                            .numberOfhours,
-                                                                    "tran_type":
-                                                                        "R",
-                                                                  };
-
+                                                          void bongGo() {
+                                                            Map<String, dynamic>
+                                                                parameters = {
+                                                              "client_id": controller
+                                                                          .parameters[
+                                                                      "areaData"]
+                                                                  ["client_id"],
+                                                              "park_area_id": controller
+                                                                          .parameters[
+                                                                      "areaData"]
+                                                                  [
+                                                                  "park_area_id"],
+                                                              "vehicle_plate_no":
                                                                   controller
-                                                                      .submitReservation(
-                                                                          parameters);
-                                                                }
+                                                                          .selectedVh[0]
+                                                                      [
+                                                                      "vehicle_plate_no"],
+                                                              "vehicle_type_id":
+                                                                  controller
+                                                                      .selectedVh[
+                                                                          0][
+                                                                          "vehicle_type_id"]
+                                                                      .toString(),
+                                                              "dt_in": dateIn
+                                                                  .toString()
+                                                                  .toString()
+                                                                  .split(
+                                                                      ".")[0],
+                                                              "dt_out": dateOut
+                                                                  .toString()
+                                                                  .split(
+                                                                      ".")[0],
+                                                              "no_hours": controller
+                                                                  .selectedNumber,
+                                                              "tran_type": "R",
+                                                            };
+                                                            print(
+                                                                "parameters $parameters");
+                                                            // controller
+                                                            //     .submitReservation(
+                                                            //         parameters);
+                                                          }
 
-                                                                if (controller
-                                                                    .isExtendchecked
-                                                                    .value) {
-                                                                  bongGo();
-                                                                } else {
-                                                                  CustomDialog().confirmationDialog(
-                                                                      context,
-                                                                      "Enable Auto Extend",
-                                                                      "Your parking duration will be automatically extended using your available balance if it is enabled.\nWould you like to enable it?",
-                                                                      "No",
-                                                                      "Yes",
-                                                                      () {
-                                                                    Get.back();
-                                                                    controller
-                                                                        .isExtendchecked
-                                                                        .value = false;
-                                                                    bongGo();
-                                                                  }, () {
-                                                                    Get.back();
-                                                                    controller
-                                                                        .isExtendchecked
-                                                                        .value = true;
-                                                                    bongGo();
-                                                                  });
-                                                                }
-                                                              }),
-                                              ),
-                                            ],
-                                          ),
+                                                          if (controller
+                                                              .isExtendchecked
+                                                              .value) {
+                                                            bongGo();
+                                                          } else {
+                                                            CustomDialog()
+                                                                .confirmationDialog(
+                                                                    context,
+                                                                    "Enable Auto Extend",
+                                                                    "Your parking duration will be automatically extended using your available balance if it is enabled.\nWould you like to enable it?",
+                                                                    "No",
+                                                                    "Yes", () {
+                                                              Get.back();
+                                                              controller
+                                                                  .isExtendchecked
+                                                                  .value = false;
+                                                              bongGo();
+                                                            }, () {
+                                                              Get.back();
+                                                              controller
+                                                                  .isExtendchecked
+                                                                  .value = true;
+                                                              bongGo();
+                                                            });
+                                                          }
+                                                        }),
+                                            ),
+                                          ],
+                                        ),
                                         Container(
                                           height: 10,
                                         ),
