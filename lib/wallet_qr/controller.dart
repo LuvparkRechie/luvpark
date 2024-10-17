@@ -39,7 +39,7 @@ class QrWalletController extends GetxController
   final ScreenshotController screenshotController = ScreenshotController();
   late TabController tabController;
   // ignore: prefer_typing_uninitialized_variables
-  var userImage;
+  RxString userImage = "".obs;
 
   @override
   void onClose() {
@@ -66,7 +66,8 @@ class QrWalletController extends GetxController
 
   ///FIrst tab
   Future<void> getQrData() async {
-    userImage = await Authentication().getUserProfilePic();
+    String image = await Authentication().getUserProfilePic();
+    userImage.value = image;
     isLoading.value = true;
     isInternetConn.value = true;
     var userData = await Authentication().getUserData2();

@@ -1,4 +1,9 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../functions/functions.dart';
 
 class ParkingAreasController extends GetxController {
   ParkingAreasController();
@@ -7,17 +12,28 @@ class ParkingAreasController extends GetxController {
   final Function callback = Get.arguments["callback"];
   RxList searchedZone = [].obs;
   RxBool isLoading = false.obs;
+  RxBool isLoadDisplay = true.obs;
   RxList markerData = [].obs;
+  RxBool isOpenParking = false.obs;
+  Timer? debounce;
 
   void onSearch(String value) {
-    searchedZone.value = dataNearest;
-    searchedZone.value = dataNearest.where((e) {
+    if (debounce?.isActive ?? false) debounce?.cancel();
+    List subData = dataNearest;
+    subData = dataNearest.where((e) {
       return e["park_area_name"]
               .toString()
               .toLowerCase()
               .contains(value.toLowerCase()) ||
           e["address"].toString().toLowerCase().contains(value.toLowerCase());
     }).toList();
+
+    Duration duration = const Duration(seconds: 2);
+    debounce = Timer(duration, () {
+      Future.delayed(Duration(milliseconds: 200), () {
+        initData(subData);
+      });
+    });
 
     update();
   }
@@ -97,11 +113,38 @@ class ParkingAreasController extends GetxController {
     }
   }
 
+  String formatTime(String time) {
+    return "${time.substring(0, 2)}:${time.substring(2)}";
+  }
+
+  void initData(List data) async {
+    FocusManager.instance.primaryFocus!.unfocus();
+    isLoadDisplay.value = true;
+
+    List<Future<Map<String, dynamic>>> futures =
+        data.map<Future<Map<String, dynamic>>>((e) async {
+      String finalSttime = formatTime(e["start_time"]);
+      String finalEndtime = formatTime(e["end_time"]);
+      bool isOpen =
+          await Functions.checkAvailability(finalSttime, finalEndtime);
+      e["is_open"] = isOpen; // Update the parking availability
+
+      return e;
+    }).toList();
+
+    List<Map<String, dynamic>> results = await Future.wait(futures);
+
+    searchedZone.value = results;
+    isLoadDisplay.value = false;
+  }
+
+  void clearSearch() {
+    initData(dataNearest);
+  }
+
   @override
   void onInit() {
-    searchedZone.value = dataNearest;
-    print("dataNearest $dataNearest");
-
+    initData(dataNearest);
     super.onInit();
   }
 }

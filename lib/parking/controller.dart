@@ -155,6 +155,7 @@ class ParkingController extends GetxController
     };
 
     dynamic args = {
+      'ticketId': data["ticket_id"],
       'spaceName': data["park_area_name"],
       'parkArea': data["park_area_name"],
       'startDate': data["dt_in"],

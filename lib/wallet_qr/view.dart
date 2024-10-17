@@ -26,8 +26,7 @@ class QrWallet extends GetView<QrWalletController> {
           body: Column(
             children: [
               CustomAppbar(
-                title:
-                    controller.currentPage.value == 0 ? "Payment" : "Receive",
+                title: controller.currentPage.value == 0 ? "Payment" : "My QR",
                 bgColor: AppColor.primaryColor,
                 titleColor: Colors.white,
                 textColor: Colors.white,
@@ -185,10 +184,10 @@ class PayQr extends GetView<QrWalletController> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Padding(
-                                padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
+                                padding: EdgeInsets.fromLTRB(15, 17, 15, 15),
                                 child: Column(
                                   children: [
-                                    controller.userImage == null
+                                    controller.userImage.isEmpty
                                         ? Container(
                                             height: 70,
                                             width: 70,
@@ -206,14 +205,14 @@ class PayQr extends GetView<QrWalletController> {
                                             radius: 40,
                                             backgroundImage: MemoryImage(
                                               base64Decode(
-                                                  controller.userImage!),
+                                                  controller.userImage.value),
                                             )),
                                     SizedBox(
                                       height: 10,
                                     ),
                                     CustomTitle(
                                       text: controller.fullName.value,
-                                      maxlines: 1,
+                                      maxlines: 2,
                                       textAlign: TextAlign.center,
                                     ),
                                     Container(height: 5),
@@ -221,6 +220,8 @@ class PayQr extends GetView<QrWalletController> {
                                       text: controller.mono.value,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFF616161),
+                                      maxlines: 2,
+                                      textAlign: TextAlign.center,
                                     ),
                                   ],
                                 ),
@@ -461,7 +462,7 @@ class ReceiveQr extends GetView<QrWalletController> {
                   padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
                   child: Column(
                     children: [
-                      controller.userImage == null
+                      controller.userImage.value.isEmpty
                           ? Container(
                               height: 70,
                               width: 70,
@@ -478,7 +479,7 @@ class ReceiveQr extends GetView<QrWalletController> {
                           : CircleAvatar(
                               radius: 40,
                               backgroundImage: MemoryImage(
-                                base64Decode(controller.userImage!),
+                                base64Decode(controller.userImage.value),
                               ),
                             ),
                       SizedBox(

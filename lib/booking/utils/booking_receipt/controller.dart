@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark_get/booking/utils/extend.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
@@ -8,14 +9,18 @@ import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 
+import '../../../auth/authentication.dart';
+
 class BookingReceiptController extends GetxController
     with GetTickerProviderStateMixin {
   final parameters = Get.arguments;
   late Timer _timer;
+  late Timer _timerEta;
   RxDouble progress = 0.0.obs;
   RxInt noHours = 1.obs;
   Rx<Duration?> timeLeft = Rx<Duration?>(null);
   RxBool isSubmit = false.obs;
+  RxBool btnDisabled = false.obs;
 
   @override
   void onInit() {
@@ -23,7 +28,37 @@ class BookingReceiptController extends GetxController
     print("parameters $parameters");
     if (parameters["status"] == "A") {
       startTimer();
+    } else {
+      checkEta();
     }
+  }
+
+  void checkEta() {
+    _timerEta = Timer.periodic(const Duration(seconds: 5), (Timer timer) async {
+      List ltlng = await Functions.getCurrentPosition();
+      LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+      LatLng dest = LatLng(double.parse(parameters["lat"].toString()),
+          double.parse(parameters["long"].toString()));
+      final etaData = await Functions.fetchETA(coordinates, dest);
+
+      if (etaData[0]["distance"]
+          .toString()
+          .toLowerCase()
+          .trim()
+          .contains("km")) {
+        if (btnDisabled.value) return;
+        btnDisabled.value = true;
+      } else {
+        if (int.parse(etaData[0]["distance"].toString().trim().split(" ")[0]) <=
+            5) {
+          if (!btnDisabled.value) return;
+          btnDisabled.value = false;
+        } else {
+          if (btnDisabled.value) return;
+          btnDisabled.value = true;
+        }
+      }
+    });
   }
 
   void startTimer() async {
@@ -154,6 +189,92 @@ class BookingReceiptController extends GetxController
     });
   }
 
+  Future<void> checkIn() async {
+    int userId = await Authentication().getUserId();
+    dynamic chkInParam = {
+      "ticket_id": parameters["ticketId"],
+      "luvpay_id": userId,
+    };
+    CustomDialog().loadingDialog(Get.context!);
+    List ltlng = await Functions.getCurrentPosition();
+    LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+    LatLng dest = LatLng(double.parse(parameters["lat"].toString()),
+        double.parse(parameters["long"].toString()));
+    final etaData = await Functions.fetchETA(coordinates, dest);
+
+    if (etaData.isEmpty) {
+      Get.back();
+      CustomDialog().errorDialog(Get.context!, "Error",
+          "We couldn't calculate the distance. Please check your connection and try again.",
+          () {
+        Get.back();
+      });
+      return;
+    }
+
+    if (etaData[0]["error"] == "No Internet") {
+      Get.back();
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+
+    btnDisabled.value = true;
+    if (etaData[0]["distance"].toString().toLowerCase().trim().contains("km")) {
+      Get.back();
+      CustomDialog().infoDialog(
+          "Check-In", "You are 5 meters away from the parking area.", () {
+        btnDisabled.value = true;
+        Get.back();
+      });
+    } else {
+      if (int.parse(etaData[0]["distance"].toString().trim().split(" ")[0]) <=
+          5) {
+        btnDisabled.value = false;
+        HttpRequest(api: ApiKeys.gApiPostSelfCheckIn, parameters: chkInParam)
+            .postBody()
+            .then((returnData) async {
+          Get.back();
+          if (returnData == "No Internet") {
+            CustomDialog().internetErrorDialog(Get.context!, () {
+              Get.back();
+            });
+            return;
+          }
+          if (returnData == null) {
+            CustomDialog().serverErrorDialog(Get.context!, () {
+              Get.back();
+            });
+
+            return;
+          }
+
+          if (returnData["success"] == 'Y') {
+            Get.back();
+            CustomDialog().successDialog(
+                Get.context!, "Check-In", "Successfully checked-in", "Okay",
+                () {
+              Get.back();
+            });
+          } else {
+            CustomDialog()
+                .errorDialog(Get.context!, "luvpark", returnData["msg"], () {
+              Get.back();
+            });
+          }
+        });
+      } else {
+        Get.back();
+        CustomDialog().infoDialog(
+            "Check-In", "You are 5 meters away from the parking area.", () {
+          btnDisabled.value = true;
+          Get.back();
+        });
+      }
+    }
+  }
+
   void cancelAutoExtend() {
     CustomDialog().confirmationDialog(
         Get.context!,
@@ -255,6 +376,8 @@ class BookingReceiptController extends GetxController
   void onClose() {
     if (parameters["status"] == "A") {
       _timer.cancel();
+    } else {
+      _timerEta.cancel();
     }
     super.onClose();
   }

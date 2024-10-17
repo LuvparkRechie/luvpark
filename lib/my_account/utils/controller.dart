@@ -97,6 +97,7 @@ class UpdateProfileController extends GetxController {
   void onClose() {
     super.onClose();
     pageController.dispose();
+    focusNode.dispose();
   }
 
   Future<void> getUserDataFields() async {
@@ -398,6 +399,20 @@ class UpdateProfileController extends GetxController {
         if (formKeyStep3.currentState!.validate()) {
           onSubmit();
         }
+        break;
+    }
+  }
+
+  void onUserInteract() {
+    switch (currentPage.value) {
+      case 0:
+        if (formKeyStep1.currentState!.validate()) {}
+        break;
+      case 1:
+        if (formKeyStep2.currentState!.validate()) {}
+        break;
+      case 2:
+        if (formKeyStep3.currentState!.validate()) {}
         break;
     }
   }

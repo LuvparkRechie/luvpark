@@ -47,11 +47,21 @@ class _FilterMapState extends State<FilterMap> {
   void initState() {
     super.initState();
     filterParam = filterParam.map((e) {
-      e["radius"] = currentDistance.toStringAsFixed(1);
+      e["radius"] = convertSliderValue(currentDistance).toString();
       return e;
     }).toList();
 
     loadData();
+  }
+
+  String convertSliderValue(double value) {
+    if (value < 1) {
+      int meters = (value * 1000).round();
+      return '$meters';
+    } else {
+      // Use the value as kilometers
+      return '${double.parse((value * 1000).toStringAsFixed(1)).round()}';
+    }
   }
 
   Future<void> onPickDistance(value) async {
@@ -329,17 +339,6 @@ class _FilterMapState extends State<FilterMap> {
                                         label: labelDistance,
                                         onChanged: (value) {
                                           onPickDistance(value);
-                                          String convertSliderValue(
-                                              double value) {
-                                            if (value < 1) {
-                                              int meters = (value * 1000)
-                                                  .round(); // Round to the nearest meter
-                                              return '$meters';
-                                            } else {
-                                              // Use the value as kilometers
-                                              return '${double.parse((value * 1000).toStringAsFixed(1)).round()}';
-                                            }
-                                          }
 
                                           filterParam = filterParam.map((e) {
                                             e["radius"] =

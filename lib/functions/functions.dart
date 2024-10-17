@@ -508,7 +508,6 @@ class Functions {
 
     // Get the current time
     DateTime currentTime = await Functions.getTimeNow();
-    print("currentTime: $currentTime");
 
     // Parse start and end times
     List<String> startParts = startTimeStr.split(':');
@@ -861,7 +860,35 @@ class Functions {
   }
 
   static Future<DateTime> getTimeNow() async {
-    DateTime timeNow = await NTP.now();
-    return timeNow;
+    try {
+      DateTime timeNow = await NTP.now().timeout(Duration(seconds: 2));
+      return timeNow;
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  static Future<void> checkInternet(Function(bool hasInternet) callBack) async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        final ping = Ping('google.com', count: 1);
+
+        ping.stream.listen((event) {
+          if (event.summary == null) {
+          } else {
+            if (event.summary!.received > 0) {
+              callBack(true);
+            } else {
+              callBack(false);
+            }
+          }
+        });
+      } else {
+        callBack(false);
+      }
+    } on SocketException catch (_) {
+      callBack(false);
+    }
   }
 }

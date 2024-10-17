@@ -1,22 +1,20 @@
 // ignore_for_file: prefer_const_constructorss, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-
 import 'package:intl/intl.dart';
-
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_data_found.dart';
-
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:luvpark_get/wallet/controller.dart';
 import 'package:luvpark_get/wallet/utils/transaction_details.dart';
 import 'package:shimmer/shimmer.dart';
 
+import '../auth/authentication.dart';
+import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/app_color.dart';
 import 'utils/transaction_history/index.dart';
 
@@ -49,230 +47,244 @@ class WalletScreen extends GetView<WalletController> {
                     child: Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        border: Border(
+                          left: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                          top: BorderSide(color: Color(0xFFDFE7EF)),
+                          right: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                          bottom:
+                              BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black12,
-                            offset:
-                                Offset(0, 2), // horizontal & vertical offset
-                            blurRadius: 6, // softening the shadow
-                            spreadRadius: 1, // spread of the shadow
-                          ),
+                            color: Color(0x0C000000),
+                            blurRadius: 15,
+                            offset: Offset(0, 5),
+                            spreadRadius: 0,
+                          )
                         ],
-                        borderRadius: BorderRadius.circular(7),
                       ),
-                      child: Container(
-                        height: 140,
-                        width: double.infinity,
-                        child: Column(
-                          children: [
-                            Row(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                            child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Image.asset(
+                                    height: 30, "assets/images/logo.png"),
+                                SizedBox(width: 14),
                                 Expanded(
-                                  child: Row(
+                                  child: Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Expanded(
-                                        child: Container(
-                                          height: 70,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(7),
-                                              topRight: Radius.circular(7),
-                                            ),
-                                            border: Border(
-                                              top: BorderSide(
-                                                  color: Colors.black12),
-                                              left: BorderSide(
-                                                  color: Colors.black12),
-                                              right: BorderSide(
-                                                  color: Colors.black12),
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  SizedBox(width: 15),
-                                                  Image.asset(
-                                                      height: 30,
-                                                      "assets/images/logo.png"),
-                                                  SizedBox(width: 14),
-                                                  Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      CustomParagraph(
-                                                        text: "My balance",
-                                                      ),
-                                                      CustomParagraph(
-                                                        text: !controller
-                                                                .isNetConnCard
-                                                                .value
-                                                            ? "........"
-                                                            : controller
-                                                                    .isLoadingCard
-                                                                    .value
-                                                                ? "........"
-                                                                : toCurrencyString(
-                                                                    controller
-                                                                            .userData[0]
-                                                                        [
-                                                                        "amount_bal"]),
-                                                        fontWeight:
-                                                            FontWeight.w800,
-                                                        color: Colors.black,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                      CustomParagraph(
+                                        text: "My balance",
+                                      ),
+                                      CustomParagraph(
+                                        text: !controller.isNetConnCard.value
+                                            ? "........"
+                                            : controller.isLoadingCard.value
+                                                ? "........"
+                                                : toCurrencyString(controller
+                                                    .userData[0]["amount_bal"]),
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
                                       ),
                                     ],
                                   ),
                                 ),
                               ],
                             ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          Divider(
+                            color: Colors.black12,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                            child: Row(
                               children: [
+                                Image.asset(
+                                    height: 30, "assets/images/rewardicon.png"),
+                                SizedBox(width: 14),
                                 Expanded(
-                                  child: Container(
-                                    height: 70,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(7),
-                                        bottomRight: Radius.circular(7),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CustomParagraph(
+                                        text: "My rewards",
                                       ),
-                                      border: Border.all(
-                                        color: Colors.black12,
+                                      CustomParagraph(
+                                        text: !controller.isNetConnCard.value
+                                            ? "........"
+                                            : controller.isLoadingCard.value
+                                                ? "........"
+                                                : toCurrencyString(controller
+                                                    .userData[0]["points_bal"]
+                                                    .toString()),
+                                        fontWeight: FontWeight.w800,
+                                        color: Colors.black,
                                       ),
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            SizedBox(width: 15),
-                                            Image.asset(
-                                                height: 30,
-                                                "assets/images/rewardicon.png"),
-                                            SizedBox(width: 14),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                CustomParagraph(
-                                                  text: "My rewards",
-                                                ),
-                                                CustomParagraph(
-                                                  text: !controller
-                                                          .isNetConnCard.value
-                                                      ? "........"
-                                                      : controller.isLoadingCard
-                                                              .value
-                                                          ? "........"
-                                                          : toCurrencyString(
-                                                              controller
-                                                                  .userData[0][
-                                                                      "points_bal"]
-                                                                  .toString()),
-                                                  fontWeight: FontWeight.w800,
-                                                  color: Colors.black,
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
+                                    ],
                                   ),
                                 ),
                               ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(15, 0, 15, 23),
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 23),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton.icon(
-                      onPressed: () async {
+                    InkWell(
+                      onTap: () async {
+                        final item = await Authentication().getUserData2();
+                        String? fname = item["first_name"];
+
+                        if (fname == null) {
+                          CustomDialog().infoDialog("Unverified Account",
+                              "Complete your account information to access the requested service.\nGo to profile and update your account.",
+                              () {
+                            Get.back();
+                          });
+                          return;
+                        }
                         Get.toNamed(Routes.walletrecharge);
                       },
-                      icon: SvgPicture.asset(
-                        'assets/images/wallet_wallet.svg',
-                        height: 20,
-                        width: 20,
-                      ),
-                      label: CustomParagraph(
-                        text: "Load",
-                        fontSize: 12,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.scafColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(41),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.6,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 13),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                            borderRadius: BorderRadius.circular(41),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/wallet_wallet.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            Container(
+                              width: 10,
+                            ),
+                            CustomParagraph(
+                              text: "Load",
+                              fontSize: 12,
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
+                    Container(width: 5),
+                    InkWell(
+                      onTap: () {
                         Get.toNamed(Routes.walletsend);
                       },
-                      icon: SvgPicture.asset(
-                        'assets/images/wallet_send.svg',
-                        height: 20,
-                        width: 20,
-                      ),
-                      label: CustomParagraph(
-                        text: "Send",
-                        fontSize: 12,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.scafColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(41),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.6,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 13),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                            borderRadius: BorderRadius.circular(41),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/wallet_send.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            Container(
+                              width: 10,
+                            ),
+                            CustomParagraph(
+                              text: "Send",
+                              fontSize: 12,
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
+                    Container(width: 5),
+                    InkWell(
+                      onTap: () {
                         Get.toNamed(Routes.qrwallet);
                       },
-                      icon: SvgPicture.asset(
-                        'assets/images/wallet_qr.svg',
-                        height: 20,
-                        width: 20,
-                      ),
-                      label: CustomParagraph(
-                        text: "QR Code",
-                        fontSize: 12,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColor.scafColor,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(41),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.2,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 13),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                            borderRadius: BorderRadius.circular(41),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/wallet_qr.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            Container(
+                              width: 5,
+                            ),
+                            CustomParagraph(
+                              text: "QR Code",
+                              fontSize: 12,
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -280,7 +292,7 @@ class WalletScreen extends GetView<WalletController> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(15, 0, 15, 25),
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 23),
                 child: InkWell(
                   onTap: () {
                     Get.toNamed(Routes.myaccount);
@@ -291,8 +303,11 @@ class WalletScreen extends GetView<WalletController> {
                 ),
               ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 25, 25),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 26),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(color: Colors.white),
                   child: Column(
                     children: [
                       Padding(
@@ -303,6 +318,8 @@ class WalletScreen extends GetView<WalletController> {
                             CustomParagraph(
                               text: "Current Transactions",
                               color: Colors.black,
+                              fontWeight: FontWeight.w900,
+                              fontSize: 16,
                             ),
                             GestureDetector(
                               onTap: () {

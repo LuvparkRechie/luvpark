@@ -638,7 +638,10 @@ class BookingController extends GetxController
       isSubmitBooking.value = false;
       if (returnData["success"] == 'Y') {
         Get.back();
-        Get.to(BookingDialog(data: [args]));
+        CustomDialog().successDialog(
+            Get.context!, "Check-In", "Successfully checked-in", "Okay", () {
+          Get.back();
+        });
       } else {
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
             () {

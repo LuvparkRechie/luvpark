@@ -126,6 +126,7 @@ class WalletSendController extends GetxController
               arguments: {
                 "otpData": otpData,
                 "cb": () {
+                  Get.back();
                   refreshUserData();
                 }
               },

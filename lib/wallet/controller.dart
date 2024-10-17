@@ -53,14 +53,19 @@ class WalletController extends GetxController
     unverified.value = [];
     if (item2["first_name"] == null || item2["first_name"].toString().isEmpty) {
       unverified.add(Container(
-        padding: EdgeInsets.fromLTRB(23, 12, 0, 12),
-        height: 72,
+        padding: EdgeInsets.fromLTRB(23, 12, 10, 12),
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: ShapeDecoration(
           color: Color(0xFF89C732),
-          borderRadius: BorderRadius.all(
-            Radius.circular(7),
-          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
+          shadows: [
+            BoxShadow(
+              color: Color(0x0C000000),
+              blurRadius: 15,
+              offset: Offset(0, 5),
+              spreadRadius: 0,
+            )
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.start,
@@ -81,17 +86,17 @@ class WalletController extends GetxController
                 CustomParagraph(
                   text: "Verification incomplete",
                   textAlign: TextAlign.start,
-                  fontSize: 14,
+                  fontSize: 16,
                   color: Colors.white,
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                 ),
                 SizedBox(height: 5),
                 CustomParagraph(
                   text: "Only a few more steps to go",
                   textAlign: TextAlign.start,
-                  fontSize: 12,
+                  fontSize: 14,
                   color: Colors.white,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w600,
                 ),
               ],
             ),

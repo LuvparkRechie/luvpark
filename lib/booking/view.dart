@@ -1135,11 +1135,10 @@ class BookingPage extends GetView<BookingController> {
                                                                   .selectedNumber,
                                                               "tran_type": "R",
                                                             };
-                                                            print(
-                                                                "parameters $parameters");
-                                                            // controller
-                                                            //     .submitReservation(
-                                                            //         parameters);
+
+                                                            controller
+                                                                .submitReservation(
+                                                                    parameters);
                                                           }
 
                                                           if (controller

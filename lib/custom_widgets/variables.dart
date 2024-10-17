@@ -303,6 +303,7 @@ class Variables {
 
     // Parse numeric part to double
     double distanceValue = double.tryParse(numericPart) ?? 0;
+
     // Convert to meters
     return distanceValue * 1000;
   }

@@ -89,157 +89,215 @@ class ParkingAreas extends GetView<ParkingAreasController> {
             Obx(
               () => Expanded(
                 child: Container(
+                  width: MediaQuery.of(context).size.width,
                   decoration: const BoxDecoration(
                     //   color: AppColor.bodyColor,
                     borderRadius: BorderRadius.vertical(
                       top: Radius.circular(7),
                     ),
                   ),
-                  child: ct.searchedZone.isEmpty
-                      ? NoDataFound(
-                          text: "There are no parking areas to display.",
-                        )
-                      : ScrollConfiguration(
-                          behavior:
-                              ScrollBehavior().copyWith(overscroll: false),
-                          child: StretchingOverscrollIndicator(
-                            axisDirection: AxisDirection.down,
-                            child: ListView.separated(
-                              padding: EdgeInsets.zero,
-                              separatorBuilder: (context, index) {
-                                return const SizedBox(height: 2);
-                              },
-                              itemCount: ct.searchedZone.length,
-                              itemBuilder: (context, index) {
-                                final String isPwd =
-                                    ct.searchedZone[index]["is_pwd"] ?? "N";
-                                final String vehicleTypes = ct
-                                    .searchedZone[index]["vehicle_types_list"];
-
-                                String iconAsset;
-                                // Determine the iconAsset based on parking type and PWD status
-                                if (isPwd == "Y") {
-                                  iconAsset = controller.getIconAssetForPwd(
-                                      ct.searchedZone[index]
-                                          ["parking_type_code"],
-                                      vehicleTypes);
-                                } else {
-                                  iconAsset = controller.getIconAssetForNonPwd(
-                                      ct.searchedZone[index]
-                                          ["parking_type_code"],
-                                      vehicleTypes);
-                                }
-
-                                return ShowUpAnimation(
-                                  delay: 5 * index,
-                                  child: InkWell(
-                                    onTap: () async {
-                                      CustomDialog()
-                                          .loadingDialog(Get.context!);
-
-                                      controller.markerData = ct.searchedZone;
-
-                                      List ltlng =
-                                          await Functions.getCurrentPosition();
-                                      LatLng coordinates = LatLng(
-                                          ltlng[0]["lat"], ltlng[0]["long"]);
-                                      LatLng dest = LatLng(
-                                          double.parse(ct.searchedZone[index]
-                                                  ["pa_latitude"]
-                                              .toString()),
-                                          double.parse(ct.searchedZone[index]
-                                                  ["pa_longitude"]
-                                              .toString()));
-                                      final estimatedData =
-                                          await Functions.fetchETA(
-                                              coordinates, dest);
-
-                                      controller.markerData.value =
-                                          controller.markerData.map((e) {
-                                        e["distance_display"] =
-                                            "${Variables.parseDistance(double.parse(e["current_distance"].toString()))} away";
-                                        e["time_arrival"] =
-                                            estimatedData[0]["time"];
-                                        return e;
-                                      }).toList();
-                                      Get.back();
-                                      if (estimatedData[0]["error"] ==
-                                          "No Internet") {
-                                        CustomDialog().internetErrorDialog(
-                                            Get.context!, () {
-                                          Get.back();
-                                        });
-
-                                        return;
-                                      } else {
-                                        Get.back();
-                                        controller.callback(
-                                            [controller.markerData[index]]);
-                                      }
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          0, 15, 15, 15),
-                                      width: MediaQuery.of(context).size.width *
-                                          .88,
-                                      decoration: BoxDecoration(
-                                        border: Border(
-                                            bottom: BorderSide(
-                                          color: Colors.grey.shade200,
-                                        )),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            height: 40,
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: const BoxDecoration(),
-                                            child: Image(
-                                              image: AssetImage(iconAsset),
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                          Container(width: 10),
-                                          Expanded(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                CustomTitle(
-                                                  text: ct.searchedZone[index]
-                                                      ["park_area_name"],
-                                                  fontSize: 16,
-                                                  maxlines: 1,
-                                                  fontWeight: FontWeight.w800,
-                                                ),
-                                                CustomParagraph(
-                                                  text: ct.searchedZone[index]
-                                                      ["address"],
-                                                  fontSize: 14,
-                                                  maxlines: 2,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(width: 10),
-                                          CustomLinkLabel(
-                                              text: Variables.parseDistance(
-                                                  double.parse(ct
-                                                      .searchedZone[index]
-                                                          ["current_distance"]
-                                                      .toString())))
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
+                  child: controller.isLoadDisplay.value
+                      ? Center(
+                          child: SizedBox(
+                            height: 40,
+                            width: 40,
+                            child: CircularProgressIndicator(),
                           ),
-                        ),
+                        )
+                      : ct.searchedZone.isEmpty
+                          ? NoDataFound(
+                              text: "There are no parking areas to display.",
+                            )
+                          : ScrollConfiguration(
+                              behavior:
+                                  ScrollBehavior().copyWith(overscroll: false),
+                              child: StretchingOverscrollIndicator(
+                                axisDirection: AxisDirection.down,
+                                child: ListView.separated(
+                                  padding: EdgeInsets.zero,
+                                  separatorBuilder: (context, index) {
+                                    return const SizedBox(height: 2);
+                                  },
+                                  itemCount: ct.searchedZone.length,
+                                  itemBuilder: (context, index) {
+                                    final String isPwd =
+                                        ct.searchedZone[index]["is_pwd"] ?? "N";
+                                    final String vehicleTypes =
+                                        ct.searchedZone[index]
+                                            ["vehicle_types_list"];
+
+                                    String iconAsset;
+
+                                    if (isPwd == "Y") {
+                                      iconAsset = controller.getIconAssetForPwd(
+                                          ct.searchedZone[index]
+                                              ["parking_type_code"],
+                                          vehicleTypes);
+                                    } else {
+                                      iconAsset =
+                                          controller.getIconAssetForNonPwd(
+                                              ct.searchedZone[index]
+                                                  ["parking_type_code"],
+                                              vehicleTypes);
+                                    }
+
+                                    return ShowUpAnimation(
+                                      delay: 5 * index,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          CustomDialog()
+                                              .loadingDialog(Get.context!);
+
+                                          controller.markerData =
+                                              ct.searchedZone;
+
+                                          List ltlng = await Functions
+                                              .getCurrentPosition();
+                                          LatLng coordinates = LatLng(
+                                              ltlng[0]["lat"],
+                                              ltlng[0]["long"]);
+                                          LatLng dest = LatLng(
+                                              double.parse(ct
+                                                  .searchedZone[index]
+                                                      ["pa_latitude"]
+                                                  .toString()),
+                                              double.parse(ct
+                                                  .searchedZone[index]
+                                                      ["pa_longitude"]
+                                                  .toString()));
+                                          final estimatedData =
+                                              await Functions.fetchETA(
+                                                  coordinates, dest);
+
+                                          controller.markerData.value =
+                                              controller.markerData.map((e) {
+                                            e["distance_display"] =
+                                                "${Variables.parseDistance(double.parse(e["current_distance"].toString()))} away";
+                                            e["time_arrival"] =
+                                                estimatedData[0]["time"];
+                                            return e;
+                                          }).toList();
+                                          Get.back();
+                                          if (estimatedData[0]["error"] ==
+                                              "No Internet") {
+                                            CustomDialog().internetErrorDialog(
+                                                Get.context!, () {
+                                              Get.back();
+                                            });
+
+                                            return;
+                                          } else {
+                                            Get.back();
+                                            controller.callback(
+                                                [controller.markerData[index]]);
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              0, 15, 15, 15),
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              .88,
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                                bottom: BorderSide(
+                                              color: Colors.grey.shade200,
+                                            )),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                height: 40,
+                                                clipBehavior: Clip.antiAlias,
+                                                decoration:
+                                                    const BoxDecoration(),
+                                                child: Image(
+                                                  image: AssetImage(iconAsset),
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                              Container(width: 10),
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    CustomTitle(
+                                                      text: ct.searchedZone[
+                                                              index]
+                                                          ["park_area_name"],
+                                                      fontSize: 16,
+                                                      maxlines: 1,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                    ),
+                                                    CustomParagraph(
+                                                      text:
+                                                          ct.searchedZone[index]
+                                                              ["address"],
+                                                      fontSize: 14,
+                                                      maxlines: 2,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                    Container(height: 5),
+                                                    Text.rich(
+                                                      TextSpan(
+                                                        children: [
+                                                          TextSpan(
+                                                            text: ct.searchedZone[
+                                                                        index]
+                                                                    ["is_open"]
+                                                                ? "Open"
+                                                                : "Close",
+                                                            style: paragraphStyle(
+                                                                color: ct.searchedZone[
+                                                                            index]
+                                                                        [
+                                                                        "is_open"]
+                                                                    ? const Color(
+                                                                        0xFF7BB56C)
+                                                                    : Colors
+                                                                        .red,
+                                                                fontSize: 12),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                ' ● ${Variables.timeFormatter(ct.searchedZone[index]["opened_time"].toString())} - ${Variables.timeFormatter(ct.searchedZone[index]["closed_time"]).toString()} ● ',
+                                                            style:
+                                                                paragraphStyle(
+                                                                    fontSize:
+                                                                        12),
+                                                          ),
+                                                          TextSpan(
+                                                            text:
+                                                                ' ${Variables.parseDistance(double.parse(ct.searchedZone[index]["current_distance"].toString()))}',
+                                                            style: paragraphStyle(
+                                                                color: AppColor
+                                                                    .primaryColor,
+                                                                fontSize: 12),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
                 ),
               ),
             ),

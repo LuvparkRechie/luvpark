@@ -251,10 +251,11 @@ class WalletSend extends GetView<WalletSendController> {
                                         .removeAllWhitespace)) {
                                   // ignore: use_build_context_synchronously
                                   CustomDialog().snackbarDialog(
-                                      context,
-                                      "Insuficient balance.",
-                                      Colors.red,
-                                      () {});
+                                    context,
+                                    "Insuficient balance.",
+                                    Colors.red,
+                                    () {},
+                                  );
                                   return;
                                 }
                                 // ignore: use_build_context_synchronously
@@ -266,10 +267,11 @@ class WalletSend extends GetView<WalletSendController> {
                                     "Yes", () {
                                   Get.back();
                                   Get.back();
+                                  Get.back();
                                 }, () {
                                   Get.back();
+
                                   controller.getVerifiedAcc();
-                                  Get.back();
                                 });
                               }
                             })

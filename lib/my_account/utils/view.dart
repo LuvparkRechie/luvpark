@@ -152,7 +152,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep1,
-          autovalidateMode: AutovalidateMode.always,
+          autovalidateMode: AutovalidateMode.disabled,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -183,7 +183,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
@@ -193,20 +193,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   return null;
                 },
               ),
-              // CustomDropdown(
-              //   labelText: "Suffix",
-              //   ddData: controller.suffixes,
-              //   ddValue: controller.selectedSuffix.value,
-              //   onChange: (String? newValue) {
-              //     controller.selectedSuffix.value = newValue;
-              //   },
-              // ),
               CustomTextField(
                 labelText: "Middle Name",
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 onChange: (value) {
@@ -247,7 +239,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z.\- ]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
@@ -376,7 +368,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep2,
-          autovalidateMode: AutovalidateMode.always,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -465,7 +457,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       isReadOnly: true,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'City is required';
+                          return 'Barangay is required';
                         }
 
                         return null;
@@ -477,7 +469,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       ddValue: controller.selectedBrgy.value,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return 'City is required';
+                          return 'Barangay is required';
                         }
 
                         return null;
@@ -500,7 +492,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Region is required';
+                    return 'Zip code is required';
                   } else if (value.length != 4) {
                     return 'ZIP code must be 4 digits';
                   } else if (!RegExp(r'^\d{4}$').hasMatch(value)) {

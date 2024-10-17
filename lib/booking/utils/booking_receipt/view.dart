@@ -317,19 +317,45 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                   ],
                 ),
               ),
-            if (controller.parameters["can_cancel"])
-              Padding(
-                padding: const EdgeInsets.all(15),
-                child: Column(
-                  children: [
-                    CustomButton(
-                      textColor: AppColor.primaryColor,
-                      btnColor: Colors.white,
-                      bordercolor: AppColor.primaryColor,
-                      text: "Cancel booking",
-                      onPressed: controller.cancelAdvanceParking,
-                    )
-                  ],
+            if (controller.parameters["status"] != "A")
+              Obx(
+                () => Padding(
+                  padding: const EdgeInsets.all(15),
+                  child: !controller.parameters["can_cancel"]
+                      ? CustomButton(
+                          btnColor: controller.btnDisabled.value
+                              ? AppColor.primaryColor.withOpacity(.5)
+                              : null,
+                          text: "Check in",
+                          onPressed: controller.btnDisabled.value
+                              ? () {}
+                              : controller.checkIn,
+                        )
+                      : Row(
+                          children: [
+                            Expanded(
+                              child: CustomButton(
+                                textColor: AppColor.primaryColor,
+                                btnColor: Colors.white,
+                                bordercolor: AppColor.primaryColor,
+                                text: "Cancel booking",
+                                onPressed: controller.cancelAdvanceParking,
+                              ),
+                            ),
+                            Container(width: 10),
+                            Expanded(
+                              child: CustomButton(
+                                btnColor: controller.btnDisabled.value
+                                    ? AppColor.primaryColor.withOpacity(.5)
+                                    : null,
+                                text: "Check in",
+                                onPressed: controller.btnDisabled.value
+                                    ? () {}
+                                    : controller.checkIn,
+                              ),
+                            )
+                          ],
+                        ),
                 ),
               ),
             Container(height: 10)
