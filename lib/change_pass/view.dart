@@ -100,6 +100,9 @@ class ChangePassword extends GetView<ChangePasswordController> {
                             if (txtValue == null || txtValue.isEmpty) {
                               return "Field is required";
                             }
+                            if (txtValue == controller.oldPassword.text) {
+                              return "New password must be different";
+                            }
                             return null;
                           },
                         ),
@@ -128,9 +131,7 @@ class ChangePassword extends GetView<ChangePasswordController> {
                             if (txtValue != controller.newPassword.text) {
                               return "New passwords do not match";
                             }
-                            if (txtValue == controller.oldPassword.text) {
-                              return "New password cannot be the same as the old password";
-                            }
+
                             return null;
                           },
                         ),
