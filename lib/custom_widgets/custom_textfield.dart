@@ -32,6 +32,8 @@ class CustomTextField extends StatefulWidget {
   final TextAlign? textAlign;
   final TextCapitalization textCapitalization;
   final FormFieldValidator<String>? validator;
+  final int? maxLines;
+  final String? errorText;
 
   const CustomTextField(
       {super.key,
@@ -55,7 +57,9 @@ class CustomTextField extends StatefulWidget {
       this.validator,
       this.keyboardType = TextInputType.text,
       this.textCapitalization = TextCapitalization.none,
-      this.onTap});
+      this.onTap,
+      this.maxLines,
+      this.errorText});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -70,6 +74,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
     return Padding(
         padding: const EdgeInsets.only(top: 10.0, bottom: 10),
         child: TextFormField(
+          minLines: 1,
+          maxLength: widget.maxLength,
+          maxLines: widget.maxLines,
           textCapitalization: widget.textCapitalization,
           obscureText: widget.isObscure,
           autofocus: false,
@@ -82,6 +89,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
+            errorText: widget.errorText,
             filled: widget.isFilled,
             fillColor: widget.filledColor,
             contentPadding:
