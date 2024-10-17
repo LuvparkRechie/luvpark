@@ -32,7 +32,6 @@ class AddVehicles extends GetView<MyVehiclesController> {
               child: Obx(
                 () => Form(
                   key: controller.formVehicleReg,
-                  autovalidateMode: AutovalidateMode.always,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
