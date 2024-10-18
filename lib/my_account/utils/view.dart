@@ -566,10 +566,16 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           Container(height: 10),
                           CustomTextField(
                             labelText: "Answer",
-                            controller: controller.answer1,
-                            isReadOnly: controller.seq1.value == 0,
-                            isObscure: true,
                             textCapitalization: TextCapitalization.characters,
+                            controller: controller.answer1,
+                            isObscure: !controller.obscureTextAnswer1.value,
+                            suffixIcon: !controller.obscureTextAnswer1.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            onIconTap: () {
+                              controller.onToggleShowAnswer1(
+                                  !controller.obscureTextAnswer1.value);
+                            },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
@@ -577,7 +583,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
 
                               return null;
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -623,10 +629,16 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           Container(height: 10),
                           CustomTextField(
                             labelText: "Answer",
-                            controller: controller.answer2,
                             textCapitalization: TextCapitalization.characters,
-                            isReadOnly: controller.seq2.value == 0,
-                            isObscure: true,
+                            controller: controller.answer2,
+                            isObscure: !controller.obscureTextAnswer2.value,
+                            suffixIcon: !controller.obscureTextAnswer2.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            onIconTap: () {
+                              controller.onToggleShowAnswer2(
+                                  !controller.obscureTextAnswer2.value);
+                            },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
@@ -634,7 +646,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
 
                               return null;
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),
@@ -680,10 +692,16 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           Container(height: 10),
                           CustomTextField(
                             labelText: "Answer",
-                            isObscure: true,
-                            controller: controller.answer3,
                             textCapitalization: TextCapitalization.characters,
-                            isReadOnly: controller.seq3.value == 0,
+                            controller: controller.answer3,
+                            isObscure: !controller.obscureTextAnswer3.value,
+                            suffixIcon: !controller.obscureTextAnswer3.value
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                            onIconTap: () {
+                              controller.onToggleShowAnswer3(
+                                  !controller.obscureTextAnswer3.value);
+                            },
                             validator: (value) {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
@@ -691,7 +709,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
 
                               return null;
                             },
-                          )
+                          ),
                         ],
                       ),
                     ),

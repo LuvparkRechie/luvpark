@@ -75,6 +75,10 @@ class UpdateProfileController extends GetxController {
   TextEditingController answer2 = TextEditingController();
   TextEditingController answer3 = TextEditingController();
 
+  var obscureTextAnswer1 = true.obs;
+  var obscureTextAnswer2 = true.obs;
+  var obscureTextAnswer3 = true.obs;
+
   @override
   // ignore: unnecessary_overrides
   void onInit() {
@@ -160,6 +164,21 @@ class UpdateProfileController extends GetxController {
         });
       });
     }
+  }
+
+  void onToggleShowAnswer1(bool isShow) {
+    obscureTextAnswer1.value = isShow;
+    update();
+  }
+
+  void onToggleShowAnswer2(bool isShow) {
+    obscureTextAnswer2.value = isShow;
+    update();
+  }
+
+  void onToggleShowAnswer3(bool isShow) {
+    obscureTextAnswer3.value = isShow;
+    update();
   }
 
   Future<void> executeCodeAddress(String api, int index, Function cb) async {
