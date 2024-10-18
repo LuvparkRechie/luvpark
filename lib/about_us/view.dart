@@ -56,7 +56,7 @@ class AboutUs extends GetView<AboutUsController> {
                 ),
                 const SizedBox(height: 10),
                 InkWell(
-                  overlayColor: WidgetStateProperty.all(Colors.transparent),
+                overlayColor: MaterialStateProperty.all(Colors.blue.withOpacity(0.2)),
                   onTap: () {
                     Get.to(EmailSender());
                   },

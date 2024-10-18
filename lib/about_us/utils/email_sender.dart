@@ -47,7 +47,6 @@ class EmailSender extends StatelessWidget {
                   )),
               Obx(() => CustomTextField(
                     title: "Body",
-                    maxLines: 5,
                     maxLength: 400,
                     inputFormatters: [LengthLimitingTextInputFormatter(400)],
                     controller: emailController.bodyController,
