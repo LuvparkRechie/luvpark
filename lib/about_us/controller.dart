@@ -9,15 +9,16 @@ class AboutUsController extends GetxController
     with GetSingleTickerProviderStateMixin {
   AboutUsController();
 
-  var attachments = <String>[].obs;
-  var isHTML = false.obs;
+  // Text Editing Controllers
   final recipientController = TextEditingController(text: 'support@luvpark.ph');
   final subjectController = TextEditingController(text: 'luvpark');
   final bodyController = TextEditingController();
 
+  // Reactive variables
+  var attachments = <String>[].obs;
+  var isHTML = false.obs;
   var isSubjectValid = true.obs;
   var isBodyValid = true.obs;
-
   RxBool isLoading = false.obs;
   RxBool isInternetConn = true.obs;
 

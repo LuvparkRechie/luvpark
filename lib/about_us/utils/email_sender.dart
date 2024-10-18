@@ -9,7 +9,6 @@ import '../controller.dart';
 
 class EmailSender extends StatelessWidget {
   final emailController = Get.put(AboutUsController());
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,13 +38,37 @@ class EmailSender extends StatelessWidget {
                 labelText: "Recipient",
                 controller: emailController.recipientController,
               ),
-              Obx(() => CustomTextField(
-                    labelText: "Subject",
-                    controller: emailController.subjectController,
-                    errorText: emailController.isSubjectValid.value
-                        ? null
-                        : 'Subject cannot be empty',
-                  )),
+              Obx(
+                () => Padding(
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    child: TextFormField(
+                      minLines: 1,
+                      autofocus: false,
+                      inputFormatters: [LengthLimitingTextInputFormatter(400)],
+                      controller: emailController.subjectController,
+                      textInputAction: TextInputAction.done,
+                      keyboardType: TextInputType.multiline,
+                      textAlign: TextAlign.left,
+                      decoration: InputDecoration(
+                        labelText: "Subject",
+                        errorText: emailController.isSubjectValid.value
+                            ? null
+                            : 'Subject cannot be empty',
+                        contentPadding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 12),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide(color: Color(0xFF0078FF))),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                        ),
+                        errorBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(12)),
+                            borderSide: BorderSide(color: Color(0xFFDF0000))),
+                      ),
+                      style: paragraphStyle(color: Colors.black),
+                    )),
+              ),
               Obx(() => Padding(
                   padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                   child: TextFormField(
