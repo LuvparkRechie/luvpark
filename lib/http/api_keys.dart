@@ -59,14 +59,12 @@ class ApiKeys {
 //Reservation history
   static const gApiSubFolderGetReservationHistory =
       '/ords/$luvApi/tnx/reslist/';
+
 // //GEt REservation
-//   static const gApiSubFolderGetReservations = '/ords/$luvApi/ps/reservations';
-//replaced with
   static const gApiSubFolderGetReservations =
       '/ords/$parkSpaceApi/pm/getAdvancedParking';
   static const gApiSubFolderGetActiveParking =
       '/ords/$parkSpaceApi/pm/getAdvancedParkingLogs';
-
 //Login API
   //Get user data
   static const gApiSubFolderLogin = '/ords/$luvApi/auth/login';
@@ -250,19 +248,4 @@ class ApiKeys {
       '/ords/$parkSpaceApi/pm/extendAdvancedParking';
   //Cancel Auto Extend  POSt  parameter: reservation_id
   static const gApiCancelAutoExtend = '/ords/$parkSpaceApi/pm/cancelAutoExtend';
-
-  //REMOVED API
-  // //Reserve payment key
-  // static const gApiLuvParkGetResPayKey =
-  //     '/ords/$luvApi/base/paymentkey'; ////  removed
-
-// //Reserve API with auto extend parameter
-//   static const gApiSubFolderPostReserveParking =
-//       '/ords/$parkSpaceApi/park/reserve'; //removed
-// //Reservation pay
-//   static const gApiSubFolderPostReservePay =
-//       '/ords/$luvApi/ps/payres'; //removed
-//   //getComputation
-//   static const gApiSubFolderPostReserveCalc =
-//       '/ords/$parkSpaceApi/park/calcfee'; //removed
 }

@@ -184,9 +184,8 @@ class ForgotPassOtpController extends GetxController {
     if ((int.parse(inputPin.toString()) !=
             int.parse(paramArgs[0]["otp"].toString())) ||
         inputPin.value.length != 6) {
-      CustomDialog().errorDialog(
-          Get.context!, "Invalid OTP", "Invalid OTP code. Please try again.",
-          () {
+      CustomDialog().errorDialog(Get.context!, "Invalid OTP",
+          "Your OTP code is incorrect.\nPlease try again.", () {
         Get.back();
       });
       return;

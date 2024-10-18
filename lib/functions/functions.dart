@@ -828,7 +828,6 @@ class Functions {
           Get.back();
           SystemChannels.platform.invokeMethod('SystemNavigator.pop');
         });
-
         return;
       }
       if (objData["items"].isEmpty) {

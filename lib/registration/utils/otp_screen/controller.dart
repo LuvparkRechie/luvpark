@@ -136,7 +136,8 @@ class OtpController extends GetxController
     if (paramArgs[0]['otp'] != int.parse(inputPin.value)) {
       isLoading.value = false;
       CustomDialog().errorDialog(
-          Get.context!, "OTP", "Invalid OTP code. Please try again.", () {
+          Get.context!, "OTP", "Your OTP code is incorrect.\nPlease try again.",
+          () {
         Get.back();
       });
       return;

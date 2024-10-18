@@ -483,14 +483,16 @@ class BookingReceipt extends GetView<BookingReceiptController> {
               Row(
                 children: [
                   Expanded(
+                    flex: 2,
                     child: CustomTitle(
                       text: "Total Token",
                       color: AppColor.primaryColor,
                     ),
                   ),
                   Expanded(
+                    flex: 3,
                     child: Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.centerRight,
                       child: CustomTitle(
                         text: controller.parameters["amount"],
                         color: AppColor.primaryColor,
@@ -520,9 +522,8 @@ class BookingReceipt extends GetView<BookingReceiptController> {
               ticketDetailsWidget('Duration',
                   "${controller.parameters["hours"]} ${int.parse(controller.parameters["hours"].toString()) > 1 ? "Hours" : "Hour"}"),
               const SizedBox(height: 5),
-
-              // ticketDetailsWidget(
-              //     'Reference No.', controller.parameters["refno"]),
+              ticketDetailsWidget(
+                  'Ref no.', "${controller.parameters["refno"]}"),
             ],
           ),
         ),
@@ -535,11 +536,13 @@ class BookingReceipt extends GetView<BookingReceiptController> {
     return Row(
       children: [
         Expanded(
+          flex: 2,
           child: CustomParagraph(text: firstTitle),
         ),
         Expanded(
+          flex: 3,
           child: Align(
-            alignment: Alignment.centerLeft,
+            alignment: Alignment.centerRight,
             child: CustomParagraph(
               text: firstDesc,
               fontWeight: FontWeight.w700,

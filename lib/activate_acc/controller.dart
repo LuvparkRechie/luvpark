@@ -255,8 +255,8 @@ class ActivateAccountController extends GetxController {
         );
       } else {
         Get.back();
-        CustomDialog().errorDialog(
-            Get.context!, "Error", "Invalid OTP code. Please try again.", () {
+        CustomDialog().errorDialog(Get.context!, "Error",
+            "Your OTP code is incorrect.\nPlease try again.", () {
           pinController.text = "";
           Get.back();
         });

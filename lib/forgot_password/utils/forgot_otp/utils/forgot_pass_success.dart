@@ -64,7 +64,7 @@ class _ForgetPasswordSuccessState extends State<ForgetPasswordSuccess> {
               padding: EdgeInsets.symmetric(horizontal: 15.0),
               child: CustomParagraph(
                 text:
-                    'Your password has been reset successfully. You can now log in with your new password',
+                    'Your password has been reset successfully. You can now log in with your new password.',
                 textAlign: TextAlign.center,
               ),
             ),

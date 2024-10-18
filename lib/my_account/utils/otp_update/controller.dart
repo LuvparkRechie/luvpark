@@ -122,12 +122,11 @@ class OtpUpdateController extends GetxController {
 
   Future<void> verifyOtp() async {
     CustomDialog().loadingDialog(Get.context!);
-    print('submitParam $submitParam');
+
     HttpRequest(
             api: ApiKeys.gApiSubFolderPutUpdateProf, parameters: submitParam)
         .put()
         .then((res) async {
-      print("res $res");
       Get.back();
       if (res == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -166,7 +165,7 @@ class OtpUpdateController extends GetxController {
             int.parse(paramArgs[0]["otp"].toString())) ||
         inputPin.value.length != 6) {
       CustomDialog().errorDialog(Get.context!, "luvpark",
-          "Invalid OTP code. Please try again.. Please try again.", () {
+          "Your OTP code is incorrect.\nPlease try again.", () {
         Get.back();
       });
       return;

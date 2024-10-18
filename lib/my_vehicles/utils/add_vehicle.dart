@@ -7,6 +7,7 @@ import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/my_vehicles/controller.dart';
+import 'package:luvpark_get/my_vehicles/utils/class_test.dart';
 
 import '../../custom_widgets/custom_textfield.dart';
 
@@ -36,40 +37,40 @@ class AddVehicles extends GetView<MyVehiclesController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(height: 30),
-                      CustomDropdown(
-                        labelText: "Vehicle type",
-                        ddData: controller.vehicleDdData,
-                        ddValue: controller.ddVhType,
-                        onChange: (String? newValue) {
-                          controller.onChangedType(newValue!);
-                        },
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return "Vehicle type is required";
-                          }
-                          return null;
-                        },
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                        child: customDropdown(
+                          labelText: "Vehicle type",
+                          items: controller.vehicleDdData,
+                          selectedValue: controller.ddVhType,
+                          onChanged: (String? newValue) {
+                            controller.onChangedType(newValue!);
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Vehicle type is required";
+                            }
+                            return null;
+                          },
+                        ),
                       ),
-                      controller.isLoadingAddVh.value
-                          ? CustomTextField(
-                              labelText: "Vehicle brand",
-                              controller: TextEditingController(),
-                              isReadOnly: true,
-                            )
-                          : CustomDropdown(
-                              labelText: "Vehicle brand",
-                              ddData: controller.vehicleBrandData,
-                              ddValue: controller.ddVhBrand.value,
-                              onChange: (String? newValue) {
-                                controller.onChangedBrand(newValue!);
-                              },
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return "Vehicle brand is required";
-                                }
-                                return null;
-                              },
-                            ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                        child: customDropdown(
+                          labelText: "Vehicle brand",
+                          items: controller.vehicleBrandData,
+                          selectedValue: controller.ddVhBrand.value,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Vehicle brand is required";
+                            }
+                            return null;
+                          },
+                          onChanged: (value) {
+                            controller.onChangedBrand(value!);
+                          },
+                        ),
+                      ),
                       CustomTextField(
                         labelText: controller.hintTextLabel.value.isEmpty
                             ? "Plate No"

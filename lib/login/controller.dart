@@ -7,10 +7,6 @@ import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/routes/routes.dart';
-import 'package:luvpark_get/sqlite/vehicle_brands_model.dart';
-import 'package:luvpark_get/sqlite/vehicle_brands_table.dart';
-
-import '../custom_widgets/variables.dart';
 
 class LoginScreenController extends GetxController {
   LoginScreenController();
@@ -44,51 +40,79 @@ class LoginScreenController extends GetxController {
 
   //POST LOGIN
   postLogin(context, Map<String, dynamic> param, Function cb) async {
-    //String? bio = await Authentication().getPasswordBiometric();
-
-    String apiParam = ApiKeys.gApiLuvParkGetVehicleBrand;
-
-    HttpRequest(api: apiParam).get().then((returnBrandData) async {
-      if (returnBrandData == "No Internet") {
-        cb([
-          {"has_net": false, "items": []}
-        ]);
+    HttpRequest(api: ApiKeys.gApiSubFolderPostLogin2, parameters: param)
+        .postBody()
+        .then((returnPost) async {
+      print("returnpost $returnPost");
+      if (returnPost == "No Internet") {
         CustomDialog().internetErrorDialog(context, () {
           Get.back();
+          cb([
+            {"has_net": false, "items": []}
+          ]);
         });
         return;
       }
-      if (returnBrandData == null) {
-        CustomDialog().serverErrorDialog(Get.context!, () {
+      if (returnPost == null) {
+        CustomDialog().errorDialog(context, "Error",
+            "Error while connecting to server, Please try again.", () {
           Get.back();
           cb([
             {"has_net": true, "items": []}
           ]);
         });
-      } else {
-        Variables.gVBrand.value = returnBrandData["items"];
-        VehicleBrandsTable.instance.deleteAll();
-        for (var dataRow in returnBrandData["items"]) {
-          var vbData = {
-            VHBrandsDataFields.vhTypeId:
-                int.parse(dataRow["vehicle_type_id"].toString()),
-            VHBrandsDataFields.vhBrandId:
-                int.parse(dataRow["vehicle_brand_id"].toString()),
-            VHBrandsDataFields.vhBrandName:
-                dataRow["vehicle_brand_name"].toString(),
-            VHBrandsDataFields.image: dataRow["imageb64"] == null
-                ? ""
-                : dataRow["imageb64"].toString().replaceAll("\n", ""),
-          };
-          await VehicleBrandsTable.instance.insertUpdate(vbData);
+        return;
+      }
+      if (returnPost["success"] == "N") {
+        cb([
+          {"has_net": true, "items": []}
+        ]);
+        if (returnPost["is_active"] == "N") {
+          CustomDialog().confirmationDialog(
+              context,
+              "Activate account",
+              "Your account is currently inactive. Would you like to activate it now?",
+              "No",
+              "Yes", () {
+            Get.back();
+          }, () {
+            Get.back();
+            Get.toNamed(
+              Routes.activate,
+              arguments: "63${mobileNumber.text.replaceAll(" ", "")}",
+            );
+          });
+          return;
+        }
+        if (returnPost["login_attempt"] != null &&
+            returnPost["login_attempt"] >= 3) {
+          mobileNumber.text = "";
+          password.text = "";
+          List mapData = [returnPost];
+
+          mapData = mapData.map((e) {
+            e["mobile_no"] = param["mobile_no"];
+            return e;
+          }).toList();
+
+          Future.delayed(Duration(milliseconds: 200), () {
+            Get.offAndToNamed(Routes.lockScreen, arguments: mapData);
+          });
+          return;
+        } else {
+          print("elsee");
+          CustomDialog().errorDialog(context, "Error", returnPost["msg"], () {
+            Get.back();
+          });
         }
 
-        print("param $param");
-        HttpRequest(api: ApiKeys.gApiSubFolderPostLogin2, parameters: param)
-            .postBody()
-            .then((returnPost) async {
-          print("returnpost $returnPost");
-          if (returnPost == "No Internet") {
+        return;
+      } else {
+        var getApi =
+            "${ApiKeys.gApiSubFolderLogin2}?mobile_no=${param["mobile_no"]}&auth_key=${returnPost["auth_key"].toString()}";
+
+        HttpRequest(api: getApi).get().then((objData) async {
+          if (objData == "No Internet") {
             CustomDialog().internetErrorDialog(context, () {
               Get.back();
               cb([
@@ -97,8 +121,8 @@ class LoginScreenController extends GetxController {
             });
             return;
           }
-          if (returnPost == null) {
-            CustomDialog().errorDialog(context, "Error",
+          if (objData == null) {
+            CustomDialog().errorDialog(context, "luvpark",
                 "Error while connecting to server, Please try again.", () {
               Get.back();
               cb([
@@ -106,117 +130,45 @@ class LoginScreenController extends GetxController {
               ]);
             });
             return;
-          }
-          if (returnPost["success"] == "N") {
-            cb([
-              {"has_net": true, "items": []}
-            ]);
-            if (returnPost["is_active"] == "N") {
-              CustomDialog().confirmationDialog(
-                  context,
-                  "Activate account",
-                  "Your account is currently inactive. Would you like to activate it now?",
-                  "No",
-                  "Yes", () {
+          } else {
+            if (objData["items"].length == 0) {
+              CustomDialog()
+                  .errorDialog(context, "Error", objData["items"]["msg"], () {
                 Get.back();
-              }, () {
-                Get.back();
-                Get.toNamed(
-                  Routes.activate,
-                  arguments: "63${mobileNumber.text.replaceAll(" ", "")}",
-                );
-              });
-              return;
-            }
-            if (returnPost["login_attempt"] != null &&
-                returnPost["login_attempt"] >= 3) {
-              print("iff");
-              mobileNumber.text = "";
-              password.text = "";
-              List mapData = [returnPost];
-
-              mapData = mapData.map((e) {
-                e["mobile_no"] = param["mobile_no"];
-                return e;
-              }).toList();
-              print("mapData $mapData");
-              Future.delayed(Duration(milliseconds: 200), () {
-                Get.offAndToNamed(Routes.lockScreen, arguments: mapData);
+                cb([
+                  {"has_net": true, "items": []}
+                ]);
               });
               return;
             } else {
-              print("elsee");
-              CustomDialog().errorDialog(context, "Error", returnPost["msg"],
-                  () {
-                Get.back();
-              });
-            }
+              //refresh the login aft logout
+              mobileNumber.clear();
+              password.clear();
+              var items = objData["items"][0];
 
-            return;
-          } else {
-            var getApi =
-                "${ApiKeys.gApiSubFolderLogin2}?mobile_no=${param["mobile_no"]}&auth_key=${returnPost["auth_key"].toString()}";
+              Map<String, dynamic> parameters = {
+                "user_id": items['user_id'].toString(),
+                "mobile_no": param["mobile_no"],
+                "is_active": "Y",
+                "is_login": "Y",
+              };
 
-            HttpRequest(api: getApi).get().then((objData) async {
-              if (objData == "No Internet") {
-                CustomDialog().internetErrorDialog(context, () {
-                  Get.back();
-                  cb([
-                    {"has_net": false, "items": []}
-                  ]);
-                });
-                return;
-              }
-              if (objData == null) {
-                CustomDialog().errorDialog(context, "luvpark",
-                    "Error while connecting to server, Please try again.", () {
-                  Get.back();
-                  cb([
-                    {"has_net": true, "items": []}
-                  ]);
-                });
-                return;
+              Authentication().setLogin(jsonEncode(parameters));
+              Authentication().setUserData(jsonEncode(items));
+              Authentication().setPasswordBiometric(param["pwd"]);
+              Authentication().setShowPopUpNearest(false);
+              Authentication().setLogoutStatus(false);
+              if (items["image_base64"] != null) {
+                Authentication()
+                    .setProfilePic(jsonEncode(items["image_base64"]));
               } else {
-                if (objData["items"].length == 0) {
-                  CustomDialog().errorDialog(
-                      context, "Error", objData["items"]["msg"], () {
-                    Get.back();
-                    cb([
-                      {"has_net": true, "items": []}
-                    ]);
-                  });
-                  return;
-                } else {
-                  //refresh the login aft logout
-                  mobileNumber.clear();
-                  password.clear();
-                  var items = objData["items"][0];
-
-                  Map<String, dynamic> parameters = {
-                    "user_id": items['user_id'].toString(),
-                    "mobile_no": param["mobile_no"],
-                    "is_active": "Y",
-                    "is_login": "Y",
-                  };
-
-                  Authentication().setLogin(jsonEncode(parameters));
-                  Authentication().setUserData(jsonEncode(items));
-                  Authentication().setPasswordBiometric(param["pwd"]);
-                  Authentication().setShowPopUpNearest(false);
-                  Authentication().setLogoutStatus(false);
-                  if (items["image_base64"] != null) {
-                    Authentication()
-                        .setProfilePic(jsonEncode(items["image_base64"]));
-                  } else {
-                    Authentication().setProfilePic("");
-                  }
-
-                  cb([
-                    {"has_net": true, "items": objData["items"]}
-                  ]);
-                }
+                Authentication().setProfilePic("");
               }
-            });
+
+              cb([
+                {"has_net": true, "items": objData["items"]}
+              ]);
+            }
           }
         });
       }

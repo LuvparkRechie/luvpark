@@ -25,7 +25,7 @@ class BookingReceiptController extends GetxController
   @override
   void onInit() {
     super.onInit();
-    print("parameters $parameters");
+
     if (parameters["status"] == "A") {
       startTimer();
     } else {
@@ -223,8 +223,8 @@ class BookingReceiptController extends GetxController
     btnDisabled.value = true;
     if (etaData[0]["distance"].toString().toLowerCase().trim().contains("km")) {
       Get.back();
-      CustomDialog().infoDialog(
-          "Check-In", "You are 5 meters away from the parking area.", () {
+      CustomDialog().infoDialog("Check-In",
+          "You should be within 5 meters of the parking zone to check-in.", () {
         btnDisabled.value = true;
         Get.back();
       });

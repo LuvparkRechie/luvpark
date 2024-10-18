@@ -373,6 +373,7 @@ class WalletScreen extends GetView<WalletController> {
                             : controller.logs.isEmpty
                                 ? NoDataFound()
                                 : ListView.builder(
+                                    physics: ClampingScrollPhysics(),
                                     padding: EdgeInsets.zero,
                                     itemCount: controller.logs.length,
                                     itemBuilder: (context, index) {

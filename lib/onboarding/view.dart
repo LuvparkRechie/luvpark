@@ -6,8 +6,6 @@ import 'package:luvpark_get/custom_widgets/custom_button.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/onboarding/controller.dart';
 
-import '../routes/routes.dart';
-
 class MyOnboardingPage extends StatelessWidget {
   const MyOnboardingPage({Key? key}) : super(key: key);
 
@@ -96,7 +94,7 @@ class MyOnboardingPage extends StatelessWidget {
                       CustomButton(
                         text: "Log in",
                         onPressed: () {
-                          Get.offAndToNamed(Routes.login);
+                          controller.getVehicleBrands(true);
                         },
                       ),
                       Container(height: 10),
@@ -106,7 +104,7 @@ class MyOnboardingPage extends StatelessWidget {
                         textColor: AppColor.primaryColor,
                         text: "Create Account",
                         onPressed: () {
-                          Get.offAndToNamed(Routes.landing);
+                          controller.getVehicleBrands(false);
                         },
                       ),
                     ],

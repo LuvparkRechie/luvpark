@@ -39,6 +39,7 @@ class ForgotPasswordController extends GetxController {
                 "${ApiKeys.gApiLuvParkGetAcctStat}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
         .get()
         .then((objData) {
+      print("objData $objData");
       if (objData == "No Internet") {
         isLoading.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {

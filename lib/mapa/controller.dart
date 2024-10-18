@@ -929,7 +929,10 @@ class DashboardMapController extends GetxController
 
     if (response == "No Internet") {
       Get.back();
-      CustomDialog().internetErrorDialog(Get.context!, () => Get.back());
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        filterMarkersData("", "");
+        Get.back();
+      });
       return;
     }
 
@@ -984,6 +987,7 @@ class DashboardMapController extends GetxController
       if (returnData == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
+          filterMarkersData("", "");
           Get.back();
         });
         return;
@@ -1083,7 +1087,6 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> goingBackToTheCornerWhenIFirstSawYou() async {
-    ratesWidget.clear();
     final vehicleTypesList = markerData[0]['vehicle_types_list'] as String;
 
     List inataya = _parseVehicleTypes(vehicleTypesList).map((e) {
@@ -1105,7 +1108,7 @@ class DashboardMapController extends GetxController
     }).toList();
 
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
-    ratesWidget.clear();
+    ratesWidget.value = <Widget>[];
 
     denoInd.value = 0;
 
@@ -1113,11 +1116,12 @@ class DashboardMapController extends GetxController
     finalEndtime = formatTime(markerData[0]["end_time"]);
     bool openBa = await Functions.checkAvailability(finalSttime, finalEndtime);
     isOpen.value = openBa;
-    update();
+
     getVhRatesData(vehicleTypes[0]["vh_types"]);
   }
 
   void getVhRatesData(String vhType) {
+    ratesWidget.value = <Widget>[];
     List data = vehicleRates.where((obj) {
       return obj["vehicle_type"]
           .toString()
@@ -1185,6 +1189,7 @@ class DashboardMapController extends GetxController
         ),
       ],
     ));
+    update();
   }
 
   String formatTime(String time) {

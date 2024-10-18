@@ -227,7 +227,6 @@ class WalletSend extends GetView<WalletSendController> {
                             text: "Continue",
                             btnColor: AppColor.primaryColor,
                             onPressed: () async {
-                              // controller.
                               if (controller.formKeySend.currentState!
                                   .validate()) {
                                 final item =
@@ -235,7 +234,6 @@ class WalletSend extends GetView<WalletSendController> {
 
                                 if (item["mobile_no"].toString() ==
                                     "63${controller.recipient.text.replaceAll(" ", "")}") {
-                                  // ignore: use_build_context_synchronously
                                   CustomDialog().snackbarDialog(
                                       context,
                                       "Please use another number.",
@@ -249,7 +247,6 @@ class WalletSend extends GetView<WalletSendController> {
                                     double.parse(controller.tokenAmount.text
                                         .toString()
                                         .removeAllWhitespace)) {
-                                  // ignore: use_build_context_synchronously
                                   CustomDialog().snackbarDialog(
                                     context,
                                     "Insuficient balance.",
@@ -258,7 +255,7 @@ class WalletSend extends GetView<WalletSendController> {
                                   );
                                   return;
                                 }
-                                // ignore: use_build_context_synchronously
+
                                 CustomDialog().confirmationDialog(
                                     context,
                                     "Confirmation",
@@ -266,11 +263,8 @@ class WalletSend extends GetView<WalletSendController> {
                                     "Back",
                                     "Yes", () {
                                   Get.back();
-                                  Get.back();
-                                  Get.back();
                                 }, () {
                                   Get.back();
-
                                   controller.getVerifiedAcc();
                                 });
                               }

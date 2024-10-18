@@ -152,7 +152,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep1,
-          autovalidateMode: AutovalidateMode.disabled,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -492,7 +492,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Zip code is required';
+                    return 'ZIP code is required';
                   } else if (value.length != 4) {
                     return 'ZIP code must be 4 digits';
                   } else if (!RegExp(r'^\d{4}$').hasMatch(value)) {
@@ -516,7 +516,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep3,
-          autovalidateMode: AutovalidateMode.always,
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
