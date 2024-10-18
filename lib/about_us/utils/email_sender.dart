@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
+import '../../custom_widgets/custom_text.dart';
 import '../controller.dart';
 
 class EmailSender extends StatelessWidget {
@@ -45,15 +46,37 @@ class EmailSender extends StatelessWidget {
                         ? null
                         : 'Subject cannot be empty',
                   )),
-              Obx(() => CustomTextField(
-                    title: "Body",
+              Obx(() => Padding(
+                  padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                  child: TextFormField(
                     maxLength: 400,
+                    minLines: 1,
+                    maxLines: 5,
+                    autofocus: false,
                     inputFormatters: [LengthLimitingTextInputFormatter(400)],
                     controller: emailController.bodyController,
-                    errorText: emailController.isBodyValid.value
-                        ? null
-                        : 'Body cannot be empty',
-                  )),
+                    textInputAction: TextInputAction.done,
+                    keyboardType: TextInputType.multiline,
+                    textAlign: TextAlign.left,
+                    decoration: InputDecoration(
+                      labelText: "Body",
+                      errorText: emailController.isBodyValid.value
+                          ? null
+                          : 'Body cannot be empty',
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 12),
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(color: Color(0xFF0078FF))),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(12)),
+                      ),
+                      errorBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(12)),
+                          borderSide: BorderSide(color: Color(0xFFDF0000))),
+                    ),
+                    style: paragraphStyle(color: Colors.black),
+                  ))),
               SizedBox(height: 10),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
