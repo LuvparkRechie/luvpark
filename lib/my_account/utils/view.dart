@@ -568,8 +568,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
                             controller: controller.answer1,
-                            isObscure: !controller.obscureTextAnswer1.value,
-                            suffixIcon: !controller.obscureTextAnswer1.value
+                            isObscure: controller.obscureTextAnswer1.value,
+                            suffixIcon: controller.obscureTextAnswer1.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             onIconTap: () {
@@ -631,8 +631,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
                             controller: controller.answer2,
-                            isObscure: !controller.obscureTextAnswer2.value,
-                            suffixIcon: !controller.obscureTextAnswer2.value
+                            isObscure: controller.obscureTextAnswer2.value,
+                            suffixIcon: controller.obscureTextAnswer2.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             onIconTap: () {
@@ -694,8 +694,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
                             controller: controller.answer3,
-                            isObscure: !controller.obscureTextAnswer3.value,
-                            suffixIcon: !controller.obscureTextAnswer3.value
+                            isObscure: controller.obscureTextAnswer3.value,
+                            suffixIcon: controller.obscureTextAnswer3.value
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                             onIconTap: () {
