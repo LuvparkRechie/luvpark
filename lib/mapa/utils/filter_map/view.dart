@@ -719,7 +719,7 @@ class _FilterMapState extends State<FilterMap> {
         return isActive
             ? 'assets/map_filter/active/covered_active.svg'
             : 'assets/map_filter/inactive/covered_inactive.svg';
-      case 'SAND AND GRAVEL':
+      case 'COMPACTED GRAVEL':
         return isActive
             ? 'assets/map_filter/active/gravel_active.svg'
             : 'assets/map_filter/inactive/gravel_inactive.svg';
@@ -733,8 +733,8 @@ class _FilterMapState extends State<FilterMap> {
             : 'assets/map_filter/inactive/security_inactive.svg';
       default:
         return isActive
-            ? 'assets/map_filter/active/gravel_active.svg'
-            : 'assets/map_filter/inactive/gravel_inactive.svg'; // Default icon
+            ? 'assets/map_filter/active/.svg'
+            : 'assets/map_filter/inactive/.svg'; // Default icon
     }
   }
 
@@ -746,14 +746,14 @@ class _FilterMapState extends State<FilterMap> {
         return 'Concrete Floor';
       case 'COVERED / SHADED':
         return 'Covered/ Shaded';
-      case 'SAND  AND GRAVEL':
-        return 'Sand and Gravel';
+      case 'COMPACTED GRAVEL':
+        return 'Compacted Gravel';
       case 'WITH CCTV':
         return 'With CCTV';
       case 'WITH SECURITY':
         return 'With Security';
       default:
-        return 'DEFAULT';
+        return 'ERROR, CHANGE THIS';
     }
   }
 }
