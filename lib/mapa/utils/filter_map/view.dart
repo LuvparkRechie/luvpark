@@ -161,7 +161,7 @@ class _FilterMapState extends State<FilterMap> {
     var returnData =
         await const HttpRequest(api: ApiKeys.gApiSubFolderGetAllAmenities)
             .get();
-
+    print(returnData);
     if (returnData == "No Internet") {
       isNetConn = false;
       isLoadingPage = false;
@@ -684,7 +684,7 @@ class _FilterMapState extends State<FilterMap> {
                           maxlines: 2,
                           textAlign: TextAlign.center,
                           text: _capitalTextAmen(
-                            amenitiesData[i]["parking_amenity_desc"].toString(),
+                            amenitiesData[i]["parking_amenity_code"].toString(),
                           ),
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
@@ -738,19 +738,19 @@ class _FilterMapState extends State<FilterMap> {
     }
   }
 
-  String _capitalTextAmen(String amenText) {
-    switch (amenText) {
-      case 'ASPHALT FLOOR':
+  String _capitalTextAmen(String amenCode) {
+    switch (amenCode) {
+      case 'A':
         return 'Asphalt Floor';
-      case 'CONCRETE FLOOR':
+      case 'C':
         return 'Concrete Floor';
-      case 'COVERED / SHADED':
-        return 'Covered/ Shaded';
-      case 'COMPACTED GRAVEL':
+      case 'V':
+        return 'Covered/Shaded';
+      case 'G':
         return 'Compacted Gravel';
-      case 'WITH CCTV':
+      case 'T':
         return 'With CCTV';
-      case 'WITH SECURITY':
+      case 'S':
         return 'With Security';
       default:
         return 'ERROR, CHANGE THIS';
