@@ -49,7 +49,7 @@ class LandingScreen extends StatelessWidget {
                     ),
                     const CustomParagraph(
                       text:
-                          "Get started with LuvPark Parking for a hassle-free experience."
+                          "Get started with luvpark Parking for a hassle-free experience."
                           "Quickly find and reserve parking spots with ease, making your travels smoother and stress-free.",
                       textAlign: TextAlign.center,
                       fontSize: 14,
