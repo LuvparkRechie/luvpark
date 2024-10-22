@@ -568,6 +568,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
                             controller: controller.answer1,
+                            isReadOnly: controller.seq1.value == 0,
                             isObscure: controller.obscureTextAnswer1.value,
                             suffixIcon: controller.obscureTextAnswer1.value
                                 ? Icons.visibility_off
@@ -630,6 +631,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           CustomTextField(
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
+                            isReadOnly: controller.seq2.value == 0,
                             controller: controller.answer2,
                             isObscure: controller.obscureTextAnswer2.value,
                             suffixIcon: controller.obscureTextAnswer2.value
@@ -694,6 +696,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
                             controller: controller.answer3,
+                            isReadOnly: controller.seq3.value == 0,
                             isObscure: controller.obscureTextAnswer3.value,
                             suffixIcon: controller.obscureTextAnswer3.value
                                 ? Icons.visibility_off
