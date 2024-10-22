@@ -234,6 +234,140 @@ class BookingPage extends GetView<BookingController> {
                                           ],
                                         ),
                                         Container(height: 24),
+
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            const CustomTitle(
+                                              text: "Vehicle details",
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                            Container(height: 10),
+                                            Container(
+                                              height:
+                                                  controller.selectedVh.isEmpty
+                                                      ? 71
+                                                      : null,
+                                              padding: EdgeInsets.all(12),
+                                              decoration: ShapeDecoration(
+                                                color: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  side: BorderSide(
+                                                      width: 1,
+                                                      color: Color(0xFFDFE7EF)),
+                                                  borderRadius:
+                                                      BorderRadius.circular(7),
+                                                ),
+                                                shadows: [
+                                                  BoxShadow(
+                                                    color: Color(0x0C000000),
+                                                    blurRadius: 15,
+                                                    offset: Offset(0, 5),
+                                                    spreadRadius: 0,
+                                                  )
+                                                ],
+                                              ),
+                                              child: InkWell(
+                                                onTap: () {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) {
+                                                    controller.getMyVehicle();
+                                                  });
+                                                },
+                                                child: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .only(
+                                                          left: 10,
+                                                          right: 10,
+                                                        ),
+                                                        child: controller
+                                                                .selectedVh
+                                                                .isEmpty
+                                                            ? CustomParagraph(
+                                                                text:
+                                                                    "Tap to add vehicle",
+                                                                color: controller
+                                                                        .selectedVh
+                                                                        .isEmpty
+                                                                    ? AppColor
+                                                                        .primaryColor
+                                                                    : Colors
+                                                                        .grey,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                letterSpacing:
+                                                                    -0.41,
+                                                              )
+                                                            : Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  CustomTitle(
+                                                                    text: controller
+                                                                            .selectedVh[0]
+                                                                        [
+                                                                        "vehicle_plate_no"],
+                                                                    fontSize:
+                                                                        16,
+                                                                  ),
+                                                                  Container(
+                                                                      height:
+                                                                          5),
+                                                                  CustomParagraph(
+                                                                    text: controller
+                                                                            .selectedVh[0]
+                                                                        [
+                                                                        "vehicle_type"],
+                                                                    letterSpacing:
+                                                                        -0.41,
+                                                                    fontSize:
+                                                                        10,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              right: 15),
+                                                      child: controller
+                                                              .selectedVh
+                                                              .isNotEmpty
+                                                          ? CustomLinkLabel(
+                                                              text:
+                                                                  "Switch vehicle",
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w800,
+                                                            )
+                                                          : Icon(
+                                                              Icons.add,
+                                                              color: AppColor
+                                                                  .primaryColor,
+                                                              size: 20,
+                                                            ),
+                                                    )
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        Container(height: 20),
                                         const CustomTitle(
                                           text: "How long do you want to park?",
                                           fontWeight: FontWeight.w800,
@@ -387,7 +521,7 @@ class BookingPage extends GetView<BookingController> {
                                                           ),
                                                           CustomParagraph(
                                                             text:
-                                                                "${toCurrencyString(controller.totalAmount.value)}/Succeeding hours",
+                                                                "${toCurrencyString(controller.selectedVh.isEmpty ? "0" : controller.selectedVh[0]["succeeding_rate"].toString())}/Succeeding hours",
                                                             letterSpacing:
                                                                 -0.41,
                                                             fontSize: 10,
@@ -528,138 +662,6 @@ class BookingPage extends GetView<BookingController> {
                                         ),
 
                                         Container(height: 20),
-
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const CustomTitle(
-                                              text: "Vehicle details",
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                            Container(height: 10),
-                                            Container(
-                                              height:
-                                                  controller.selectedVh.isEmpty
-                                                      ? 71
-                                                      : null,
-                                              padding: EdgeInsets.all(12),
-                                              decoration: ShapeDecoration(
-                                                color: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      width: 1,
-                                                      color: Color(0xFFDFE7EF)),
-                                                  borderRadius:
-                                                      BorderRadius.circular(7),
-                                                ),
-                                                shadows: [
-                                                  BoxShadow(
-                                                    color: Color(0x0C000000),
-                                                    blurRadius: 15,
-                                                    offset: Offset(0, 5),
-                                                    spreadRadius: 0,
-                                                  )
-                                                ],
-                                              ),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  WidgetsBinding.instance
-                                                      .addPostFrameCallback(
-                                                          (_) {
-                                                    controller.getMyVehicle();
-                                                  });
-                                                },
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                          left: 10,
-                                                          right: 10,
-                                                        ),
-                                                        child: controller
-                                                                .selectedVh
-                                                                .isEmpty
-                                                            ? CustomParagraph(
-                                                                text:
-                                                                    "Tap to add vehicle",
-                                                                color: controller
-                                                                        .selectedVh
-                                                                        .isEmpty
-                                                                    ? AppColor
-                                                                        .primaryColor
-                                                                    : Colors
-                                                                        .grey,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                letterSpacing:
-                                                                    -0.41,
-                                                              )
-                                                            : Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  CustomTitle(
-                                                                    text: controller
-                                                                            .selectedVh[0]
-                                                                        [
-                                                                        "vehicle_plate_no"],
-                                                                    fontSize:
-                                                                        16,
-                                                                  ),
-                                                                  Container(
-                                                                      height:
-                                                                          5),
-                                                                  CustomParagraph(
-                                                                    text: controller
-                                                                            .selectedVh[0]
-                                                                        [
-                                                                        "vehicle_type"],
-                                                                    letterSpacing:
-                                                                        -0.41,
-                                                                    fontSize:
-                                                                        10,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                      ),
-                                                    ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 15),
-                                                      child: controller
-                                                              .selectedVh
-                                                              .isNotEmpty
-                                                          ? CustomLinkLabel(
-                                                              text:
-                                                                  "Switch vehicle",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w800,
-                                                            )
-                                                          : Icon(
-                                                              Icons.add,
-                                                              color: AppColor
-                                                                  .primaryColor,
-                                                              size: 20,
-                                                            ),
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
 
                                         //payment details
 

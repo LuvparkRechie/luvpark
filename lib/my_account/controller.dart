@@ -48,7 +48,11 @@ class MyAccountScreenController extends GetxController
     myprofile.value = profilepic;
     userData.add(data);
 
-    if (userData[0]['first_name'] != null) {
+    if (userData[0]['region_id'] == 0 || userData[0]['region_id'] == null) {
+      province.value = "No province provided";
+      isLoading.value = false;
+      isNetConn.value = true;
+    } else {
       civilStatus.value = Variables.civilStatusData.where((element) {
         return element["value"] == userData[0]['civil_status'];
       }).toList()[0]["status"];
@@ -58,9 +62,6 @@ class MyAccountScreenController extends GetxController
       } else {
         getProvince(userData[0]['region_id']);
       }
-    } else {
-      isLoading.value = false;
-      isNetConn.value = true;
     }
   }
 

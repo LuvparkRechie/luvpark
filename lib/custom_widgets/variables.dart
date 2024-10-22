@@ -610,4 +610,10 @@ class Variables {
   static List<String> languages = <String>[];
   static List<String> languageCodes = <String>[];
   static String? voice;
+  static double computeZoomLevel(double latitude, double radius) {
+    const double initialMapSize = 156543.03; // Meters at zoom level 0
+    double metersPerPixel = initialMapSize * cos(latitude * pi / 180);
+    double zoom = log(metersPerPixel / radius) / log(2);
+    return zoom.toDouble();
+  }
 }

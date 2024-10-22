@@ -223,7 +223,13 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                                     CustomParagraph(
                                                       fontSize: 12,
                                                       text: controller
-                                                          .civilStatus.value,
+                                                              .civilStatus
+                                                              .value
+                                                              .isEmpty
+                                                          ? "No civil status provided"
+                                                          : controller
+                                                              .civilStatus
+                                                              .value,
                                                     ),
                                                     Divider(
                                                       color:
@@ -247,8 +253,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                                     Container(height: 5),
                                                     CustomParagraph(
                                                         fontSize: 12,
-                                                        text: controller
-                                                            .gender.value),
+                                                        text: controller.gender
+                                                                .value.isEmpty
+                                                            ? "No gender provided"
+                                                            : controller
+                                                                .gender.value),
                                                     Divider(
                                                       color:
                                                           Colors.grey.shade500,
@@ -310,8 +319,12 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           CustomParagraph(
                                               fontSize: 12,
                                               text: controller.userData[0]
-                                                      ['zip_code']
-                                                  .toString()),
+                                                          ['zip_code'] ==
+                                                      null
+                                                  ? "No zip code provided"
+                                                  : controller.userData[0]
+                                                          ['zip_code']
+                                                      .toString()),
                                           Divider(
                                             color: Colors.grey.shade500,
                                           ),

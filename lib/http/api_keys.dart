@@ -70,34 +70,26 @@ class ApiKeys {
   static const gApiSubFolderLogin = '/ords/$luvApi/auth/login';
 //wala gi gamit
   static const gApiSubFolderGetIdleTime = '/ords/$luvApi/base/userpref/';
-//Post Login
-  static const gApiSubFolderPostLogin = '/ords/$luvApi/auth/login/'; //post
   //Post Login2
   static const gApiSubFolderPostLogin2 = '/ords/$luvApi/auth/login'; //post
   //Get user data
   static const gApiSubFolderLogin2 = '/ords/$luvApi/auth/login';
-//$parkSpaceApi api
   //get vehicles
   static const gApiSubFolderGetVehicleType =
       '/ords/$parkSpaceApi/base/vehicletypes';
-
 //get neareast space data sa mapa
-
   static const gApiSubFolderGetNearestSpace =
       '/ords/$parkSpaceApi/zone/nearestParking';
   static const gApiSubGetNearybyParkings =
       '/ords/$parkSpaceApi/zone/nearbyParkings';
-
   //get parking type filter dropdown dashboard
   static const gApiSubFolderGetParkingTypes =
       '/ords/$parkSpaceApi/base/parkingtypes';
 //get parking type filter dropdown radius
   static const gApiSubFolderGetDDNearest =
       '/ords/$parkSpaceApi/park/dd_nearest';
-
 //get Direction view payment details
   static const gApiSubFolderGetDirection = '/ords/$parkSpaceApi/park/res/';
-
 // Get Address registration
   static const gApiSubFolderGetRegion = 'ords/$luvApi/base/region/';
   static const gApiSubFolderGetProvince = 'ords/$luvApi/base/prov/';
@@ -107,12 +99,10 @@ class ApiKeys {
 //Extend API
   static const gApiSubFolderPutExtendPay = '/ords/$luvApi/ps/payext'; //put
   static const gApiSubFolderPutExtend = '/ords/$parkSpaceApi/park/extend'; //put
-
 //Get User Info connect with union bank
   static const gApiSubFolderGetUserInfo = '/ords/$luvApi/base/userinfo';
 //UB CONNECT API
   static const gApiSubFolderPostUbTrans = '/ords/$luvApi/topup/ub/'; //post
-
 //Check account Lock or unlock
   static const gApiSubFolderGetLoginAttemptRecord =
       '/ords/$luvApi/auth/chklogin/';

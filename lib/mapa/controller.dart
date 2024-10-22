@@ -257,7 +257,7 @@ class DashboardMapController extends GetxController
     final item = await Authentication().getUserData2();
     final profPic = await Authentication().getUserProfilePic();
     userBal.value = item["amount_bal"];
-    userProfile = item;
+
     myProfPic.value = profPic;
 
     userProfile = item;
@@ -330,6 +330,7 @@ class DashboardMapController extends GetxController
   }
 
   void handleNoInternet() {
+    showDottedCircle([]);
     netConnected.value = false;
     isLoading.value = false;
     dataNearest.value = [];
@@ -409,7 +410,11 @@ class DashboardMapController extends GetxController
   void showDottedCircle(nearData) {
     initialCameraPosition = CameraPosition(
       target: searchCoordinates,
-      zoom: nearData.isEmpty ? 14 : 16,
+      // zoom: nearData.isEmpty ? 15 : 16,
+      zoom: nearData.isEmpty
+          ? 15
+          : Variables.computeZoomLevel(
+              searchCoordinates.latitude, double.parse(ddRadius.toString())),
       tilt: 45,
       bearing: 0,
     );
@@ -427,70 +432,6 @@ class DashboardMapController extends GetxController
       plateNo.value = data["plate_no"];
       brandName.value = data["brand_name"];
     }
-  }
-
-  //Book now last booking
-  Future<void> bookNow() async {
-    CustomDialog().loadingDialog(Get.context!);
-    final data = await Authentication().getLastBooking();
-
-    List lastBooking = dataNearest;
-    lastBooking = lastBooking.where((e) {
-      return int.parse(e["park_area_id"].toString()) ==
-          int.parse(data["park_area_id"].toString());
-    }).toList();
-
-    LatLng destLoc =
-        LatLng(lastBooking[0]["pa_latitude"], lastBooking[0]["pa_longitude"]);
-    if (lastBooking[0]["is_allow_reserve"] == "N") {
-      Get.back();
-      CustomDialog().errorDialog(
-        Get.context!,
-        "LuvPark",
-        "This area is not available at the moment.",
-        () {
-          Get.back();
-        },
-      );
-      return;
-    }
-
-    Functions.getUserBalance(Get.context!, (dataBalance) async {
-      final userdata = dataBalance[0];
-      final items = userdata["items"];
-
-      if (userdata["success"]) {
-        if (double.parse(items[0]["amount_bal"].toString()) <
-            double.parse(items[0]["min_wallet_bal"].toString())) {
-          Get.back();
-          CustomDialog().errorDialog(
-            Get.context!,
-            "Attention",
-            "Your balance is below the required minimum for this feature. "
-                "Please ensure a minimum balance of ${items[0]["min_wallet_bal"]} tokens to access the requested service.",
-            () {
-              Get.back();
-            },
-          );
-          return;
-        } else {
-          Functions.computeDistanceResorChckIN(Get.context!, destLoc,
-              (success) {
-            Get.back();
-            if (success["success"]) {
-              Get.toNamed(Routes.booking, arguments: {
-                "currentLocation": success["location"],
-                "areaData": lastBooking[0],
-                "canCheckIn": success["can_checkIn"],
-                "userData": items,
-              });
-            }
-          });
-        }
-      } else {
-        Get.back();
-      }
-    });
   }
 
   //get curr location
@@ -580,7 +521,7 @@ class DashboardMapController extends GetxController
           CameraPosition(
             target: LatLng(initialCameraPosition!.target.latitude,
                 initialCameraPosition!.target.longitude),
-            zoom: dataNearest.isEmpty ? 14 : 16,
+            zoom: dataNearest.isEmpty ? 15 : 16,
             tilt: 25,
           ),
         ),
@@ -1004,6 +945,7 @@ class DashboardMapController extends GetxController
         Get.back();
         List<dynamic> item = returnData["items"];
         vehicleRates.value = item;
+        print("item $item");
       } else {
         Get.back();
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
@@ -1173,20 +1115,6 @@ class DashboardMapController extends GetxController
             ],
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 5),
-          child: Row(
-            children: [
-              Expanded(child: CustomParagraph(text: "Base Rate")),
-              Expanded(
-                  child: CustomParagraph(
-                text: "${data[0]["base_rate"]}",
-                color: Colors.black,
-                textAlign: TextAlign.right,
-              ))
-            ],
-          ),
-        ),
       ],
     ));
     update();
@@ -1310,7 +1238,6 @@ class DashboardMapController extends GetxController
         return;
       }
     }
-
     Functions.getUserBalance(Get.context!, (dataBalance) async {
       final userdata = dataBalance[0];
       final items = userdata["items"];
