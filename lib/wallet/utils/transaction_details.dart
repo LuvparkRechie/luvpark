@@ -18,6 +18,15 @@ class TransactionDetails extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String trans = data[index]["tran_desc"].toString().toLowerCase();
+    String img = "";
+    if (trans.contains("share")) {
+      img = "wallet_sharetoken";
+    } else if (trans.contains("received")) {
+      img = "wallet_receivetoken";
+    } else {
+      img = "wallet_payparking";
+    }
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
@@ -160,9 +169,9 @@ class TransactionDetails extends StatelessWidget {
                           color: Colors.white,
                         )),
                     child: SvgPicture.asset(
-                      fit: BoxFit.cover, height: 50,
-                      "assets/images/${data[index]["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : data[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
-                      //if trans_Desc is equal to Share a token svg is wallet_sharetoken else Receive Token svg is wallet_receivetoken else parking transaction is svg wallet_payparking
+                      fit: BoxFit.cover,
+                      height: 50,
+                      "assets/images/$img.svg",
                     ),
                   ),
                 ),
