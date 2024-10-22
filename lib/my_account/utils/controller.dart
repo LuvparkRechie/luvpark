@@ -114,18 +114,34 @@ class UpdateProfileController extends GetxController {
       return quest;
     }
 
-    if (userData['first_name'] != null) {
-      firstName.text = userData["first_name"].toString().trim();
-      middleName.text = userData["middle_name"] == null
-          ? ""
-          : userData["middle_name"].toString().trim();
-      lastName.text = userData["last_name"].toString().trim();
-      email.text = userData["email"].toString().trim();
-      bday.text = userData["birthday"].toString().split("T")[0].trim();
+    firstName.text = userData["first_name"] != null &&
+            userData["first_name"].toString().isNotEmpty
+        ? userData["first_name"].toString()
+        : "";
+    print("afadsf ${firstName.text}");
+    middleName.text = userData["middle_name"] != null &&
+            userData["middle_name"].toString().isNotEmpty
+        ? userData["middle_name"].toString().trim()
+        : "";
+    lastName.text = userData["last_name"] != null &&
+            userData["last_name"].toString().isNotEmpty
+        ? userData["last_name"].toString().trim()
+        : "";
+    email.text =
+        userData["email"] != null && userData["email"].toString().isNotEmpty
+            ? userData["email"].toString().trim()
+            : "";
+    bday.text = userData["birthday"] != null &&
+            userData["birthday"].toString().isNotEmpty
+        ? userData["birthday"].toString().split("T")[0].trim()
+        : "";
+    if (userData["civil_status"] != null) {
       selectedCivil.value = civilData.where((objData) {
         return objData["value"].toString().toLowerCase() ==
             userData["civil_status"].toString().toLowerCase();
       }).toList()[0]["value"];
+    }
+    if (userData["region_id"] != 0) {
       selectedRegion.value = userData["region_id"].toString();
       selectedProvince.value = userData["province_id"].toString();
       selectedCity.value = userData["city_id"].toString();

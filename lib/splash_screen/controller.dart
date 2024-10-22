@@ -38,7 +38,6 @@ class SplashController extends GetxController
     if (data != null) {
       Functions.getAccountStatus(data["mobile_no"], (obj) async {
         final items = obj[0]["items"];
-        print("splash $items");
         if (!obj[0]["has_net"]) {
           isNetConn.value = false;
           return;
@@ -59,7 +58,6 @@ class SplashController extends GetxController
             Get.offAndToNamed(Routes.login);
             return;
           } else {
-            print("userLogin $userLogin");
             String apiParam = ApiKeys.gApiLuvParkGetVehicleBrand;
             isNetConn.value = true;
 

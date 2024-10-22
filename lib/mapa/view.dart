@@ -175,7 +175,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           controller.onPanelSlide(pos);
                         },
                       ),
-
                       if (MediaQuery.of(Get.context!).viewInsets.bottom == 0)
                         Visibility(
                           visible: !controller.isHidePanel.value,
@@ -185,10 +184,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                // _buildDialItem("lightbulb", () {
-                                //   Get.dialog(LegendDialogScreen());
-                                // }),
-                                // const SizedBox(width: 10),
                                 Container(
                                   key: controller.parkKey,
                                   child: _buildDialItem("parking", () {
@@ -409,7 +404,8 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           } else {
                             controller.searchCoordinates =
                                 LatLng(searchedPlace[0], searchedPlace[1]);
-                            controller.ddRadius.value = "2000";
+                            controller.ddRadius.value =
+                                '${controller.userProfile["default_search_radius"]}';
                             controller.isSearched.value = true;
                             controller.bridgeLocation(
                                 LatLng(searchedPlace[0], searchedPlace[1]));

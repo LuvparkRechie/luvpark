@@ -83,8 +83,6 @@ class BookingController extends GetxController
   void onInit() {
     super.onInit();
 
-    print("area data ${parameters["areaData"]}");
-
     _startInactivityTimer();
     _updateMaskFormatter("");
     int endNumber =
@@ -198,12 +196,13 @@ class BookingController extends GetxController
   }
 
   void onTapChanged(bool isIncrement) {
+    int inatay = selectedVh.isEmpty ? 1 : selectedVh[0]["base_hours"];
     if (isIncrement) {
       if (selectedNumber.value == numbersList.length) return;
       selectedNumber.value++;
       timeComputation();
     } else {
-      if (selectedNumber.value == 1) return;
+      if (selectedNumber.value == inatay) return;
       selectedNumber--;
       timeComputation();
     }
@@ -390,15 +389,21 @@ class BookingController extends GetxController
               return obj["value"] == data[0]["vehicle_type_id"];
             }).toList();
             if (filterData.isEmpty) {
+              print("else");
               selectedVh.value = objData;
             } else {
+              print("iff");
               objData = objData.map((e) {
                 e["vehicle_type"] = filterData[0]["text"];
                 return e;
               }).toList();
               selectedVh.value = objData;
             }
-            routeToComputation();
+
+            selectedNumber.value = selectedVh[0]["base_hours"];
+            Future.delayed(Duration(milliseconds: 200), () {
+              routeToComputation();
+            });
           },
         ),
       );
@@ -408,13 +413,14 @@ class BookingController extends GetxController
   //Compute booking payment
   Future<void> routeToComputation() async {
     isBtnLoading.value = true;
-    print("selectedVh $selectedVh");
     int selNoHours = int.parse(selectedNumber.value.toString());
     int selBaseHours = int.parse(selectedVh[0]["base_hours"].toString());
     int selSucceedRate = int.parse(selectedVh[0]["succeeding_rate"].toString());
     int amount = int.parse(selectedVh[0]["base_rate"].toString());
 
     int finalData = 0;
+
+    print("selNoHours $selNoHours + $selBaseHours + $selSucceedRate");
 
     if (selNoHours > selBaseHours) {
       finalData = amount + ((selNoHours - selBaseHours)) * selSucceedRate;
@@ -423,6 +429,7 @@ class BookingController extends GetxController
     }
     isBtnLoading.value = false;
     totalAmount.value = "$finalData";
+    print("totalAmount $totalAmount");
     tokenRewards.value = totalAmount.value;
   }
 

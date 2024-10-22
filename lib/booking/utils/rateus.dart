@@ -123,6 +123,7 @@ class _RateUsState extends State<RateUs> {
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
                   textAlign: TextAlign.center,
+                  maxlines: 1,
                 ),
               ),
               Container(height: 10),

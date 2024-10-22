@@ -94,7 +94,7 @@ class LoginScreen extends GetView<LoginScreenController> {
                           labelText: "Enter your password",
                           controller: controller.password,
                           isObscure: !controller.isShowPass.value,
-                          suffixIcon: controller.isShowPass.value
+                          suffixIcon: !controller.isShowPass.value
                               ? Icons.visibility_off
                               : Icons.visibility,
                           onIconTap: () {
