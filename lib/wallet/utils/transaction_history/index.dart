@@ -147,6 +147,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         title: "Transaction History",
         action: [
           IconButton(
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
             onPressed: () {
               selectDateRange(context);
             },
