@@ -57,6 +57,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${filterfromDate.text}&tran_date_to=${filtertoDate.text}";
 
     HttpRequest(api: subApi).get().then((response) {
+      print(subApi);
       setState(() {
         isLoadingPage = false;
       });
@@ -174,6 +175,17 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                           padding: const EdgeInsets.all(10),
                           itemCount: filterLogs.length,
                           itemBuilder: (context, index) {
+                            String trans = filterLogs[index]["tran_desc"]
+                                .toString()
+                                .toLowerCase();
+                            String img = "";
+                            if (trans.contains("share")) {
+                              img = "wallet_sharetoken";
+                            } else if (trans.contains("received")) {
+                              img = "wallet_receivetoken";
+                            } else {
+                              img = "wallet_payparking";
+                            }
                             return GestureDetector(
                               onTap: () {
                                 Get.dialog(
@@ -187,7 +199,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                                 contentPadding: EdgeInsets.zero,
                                 leading: SvgPicture.asset(
                                   fit: BoxFit.cover,
-                                  "assets/images/${filterLogs[index]["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : filterLogs[index]["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
+                                  "assets/images/$img.svg",
                                   height: 50,
                                 ),
                                 title: CustomTitle(
@@ -206,14 +218,11 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                                   text: filterLogs[index]["amount"],
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: (filterLogs[index]["tran_desc"] ==
-                                              'Share a token' ||
-                                          filterLogs[index]["tran_desc"] ==
-                                              'Received token' ||
-                                          filterLogs[index]["tran_desc"] ==
-                                              'Credit top-up')
-                                      ? const Color(0xFF0078FF)
-                                      : const Color(0xFFBD2424),
+                                  color: double.parse(
+                                              filterLogs[index]["amount"]) <
+                                          0
+                                      ? const Color(0xFFFF0000)
+                                      : const Color(0xFF0078FF),
                                 ),
                               ),
                             );

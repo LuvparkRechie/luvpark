@@ -373,11 +373,24 @@ class WalletScreen extends GetView<WalletController> {
                             : controller.logs.isEmpty
                                 ? NoDataFound()
                                 : ListView.builder(
-                                    physics: ClampingScrollPhysics(),
+                                    physics: BouncingScrollPhysics(
+                                        decelerationRate:
+                                            ScrollDecelerationRate.fast),
                                     padding: EdgeInsets.zero,
                                     itemCount: controller.logs.length,
                                     itemBuilder: (context, index) {
                                       var log = controller.logs[index];
+                                      String trans = log["tran_desc"]
+                                          .toString()
+                                          .toLowerCase();
+                                      String img = "";
+                                      if (trans.contains("share")) {
+                                        img = "wallet_sharetoken";
+                                      } else if (trans.contains("received")) {
+                                        img = "wallet_receivetoken";
+                                      } else {
+                                        img = "wallet_payparking";
+                                      }
                                       return GestureDetector(
                                         onTap: () {
                                           Get.bottomSheet(TransactionDetails(
@@ -388,7 +401,7 @@ class WalletScreen extends GetView<WalletController> {
                                           contentPadding: EdgeInsets.zero,
                                           leading: SvgPicture.asset(
                                             fit: BoxFit.cover,
-                                            "assets/images/${log["tran_desc"] == 'Share a token' ? 'wallet_sharetoken' : log["tran_desc"] == 'Received token' ? 'wallet_receivetoken' : 'wallet_payparking'}.svg",
+                                            "assets/images/$img.svg",
                                           ),
                                           title: CustomTitle(
                                             text: log["tran_desc"],
@@ -409,14 +422,10 @@ class WalletScreen extends GetView<WalletController> {
                                             text: log["amount"],
                                             fontSize: 14,
                                             fontWeight: FontWeight.w600,
-                                            color: (log["tran_desc"] ==
-                                                        'Share a token' ||
-                                                    log["tran_desc"] ==
-                                                        'Received token' ||
-                                                    log["tran_desc"] ==
-                                                        'Credit top-up')
-                                                ? Color(0xFF0078FF)
-                                                : Color(0xFFBD2424),
+                                            color:
+                                                double.parse(log["amount"]) < 0
+                                                    ? const Color(0xFFFF0000)
+                                                    : const Color(0xFF0078FF),
                                           ),
                                         ),
                                       );
