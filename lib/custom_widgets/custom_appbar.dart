@@ -48,7 +48,7 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
         statusBarIconBrightness: statusBarBrightness ?? Brightness.dark,
       ),
       leading: InkWell(
-        overlayColor: WidgetStatePropertyAll(Colors.transparent),
+        overlayColor: MaterialStatePropertyAll(Colors.transparent),
         onTap: () {
           if (onTap == null) {
             Get.back();

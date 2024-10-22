@@ -129,6 +129,8 @@ class DashboardMapController extends GetxController
   RxList ratesWidget = <Widget>[].obs;
   final FocusNode focusNode = FocusNode();
 
+  RxBool isClkBook = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -1164,6 +1166,7 @@ class DashboardMapController extends GetxController
   void onClickBooking() async {
     DateTime now = await Functions.getTimeNow();
     CustomDialog().loadingDialog(Get.context!);
+    isClkBook.value = false;
     if (markerData[0]["is_allow_reserve"] == "N") {
       Get.back();
       CustomDialog().infoDialog("Not Open to Public Yet",

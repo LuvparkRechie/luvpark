@@ -147,7 +147,8 @@ class WalletScreen extends GetView<WalletController> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     InkWell(
-                      overlayColor: WidgetStatePropertyAll(Colors.transparent),
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
                       onTap: () async {
                         final item = await Authentication().getUserData2();
                         String? fname = item["first_name"];
@@ -203,7 +204,8 @@ class WalletScreen extends GetView<WalletController> {
                     ),
                     Container(width: 5),
                     InkWell(
-                      overlayColor: WidgetStatePropertyAll(Colors.transparent),
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
                       onTap: () {
                         Get.toNamed(Routes.walletsend);
                       },
@@ -248,7 +250,8 @@ class WalletScreen extends GetView<WalletController> {
                     ),
                     Container(width: 5),
                     InkWell(
-                      overlayColor: WidgetStatePropertyAll(Colors.transparent),
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
                       onTap: () {
                         Get.toNamed(Routes.qrwallet);
                       },

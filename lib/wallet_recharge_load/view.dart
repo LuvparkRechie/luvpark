@@ -65,6 +65,8 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                         isReadOnly: true,
                         controller: controller.rname,
                         labelText: "Recipient Name",
+                        filledColor: Colors.grey.shade200,
+                        isFilled: true,
                       ),
                       CustomTextField(
                         isReadOnly: true,

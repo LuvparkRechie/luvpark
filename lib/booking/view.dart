@@ -367,300 +367,350 @@ class BookingPage extends GetView<BookingController> {
                                           ],
                                         ),
 
-                                        Container(height: 20),
-                                        const CustomTitle(
-                                          text: "How long do you want to park?",
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                        Container(height: 15),
-                                        Container(
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          decoration: ShapeDecoration(
-                                            color: Colors.white,
-                                            shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                  width: 1,
-                                                  color: Color(0xFFDFE7EF)),
-                                              borderRadius:
-                                                  BorderRadius.circular(7),
-                                            ),
-                                            shadows: [
-                                              BoxShadow(
-                                                color: Color(0x0C000000),
-                                                blurRadius: 15,
-                                                offset: Offset(0, 5),
-                                                spreadRadius: 0,
-                                              )
-                                            ],
-                                          ),
+                                        Visibility(
+                                          visible:
+                                              controller.selectedVh.isNotEmpty,
                                           child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
                                             children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10),
-                                                child: Row(
-                                                  children: [
-                                                    Container(
-                                                      width: 70,
-                                                      height: 36,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 23,
-                                                          vertical: 6),
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          right: BorderSide(
-                                                            color:
-                                                                Colors.black12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: Center(
-                                                        child: IconButton(
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                            onPressed: () {
-                                                              controller
-                                                                  .onTapChanged(
-                                                                      false);
-                                                            },
-                                                            icon: Icon(
-                                                                LucideIcons
-                                                                    .minus)),
-                                                      ),
-                                                    ),
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(top: 8.0),
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [
-                                                            CustomLinkLabel(
-                                                              text:
-                                                                  "${controller.selectedNumber.value} ${int.parse(controller.selectedNumber.value.toString()) > 1 ? "Hours" : "Hour"}",
-                                                            ),
-                                                            Container(
-                                                                height: 4),
-                                                            CustomParagraph(
-                                                              text:
-                                                                  "${controller.startTime.value} - ${controller.endTime.value}",
-                                                              fontSize: 10,
-                                                              letterSpacing:
-                                                                  -0.41,
-                                                              textAlign:
-                                                                  TextAlign
-                                                                      .center,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    Container(
-                                                      width: 70,
-                                                      height: 36,
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 23,
-                                                          vertical: 6),
-                                                      clipBehavior:
-                                                          Clip.antiAlias,
-                                                      decoration: BoxDecoration(
-                                                        border: Border(
-                                                          left: BorderSide(
-                                                            color:
-                                                                Colors.black12,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      child: IconButton(
-                                                          padding:
-                                                              EdgeInsets.zero,
-                                                          onPressed: () {
-                                                            controller
-                                                                .onTapChanged(
-                                                                    true);
-                                                          },
-                                                          icon: Icon(LucideIcons
-                                                              .plus)),
-                                                    ),
+                                              Container(height: 20),
+                                              const CustomTitle(
+                                                text:
+                                                    "How long do you want to park?",
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                              Container(height: 15),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                decoration: ShapeDecoration(
+                                                  color: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    side: BorderSide(
+                                                        width: 1,
+                                                        color:
+                                                            Color(0xFFDFE7EF)),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            7),
+                                                  ),
+                                                  shadows: [
+                                                    BoxShadow(
+                                                      color: Color(0x0C000000),
+                                                      blurRadius: 15,
+                                                      offset: Offset(0, 5),
+                                                      spreadRadius: 0,
+                                                    )
                                                   ],
                                                 ),
-                                              ),
-                                              Divider(
-                                                color: Colors.black12,
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 10,
-                                                        horizontal: 20),
-                                                child: Row(
+                                                child: Column(
                                                   children: [
-                                                    Expanded(
-                                                      child: Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 10),
+                                                      child: Row(
                                                         children: [
-                                                          CustomTitle(
-                                                            text: "Auto Extend",
-                                                            fontWeight:
-                                                                FontWeight.w700,
-                                                            fontSize: 15,
+                                                          Container(
+                                                            width: 70,
+                                                            height: 36,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        23,
+                                                                    vertical:
+                                                                        6),
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border(
+                                                                right:
+                                                                    BorderSide(
+                                                                  color: Colors
+                                                                      .black12,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            child: Center(
+                                                              child: IconButton(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  onPressed:
+                                                                      () {
+                                                                    if (controller
+                                                                        .selectedVh
+                                                                        .isEmpty) {
+                                                                      return;
+                                                                    }
+                                                                    controller
+                                                                        .onTapChanged(
+                                                                            false);
+                                                                  },
+                                                                  icon: Icon(
+                                                                      LucideIcons
+                                                                          .minus)),
+                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      top: 8.0),
+                                                              child: Column(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  CustomLinkLabel(
+                                                                    text:
+                                                                        "${controller.selectedNumber.value} ${int.parse(controller.selectedNumber.value.toString()) > 1 ? "Hours" : "Hour"}",
+                                                                  ),
+                                                                  Container(
+                                                                      height:
+                                                                          4),
+                                                                  CustomParagraph(
+                                                                    text:
+                                                                        "${controller.startTime.value} - ${controller.endTime.value}",
+                                                                    fontSize:
+                                                                        10,
+                                                                    letterSpacing:
+                                                                        -0.41,
+                                                                    textAlign:
+                                                                        TextAlign
+                                                                            .center,
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
                                                           ),
                                                           Container(
-                                                            height: 5,
-                                                          ),
-                                                          CustomParagraph(
-                                                            text:
-                                                                "${toCurrencyString(controller.selectedVh.isEmpty ? "0" : controller.selectedVh[0]["succeeding_rate"].toString())}/Succeeding hours",
-                                                            letterSpacing:
-                                                                -0.41,
-                                                            fontSize: 10,
+                                                            width: 70,
+                                                            height: 36,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        23,
+                                                                    vertical:
+                                                                        6),
+                                                            clipBehavior:
+                                                                Clip.antiAlias,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              border: Border(
+                                                                left:
+                                                                    BorderSide(
+                                                                  color: Colors
+                                                                      .black12,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            child: IconButton(
+                                                                padding:
+                                                                    EdgeInsets
+                                                                        .zero,
+                                                                onPressed: () {
+                                                                  if (controller
+                                                                      .selectedVh
+                                                                      .isEmpty)
+                                                                    return;
+                                                                  controller
+                                                                      .onTapChanged(
+                                                                          true);
+                                                                },
+                                                                icon: Icon(
+                                                                    LucideIcons
+                                                                        .plus)),
                                                           ),
                                                         ],
                                                       ),
                                                     ),
-                                                    Container(width: 10),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        controller
-                                                            .toggleExtendChecked(
-                                                                !controller
-                                                                    .isExtendchecked
-                                                                    .value);
-                                                      },
-                                                      child: Container(
-                                                        width: 60,
-                                                        height: 30,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(30),
-                                                          gradient:
-                                                              LinearGradient(
-                                                            colors: controller
-                                                                    .isExtendchecked
-                                                                    .value
-                                                                ? [
-                                                                    Colors
-                                                                        .green,
-                                                                    Colors
-                                                                        .lightGreen
-                                                                  ]
-                                                                : [
-                                                                    Colors.red,
-                                                                    Colors
-                                                                        .redAccent
-                                                                  ],
+                                                    Divider(
+                                                      color: Colors.black12,
+                                                    ),
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 10,
+                                                          horizontal: 20),
+                                                      child: Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                CustomTitle(
+                                                                  text:
+                                                                      "Auto Extend",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  fontSize: 15,
+                                                                ),
+                                                                Container(
+                                                                  height: 5,
+                                                                ),
+                                                                CustomParagraph(
+                                                                  text:
+                                                                      "${toCurrencyString(controller.selectedVh.isEmpty ? "0" : controller.selectedVh[0]["succeeding_rate"].toString())}/Succeeding hours",
+                                                                  letterSpacing:
+                                                                      -0.41,
+                                                                  fontSize: 10,
+                                                                ),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                        child: Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            if (controller
-                                                                .isExtendchecked
-                                                                .value)
-                                                              Positioned(
-                                                                left: 10,
-                                                                child: Icon(
-                                                                  LucideIcons
-                                                                      .check,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size: 15,
-                                                                ),
-                                                              ),
-                                                            if (!controller
-                                                                .isExtendchecked
-                                                                .value)
-                                                              Positioned(
-                                                                right: 10,
-                                                                child: Icon(
-                                                                  Icons.clear,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size: 15,
-                                                                ),
-                                                              ),
-                                                            AnimatedPositioned(
-                                                              duration:
-                                                                  Duration(
-                                                                milliseconds:
-                                                                    200,
-                                                              ),
-                                                              left: controller
+                                                          Container(width: 10),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              controller.toggleExtendChecked(
+                                                                  !controller
                                                                       .isExtendchecked
-                                                                      .value
-                                                                  ? 30
-                                                                  : 5,
-                                                              child: Container(
-                                                                width: 20,
-                                                                height: 20,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              30),
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                      color: Colors
-                                                                          .black26,
-                                                                      blurRadius:
-                                                                          4.0,
-                                                                      spreadRadius:
-                                                                          2.0,
-                                                                    ),
-                                                                  ],
+                                                                      .value);
+                                                            },
+                                                            child: Container(
+                                                              width: 60,
+                                                              height: 30,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            30),
+                                                                gradient:
+                                                                    LinearGradient(
+                                                                  colors: controller
+                                                                          .isExtendchecked
+                                                                          .value
+                                                                      ? [
+                                                                          Colors
+                                                                              .green,
+                                                                          Colors
+                                                                              .lightGreen
+                                                                        ]
+                                                                      : [
+                                                                          Colors
+                                                                              .red,
+                                                                          Colors
+                                                                              .redAccent
+                                                                        ],
                                                                 ),
+                                                              ),
+                                                              child: Stack(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                children: [
+                                                                  if (controller
+                                                                      .isExtendchecked
+                                                                      .value)
+                                                                    Positioned(
+                                                                      left: 10,
+                                                                      child:
+                                                                          Icon(
+                                                                        LucideIcons
+                                                                            .check,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                    ),
+                                                                  if (!controller
+                                                                      .isExtendchecked
+                                                                      .value)
+                                                                    Positioned(
+                                                                      right: 10,
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .clear,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                    ),
+                                                                  AnimatedPositioned(
+                                                                    duration:
+                                                                        Duration(
+                                                                      milliseconds:
+                                                                          200,
+                                                                    ),
+                                                                    left: controller
+                                                                            .isExtendchecked
+                                                                            .value
+                                                                        ? 30
+                                                                        : 5,
+                                                                    child:
+                                                                        Container(
+                                                                      width: 20,
+                                                                      height:
+                                                                          20,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(30),
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                            color:
+                                                                                Colors.black26,
+                                                                            blurRadius:
+                                                                                4.0,
+                                                                            spreadRadius:
+                                                                                2.0,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               ),
                                                             ),
-                                                          ],
-                                                        ),
+                                                          ),
+                                                        ],
                                                       ),
                                                     ),
                                                   ],
                                                 ),
                                               ),
+                                              Container(height: 5),
+                                              Visibility(
+                                                visible: controller
+                                                    .numbersList.isNotEmpty,
+                                                child: Container(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 4,
+                                                      horizontal: 6),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue.shade50,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                      12,
+                                                    ),
+                                                  ),
+                                                  child: CustomParagraph(
+                                                    text:
+                                                        "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
+                                                    color:
+                                                        AppColor.primaryColor,
+                                                    fontSize: 6,
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                         ),
-                                        Container(height: 5),
-                                        Visibility(
-                                          visible:
-                                              controller.numbersList.isNotEmpty,
-                                          child: Container(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 4, horizontal: 6),
-                                            decoration: BoxDecoration(
-                                              color: Colors.blue.shade50,
-                                              borderRadius:
-                                                  BorderRadius.circular(
-                                                12,
-                                              ),
-                                            ),
-                                            child: CustomParagraph(
-                                              text:
-                                                  "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
-                                              color: AppColor.primaryColor,
-                                              fontSize: 6,
-                                            ),
-                                          ),
-                                        ),
-
                                         Container(height: 20),
 
                                         //payment details

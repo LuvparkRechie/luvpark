@@ -1034,7 +1034,11 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                             child: CustomButton(
                               borderRadius: 25,
                               text: "Book now",
-                              onPressed: controller.onClickBooking,
+                              onPressed: () {
+                                if (controller.isClkBook.value) return;
+                                controller.isClkBook.value = true;
+                                controller.onClickBooking();
+                              },
                             ),
                           ),
                         ],

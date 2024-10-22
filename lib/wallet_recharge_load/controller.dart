@@ -364,7 +364,11 @@ class WalletRechargeLoadController extends GetxController
               "$originalFullName $middelName ${userDataInfo["last_name"].toString()}";
           fullName.value =
               '$transformedFullName $middelName${middelName.isNotEmpty ? "." : ""} $transformedLname';
-          rname.text = fullName.value;
+          if (originalFullName == 'null') {
+            rname.text = "Not verified user";
+          } else {
+            rname.text = fullName.value;
+          }
         }
       });
     });
