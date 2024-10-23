@@ -183,7 +183,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \-.]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
@@ -198,7 +198,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \-.]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 onChange: (value) {
@@ -239,7 +239,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z ]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \-.]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
