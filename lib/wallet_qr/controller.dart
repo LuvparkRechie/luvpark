@@ -14,7 +14,7 @@ import 'package:luvpark_get/http/api_keys.dart';
 import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/main.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:qr_flutter/qr_flutter.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -38,6 +38,7 @@ class QrWalletController extends GetxController
   RxString payKey = "".obs;
   final ScreenshotController screenshotController = ScreenshotController();
   late TabController tabController;
+  late final TextEditingController imageSizeEditingController;
   // ignore: prefer_typing_uninitialized_variables
   RxString userImage = "".obs;
 
@@ -162,7 +163,7 @@ class QrWalletController extends GetxController
   Future<void> saveQr() async {
     CustomDialog().loadingDialog(Get.context!);
     ScreenshotController()
-        .captureFromWidget(myWidget(), delay: const Duration(seconds: 3))
+        .captureFromWidget(myWidget(), delay: const Duration(seconds: 2))
         .then((image) async {
       final dir = await getApplicationDocumentsDirectory();
       final imagePath = await File('${dir.path}/captured.png').create();
@@ -229,14 +230,29 @@ class QrWalletController extends GetxController
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(15.0),
-                        child: QrImageView(
-                          data: currentPage.value == 1
-                              ? mobNum.value
-                              : payKey.value,
-                          version: QrVersions.auto,
-                          size: MediaQuery.of(Get.context!).size.width * .50,
-                          gapless: false,
+                        child: Container(
+                          height: MediaQuery.of(Get.context!).size.height / 4.5,
+                          child: PrettyQrView(
+                            decoration: const PrettyQrDecoration(
+                                image: PrettyQrDecorationImage(
+                                    image:
+                                        AssetImage("assets/images/logo.png"))),
+                            qrImage: QrImage(QrCode.fromData(
+                                data: currentPage.value == 1
+                                    ? mobNum.value
+                                    : payKey.value,
+                                errorCorrectLevel: QrErrorCorrectLevel.H)),
+                          ),
                         ),
+
+                        // child: QrImageView(
+                        //   data: currentPage.value == 1
+                        //       ? mobNum.value
+                        //       : payKey.value,
+                        //   version: QrVersions.auto,
+                        //   size: MediaQuery.of(Get.context!).size.width * .50,
+                        //   gapless: false,
+                        // ),
                       ),
                     ),
                     Container(

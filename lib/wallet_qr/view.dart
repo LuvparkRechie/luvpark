@@ -11,6 +11,7 @@ import 'package:luvpark_get/custom_widgets/custom_tciket_style.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/custom_widgets/page_loader.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../custom_widgets/app_color.dart';
@@ -232,12 +233,32 @@ class PayQr extends GetView<QrWalletController> {
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  QrImageView(
-                                    data: controller.payKey.value,
-                                    version: QrVersions.auto,
-                                    size: 200,
-                                    gapless: false,
+                                  SizedBox(
+                                    height: 10,
                                   ),
+                                  Container(
+                                    height: MediaQuery.of(context).size.height /
+                                        4.5,
+                                    child: PrettyQrView(
+                                      decoration: const PrettyQrDecoration(
+                                          image: PrettyQrDecorationImage(
+                                              image: AssetImage(
+                                                  "assets/images/logo.png"))),
+                                      qrImage: QrImage(QrCode.fromData(
+                                          data: controller.payKey.value,
+                                          errorCorrectLevel:
+                                              QrErrorCorrectLevel.H)),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  // QrImageView(
+                                  //   data: controller.payKey.value,
+                                  //   version: QrVersions.auto,
+                                  //   size: 200,
+                                  //   gapless: false,
+                                  // ),
                                   CustomTitle(
                                     text: controller.isLoading.value
                                         ? ""
@@ -504,12 +525,29 @@ class ReceiveQr extends GetView<QrWalletController> {
                 ),
                 Column(
                   children: [
-                    QrImageView(
-                      data: controller.mobNum.value,
-                      version: QrVersions.auto,
-                      gapless: false,
-                      size: 200,
+                    SizedBox(
+                      height: 10,
                     ),
+                    Container(
+                      height: MediaQuery.of(context).size.height / 4.5,
+                      child: PrettyQrView(
+                        decoration: const PrettyQrDecoration(
+                            image: PrettyQrDecorationImage(
+                                image: AssetImage("assets/images/logo.png"))),
+                        qrImage: QrImage(QrCode.fromData(
+                            data: controller.mobNum.value,
+                            errorCorrectLevel: QrErrorCorrectLevel.H)),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    // QrImageView(
+                    //   data: controller.mobNum.value,
+                    //   version: QrVersions.auto,
+                    //   gapless: false,
+                    //   size: 200,
+                    // ),
                     CustomTitle(
                       text: 'Scan QR code to receive',
                       fontSize: 12,
