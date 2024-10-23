@@ -29,6 +29,7 @@ class MyAccountScreenController extends GetxController
   RxList regionData = [].obs;
   RxList userData = [].obs;
   RxString myName = "".obs;
+  RxString myAddress = "".obs;
   RxString civilStatus = "".obs;
   RxString province = "".obs;
   RxString gender = "".obs;
@@ -50,6 +51,7 @@ class MyAccountScreenController extends GetxController
 
     if (userData[0]['region_id'] == 0 || userData[0]['region_id'] == null) {
       province.value = "No province provided";
+      myAddress.value = "No Address provided";
       isLoading.value = false;
       isNetConn.value = true;
     } else {
@@ -61,6 +63,8 @@ class MyAccountScreenController extends GetxController
         province.value = "No province provided";
       } else {
         getProvince(userData[0]['region_id']);
+        myAddress.value =
+            "Brgy ${userData[0]['brgy_name']}, ${userData[0]['city_name']}";
       }
     }
   }
