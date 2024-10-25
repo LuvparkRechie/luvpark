@@ -481,11 +481,14 @@ class UpdateProfile extends GetView<UpdateProfileController> {
               CustomTextField(
                 labelText: 'Zip Code',
                 controller: controller.zipCode,
-                keyboardType: TextInputType.number,
                 inputFormatters: [
                   FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
                   LengthLimitingTextInputFormatter(4),
                 ],
+                keyboardType: Platform.isAndroid
+                    ? TextInputType.number
+                    : const TextInputType.numberWithOptions(
+                        signed: true, decimal: false),
                 onChange: (value) {
                   controller.zipCode.selection = TextSelection.fromPosition(
                       TextPosition(offset: controller.zipCode.text.length));

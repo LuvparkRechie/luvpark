@@ -180,6 +180,8 @@ class BookingController extends GetxController
     DateTime cTime = DateFormat('yyyy-MM-dd HH:mm').parse(
         "${now.toString().split(" ")[0]} ${parameters["areaData"]["closed_time"].toString().trim()}");
 
+    print("cTime $selectedVh");
+
     if (parameters["areaData"]["is_24_hrs"] == "N") {
       if (pTime.isAfter(cTime)) {
         int deductTime = pTime.difference(cTime).inHours > 0
@@ -189,8 +191,8 @@ class BookingController extends GetxController
         CustomDialog().confirmationDialog(
             Get.context!,
             "Booking Time Exceeded",
-            "Booking time must not exceed operating hours. But you still have ${pTime.difference(cTime).inMinutes} minutes to park. "
-                "would you like to continue park here? But nothing changed about the payment",
+            "Booking time must not exceed operating hours. You'll be charged the ${selectedVh[0]["base_hours"]}-hour${selectedVh[0]["base_hours"] > 1 ? "s" : ""} rate,"
+                "even for shorter stays, as the parking closes at ${DateFormat('h:mm').format(cTime).toString()} PM. Thank you for understanding!",
             "No",
             "Okay", () {
           Get.back();
