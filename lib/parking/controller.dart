@@ -97,7 +97,7 @@ class ParkingController extends GetxController
 
       try {
         final returnData = await HttpRequest(api: api).get();
-        print("returnData $returnData");
+
         if (returnData == "No Internet") {
           isLoading.value = false; // End loading
           hasNet.value = false;

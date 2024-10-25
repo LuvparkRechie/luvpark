@@ -595,6 +595,23 @@ class Variables {
 
       return 'Invalid time'; // Return a default value or error message
     }
+  } // '16:30'; format
+
+  static String timeFormatter2(String time) {
+    try {
+      // Parse the 24-hour time into a DateTime object
+      DateFormat format24Hour = DateFormat('HH:mm');
+      DateTime dateTime = format24Hour.parse(time.trim());
+
+      // Convert to 12-hour format with AM/PM
+      DateFormat format12Hour = DateFormat('h a');
+
+      return format12Hour.format(dateTime);
+    } catch (e) {
+      // Handle parsing errors if necessary
+
+      return 'Invalid time'; // Return a default value or error message
+    }
   }
 
   //TEXT TO SPEECH Variables

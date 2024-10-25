@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark_get/booking/index.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
@@ -413,47 +414,55 @@ class BookingPage extends GetView<BookingController> {
                                                           vertical: 10),
                                                       child: Row(
                                                         children: [
-                                                          Container(
-                                                            width: 70,
-                                                            height: 36,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        23,
-                                                                    vertical:
-                                                                        6),
-                                                            clipBehavior:
-                                                                Clip.antiAlias,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              border: Border(
-                                                                right:
-                                                                    BorderSide(
-                                                                  color: Colors
-                                                                      .black12,
+                                                          InkWell(
+                                                            onTap: () {
+                                                              if (controller
+                                                                  .selectedVh
+                                                                  .isEmpty) {
+                                                                return;
+                                                              }
+                                                              controller
+                                                                  .onTapChanged(
+                                                                      false);
+                                                            },
+                                                            child: Container(
+                                                              width: 70,
+                                                              height: 36,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          23,
+                                                                      vertical:
+                                                                          6),
+                                                              clipBehavior: Clip
+                                                                  .antiAlias,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border: Border(
+                                                                  right:
+                                                                      BorderSide(
+                                                                    color: Colors
+                                                                        .black12,
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            child: Center(
-                                                              child: IconButton(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  onPressed:
-                                                                      () {
-                                                                    if (controller
-                                                                        .selectedVh
-                                                                        .isEmpty) {
-                                                                      return;
-                                                                    }
-                                                                    controller
-                                                                        .onTapChanged(
-                                                                            false);
-                                                                  },
-                                                                  icon: Icon(
-                                                                      LucideIcons
-                                                                          .minus)),
+                                                              child: Center(
+                                                                child:
+                                                                    IconButton(
+                                                                        padding:
+                                                                            EdgeInsets
+                                                                                .zero,
+                                                                        onPressed:
+                                                                            null,
+                                                                        icon:
+                                                                            Icon(
+                                                                          LucideIcons
+                                                                              .minus,
+                                                                          color:
+                                                                              Colors.black,
+                                                                        )),
+                                                              ),
                                                             ),
                                                           ),
                                                           Expanded(
@@ -489,44 +498,51 @@ class BookingPage extends GetView<BookingController> {
                                                               ),
                                                             ),
                                                           ),
-                                                          Container(
-                                                            width: 70,
-                                                            height: 36,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        23,
-                                                                    vertical:
-                                                                        6),
-                                                            clipBehavior:
-                                                                Clip.antiAlias,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              border: Border(
-                                                                left:
-                                                                    BorderSide(
-                                                                  color: Colors
-                                                                      .black12,
+                                                          InkWell(
+                                                            onTap: () {
+                                                              if (controller
+                                                                  .selectedVh
+                                                                  .isEmpty)
+                                                                return;
+                                                              controller
+                                                                  .onTapChanged(
+                                                                      true);
+                                                            },
+                                                            child: Container(
+                                                              width: 70,
+                                                              height: 36,
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          23,
+                                                                      vertical:
+                                                                          6),
+                                                              clipBehavior: Clip
+                                                                  .antiAlias,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border: Border(
+                                                                  left:
+                                                                      BorderSide(
+                                                                    color: Colors
+                                                                        .black12,
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            child: IconButton(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .zero,
-                                                                onPressed: () {
-                                                                  if (controller
-                                                                      .selectedVh
-                                                                      .isEmpty)
-                                                                    return;
-                                                                  controller
-                                                                      .onTapChanged(
-                                                                          true);
-                                                                },
-                                                                icon: Icon(
+                                                              child: IconButton(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .zero,
+                                                                  onPressed:
+                                                                      null,
+                                                                  icon: Icon(
                                                                     LucideIcons
-                                                                        .plus)),
+                                                                        .plus,
+                                                                    color: Colors
+                                                                        .black,
+                                                                  )),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
@@ -719,7 +735,6 @@ class BookingPage extends GetView<BookingController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Container(height: 20),
                                             const CustomTitle(
                                               text: "Payment Details",
                                               fontWeight: FontWeight.w800,
@@ -1151,6 +1166,9 @@ class BookingPage extends GetView<BookingController> {
                                                             ),
                                                           );
 
+                                                          String finalDateOut =
+                                                              "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${controller.paramEndTime.value}";
+
                                                           void bongGo() {
                                                             Map<String, dynamic>
                                                                 parameters = {
@@ -1179,10 +1197,8 @@ class BookingPage extends GetView<BookingController> {
                                                                   .toString()
                                                                   .split(
                                                                       ".")[0],
-                                                              "dt_out": dateOut
-                                                                  .toString()
-                                                                  .split(
-                                                                      ".")[0],
+                                                              "dt_out":
+                                                                  finalDateOut,
                                                               "no_hours": controller
                                                                   .selectedNumber,
                                                               "tran_type": "R",
@@ -1218,6 +1234,8 @@ class BookingPage extends GetView<BookingController> {
                                                               bongGo();
                                                             });
                                                           }
+                                                          print(
+                                                              "militaryTime  ");
                                                         }),
                                             ),
                                           ],

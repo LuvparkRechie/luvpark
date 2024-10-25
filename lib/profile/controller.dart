@@ -53,10 +53,16 @@ class ProfileScreenController extends GetxController
       isLoading.value = false;
       isNetConn.value = true;
     } else {
-      civilStatus.value = Variables.civilStatusData.where((element) {
-        return element["value"] == userData[0]['civil_status'];
-      }).toList()[0]["status"];
-      gender.value = userData[0]['gender'] == "F" ? "Female" : "Male";
+      civilStatus.value = userData[0]['civil_status'] == null
+          ? ""
+          : Variables.civilStatusData.where((element) {
+              return element["value"] == userData[0]['civil_status'];
+            }).toList()[0]["status"];
+      gender.value = userData[0]['gender'] == null
+          ? ""
+          : userData[0]['gender'] == "F"
+              ? "Female"
+              : "Male";
       getProvince(userData[0]['region_id']);
     }
   }

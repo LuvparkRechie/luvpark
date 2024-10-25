@@ -146,7 +146,8 @@ class UpdateProfileController extends GetxController {
       selectedProvince.value = userData["province_id"].toString();
       selectedCity.value = userData["city_id"].toString();
       selectedBrgy.value = userData["brgy_id"].toString();
-      zipCode.text = userData["zip_code"].toString();
+      zipCode.text =
+          userData["zip_code"] == null ? "" : userData["zip_code"].toString();
       seq1.value = userData["secq_id1"];
       seq2.value = userData["secq_id2"];
       seq3.value = userData["secq_id3"];

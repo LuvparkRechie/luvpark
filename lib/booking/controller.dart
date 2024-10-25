@@ -15,7 +15,7 @@ import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/routes/routes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import 'index.dart';
+import 'view.dart';
 
 class BookingController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -38,6 +38,7 @@ class BookingController extends GetxController
   RxBool isHideBottom = true.obs;
   RxString startTime = "".obs;
   RxString endTime = "".obs;
+  RxString paramEndTime = "".obs;
   RxBool hasInternetBal = true.obs;
   RxBool isRewardchecked = false.obs;
   RxBool isExtendchecked = false.obs;
@@ -82,7 +83,7 @@ class BookingController extends GetxController
   @override
   void onInit() {
     super.onInit();
-
+    selectedNumber.value = 1;
     _startInactivityTimer();
     _updateMaskFormatter("");
     int endNumber =
@@ -101,21 +102,8 @@ class BookingController extends GetxController
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initializeDate();
       getAvailabeAreaVh();
     });
-  }
-
-  void initializeDate() async {
-    DateTime now = await Functions.getTimeNow();
-    startDate.text = now.toString().split(" ")[0].toString();
-    startTime.value = DateFormat('h:mm a').format(now).toString();
-    DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
-    timeInParam.text = DateFormat('HH:mm').format(parsedTime);
-
-    endTime.value = DateFormat('h:mm a')
-        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-        .toString();
   }
 
   void _startInactivityTimer() {
@@ -139,7 +127,6 @@ class BookingController extends GetxController
 
   void _reloadPage() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      initializeDate();
       getAvailabeAreaVh();
     });
   }
@@ -160,14 +147,28 @@ class BookingController extends GetxController
     );
   }
 
+  String convertStandardToMilitary(String standardTime) {
+    // Parse the standard time into a DateTime object
+    DateTime dateTime = DateFormat.jm().parse(standardTime);
+
+    // Format the DateTime object to a 24-hour format
+    String militaryTime = DateFormat("HH:mm").format(dateTime);
+
+    return militaryTime;
+  }
+
   void timeComputation() async {
     DateTime now = await Functions.getTimeNow();
+
     startDate.text = now.toString().split(" ")[0].toString();
     startTime.value = DateFormat('h:mm a').format(now).toString();
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
 
     endTime.value = DateFormat('h:mm a')
+        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+        .toString();
+    paramEndTime.value = DateFormat('HH:mm')
         .format(parsedTime.add(Duration(hours: selectedNumber.value)))
         .toString();
 
@@ -181,15 +182,30 @@ class BookingController extends GetxController
 
     if (parameters["areaData"]["is_24_hrs"] == "N") {
       if (pTime.isAfter(cTime)) {
-        selectedNumber = selectedNumber - 1;
-        CustomDialog().infoDialog("Booking Time Exceeded",
-            "Booking time must not exceed operating hours.", () {
-          initializeDate();
-          Get.back();
-        });
+        int deductTime = pTime.difference(cTime).inHours > 0
+            ? pTime.difference(cTime).inHours
+            : 1;
 
-        update();
-        return;
+        CustomDialog().confirmationDialog(
+            Get.context!,
+            "Booking Time Exceeded",
+            "Booking time must not exceed operating hours. But you still have ${pTime.difference(cTime).inMinutes} minutes to park. "
+                "would you like to continue park here? But nothing changed about the payment",
+            "No",
+            "Okay", () {
+          Get.back();
+          selectedNumber -= deductTime;
+          timeComputation();
+          routeToComputation();
+        }, () {
+          Get.back();
+          selectedNumber -= deductTime;
+          if (selectedNumber.value == 0) {
+            selectedNumber.value = 1;
+          }
+          endTime.value = DateFormat('h:mm a').format(cTime).toString();
+          paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
+        });
       }
       update();
     }
@@ -220,6 +236,54 @@ class BookingController extends GetxController
     });
 
     update();
+  }
+
+  void displaySelVh() {
+    Get.bottomSheet(
+      isScrollControlled: true,
+      VehicleOption(
+        callback: (data) {
+          List objData = data;
+
+          List filterData = ddVehiclesData.where((obj) {
+            return obj["value"] == data[0]["vehicle_type_id"];
+          }).toList();
+          if (filterData.isEmpty) {
+            selectedVh.value = objData;
+          } else {
+            objData = objData.map((e) {
+              e["vehicle_type"] = filterData[0]["text"];
+              return e;
+            }).toList();
+            selectedVh.value = objData;
+          }
+
+          selectedNumber.value = selectedVh[0]["base_hours"];
+          timeComputation();
+          routeToComputation();
+        },
+      ),
+    );
+  }
+
+//Compute booking payment
+  Future<void> routeToComputation() async {
+    isBtnLoading.value = true;
+    int selNoHours = int.parse(selectedNumber.value.toString());
+    int selBaseHours = int.parse(selectedVh[0]["base_hours"].toString());
+    int selSucceedRate = int.parse(selectedVh[0]["succeeding_rate"].toString());
+    int amount = int.parse(selectedVh[0]["base_rate"].toString());
+    int finalData = 0;
+
+    if (selNoHours > selBaseHours) {
+      finalData = amount + (selNoHours - selBaseHours) * selSucceedRate;
+    } else {
+      finalData = amount;
+    }
+
+    isBtnLoading.value = false;
+    totalAmount.value = "$finalData";
+    tokenRewards.value = totalAmount.value;
   }
 
   void toggleRewardChecked(bool value) {
@@ -379,58 +443,8 @@ class BookingController extends GetxController
           };
         }).toList();
       }
-      Get.bottomSheet(
-        isScrollControlled: true,
-        VehicleOption(
-          callback: (data) {
-            List objData = data;
-
-            List filterData = ddVehiclesData.where((obj) {
-              return obj["value"] == data[0]["vehicle_type_id"];
-            }).toList();
-            if (filterData.isEmpty) {
-              print("else");
-              selectedVh.value = objData;
-            } else {
-              print("iff");
-              objData = objData.map((e) {
-                e["vehicle_type"] = filterData[0]["text"];
-                return e;
-              }).toList();
-              selectedVh.value = objData;
-            }
-
-            selectedNumber.value = selectedVh[0]["base_hours"];
-            Future.delayed(Duration(milliseconds: 200), () {
-              routeToComputation();
-            });
-          },
-        ),
-      );
+      displaySelVh();
     });
-  }
-
-  //Compute booking payment
-  Future<void> routeToComputation() async {
-    isBtnLoading.value = true;
-    int selNoHours = int.parse(selectedNumber.value.toString());
-    int selBaseHours = int.parse(selectedVh[0]["base_hours"].toString());
-    int selSucceedRate = int.parse(selectedVh[0]["succeeding_rate"].toString());
-    int amount = int.parse(selectedVh[0]["base_rate"].toString());
-
-    int finalData = 0;
-
-    print("selNoHours $selNoHours + $selBaseHours + $selSucceedRate");
-
-    if (selNoHours > selBaseHours) {
-      finalData = amount + ((selNoHours - selBaseHours)) * selSucceedRate;
-    } else {
-      finalData = amount;
-    }
-    isBtnLoading.value = false;
-    totalAmount.value = "$finalData";
-    print("totalAmount $totalAmount");
-    tokenRewards.value = totalAmount.value;
   }
 
   //Reservation Submit
@@ -554,6 +568,7 @@ class BookingController extends GetxController
           } else {
             isSubmitBooking.value = false;
             inactivityTimer?.cancel();
+            Get.back();
             Get.back();
             Get.to(BookingDialog(data: [paramArgs]));
             return;

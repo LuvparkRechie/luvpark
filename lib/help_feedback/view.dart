@@ -224,7 +224,7 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                         if (response == "Success") {
                           Get.to(const WebviewPage(
                             urlDirect: "https://luvpark.ph/privacy-policy/",
-                            label: "Terms of Use",
+                            label: "Privacy Policy",
                             isBuyToken: false,
                           ));
                         } else {

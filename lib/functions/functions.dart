@@ -258,33 +258,81 @@ class Functions {
     }
   }
 
-  //search place
+  // //search place
+  // static Future<void> searchPlaces(
+  //     context, String query, Function callback) async {
+  //   hasInternetConnection((hasInternet) async {
+  //     if (hasInternet) {
+  //       try {
+  //         final places = gmp.GoogleMapsPlaces(
+  //             apiKey:
+  //                 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'); // Replace with your API key
+  //         gmp.PlacesSearchResponse response = await places.searchByText(query);
+
+  //         if (response.isOkay && response.results.isNotEmpty) {
+  //           callback([
+  //             response.results[0].geometry!.location.lat,
+  //             response.results[0].geometry!.location.lng,
+  //           ]);
+  //           return;
+  //         } else {
+  //           callback([]);
+  //           CustomDialog().errorDialog(context, "luvpark", "No data found", () {
+  //             Get.back();
+  //           });
+  //         }
+  //       } catch (e) {
+  //         callback([]);
+  //         CustomDialog().errorDialog(
+  //             context, "Error", "An error occured while getting data.", () {
+  //           Get.back();
+  //         });
+  //       }
+  //     } else {
+  //       callback([]);
+  //       CustomDialog().internetErrorDialog(context, () {
+  //         Get.back();
+  //       });
+  //     }
+  //   });
+  // }
   static Future<void> searchPlaces(
-      context, String query, Function callback) async {
+      BuildContext context, String query, Function callback) async {
     hasInternetConnection((hasInternet) async {
       if (hasInternet) {
         try {
           final places = gmp.GoogleMapsPlaces(
               apiKey:
-                  'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'); // Replace with your API key
+                  'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'); // Replace with your API key securely
           gmp.PlacesSearchResponse response = await places.searchByText(query);
 
-          if (response.isOkay && response.results.isNotEmpty) {
-            callback([
-              response.results[0].geometry!.location.lat,
-              response.results[0].geometry!.location.lng,
-            ]);
-            return;
+          if (response.isOkay) {
+            if (response.results.isNotEmpty) {
+              callback([
+                response.results[0].geometry!.location.lat,
+                response.results[0].geometry!.location.lng,
+              ]);
+            } else {
+              callback([]);
+              CustomDialog().errorDialog(
+                  context, "luvpark", "No parking areas found.", () {
+                Get.back();
+              });
+            }
           } else {
             callback([]);
-            CustomDialog().errorDialog(context, "luvpark", "No data found", () {
+            CustomDialog().errorDialog(
+                context, "Error", "Failed to retrieve data. Please try again.",
+                () {
               Get.back();
             });
           }
         } catch (e) {
           callback([]);
-          CustomDialog().errorDialog(
-              context, "Error", "An error occured while getting data.", () {
+
+          CustomDialog().errorDialog(context, "Error",
+              "An unexpected error occurred while retrieving the data. Please refresh and try again.",
+              () {
             Get.back();
           });
         }

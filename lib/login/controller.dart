@@ -85,7 +85,7 @@ class LoginScreenController extends GetxController {
           return;
         }
         if (returnPost["login_attempt"] != null &&
-            returnPost["login_attempt"] >= 3) {
+            returnPost["login_attempt"] >= 5) {
           mobileNumber.text = "";
           password.text = "";
           List mapData = [returnPost];
@@ -112,6 +112,7 @@ class LoginScreenController extends GetxController {
             "${ApiKeys.gApiSubFolderLogin2}?mobile_no=${param["mobile_no"]}&auth_key=${returnPost["auth_key"].toString()}";
 
         HttpRequest(api: getApi).get().then((objData) async {
+          print("objData $objData");
           if (objData == "No Internet") {
             CustomDialog().internetErrorDialog(context, () {
               Get.back();

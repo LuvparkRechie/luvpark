@@ -55,11 +55,19 @@ class MyAccountScreenController extends GetxController
       isLoading.value = false;
       isNetConn.value = true;
     } else {
-      civilStatus.value = Variables.civilStatusData.where((element) {
-        return element["value"] == userData[0]['civil_status'];
-      }).toList()[0]["status"];
-      gender.value = userData[0]['gender'] == "F" ? "Female" : "Male";
-      if (userData[0]['region_id'] == null) {
+      civilStatus.value = userData[0]['civil_status'] == null
+          ? ""
+          : Variables.civilStatusData.where((element) {
+              return element["value"] == userData[0]['civil_status'];
+            }).toList()[0]["status"];
+      gender.value = userData[0]['gender'] == null
+          ? ""
+          : userData[0]['gender'] == "F"
+              ? "Female"
+              : "Male";
+
+      if (userData[0]['province_id'] == 0 ||
+          userData[0]['province_id'] == null) {
         province.value = "No province provided";
       } else {
         getProvince(userData[0]['region_id']);

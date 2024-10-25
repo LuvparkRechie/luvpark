@@ -7,6 +7,7 @@ import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_body.dart';
@@ -15,6 +16,7 @@ import 'package:luvpark_get/custom_widgets/no_internet.dart';
 import 'package:luvpark_get/drawer/view.dart';
 import 'package:luvpark_get/functions/functions.dart';
 import 'package:luvpark_get/voice_search/view.dart';
+import 'package:material_symbols_icons/symbols.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -730,32 +732,33 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
               child: Obx(
                 () => Column(
                   children: [
-                    Container(
-                      decoration: const BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            width: 1,
-                            // strokeAlign: BorderSide
-                            //     .strokeAlignCenter,
-                            color: Color(0xFFF3EAEA),
-                          ),
-                        ),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                        horizontal: 15,
-                      ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                       child: ScrollConfiguration(
                         behavior: ScrollBehavior().copyWith(overscroll: false),
                         child: SingleChildScrollView(
                             controller: scrollController,
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              //  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                const CustomTitle(
-                                  text: "Parking Details",
-                                  fontSize: 14,
+                                Transform.rotate(
+                                  angle:
+                                      -1.5708, // Rotate by 90 degrees in radians
+                                  child: Icon(
+                                    Symbols.arrow_split_rounded,
+                                    color: AppColor.primaryColor,
+                                    size: 20,
+                                    weight: 1000,
+                                  ),
                                 ),
+                                Container(width: 8),
+                                CustomParagraph(
+                                  text: controller.markerData[0]
+                                      ["distance_display"],
+                                  color: AppColor.primaryColor,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                                Expanded(child: SizedBox()),
                                 Align(
                                   alignment: Alignment.topRight,
                                   child: InkWell(
@@ -773,9 +776,10 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                       child: const Padding(
                                         padding: EdgeInsets.all(10),
                                         child: Icon(
-                                          Icons.close,
-                                          color: Color(0xFF747579),
-                                          size: 15,
+                                          Symbols.close,
+                                          color: Colors.black,
+                                          size: 16,
+                                          weight: 1500,
                                         ),
                                       ),
                                     ),
@@ -797,9 +801,16 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Padding(
+                                Container(
                                   padding:
-                                      const EdgeInsets.fromLTRB(15, 10, 15, 0),
+                                      const EdgeInsets.fromLTRB(15, 13, 15, 15),
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                          width: 1, color: Color(0xFFE6EBF0)),
+                                    ),
+                                  ),
                                   child: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -817,6 +828,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                       .toString(),
                                                   fontSize: 20,
                                                 ),
+                                                Container(height: 5),
                                                 CustomParagraph(
                                                   text: controller.markerData[0]
                                                           ["address"]
@@ -824,6 +836,9 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                   maxlines: 2,
                                                   overflow:
                                                       TextOverflow.ellipsis,
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF1E1E1E),
                                                 )
                                               ],
                                             ),
@@ -871,119 +886,115 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                         ],
                                       ),
                                       Container(height: 20),
-                                      Text.rich(
-                                        TextSpan(
-                                          children: [
-                                            TextSpan(
-                                              text: controller.isOpen.value
-                                                  ? "Open"
-                                                  : "Close",
-                                              style: paragraphStyle(
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Visibility(
+                                                visible:
+                                                    controller.isOpen.value,
+                                                child: Container(
+                                                  child: Icon(
+                                                    LucideIcons.checkCircle2,
+                                                    color: Colors.green,
+                                                    weight: 1500,
+                                                    size: 16,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(width: 10),
+                                              CustomParagraph(
+                                                text: controller.isOpen.value
+                                                    ? "Open"
+                                                    : "Close",
+                                                fontWeight: FontWeight.w700,
+                                                maxlines: 1,
+                                                fontSize: 13,
                                                 color: controller.isOpen.value
-                                                    ? const Color(0xFF7BB56C)
+                                                    ? null
                                                     : Colors.red,
                                               ),
+                                            ],
+                                          ),
+                                          Container(width: 5),
+                                          Expanded(
+                                            child: _openTime(
+                                              Container(
+                                                child: Icon(
+                                                  LucideIcons.clock2,
+                                                  color: Colors.blue,
+                                                  weight: 1500,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                              " ${Variables.timeFormatter2(controller.markerData[0]["opened_time"].toString())} - ${Variables.timeFormatter2(controller.markerData[0]["closed_time"]).toString()}",
                                             ),
-                                            TextSpan(
-                                              text:
-                                                  ' ● ${Variables.timeFormatter(controller.markerData[0]["opened_time"].toString())} - ${Variables.timeFormatter(controller.markerData[0]["closed_time"]).toString()} ● ',
-                                              style: paragraphStyle(),
-                                            ),
-                                            TextSpan(
-                                              text:
-                                                  '${int.parse(controller.markerData[0]["ps_vacant_count"].toString())} ${int.parse(controller.markerData[0]["ps_vacant_count"].toString()) > 1 ? "Slots" : "Slot"}',
-                                              style: paragraphStyle(
-                                                  color:
-                                                      const Color(0xFFE03C20)),
-                                            ),
-                                            TextSpan(
-                                              text: ' ● ',
-                                              style: paragraphStyle(),
-                                            ),
-                                            TextSpan(
-                                              text:
-                                                  ' ${controller.markerData[0]["distance_display"]}',
-                                              style: paragraphStyle(
-                                                  color: AppColor.primaryColor),
-                                            ),
-                                          ],
-                                        ),
-                                        maxLines: 1,
+                                          ),
+                                          Container(width: 5),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              Container(
+                                                child: Icon(
+                                                  LucideIcons.parkingCircle,
+                                                  color: Colors.blue,
+                                                  weight: 1500,
+                                                  size: 16,
+                                                ),
+                                              ),
+                                              Container(width: 10),
+                                              CustomParagraph(
+                                                text:
+                                                    '${int.parse(controller.markerData[0]["ps_vacant_count"].toString())} ${int.parse(controller.markerData[0]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
+                                                fontWeight: FontWeight.w700,
+                                                maxlines: 1,
+                                                fontSize: 13,
+                                              )
+                                            ],
+                                          ),
+                                        ],
                                       ),
-                                      Container(height: 12),
-                                      const CustomTitle(
-                                        text: "Available Vehicle Slots",
+                                      Container(height: 15),
+                                      CustomParagraph(
+                                        text: "Available vehicle slots",
+                                        maxlines: 1,
+                                        fontStyle: FontStyle.normal,
                                         fontWeight: FontWeight.w700,
-                                        fontSize: 14,
+                                        color: Colors.black,
                                       ),
                                       Container(height: 10),
                                       _vehicles(),
-                                      Container(
-                                          height: 50,
-                                          width: double.infinity,
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                width: 1,
-                                                color: Color(0xFFEAEBF3),
-                                              ),
-                                            ),
-                                          ),
-                                          child: Obx(() {
-                                            return TabBar(
-                                              controller:
-                                                  controller.tabController,
-                                              padding: EdgeInsets.zero,
-                                              labelPadding:
-                                                  const EdgeInsets.only(
-                                                      right: 15),
-                                              isScrollable: true,
-                                              onTap: (index) {
-                                                controller.tabIndex.value =
-                                                    index;
-                                                controller
-                                                    .goingBackToTheCornerWhenIFirstSawYou();
-                                              },
-                                              tabs: [
-                                                CustomParagraph(
-                                                  text: "Parking Amenities",
-                                                  maxlines: 1,
-                                                  fontStyle: FontStyle.normal,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: controller
-                                                              .tabIndex.value ==
-                                                          0
-                                                      ? AppColor.primaryColor
-                                                      : const Color(0xFF666666),
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                                CustomParagraph(
-                                                  text: "Parking Rates",
-                                                  maxlines: 1,
-                                                  fontStyle: FontStyle.normal,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: controller
-                                                              .tabIndex.value ==
-                                                          1
-                                                      ? AppColor.primaryColor
-                                                      : const Color(0xFF666666),
-                                                  textAlign: TextAlign.left,
-                                                ),
-                                              ],
-                                            );
-                                          })),
-                                      SizedBox(
-                                        height: 300,
-                                        child: TabBarView(
-                                          physics:
-                                              const NeverScrollableScrollPhysics(),
-                                          controller: controller.tabController,
-                                          children: [
-                                            _amenities(),
-                                            _parkRates(),
-                                          ],
-                                        ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(15, 20, 15, 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomParagraph(
+                                        text: "Parking Amenities",
+                                        maxlines: 1,
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black,
                                       ),
+                                      _amenities(),
+                                      Container(height: 20),
+                                      CustomParagraph(
+                                        text: "Parking Rates",
+                                        maxlines: 1,
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black,
+                                      ),
+                                      _parkRates(),
+                                      Container(height: 20)
                                     ],
                                   ),
                                 ),
@@ -999,7 +1010,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                         children: [
                           Expanded(
                             child: CustomButton(
-                              text: "Go now",
+                              text: "Get directions",
                               btnColor: Colors.grey.shade100,
                               textColor: AppColor.primaryColor,
                               bordercolor: AppColor.primaryColor,
@@ -1050,86 +1061,69 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
         });
   }
 
+  Widget _openTime(dynamic icon, String text) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        icon,
+        Container(width: 10),
+        Flexible(
+          child: CustomParagraph(
+            text: text,
+            fontWeight: FontWeight.w700,
+            maxlines: 1,
+            fontSize: 13,
+          ),
+        )
+      ],
+    );
+  }
+
   Widget _vehicles() {
-    print(controller.vehicleTypes);
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-        decoration: const ShapeDecoration(
-          color: Colors.white,
-          shape: RoundedRectangleBorder(
-            side: BorderSide(width: 1, color: Color(0xFFE8E8E8)),
-            borderRadius: BorderRadius.all(
-              Radius.circular(5),
-            ),
-          ),
-        ),
-        child: LayoutBuilder(builder: (context, constraints) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              for (int j = 0; j < controller.vehicleTypes.length; j++) ...[
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Row(
+      child: LayoutBuilder(builder: (context, constraints) {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            for (int j = 0; j < controller.vehicleTypes.length; j++) ...[
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 50, 10),
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(7),
+                      ),
+                    ),
+                  ),
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: Image(
-                          image: AssetImage(
-                              "assets/dashboard_icon/${controller.vehicleTypes[j]["icon"]}.png"),
-                          color: Color(int.parse(
-                                  controller.vehicleTypes[j]['color']
-                                      .substring(1),
-                                  radix: 16) +
-                              0xFF000000),
-                        ),
-                      ),
-                      Container(width: 10),
-                      CustomParagraph(
-                        text: '${controller.vehicleTypes[j]['count']}',
-                        color: Color(int.parse(
-                                controller.vehicleTypes[j]['color']
-                                    .substring(1),
-                                radix: 16) +
-                            0xFF000000),
-                      ),
-                      Container(width: 5),
                       CustomParagraph(
                         text: '${controller.vehicleTypes[j]['name']}',
-                        fontStyle: FontStyle.normal,
                         fontWeight: FontWeight.w700,
-                        color: Color(int.parse(
-                                controller.vehicleTypes[j]['color']
-                                    .substring(1),
-                                radix: 16) +
-                            0xFF000000),
+                        fontSize: 12,
                       ),
-                      Container(width: 10),
+                      Container(height: 5),
+                      CustomParagraph(
+                        text: '${controller.vehicleTypes[j]['count']} slots',
+                        color: Colors.black,
+                        fontWeight: FontWeight.w700,
+                        fontSize: 16,
+                      ),
                     ],
                   ),
                 ),
-                if (j < controller.vehicleTypes.length - 1)
-                  Row(
-                    children: [
-                      Container(
-                        height: 25,
-                        width: 2,
-                        color: Colors.black12,
-                      ),
-                      if (j < controller.vehicleTypes.length - 1)
-                        Container(width: 10)
-                    ],
-                  )
-              ],
+              ),
             ],
-          );
-        }),
-      ),
+          ],
+        );
+      }),
     );
   }
 
@@ -1138,11 +1132,11 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
       padding: const EdgeInsets.only(top: 20),
       child: Column(
         children: [
-          for (int i = 0; i < controller.amenData.length; i += 3)
+          for (int i = 0; i < controller.amenData.length; i += 2)
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                for (int j = i; j < i + 3; j++)
+                for (int j = i; j < i + 2; j++)
                   j < controller.amenData.length
                       ? _buildColumn(
                           controller.amenData[j]["parking_amenity_desc"],
@@ -1152,37 +1146,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
               ],
             ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPlaceholder() {
-    return SizedBox(
-      width: MediaQuery.of(Get.context!).size.width / 3.4,
-      height: 125,
-      child: Padding(
-        padding: const EdgeInsets.all(5), // Padding to ensure spacing
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 70,
-              height: 70,
-              child: const Padding(
-                padding: EdgeInsets.all(12),
-              ),
-            ),
-            const SizedBox(height: 10),
-            const CustomParagraph(
-              text: "",
-              textAlign: TextAlign.center,
-              fontWeight: FontWeight.w600,
-              maxlines: 2,
-              fontSize: 12,
-            ),
-            const SizedBox(height: 10),
-          ],
-        ),
       ),
     );
   }
@@ -1215,8 +1178,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                         child: Padding(
                           padding: const EdgeInsets.only(right: 8.0),
                           child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 15, vertical: 5),
+                            padding: EdgeInsets.all(10),
                             decoration: ShapeDecoration(
                               color: controller.denoInd.value == i
                                   ? AppColor.primaryColor.withOpacity(.1)
@@ -1225,9 +1187,9 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                 side: BorderSide(
                                     width: 1,
                                     color: controller.denoInd.value == i
-                                        ? AppColor.primaryColor.withOpacity(.1)
+                                        ? AppColor.primaryColor
                                         : Color(0xFFDFE7EF)),
-                                borderRadius: BorderRadius.circular(15),
+                                borderRadius: BorderRadius.circular(100),
                               ),
                               shadows: [
                                 BoxShadow(
@@ -1238,13 +1200,28 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                 )
                               ],
                             ),
-                            child: CustomParagraph(
-                              text: controller.vehicleTypes[i]["name"],
-                              fontWeight: FontWeight.w700,
-                              fontSize: 12,
-                              color: controller.denoInd.value == i
-                                  ? AppColor.primaryColor
-                                  : Colors.black87,
+                            child: Row(
+                              children: [
+                                Image(
+                                  width: 20,
+                                  height: 20,
+                                  fit: BoxFit.contain,
+                                  color: controller.denoInd.value == i
+                                      ? AppColor.primaryColor
+                                      : Color(0xFFB6C1CC),
+                                  image: AssetImage(
+                                      "assets/dashboard_icon/${controller.vehicleTypes[i]["icon"]}.png"),
+                                ),
+                                Container(width: 5),
+                                CustomParagraph(
+                                  text: controller.vehicleTypes[i]["name"],
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 12,
+                                  color: controller.denoInd.value == i
+                                      ? AppColor.primaryColor
+                                      : Color(0xFFB6C1CC),
+                                ),
+                              ],
                             ),
                           ),
                         ),
@@ -1267,44 +1244,83 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
     );
   }
 
+  String _getSvgForAmenities(String amenText) {
+    switch (amenText) {
+      case 'ASPHALT FLOOR':
+        return 'assets/map_filter/inactive/asphalt_inactive.svg';
+      case 'CONCRETE FLOOR':
+        return 'assets/map_filter/inactive/concrete_inactive.svg';
+      case 'COVERED / SHADED':
+        return 'assets/map_filter/inactive/covered_inactive.svg';
+      case 'COMPACTED GRAVEL':
+        return 'assets/map_filter/inactive/gravel_inactive.svg';
+      case 'WITH CCTV':
+        return 'assets/map_filter/inactive/cctv_inactive.svg';
+      case 'WITH SECURITY':
+        return 'assets/map_filter/inactive/security_inactive.svg';
+      default:
+        return 'assets/area_details/dimension.svg';
+    }
+  }
+
   Widget _buildColumn(String text, String icon) {
     return SizedBox(
-      width: MediaQuery.of(Get.context!).size.width / 3.5,
-      height: 125,
+      width: MediaQuery.of(Get.context!).size.width / 2.2,
       child: Padding(
         padding: const EdgeInsets.all(5), // Padding to ensure spacing
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Row(
+          children: [
+            SvgPicture.asset(
+              _getSvgForAmenities(text),
+              width: 40.0,
+              height: 40.0,
+            ),
+            const SizedBox(width: 10),
+            Flexible(
+              child: CustomParagraph(
+                text: text.toLowerCase().trim().contains("perpendicular")
+                    ? text
+                        .trim()
+                        .replaceAll("PERPENDICULAR", "\nPERPENDICULAR")
+                        .trim()
+                    : text.trim().toUpperCase(),
+                textAlign: TextAlign.left,
+                maxlines: 2,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+                minFontSize: 6,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return SizedBox(
+      width: MediaQuery.of(Get.context!).size.width / 2.2,
+      child: Padding(
+        padding: const EdgeInsets.all(5), // Padding to ensure spacing
+        child: Row(
           children: [
             Container(
-              width: 50,
-              height: 50,
-              decoration: ShapeDecoration(
-                color: const Color(0xFFEDF7FF),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(7),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: SvgPicture.asset("assets/area_details/$icon.svg"),
+              width: 30,
+              height: 30,
+              child: const Padding(
+                padding: EdgeInsets.all(12),
               ),
             ),
-            const SizedBox(height: 10),
-            CustomParagraph(
-              text: text.toLowerCase().trim().contains("perpendicular")
-                  ? text
-                      .trim()
-                      .replaceAll("PERPENDICULAR", "\nPERPENDICULAR")
-                      .trim()
-                  : text.trim().toUpperCase(),
-              textAlign: TextAlign.center,
-              fontWeight: FontWeight.w600,
-              maxlines: 2,
-              fontSize: 12,
-              minFontSize: 6,
+            const SizedBox(width: 10),
+            Flexible(
+              child: const CustomParagraph(
+                text: "",
+                textAlign: TextAlign.left,
+                fontWeight: FontWeight.w600,
+                maxlines: 2,
+                fontSize: 12,
+              ),
             ),
-            const SizedBox(height: 5),
           ],
         ),
       ),

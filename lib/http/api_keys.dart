@@ -59,7 +59,6 @@ class ApiKeys {
 //Reservation history
   static const gApiSubFolderGetReservationHistory =
       '/ords/$luvApi/tnx/reslist/';
-
 // //GEt REservation
   static const gApiSubFolderGetReservations =
       '/ords/$parkSpaceApi/pm/getAdvancedParking';

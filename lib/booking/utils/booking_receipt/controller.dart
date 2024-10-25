@@ -61,14 +61,13 @@ class BookingReceiptController extends GetxController
     });
   }
 
-  void startTimer() async {
-    DateTime timeNow = await Functions.getTimeNow();
+  void startTimer() {
     DateTime startTime =
         DateTime.parse(parameters["paramsCalc"]["dt_in"].toString());
     DateTime endTime =
         DateTime.parse(parameters["paramsCalc"]["dt_out"].toString());
-
-    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 1), (Timer timer) async {
+      DateTime timeNow = await Functions.getTimeNow();
       DateTime currentTime = timeNow;
       Duration timeElapsed = currentTime.difference(startTime);
       Duration totalTime = endTime.difference(startTime);
@@ -79,7 +78,6 @@ class BookingReceiptController extends GetxController
         remainingTime = Duration.zero;
       }
       timeLeft.value = remainingTime;
-
       if (progress.value >= 1) {
         _timer.cancel();
         progress.value = 1.0;
