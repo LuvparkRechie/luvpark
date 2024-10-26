@@ -193,31 +193,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   return null;
                 },
               ),
-              // CustomTextField(
-              //   labelText: "Middle Name",
-              //   title: "Middle Name",
-              //   controller: controller.middleName,
-              //   inputFormatters: [
-              //     MiddleNameFormatter(),
-              //     LengthLimitingTextInputFormatter(30),
-              //   ],
-              //   onChange: (value) {
-              //     String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-
-              //     if (trimmedValue.isNotEmpty) {
-              //       controller.middleName.value = TextEditingValue(
-              //         text: Variables.capitalizeAllWord(trimmedValue),
-              //         selection: controller.middleName.selection,
-              //       );
-              //     } else {
-              //       // If the trimmed value is empty, just keep the selection unchanged
-              //       controller.middleName.value = TextEditingValue(
-              //         text: "",
-              //         selection: TextSelection.collapsed(offset: 0),
-              //       );
-              //     }
-              //   },
-              // ),
               CustomTextField(
                 labelText: "Middle Name",
                 title: "Middle Name",
@@ -226,16 +201,25 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   SimpleNameFormatter(),
                   LengthLimitingTextInputFormatter(30),
                 ],
-                onChange: (value) {
-                  // Capitalize the new text
-                  controller.middleName.value = TextEditingValue(
-                    text: Variables.capitalizeAllWord(value.trim()),
-                    selection: TextSelection.collapsed(
-                        offset: value.trim().length), // Move cursor to the end
-                  );
+                // onChange: (value) {
+                //   // Capitalize the new text
+                //   controller.middleName.value = TextEditingValue(
+                //     text: Variables.capitalizeAllWord(value.trim()),
+                //     selection: TextSelection.collapsed(
+                //         offset: value.trim().length), // Move cursor to the end
+                //   );
+                // },
+                validator: (value) {
+                  if (value != null &&
+                      (value.endsWith(' ') ||
+                          value.endsWith('-') ||
+                          value.endsWith('.'))) {
+                    return "Middle name cannot end with a space, hyphen, or period";
+                  }
+
+                  return null;
                 },
               ),
-
               CustomTextField(
                 labelText: "Last Name",
                 title: "Last Name",
@@ -257,7 +241,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \-.]")),
+                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \- ]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
@@ -815,15 +799,30 @@ class SimpleNameFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
-    final regex = RegExp(
-        r'^(?!.*--)(?!.*\.\.)(?!.*[-.]{2})[a-zA-Z .-]*[.-]?[a-zA-Z .-]*$');
+    // Updated regex to disallow specific sequences
+    final regex = RegExp(r'^(|[a-zA-Z][a-zA-Z.-]*( [a-zA-Z.-]*)? ?)$');
 
-    // Allow input if it matches the regex
-    if (regex.hasMatch(newValue.text)) {
-      return newValue; // Accept the new value if valid
+    // Count spaces, periods, and hyphens in the new value
+    int spaceCount = newValue.text.split(' ').length - 1;
+    int periodCount = newValue.text.split('.').length - 1;
+    int hyphenCount = newValue.text.split('-').length - 1;
+
+    bool hasDisallowedCombination = newValue.text.contains('. -') ||
+        newValue.text.contains('- .') ||
+        newValue.text.contains(' .') ||
+        newValue.text.contains('-.') ||
+        newValue.text.contains('.-') ||
+        newValue.text.contains('- ') ||
+        newValue.text.contains(' -') ||
+        newValue.text.contains('. ');
+
+    if (regex.hasMatch(newValue.text) &&
+        spaceCount <= 1 &&
+        periodCount <= 1 &&
+        hyphenCount <= 1 &&
+        !hasDisallowedCombination) {
+      return newValue;
     }
-
-    // If the new value does not match, return the old value
     return oldValue;
   }
 }
