@@ -198,15 +198,43 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
+                  // Allow only letters, spaces, hyphens, and periods
                   FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \-.]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 onChange: (value) {
-                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+                  // Trim leading and trailing spaces
+                  String trimmedValue = value.trim();
 
-                  if (trimmedValue.isNotEmpty) {
+                  // Initialize a counter for hyphens and periods
+                  int hyphenCount = 0;
+                  int periodCount = 0;
+
+                  // Validate the input
+                  String newText = "";
+                  for (int i = 0; i < trimmedValue.length; i++) {
+                    String char = trimmedValue[i];
+
+                    // Check for hyphen and period usage
+                    if (char == '-') {
+                      if (hyphenCount < 1 && i < trimmedValue.length - 1) {
+                        hyphenCount++;
+                        newText += char;
+                      }
+                    } else if (char == '.') {
+                      if (periodCount < 1 && i < trimmedValue.length - 1) {
+                        periodCount++;
+                        newText += char;
+                      }
+                    } else {
+                      newText += char;
+                    }
+                  }
+
+                  // Update the controller with capitalized words and preserve selection
+                  if (newText.isNotEmpty) {
                     controller.middleName.value = TextEditingValue(
-                      text: Variables.capitalizeAllWord(trimmedValue),
+                      text: Variables.capitalizeAllWord(newText),
                       selection: controller.middleName.selection,
                     );
                   } else {
