@@ -6,17 +6,7 @@ class LocationService {
   static Location location = Location();
 
   static Future<void> grantPermission(BuildContext context, Function cb) async {
-    bool serviceEnabled;
     PermissionStatus permissionGranted;
-    serviceEnabled = await location.serviceEnabled();
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        cb(false);
-        return;
-      }
-    }
-
     // Check and request location permissions
     permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {
@@ -27,7 +17,7 @@ class LocationService {
       }
     }
 
-    if (serviceEnabled && permissionGranted == PermissionStatus.granted) {
+    if (permissionGranted == PermissionStatus.granted) {
       cb(true);
     } else {
       cb(false);

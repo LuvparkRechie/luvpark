@@ -147,4 +147,76 @@ class ParkingAreasController extends GetxController {
     initData(dataNearest);
     super.onInit();
   }
+
+  String getIconAssetForPwdDetails(
+      String parkingTypeCode, String vehicleTypes) {
+    switch (parkingTypeCode) {
+      case "S":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/blue/blue_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/blue/blue_mp.svg';
+        } else {
+          return 'assets/details_logo/blue/blue_cp.svg';
+        }
+      case "P":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/orange/orange_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/orange/orange_mp.svg';
+        } else {
+          return 'assets/details_logo/orange/orange_cp.svg';
+        }
+      case "C":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/green/green_cmp.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/green/green_mp.svg';
+        } else {
+          return 'assets/details_logo/green/green_cp.svg';
+        }
+      default:
+        return 'assets/details_logo/violet/violet.svg'; // Valet
+    }
+  }
+
+  String getIconAssetForNonPwdDetails(
+      String parkingTypeCode, String vehicleTypes) {
+    switch (parkingTypeCode) {
+      case "S":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/blue/blue_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/blue/blue_motor.svg';
+        } else {
+          return 'assets/details_logo/blue/blue_car.svg';
+        }
+      case "P":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/orange/orange_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/orange/orange_motor.svg';
+        } else {
+          return 'assets/details_logo/orange/orange_car.svg';
+        }
+      case "C":
+        if (vehicleTypes.contains("Motorcycle") &&
+            vehicleTypes.contains("Trikes and Cars")) {
+          return 'assets/details_logo/green/green_cm.svg';
+        } else if (vehicleTypes.contains("Motorcycle")) {
+          return 'assets/details_logo/green/green_motor.svg';
+        } else {
+          return 'assets/details_logo/green/green_car.svg';
+        }
+      case "V":
+        return 'assets/details_logo/violet/violet.svg'; // Valet
+      default:
+        return 'assets/images/no_image.png'; // Fallback icon
+    }
+  }
 }

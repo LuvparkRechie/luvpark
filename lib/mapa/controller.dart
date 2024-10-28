@@ -4,12 +4,14 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:location/location.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -160,10 +162,8 @@ class DashboardMapController extends GetxController
         });
       }
     });
-    getLastBooking();
-    getUserData();
-    getDefaultLocation();
-    initTargetTutorial();
+    WidgetsBinding.instance.addObserver(this);
+    _checkLocationService();
   }
 
   @override
@@ -173,8 +173,35 @@ class DashboardMapController extends GetxController
     animationController.dispose();
     debounce?.cancel();
     debouncePanel?.cancel();
-    focusNode.dispose(); //
+    focusNode.dispose();
     tabController.dispose();
+    WidgetsBinding.instance.removeObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _checkLocationService();
+    }
+  }
+
+  Future<void> _checkLocationService() async {
+    Location location = Location();
+    bool serviceEnabled = await location.serviceEnabled();
+
+    if (!serviceEnabled) {
+      serviceEnabled = await location.requestService();
+      if (!serviceEnabled) {
+        AppSettings.openAppSettings(type: AppSettingsType.location);
+        return;
+      }
+    }
+    if (isLoading.value) {
+      getLastBooking();
+      getUserData();
+      getDefaultLocation();
+      initTargetTutorial();
+    }
   }
 
   Future<void> onSearchChanged() async {
@@ -285,6 +312,7 @@ class DashboardMapController extends GetxController
         bridgeLocation(coordinates);
       } else {
         isLoading.value = true;
+
         Get.toNamed(Routes.permission);
       }
     });
@@ -299,7 +327,6 @@ class DashboardMapController extends GetxController
     markerData = [];
     markers.clear();
     filteredMarkers.clear();
-
     getNearest(coordinates);
   }
 
@@ -383,41 +410,18 @@ class DashboardMapController extends GetxController
   }
 
   void handleData(dynamic nearData) async {
-    // dynamic lastBookData = await Authentication().getLastBooking();
     showDottedCircle(nearData);
     buildMarkers(nearData);
     netConnected.value = true;
-
-    // bool isShowPopUp = await Authentication().getPopUpNearest();
-    // if (dataNearest.isNotEmpty && !isShowPopUp) {
-    //   Future.delayed(const Duration(seconds: 1), () {
-    //     Authentication().setShowPopUpNearest(true);
-
-    //     if (lastBookData.isEmpty || lastBookData == null) {
-    //       showLegend(() {
-    //         showNearestSuggestDialog();
-    //       });
-    //     } else {
-    //       showNearestSuggestDialog();
-    //     }
-    //   });
-    // } else {
-    //   if (suggestions.isEmpty) {
-
-    //   }
-    // }
   }
 
-//Based on radius
   void showDottedCircle(nearData) {
     initialCameraPosition = CameraPosition(
       target: searchCoordinates,
-      // zoom: nearData.isEmpty ? 15 : 16,
       zoom: nearData.isEmpty
           ? 15
           : Variables.computeZoomLevel(
               searchCoordinates.latitude, double.parse(ddRadius.toString())),
-      tilt: 45,
       bearing: 0,
     );
 
@@ -524,7 +528,6 @@ class DashboardMapController extends GetxController
             target: LatLng(initialCameraPosition!.target.latitude,
                 initialCameraPosition!.target.longitude),
             zoom: dataNearest.isEmpty ? 15 : 16,
-            tilt: 25,
           ),
         ),
       );
@@ -826,7 +829,6 @@ class DashboardMapController extends GetxController
             CameraPosition(
               target: lastLatlng,
               zoom: 15,
-              tilt: 25,
             ),
           ),
         );
@@ -845,7 +847,6 @@ class DashboardMapController extends GetxController
           CameraPosition(
             target: filteredMarkers[0].position,
             zoom: 17,
-            tilt: 25,
           ),
         ),
       );
@@ -927,7 +928,6 @@ class DashboardMapController extends GetxController
     HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
         .get()
         .then((returnData) async {
-      print("returnData $returnData");
       if (returnData == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -948,6 +948,7 @@ class DashboardMapController extends GetxController
         Get.back();
         List<dynamic> item = returnData["items"];
         vehicleRates.value = item;
+        goingBackToTheCornerWhenIFirstSawYou();
       } else {
         Get.back();
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
@@ -1052,7 +1053,6 @@ class DashboardMapController extends GetxController
     }).toList();
 
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
-    ratesWidget.value = <Widget>[];
 
     denoInd.value = 0;
 
@@ -1061,145 +1061,139 @@ class DashboardMapController extends GetxController
     bool openBa = await Functions.checkAvailability(finalSttime, finalEndtime);
     isOpen.value = openBa;
 
-    print("vehicleTypes $vehicleTypes");
-
     getVhRatesData(vehicleTypes[0]["vh_types"]);
   }
 
   void getVhRatesData(String vhType) async {
     ratesWidget.value = <Widget>[];
-    var dataWidget = <Widget>[];
     List data = vehicleRates.where((obj) {
       return obj["vehicle_type"]
           .toString()
+          .trim()
           .toLowerCase()
-          .contains(vhType.toLowerCase());
+          .contains(vhType.toString().trim().toLowerCase());
     }).toList();
 
-    await Future.delayed(Duration(milliseconds: 100), () {
-      dataWidget.add(Column(
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
-                      ),
+    ratesWidget.add(Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(7),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: CustomParagraph(
-                        text: "Base Rate",
-                        maxlines: 1,
-                      )),
-                      CustomParagraph(
-                        text: "${data[0]["base_rate"]}",
-                        color: Colors.black,
-                        textAlign: TextAlign.right,
-                      )
-                    ],
-                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: CustomParagraph(
+                      text: "Base Rate",
+                      maxlines: 1,
+                    )),
+                    CustomParagraph(
+                      text: "${data[0]["base_rate"]}",
+                      color: Colors.black,
+                      textAlign: TextAlign.right,
+                    )
+                  ],
                 ),
               ),
-              Container(width: 10),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
-                      ),
+            ),
+            Container(width: 10),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(7),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: CustomParagraph(
-                        text: "Base Hours",
-                        maxlines: 1,
-                      )),
-                      CustomParagraph(
-                        text: "${data[0]["base_hours"]}",
-                        color: Colors.black,
-                        textAlign: TextAlign.right,
-                      )
-                    ],
-                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: CustomParagraph(
+                      text: "Base Hours",
+                      maxlines: 1,
+                    )),
+                    CustomParagraph(
+                      text: "${data[0]["base_hours"]}",
+                      color: Colors.black,
+                      textAlign: TextAlign.right,
+                    )
+                  ],
                 ),
               ),
-            ],
-          ),
-          Container(height: 10),
-          Row(
-            children: [
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
-                      ),
+            ),
+          ],
+        ),
+        Container(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                decoration: const ShapeDecoration(
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(7),
                     ),
                   ),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: CustomParagraph(
-                        text: "Succeeding Rate",
-                        maxlines: 2,
-                      )),
-                      Container(width: 5),
-                      CustomParagraph(
-                        text: "${data[0]["succeeding_rate"]}",
-                        color: Colors.black,
-                        textAlign: TextAlign.right,
-                      )
-                    ],
-                  ),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: CustomParagraph(
+                      text: "Succeeding Rate",
+                      maxlines: 2,
+                    )),
+                    Container(width: 5),
+                    CustomParagraph(
+                      text: "${data[0]["succeeding_rate"]}",
+                      color: Colors.black,
+                      textAlign: TextAlign.right,
+                    )
+                  ],
                 ),
               ),
-              Container(width: 10),
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                  child: Row(
-                    children: [
-                      Expanded(
-                          child: CustomParagraph(
-                        text: " ",
-                        maxlines: 1,
-                      )),
-                      CustomParagraph(
-                        text: " ",
-                        color: Colors.black,
-                        textAlign: TextAlign.right,
-                      )
-                    ],
-                  ),
+            ),
+            Container(width: 10),
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                child: Row(
+                  children: [
+                    Expanded(
+                        child: CustomParagraph(
+                      text: " ",
+                      maxlines: 1,
+                    )),
+                    CustomParagraph(
+                      text: " ",
+                      color: Colors.black,
+                      textAlign: TextAlign.right,
+                    )
+                  ],
                 ),
               ),
-            ],
-          ),
-        ],
-      ));
-
-      update();
-    });
-    ratesWidget.value = dataWidget;
+            ),
+          ],
+        ),
+      ],
+    ));
+    update();
   }
 
   String formatTime(String time) {

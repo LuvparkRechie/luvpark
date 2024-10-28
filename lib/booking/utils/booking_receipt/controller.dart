@@ -113,23 +113,6 @@ class BookingReceiptController extends GetxController
     return '${timeFormat.format(DateTime.parse(dtIn))} - ${timeFormat.format(DateTime.parse(dtOut))}';
   }
 
-//EXTEND FUNCTION
-  void onExtend() {
-    Get.bottomSheet(const ExtendParking(),
-        isDismissible: true, isScrollControlled: true);
-  }
-
-  void onAdd() {
-    noHours.value++;
-    update();
-  }
-
-  void onMinus() {
-    if (noHours.value == 1) return;
-    noHours.value--;
-    update();
-  }
-
   void cancelAdvanceParking() async {
     DateTime now = await Functions.getTimeNow();
     DateTime resDate = DateTime.parse(parameters["startDate"].toString());
@@ -323,8 +306,63 @@ class BookingReceiptController extends GetxController
     });
   }
 
+//EXTEND FUNCTION
+  void onExtend() {
+    Get.bottomSheet(const ExtendParking(),
+        isDismissible: true, isScrollControlled: true);
+  }
+
+  void onAdd() {
+    noHours.value++;
+    computeDate();
+    update();
+  }
+
+  void onMinus() {
+    if (noHours.value == 1) return;
+    noHours.value--;
+    computeDate();
+    update();
+  }
+
+  Future<void> computeDate() async {
+    String date = DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(DateTime.parse(parameters["endDate"]));
+    DateTime endDate = DateTime.parse(date);
+    DateTime finalTime = endDate.add(Duration(hours: noHours.value));
+
+    String cDate = DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(DateTime.parse(parameters["closing_date"]));
+    DateTime closeDate = DateTime.parse(cDate);
+
+    if (closeDate.isBefore(finalTime)) {
+      CustomDialog().infoDialog("Booking Time Exceeded",
+          "Booking time must not exceed operating hours.", () {
+        Get.back();
+        noHours.value = noHours.value - 1;
+      });
+      return;
+    }
+  }
+
   //EXTend parking
-  void extendParking() {
+  void extendParking() async {
+    String date = DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(DateTime.parse(parameters["endDate"]));
+    DateTime endDate = DateTime.parse(date);
+    DateTime finalTime = endDate.add(Duration(hours: noHours.value));
+
+    String cDate = DateFormat('yyyy-MM-dd HH:mm:ss')
+        .format(DateTime.parse(parameters["closing_date"]));
+    DateTime closeDate = DateTime.parse(cDate);
+
+    if (closeDate.isBefore(finalTime)) {
+      CustomDialog().infoDialog("Booking Time Exceeded",
+          "Booking time must not exceed operating hours.", () {
+        Get.back();
+      });
+      return;
+    }
     CustomDialog().confirmationDialog(Get.context!, "Extend Parking",
         "Are you sure you want to extend your parking? ", "No", "Yes", () {
       Get.back();
@@ -333,7 +371,7 @@ class BookingReceiptController extends GetxController
       CustomDialog().loadingDialog(Get.context!);
       Map<String, dynamic> param = {
         "reservation_id": parameters["reservationId"],
-        "no_hours": parameters["hours"]
+        "no_hours": noHours.value
       };
       HttpRequest(api: ApiKeys.gApiExtendParking, parameters: param)
           .postBody()

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark_get/custom_widgets/app_color.dart';
 import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -120,27 +122,6 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                   },
                                   itemCount: ct.searchedZone.length,
                                   itemBuilder: (context, index) {
-                                    final String isPwd =
-                                        ct.searchedZone[index]["is_pwd"] ?? "N";
-                                    final String vehicleTypes =
-                                        ct.searchedZone[index]
-                                            ["vehicle_types_list"];
-
-                                    String iconAsset;
-
-                                    if (isPwd == "Y") {
-                                      iconAsset = controller.getIconAssetForPwd(
-                                          ct.searchedZone[index]
-                                              ["parking_type_code"],
-                                          vehicleTypes);
-                                    } else {
-                                      iconAsset =
-                                          controller.getIconAssetForNonPwd(
-                                              ct.searchedZone[index]
-                                                  ["parking_type_code"],
-                                              vehicleTypes);
-                                    }
-
                                     return ShowUpAnimation(
                                       delay: 5 * index,
                                       child: InkWell(
@@ -194,100 +175,175 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.fromLTRB(
-                                              0, 15, 15, 15),
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .88,
+                                              10, 15, 10, 15),
                                           decoration: BoxDecoration(
                                             border: Border(
                                                 bottom: BorderSide(
                                               color: Colors.grey.shade200,
                                             )),
                                           ),
-                                          child: Row(
+                                          child: Column(
                                             children: [
-                                              Container(
-                                                height: 40,
-                                                clipBehavior: Clip.antiAlias,
-                                                decoration:
-                                                    const BoxDecoration(),
-                                                child: Image(
-                                                  image: AssetImage(iconAsset),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                              Container(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                    CustomTitle(
-                                                      text: ct.searchedZone[
-                                                              index]
-                                                          ["park_area_name"],
-                                                      fontSize: 16,
-                                                      maxlines: 1,
-                                                      fontWeight:
-                                                          FontWeight.w800,
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        CustomTitle(
+                                                          text: ct.searchedZone[
+                                                                  index][
+                                                              "park_area_name"],
+                                                          fontSize: 16,
+                                                          maxlines: 1,
+                                                          fontWeight:
+                                                              FontWeight.w800,
+                                                        ),
+                                                        CustomParagraph(
+                                                          text: ct.searchedZone[
+                                                              index]["address"],
+                                                          maxlines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          color:
+                                                              Color(0xFF1E1E1E),
+                                                        ),
+                                                      ],
                                                     ),
-                                                    CustomParagraph(
-                                                      text:
+                                                  ),
+                                                  Container(width: 10),
+                                                  LayoutBuilder(
+                                                    builder: ((context,
+                                                        constraints) {
+                                                      final String isPwd =
                                                           ct.searchedZone[index]
-                                                              ["address"],
-                                                      fontSize: 14,
-                                                      maxlines: 2,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                    ),
-                                                    Container(height: 5),
-                                                    Text.rich(
-                                                      TextSpan(
-                                                        children: [
-                                                          TextSpan(
-                                                            text: ct.searchedZone[
-                                                                        index]
-                                                                    ["is_open"]
-                                                                ? "Open"
-                                                                : "Close",
-                                                            style: paragraphStyle(
-                                                                color: ct.searchedZone[
-                                                                            index]
-                                                                        [
-                                                                        "is_open"]
-                                                                    ? const Color(
-                                                                        0xFF7BB56C)
-                                                                    : Colors
-                                                                        .red,
-                                                                fontSize: 12),
+                                                                  ["is_pwd"] ??
+                                                              "N";
+                                                      final String
+                                                          vehicleTypes =
+                                                          ct.searchedZone[index]
+                                                              [
+                                                              "vehicle_types_list"];
+                                                      String iconAsset;
+
+                                                      if (isPwd == "Y") {
+                                                        iconAsset = controller
+                                                            .getIconAssetForPwdDetails(
+                                                                ct.searchedZone[
+                                                                        index][
+                                                                    "parking_type_code"],
+                                                                vehicleTypes);
+                                                      } else {
+                                                        iconAsset = controller
+                                                            .getIconAssetForNonPwdDetails(
+                                                                ct.searchedZone[
+                                                                        index][
+                                                                    "parking_type_code"],
+                                                                vehicleTypes);
+                                                      }
+                                                      return iconAsset
+                                                              .contains("png")
+                                                          ? Image(
+                                                              image: AssetImage(
+                                                                  iconAsset),
+                                                              height: 45,
+                                                              width: 45,
+                                                            )
+                                                          : SvgPicture.asset(
+                                                              height: 45,
+                                                              width: 45,
+                                                              iconAsset);
+                                                    }),
+                                                  ),
+                                                ],
+                                              ),
+                                              Container(height: 10),
+                                              Row(
+                                                children: [
+                                                  Row(
+                                                    children: [
+                                                      Visibility(
+                                                        visible: ct
+                                                                .searchedZone[
+                                                            index]["is_open"],
+                                                        child: Container(
+                                                          child: Icon(
+                                                            LucideIcons
+                                                                .checkCircle2,
+                                                            color: Colors.green,
+                                                            weight: 1500,
+                                                            size: 20,
                                                           ),
-                                                          TextSpan(
-                                                            text:
-                                                                ' ● ${Variables.timeFormatter(ct.searchedZone[index]["opened_time"].toString())} - ${Variables.timeFormatter(ct.searchedZone[index]["closed_time"]).toString()} ● ',
-                                                            style:
-                                                                paragraphStyle(
-                                                                    fontSize:
-                                                                        12),
-                                                          ),
-                                                          TextSpan(
-                                                            text:
-                                                                ' ${Variables.parseDistance(double.parse(ct.searchedZone[index]["current_distance"].toString()))}',
-                                                            style: paragraphStyle(
-                                                                color: AppColor
-                                                                    .primaryColor,
-                                                                fontSize: 12),
-                                                          ),
-                                                        ],
+                                                        ),
                                                       ),
-                                                      maxLines: 1,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
+                                                      Container(width: 10),
+                                                      CustomParagraph(
+                                                        text: ct.searchedZone[
+                                                                    index]
+                                                                ["is_open"]
+                                                            ? "Open"
+                                                            : "Close",
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        maxlines: 1,
+                                                        fontSize: 12,
+                                                        minFontSize: 10,
+                                                        color: ct.searchedZone[
+                                                                    index]
+                                                                ["is_open"]
+                                                            ? null
+                                                            : Colors.red,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Container(width: 10),
+                                                  Expanded(
+                                                    child: _openTime(
+                                                      Container(
+                                                        child: Icon(
+                                                          LucideIcons.clock2,
+                                                          color: Colors.blue,
+                                                          weight: 1500,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                      " ${Variables.timeFormatter2(ct.searchedZone[index]["opened_time"].toString())} - ${Variables.timeFormatter2(ct.searchedZone[index]["closed_time"]).toString()}",
                                                     ),
-                                                  ],
-                                                ),
+                                                  ),
+                                                  Container(width: 10),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      Container(
+                                                        child: Icon(
+                                                          LucideIcons
+                                                              .parkingCircle,
+                                                          color: Colors.blue,
+                                                          weight: 1500,
+                                                          size: 20,
+                                                        ),
+                                                      ),
+                                                      Container(width: 10),
+                                                      CustomParagraph(
+                                                        text:
+                                                            '${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString())} ${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        maxlines: 1,
+                                                        fontSize: 12,
+                                                        minFontSize: 10,
+                                                      )
+                                                    ],
+                                                  ),
+                                                ],
                                               ),
                                             ],
                                           ),
@@ -304,6 +360,25 @@ class ParkingAreas extends GetView<ParkingAreasController> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget _openTime(dynamic icon, String text) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        icon,
+        Container(width: 10),
+        Flexible(
+          child: CustomParagraph(
+            text: text,
+            fontWeight: FontWeight.w700,
+            maxlines: 1,
+            fontSize: 12,
+            minFontSize: 10,
+          ),
+        )
+      ],
     );
   }
 }

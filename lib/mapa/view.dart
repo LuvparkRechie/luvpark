@@ -73,7 +73,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 CustomDialog().confirmationDialog(
                     context,
                     "Close Page",
-                    "Are you sure you want to close this page?",
+                    "Are you sure you want to close application?",
                     "No",
                     "Yes", () {
                   Get.back();
@@ -703,7 +703,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.goingBackToTheCornerWhenIFirstSawYou();
     final double screenHeight = MediaQuery.of(context).size.height;
 
     // Calculate the initial child size as a fraction of the screen height
@@ -900,7 +899,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                     LucideIcons.checkCircle2,
                                                     color: Colors.green,
                                                     weight: 1500,
-                                                    size: 16,
+                                                    size: 20,
                                                   ),
                                                 ),
                                               ),
@@ -911,7 +910,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                     : "Close",
                                                 fontWeight: FontWeight.w700,
                                                 maxlines: 1,
-                                                fontSize: 13,
+                                                fontSize: 12,
+                                                minFontSize: 10,
                                                 color: controller.isOpen.value
                                                     ? null
                                                     : Colors.red,
@@ -926,7 +926,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                   LucideIcons.clock2,
                                                   color: Colors.blue,
                                                   weight: 1500,
-                                                  size: 16,
+                                                  size: 20,
                                                 ),
                                               ),
                                               " ${Variables.timeFormatter2(controller.markerData[0]["opened_time"].toString())} - ${Variables.timeFormatter2(controller.markerData[0]["closed_time"]).toString()}",
@@ -942,7 +942,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                   LucideIcons.parkingCircle,
                                                   color: Colors.blue,
                                                   weight: 1500,
-                                                  size: 16,
+                                                  size: 20,
                                                 ),
                                               ),
                                               Container(width: 10),
@@ -951,7 +951,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                     '${int.parse(controller.markerData[0]["ps_vacant_count"].toString())} ${int.parse(controller.markerData[0]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
                                                 fontWeight: FontWeight.w700,
                                                 maxlines: 1,
-                                                fontSize: 13,
+                                                fontSize: 12,
+                                                minFontSize: 10,
                                               )
                                             ],
                                           ),
@@ -1072,7 +1073,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
             text: text,
             fontWeight: FontWeight.w700,
             maxlines: 1,
-            fontSize: 13,
+            fontSize: 12,
+            minFontSize: 10,
           ),
         )
       ],

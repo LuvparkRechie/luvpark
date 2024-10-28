@@ -94,7 +94,7 @@ class ParkingController extends GetxController
 
       String api =
           "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
-
+      print("api $api");
       try {
         final returnData = await HttpRequest(api: api).get();
 
@@ -124,6 +124,7 @@ class ParkingController extends GetxController
               return timeNow.isBefore(timeOut);
             }).toList();
           }
+
           resData.value = itemData;
         }
       } finally {
@@ -160,6 +161,7 @@ class ParkingController extends GetxController
       'parkArea': data["park_area_name"],
       'startDate': data["dt_in"],
       'endDate': data["dt_out"],
+      'closing_date': data["end_time"],
       'startTime': dateInRelated.toString().split(" ")[1].toString(),
       'endTime': dateOutRelated.toString().split(" ")[1].toString(),
       'plateNo': data["vehicle_plate_no"],
