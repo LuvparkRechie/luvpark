@@ -7,21 +7,24 @@ import 'package:luvpark_get/custom_widgets/custom_text.dart';
 class CustomButton extends StatelessWidget {
   final String text;
   final Function onPressed;
+  final double? btnWidth;
   final Color? btnColor;
   final bool? loading;
   final Color? bordercolor;
   final Color? textColor;
   final double? borderRadius;
-  const CustomButton(
-      {super.key,
-      required this.text,
-      required this.onPressed,
-      this.btnColor,
-      this.bordercolor,
-      this.textColor,
-      this.loading,
-      this.borderRadius = 7,
-      int? btnHeight});
+  const CustomButton({
+    super.key,
+    required this.text,
+    required this.onPressed,
+    this.btnColor,
+    this.bordercolor,
+    this.textColor,
+    this.loading,
+    this.borderRadius = 7,
+    int? btnHeight,
+    this.btnWidth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +33,7 @@ class CustomButton extends StatelessWidget {
         onPressed();
       },
       child: Container(
-        width: MediaQuery.of(context).size.width,
+        width: btnWidth ?? MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: btnColor ?? AppColor.primaryColor,
           border: Border.all(color: bordercolor ?? Colors.transparent),

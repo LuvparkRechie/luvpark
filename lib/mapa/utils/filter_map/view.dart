@@ -51,6 +51,25 @@ class _FilterMapState extends State<FilterMap> {
     loadData();
   }
 
+  void resetFilters() {
+    sfVt.clear();
+    sfPt.clear();
+    sfAmen.clear();
+    selectedOvp = null;
+    currentDistance = 10.0;
+    labelDistance = "10 km";
+    filterParam = [
+      {
+        "ovp": "",
+        "radius": convertSliderValue(currentDistance),
+        "vh_type": "",
+        "park_type": "",
+        "amen": ""
+      }
+    ];
+
+    setState(() {});
+  }
   //convert to km
 
   String convertSliderValue(double value) {
@@ -63,11 +82,9 @@ class _FilterMapState extends State<FilterMap> {
   }
 
   Future<void> getSelectedVhTpe() async {
-    int distanceInMeters = int.parse(
-        widget.data[0]["radius"].toString()); // Example distance in meters
-    double distanceInKm = distanceInMeters / 1000; // Convert to kilometers
-    String formattedDistance =
-        distanceInKm.toStringAsFixed(2); // Format to 2 decimal places
+    int distanceInMeters = int.parse(widget.data[0]["radius"].toString());
+    double distanceInKm = distanceInMeters / 1000;
+    String formattedDistance = distanceInKm.toStringAsFixed(2);
     currentDistance = double.parse(formattedDistance);
     onPickDistance(currentDistance);
     //radius
@@ -364,7 +381,6 @@ class _FilterMapState extends State<FilterMap> {
                             ),
                           ),
                         ),
-
                         Container(height: 20),
                         Expanded(
                             child: StretchingOverscrollIndicator(
@@ -532,16 +548,35 @@ class _FilterMapState extends State<FilterMap> {
                                 ),
                                 Container(height: 10),
                                 SizedBox(
-                                  width: double.infinity,
-                                  child: CustomButton(
-                                    text: "Apply",
-                                    onPressed: () {
-                                      print("filter param $filterParam");
-                                      Get.back();
-                                      widget.cb(filterParam);
-                                    },
-                                  ),
-                                ),
+                                    width: double.infinity,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        CustomButton(
+                                            bordercolor: Colors.blue,
+                                            textColor: Colors.blue,
+                                            btnColor: Colors.white,
+                                            btnWidth: MediaQuery.of(context)
+                                                    .size
+                                                    .width /
+                                                2.5,
+                                            text: "Clear Filters",
+                                            onPressed: resetFilters),
+                                        CustomButton(
+                                          btnWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width /
+                                              2.5,
+                                          text: "Apply",
+                                          onPressed: () {
+                                            print("filter param $filterParam");
+                                            Get.back();
+                                            widget.cb(filterParam);
+                                          },
+                                        ),
+                                      ],
+                                    )),
                               ],
                             ),
                           ),
