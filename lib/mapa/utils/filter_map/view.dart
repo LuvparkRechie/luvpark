@@ -551,7 +551,7 @@ class _FilterMapState extends State<FilterMap> {
                                     width: double.infinity,
                                     child: Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         CustomButton(
                                             bordercolor: Colors.blue,
@@ -560,14 +560,14 @@ class _FilterMapState extends State<FilterMap> {
                                             btnWidth: MediaQuery.of(context)
                                                     .size
                                                     .width /
-                                                2.5,
-                                            text: "Clear Filters",
+                                                2.3,
+                                            text: "Reset",
                                             onPressed: resetFilters),
                                         CustomButton(
                                           btnWidth: MediaQuery.of(context)
                                                   .size
                                                   .width /
-                                              2.5,
+                                              2.3,
                                           text: "Apply",
                                           onPressed: () {
                                             print("filter param $filterParam");
