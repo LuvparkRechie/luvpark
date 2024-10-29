@@ -12,7 +12,8 @@ import '../../../http/http_request.dart';
 
 class FilterMap extends StatefulWidget {
   final Function cb;
-  const FilterMap({Key? key, required this.cb}) : super(key: key);
+  final List<Map<String, String>> data;
+  FilterMap({Key? key, required this.cb, required this.data}) : super(key: key);
 
   @override
   State<FilterMap> createState() => _FilterMapState();
@@ -46,22 +47,112 @@ class _FilterMapState extends State<FilterMap> {
   @override
   void initState() {
     super.initState();
-    filterParam = filterParam.map((e) {
-      e["radius"] = convertSliderValue(currentDistance).toString();
-      return e;
-    }).toList();
-
+    getSelectedVhTpe();
     loadData();
   }
+
+  //convert to km
 
   String convertSliderValue(double value) {
     if (value < 1) {
       int meters = (value * 1000).round();
       return '$meters';
     } else {
-      // Use the value as kilometers
       return '${double.parse((value * 1000).toStringAsFixed(1)).round()}';
     }
+  }
+
+  Future<void> getSelectedVhTpe() async {
+    int distanceInMeters = int.parse(
+        widget.data[0]["radius"].toString()); // Example distance in meters
+    double distanceInKm = distanceInMeters / 1000; // Convert to kilometers
+    String formattedDistance =
+        distanceInKm.toStringAsFixed(2); // Format to 2 decimal places
+    currentDistance = double.parse(formattedDistance);
+    onPickDistance(currentDistance);
+    //radius
+    filterParam = filterParam.map((e) {
+      e["radius"] = widget.data[0]["radius"].toString();
+      return e;
+    }).toList();
+    //vh type
+    if (widget.data[0]["vh_type"]!.isNotEmpty) {
+      if (widget.data[0]["vh_type"]!.contains('|')) {
+        List data = widget.data[0]["vh_type"]!.split('|');
+        for (dynamic item in data) {
+          sfVt.add(item.toString());
+        }
+        String filterVtype = sfVt.join('|');
+        filterParam = filterParam.map((e) {
+          e["vh_type"] = filterVtype.toString();
+
+          return e;
+        }).toList();
+      } else {
+        sfVt.add(widget.data[0]["vh_type"]!.toString());
+        filterParam = filterParam.map((e) {
+          e["vh_type"] = widget.data[0]["vh_type"]!.toString();
+
+          return e;
+        }).toList();
+      }
+    }
+    //park type
+    if (widget.data[0]["park_type"]!.isNotEmpty) {
+      if (widget.data[0]["park_type"]!.contains('|')) {
+        List data = widget.data[0]["park_type"]!.split('|');
+        for (dynamic item in data) {
+          sfPt.add(item.toString());
+        }
+        String filterVtype = sfPt.join('|');
+        filterParam = filterParam.map((e) {
+          e["park_type"] = filterVtype.toString();
+          return e;
+        }).toList();
+      } else {
+        sfPt.add(widget.data[0]["park_type"]!.toString());
+        filterParam = filterParam.map((e) {
+          e["park_type"] = widget.data[0]["park_type"]!.toString();
+
+          return e;
+        }).toList();
+      }
+    }
+
+    //Amenities
+    if (widget.data[0]["amen"]!.isNotEmpty) {
+      if (widget.data[0]["amen"]!.contains('|')) {
+        List data = widget.data[0]["amen"]!.split('|');
+        for (dynamic item in data) {
+          sfAmen.add(item.toString());
+        }
+        String filterVtype = sfAmen.join('|');
+        filterParam = filterParam.map((e) {
+          e["amen"] = filterVtype.toString();
+          return e;
+        }).toList();
+      } else {
+        sfAmen.add(widget.data[0]["amen"]!.toString());
+        filterParam = filterParam.map((e) {
+          e["amen"] = widget.data[0]["amen"]!.toString();
+
+          return e;
+        }).toList();
+      }
+    }
+
+    //overnight
+    List itemText = items.where((d) {
+      // print("$d == ${widget.data[0]["ovp"]}");
+      return d["value"].toString().trim() ==
+          widget.data[0]["ovp"].toString().trim();
+    }).toList();
+    selectedOvp =
+        items.indexWhere((item) => item["text"] == itemText[0]["text"]);
+    filterParam = filterParam.map((e) {
+      e["ovp"] = widget.data[0]["ovp"].toString();
+      return e;
+    }).toList();
   }
 
   Future<void> onPickDistance(value) async {
@@ -161,7 +252,7 @@ class _FilterMapState extends State<FilterMap> {
     var returnData =
         await const HttpRequest(api: ApiKeys.gApiSubFolderGetAllAmenities)
             .get();
-    print(returnData);
+
     if (returnData == "No Internet") {
       isNetConn = false;
       isLoadingPage = false;
@@ -338,6 +429,7 @@ class _FilterMapState extends State<FilterMap> {
                                         divisions: 1998,
                                         label: labelDistance,
                                         onChanged: (value) {
+                                          // print("value  $value");
                                           onPickDistance(value);
 
                                           filterParam = filterParam.map((e) {
@@ -345,7 +437,10 @@ class _FilterMapState extends State<FilterMap> {
                                                 convertSliderValue(value);
                                             return e;
                                           }).toList();
-                                          setState(() {});
+                                          setState(() {
+                                            print(
+                                                "filterParameters $filterParam");
+                                          });
                                         },
                                       ),
                                     ),
@@ -380,6 +475,7 @@ class _FilterMapState extends State<FilterMap> {
                                             return e;
                                           }).toList();
                                           selectedOvp = index;
+
                                           setState(() {});
                                         },
                                         child: Padding(
@@ -472,13 +568,14 @@ class _FilterMapState extends State<FilterMap> {
               } else {
                 sfVt.add(vhTypeData[i]["value"].toString());
               }
-
+              print("sfVt $sfVt");
               String filterVtype = sfVt.join('|');
+              print("filterVtype $filterVtype");
               filterParam = filterParam.map((e) {
                 e["vh_type"] = filterVtype.toString();
                 return e;
               }).toList();
-
+              print("filterParam $filterParam");
               setState(() {});
             },
             child: SizedBox(

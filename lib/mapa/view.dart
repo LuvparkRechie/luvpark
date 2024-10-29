@@ -561,9 +561,21 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               builder: (BuildContext context) {
                                 // Obtain the screen height
 
-                                return FilterMap(cb: (data) {
-                                  controller.getFilterNearest(data);
-                                });
+                                List<Map<String, String>> filterParam = [
+                                  {
+                                    "ovp": controller.isAllowOverNight,
+                                    "radius": controller.ddRadius.value,
+                                    "vh_type": controller.vtypeId,
+                                    "park_type": controller.pTypeCode,
+                                    "amen": controller.amenities
+                                  }
+                                ];
+                                // print("filter param $filterParam");
+                                return FilterMap(
+                                    data: filterParam,
+                                    cb: (data) {
+                                      controller.getFilterNearest(data);
+                                    });
                               },
                               isScrollControlled:
                                   true, // Ensure the height is respected

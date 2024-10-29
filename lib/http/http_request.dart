@@ -11,7 +11,7 @@ class HttpRequest {
   const HttpRequest({required this.api, this.parameters});
 
   static Future<http.Response> fetchDataWithTimeout(link) async {
-    const timeoutDuration = Duration(seconds: 10);
+    const timeoutDuration = Duration(seconds: 5);
 
     return await link.timeout(timeoutDuration, onTimeout: () {
       throw TimeoutException(
@@ -23,6 +23,7 @@ class HttpRequest {
     var links = http.get(
         Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
         headers: {"Content-Type": 'application/json; charset=utf-8'});
+
     try {
       final response = await fetchDataWithTimeout(links);
 

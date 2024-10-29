@@ -69,7 +69,7 @@ class DashboardMapController extends GetxController
   List<String> searchImage = ['assets/dashboard_icon/location_pin.png'];
 
   // Configuration Variables
-  RxString ddRadius = "10".obs;
+  RxString ddRadius = "10000".obs;
   String pTypeCode = "";
   String amenities = "";
   String vtypeId = "";
@@ -197,10 +197,8 @@ class DashboardMapController extends GetxController
       }
     }
     if (isLoading.value) {
-      getLastBooking();
       getUserData();
       getDefaultLocation();
-      initTargetTutorial();
     }
   }
 
@@ -261,9 +259,7 @@ class DashboardMapController extends GetxController
   Future<void> refresher() async {
     netConnected.value = true;
     isLoading.value = true;
-    getLastBooking();
-    getUserData();
-    getDefaultLocation();
+    _checkLocationService();
   }
 
   void getBalance() async {
