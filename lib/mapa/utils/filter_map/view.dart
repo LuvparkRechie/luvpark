@@ -553,28 +553,26 @@ class _FilterMapState extends State<FilterMap> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        CustomButton(
-                                            bordercolor: Colors.blue,
-                                            textColor: Colors.blue,
-                                            btnColor: Colors.white,
-                                            btnWidth: MediaQuery.of(context)
-                                                    .size
-                                                    .width /
-                                                2.3,
-                                            text: "Reset",
-                                            onPressed: resetFilters),
-                                        CustomButton(
-                                          btnWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width /
-                                              2.3,
-                                          text: "Apply",
-                                          onPressed: () {
-                                            print("filter param $filterParam");
-                                            Get.back();
-                                            widget.cb(filterParam);
-                                          },
+                                        Expanded(
+                                          child: CustomButton(
+                                              bordercolor: Colors.blue,
+                                              textColor: Colors.blue,
+                                              btnColor: Colors.white,
+                                              text: "Reset",
+                                              onPressed: resetFilters),
                                         ),
+                                        Container(width: 10),
+                                        Expanded(
+                                          child: CustomButton(
+                                            text: "Apply",
+                                            onPressed: () {
+                                              print(
+                                                  "filter param $filterParam");
+                                              Get.back();
+                                              widget.cb(filterParam);
+                                            },
+                                          ),
+                                        )
                                       ],
                                     )),
                               ],
