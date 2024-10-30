@@ -1529,33 +1529,6 @@ class VehicleOption extends GetView<BookingController> {
                                               }
                                               return null;
                                             },
-                                            onChange: (value) {
-                                              var newValue = value
-                                                  .toUpperCase()
-                                                  .replaceAll(
-                                                      RegExp(r'[^A-Z0-9-]'), "")
-                                                  .replaceAll(" ", "")
-                                                  .replaceAll(
-                                                      RegExp(r'-{2,}'), '-');
-
-                                              if (newValue.length > 15) {
-                                                controller.plateNo.text =
-                                                    newValue.substring(0, 15);
-                                                controller.plateNo.selection =
-                                                    TextSelection.fromPosition(
-                                                  TextPosition(
-                                                      offset: controller
-                                                          .plateNo.text.length),
-                                                );
-                                              } else {
-                                                controller.plateNo.value =
-                                                    TextEditingValue(
-                                                  text: newValue,
-                                                  selection: controller
-                                                      .plateNo.selection,
-                                                );
-                                              }
-                                            },
                                           ),
                                           if (MediaQuery.of(context)
                                                   .viewInsets
