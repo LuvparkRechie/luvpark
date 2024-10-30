@@ -17,7 +17,6 @@ class WalletSendController extends GetxController
   final TextEditingController recipient = TextEditingController();
   final TextEditingController tokenAmount = TextEditingController();
   final TextEditingController message = TextEditingController();
-  final TextEditingController sub = TextEditingController();
   final GlobalKey contentKey = GlobalKey();
   RxBool isLpAccount = false.obs;
   RxBool isLoading = true.obs;
@@ -172,21 +171,25 @@ class WalletSendController extends GetxController
     });
   }
 
-  Future<void> timerPeriodic() async {
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-      refreshUserData();
-    });
-  }
+  // Future<void> timerPeriodic() async {
+  //   _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+  //     refreshUserData();
+  //   });
+  // }
 
   @override
   void onInit() {
-    timerPeriodic();
+    // timerPeriodic();
+    refreshUserData();
     padData.value = dataList;
     super.onInit();
   }
 
   @override
   void onClose() {
+    tokenAmount.clear();
+    recipient.clear();
+    message.clear();
     _timer!.cancel();
     super.onClose();
   }
