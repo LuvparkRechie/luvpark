@@ -1495,105 +1495,146 @@ class VehicleOption extends GetView<BookingController> {
                             controller.isFirstScreen.value
                                 ? Form(
                                     key: controller.bookKey,
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        const CustomTitle(
-                                          text: "What's your plate number?",
-                                        ),
-                                        Container(height: 10),
-                                        CustomTextField(
-                                          labelText: "Plate No.",
-                                          controller: controller.plateNo,
-                                          textCapitalization:
-                                              TextCapitalization.characters,
-                                          inputFormatters: [
-                                            FilteringTextInputFormatter.deny(
-                                                RegExp(r'\s')),
-                                          ],
-                                          validator: (data) {
-                                            if (data == null || data.isEmpty) {
-                                              return "Plate no is required";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        if (MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom ==
-                                            0)
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              CustomDropdown(
-                                                labelText: "Vehicle Type",
-                                                ddData:
-                                                    controller.ddVehiclesData,
-                                                ddValue:
-                                                    controller.dropdownValue,
-                                                onChange: (newValue) {
-                                                  controller.dropdownValue =
-                                                      newValue;
-                                                },
-                                              ),
-                                              Container(height: 30),
-                                              CustomButton(
-                                                text: "Confirm",
-                                                onPressed: () {
-                                                  if (ct.bookKey.currentState!
-                                                      .validate()) {
-                                                    dynamic selVh = ct
-                                                        .ddVehiclesData
-                                                        .where((element) {
-                                                      return element["value"] ==
-                                                          int.parse(ct
-                                                              .dropdownValue!
-                                                              .toString());
-                                                    }).toList()[0];
-
-                                                    callback([
-                                                      {
-                                                        'vehicle_type_id': ct
-                                                            .dropdownValue!
-                                                            .toString(),
-                                                        'vehicle_brand_id': 0,
-                                                        'vehicle_brand_name':
-                                                            selVh["text"],
-                                                        'vehicle_plate_no':
-                                                            controller
-                                                                .plateNo.text,
-                                                        'base_hours':
-                                                            selVh["base_hours"],
-                                                        'base_rate':
-                                                            selVh["base_rate"],
-                                                        'succeeding_rate': selVh[
-                                                            "succeeding_rate"],
-                                                        'vehicle_type':
-                                                            selVh["text"]
-                                                      }
-                                                    ]);
-                                                    Get.back();
-                                                  }
-                                                },
-                                              ),
-                                              Container(height: 15),
-                                              CustomButtonCancel(
-                                                  borderColor: Colors.black,
-                                                  textColor: Colors.black,
-                                                  color: AppColor.bodyColor,
-                                                  text: "My Vehicle",
-                                                  onPressed: () {
-                                                    controller.onScreenChanged(
-                                                        !ct.isFirstScreen
-                                                            .value);
-                                                  }),
-                                              if (Platform.isIOS)
-                                                Container(height: 20),
-                                            ],
+                                    child: SingleChildScrollView(
+                                      physics: BouncingScrollPhysics(),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const CustomTitle(
+                                            text: "What's your plate number?",
                                           ),
-                                      ],
+                                          Container(height: 10),
+                                          CustomTextField(
+                                            labelText: "Plate No.",
+                                            controller: controller.plateNo,
+                                            textCapitalization:
+                                                TextCapitalization.characters,
+                                            inputFormatters: [
+                                              FilteringTextInputFormatter.deny(
+                                                  RegExp(r'\s')),
+                                            ],
+                                            validator: (data) {
+                                              if (data == null ||
+                                                  data.isEmpty) {
+                                                return "Plate no is required";
+                                              }
+                                              if (!data.contains(
+                                                  RegExp(r'^[A-Z0-9-]+$'))) {
+                                                return "Plate No. should only contain letters, numbers, and dashes";
+                                              }
+                                              if (data.startsWith('-') ||
+                                                  data.endsWith('-')) {
+                                                return "Plate No. should not start or end with a dash";
+                                              }
+                                              return null;
+                                            },
+                                            onChange: (value) {
+                                              var newValue = value
+                                                  .toUpperCase()
+                                                  .replaceAll(
+                                                      RegExp(r'[^A-Z0-9-]'), "")
+                                                  .replaceAll(" ", "")
+                                                  .replaceAll(
+                                                      RegExp(r'-{2,}'), '-');
+
+                                              if (newValue.length > 15) {
+                                                controller.plateNo.text =
+                                                    newValue.substring(0, 15);
+                                                controller.plateNo.selection =
+                                                    TextSelection.fromPosition(
+                                                  TextPosition(
+                                                      offset: controller
+                                                          .plateNo.text.length),
+                                                );
+                                              } else {
+                                                controller.plateNo.value =
+                                                    TextEditingValue(
+                                                  text: newValue,
+                                                  selection: controller
+                                                      .plateNo.selection,
+                                                );
+                                              }
+                                            },
+                                          ),
+                                          if (MediaQuery.of(context)
+                                                  .viewInsets
+                                                  .bottom ==
+                                              0)
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CustomDropdown(
+                                                  labelText: "Vehicle Type",
+                                                  ddData:
+                                                      controller.ddVehiclesData,
+                                                  ddValue:
+                                                      controller.dropdownValue,
+                                                  onChange: (newValue) {
+                                                    controller.dropdownValue =
+                                                        newValue;
+                                                  },
+                                                ),
+                                                Container(height: 30),
+                                                CustomButton(
+                                                  text: "Confirm",
+                                                  onPressed: () {
+                                                    if (ct.bookKey.currentState!
+                                                        .validate()) {
+                                                      dynamic selVh = ct
+                                                          .ddVehiclesData
+                                                          .where((element) {
+                                                        return element[
+                                                                "value"] ==
+                                                            int.parse(ct
+                                                                .dropdownValue!
+                                                                .toString());
+                                                      }).toList()[0];
+
+                                                      callback([
+                                                        {
+                                                          'vehicle_type_id': ct
+                                                              .dropdownValue!
+                                                              .toString(),
+                                                          'vehicle_brand_id': 0,
+                                                          'vehicle_brand_name':
+                                                              selVh["text"],
+                                                          'vehicle_plate_no':
+                                                              controller
+                                                                  .plateNo.text,
+                                                          'base_hours': selVh[
+                                                              "base_hours"],
+                                                          'base_rate': selVh[
+                                                              "base_rate"],
+                                                          'succeeding_rate': selVh[
+                                                              "succeeding_rate"],
+                                                          'vehicle_type':
+                                                              selVh["text"]
+                                                        }
+                                                      ]);
+                                                      Get.back();
+                                                    }
+                                                  },
+                                                ),
+                                                Container(height: 15),
+                                                CustomButtonCancel(
+                                                    borderColor: Colors.black,
+                                                    textColor: Colors.black,
+                                                    color: AppColor.bodyColor,
+                                                    text: "My Vehicle",
+                                                    onPressed: () {
+                                                      controller
+                                                          .onScreenChanged(!ct
+                                                              .isFirstScreen
+                                                              .value);
+                                                    }),
+                                                if (Platform.isIOS)
+                                                  Container(height: 20),
+                                              ],
+                                            ),
+                                        ],
+                                      ),
                                     ),
                                   )
                                 : Expanded(
