@@ -13,6 +13,7 @@ import 'package:luvpark_get/http/http_request.dart';
 import 'package:luvpark_get/my_vehicles/utils/add_vehicle.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../custom_widgets/variables.dart';
 import '../sqlite/vehicle_brands_table.dart';
 
 enum AppState {
@@ -70,6 +71,14 @@ class MyVehiclesController extends GetxController {
   }
 
   void getMyVehicle() async {
+    List data = await VehicleBrandsTable.instance.readAllVHBrands();
+
+    if (data.isNotEmpty) {
+      for (dynamic dataRow in data) {
+        Variables.gVBrand.add(dataRow);
+      }
+    }
+
     final userId = await Authentication().getUserId();
     String api =
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=";

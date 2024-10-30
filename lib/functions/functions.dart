@@ -330,9 +330,7 @@ class Functions {
         } catch (e) {
           callback([]);
 
-          CustomDialog().errorDialog(context, "Error",
-              "An unexpected error occurred while retrieving the data. Please refresh and try again.",
-              () {
+          CustomDialog().errorDialog(context, "Error", "$e", () {
             Get.back();
           });
         }
@@ -657,6 +655,7 @@ class Functions {
         "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile";
 
     HttpRequest(api: apiParam).get().then((objData) {
+      print("objData $objData");
       if (objData == "No Internet") {
         cb([
           {"has_net": false, "items": []}

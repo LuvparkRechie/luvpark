@@ -9,12 +9,12 @@ import 'package:luvpark_get/routes/routes.dart';
 
 import '../web_view/webview.dart';
 
-class LandingScreen extends StatelessWidget {
+class LandingScreen extends GetView<LandingController> {
   const LandingScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final LandingController controllers = Get.put(LandingController());
+    Get.put(LandingController());
     return PopScope(
       canPop: true,
       child: Scaffold(
@@ -74,15 +74,14 @@ class LandingScreen extends StatelessWidget {
                       children: [
                         InkWell(
                           onTap: () {
-                            controllers
-                                .onPageChanged(!controllers.isAgree.value);
+                            controller.onPageChanged(!controller.isAgree.value);
                           },
                           child: Obx(
                             () => Icon(
-                              controllers.isAgree.value
+                              controller.isAgree.value
                                   ? Icons.check_box_outlined
                                   : Icons.check_box_outline_blank,
-                              color: controllers.isAgree.value
+                              color: controller.isAgree.value
                                   ? AppColor.primaryColor
                                   : Colors.grey,
                             ),
@@ -107,7 +106,7 @@ class LandingScreen extends StatelessWidget {
                                         Expanded(
                                           child: InkWell(
                                             onTap: () {
-                                              controllers.onPageChanged(true);
+                                              controller.onPageChanged(true);
                                               Get.to(const WebviewPage(
                                                 urlDirect:
                                                     "https://luvpark.ph/terms-of-use/",
@@ -135,14 +134,14 @@ class LandingScreen extends StatelessWidget {
                     Container(height: 20),
                     CustomButton(
                         text: "Continue",
-                        btnColor: controllers.isAgree.value
+                        btnColor: controller.isAgree.value
                             ? AppColor.primaryColor
                             : Colors.grey,
-                        onPressed: !controllers.isAgree.value
+                        onPressed: !controller.isAgree.value
                             ? () {}
                             : () {
-                                Get.offAllNamed(Routes.registration,
-                                    arguments: controllers.isAgree.value);
+                                Get.offAndToNamed(Routes.registration,
+                                    arguments: controller.isAgree.value);
                               }),
                   ],
                 ),

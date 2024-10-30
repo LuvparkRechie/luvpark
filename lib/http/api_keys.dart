@@ -165,14 +165,12 @@ class ApiKeys {
   static const gApiLuvParkGetAcctStat = '/ords/$luvApi/user/verify';
   //Rate Us
   static const gApiLuvParkPostRating = '/ords/$luvApi/user/uxr';
-
   //dd vehicle types
   static const gApiLuvParkDDVehicleTypes =
       '/ords/$parkSpaceApi/park/dd_vehicletypes';
   //Changed to zvt
   static const gApiLuvParkDDVehicleTypes2 =
       '/ords/$parkSpaceApi/zone/vehicleTypes';
-
   //Sharing Location API's
   static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';
   //GETSHARE

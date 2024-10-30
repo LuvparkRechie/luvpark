@@ -236,7 +236,8 @@ class LoginScreen extends GetView<LoginScreenController> {
                                         ..onTap = controller.isLoading.value
                                             ? () {}
                                             : () async {
-                                                Get.toNamed(Routes.landing);
+                                                Get.offAndToNamed(
+                                                    Routes.landing);
                                               },
                                     ),
                                   ],

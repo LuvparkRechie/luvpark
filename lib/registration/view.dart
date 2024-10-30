@@ -336,7 +336,8 @@ class RegistrationPage extends GetView<RegistrationController> {
                                             ..onTap = controller.isLoading.value
                                                 ? () {}
                                                 : () async {
-                                                    Get.toNamed(Routes.login);
+                                                    Get.offAndToNamed(
+                                                        Routes.login);
                                                   },
                                         ),
                                       ],

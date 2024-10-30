@@ -649,30 +649,18 @@ class DashboardMapController extends GetxController
                 double.parse(items["pa_longitude"].toString())),
             onTap: () async {
               FocusManager.instance.primaryFocus!.unfocus();
-              markerData.clear();
-              markerData = [];
-              filteredMarkers.clear();
-              tabIndex.value = 0;
+
               tabController = TabController(length: 2, vsync: this);
 
               CustomDialog().loadingDialog(Get.context!);
 
-              markerData.add(items);
-
               List ltlng = await Functions.getCurrentPosition();
+
               LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
               LatLng dest = LatLng(
                   double.parse(items["pa_latitude"].toString()),
                   double.parse(items["pa_longitude"].toString()));
               final estimatedData = await Functions.fetchETA(coordinates, dest);
-
-              markerData = markerData.map((e) {
-                e["distance_display"] =
-                    "${Variables.parseDistance(double.parse(markerData[0]["current_distance"].toString()))} away";
-                e["time_arrival"] = estimatedData[0]["time"];
-                e["polyline"] = estimatedData[0]['poly_line'];
-                return e;
-              }).toList();
 
               if (estimatedData[0]["error"] == "No Internet") {
                 Get.back();
@@ -682,6 +670,18 @@ class DashboardMapController extends GetxController
 
                 return;
               }
+              markerData.clear();
+              markerData = [];
+              filteredMarkers.clear();
+              tabIndex.value = 0;
+              markerData.add(items);
+              markerData = markerData.map((e) {
+                e["distance_display"] =
+                    "${Variables.parseDistance(double.parse(markerData[0]["current_distance"].toString()))} away";
+                e["time_arrival"] = estimatedData[0]["time"];
+                e["polyline"] = estimatedData[0]['poly_line'];
+                return e;
+              }).toList();
               lastRouteName.value = "";
               filterMarkersData(markerData[0]["park_area_name"], "");
               // Get.toNamed(Routes.parkingDetails, arguments: markerData[0]);
