@@ -97,7 +97,6 @@ class BookingController extends GetxController
     plateNo = TextEditingController();
     startDate = TextEditingController();
     endDate = TextEditingController();
-
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
@@ -125,10 +124,23 @@ class BookingController extends GetxController
     });
   }
 
-  void _reloadPage() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getAvailabeAreaVh();
-    });
+  void _reloadPage() async {
+    DateTime now = await Functions.getTimeNow();
+
+    startDate.text = now.toString().split(" ")[0].toString();
+    startTime.value = DateFormat('h:mm a').format(now).toString();
+    DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
+    timeInParam.text = DateFormat('HH:mm').format(parsedTime);
+
+    endTime.value = DateFormat('h:mm a')
+        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+        .toString();
+    paramEndTime.value = DateFormat('HH:mm')
+        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+        .toString();
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   getAvailabeAreaVh();
+    // });
   }
 
   void onUserInteraction() {
@@ -197,8 +209,10 @@ class BookingController extends GetxController
             "Okay", () {
           Get.back();
           selectedNumber -= deductTime;
+
           timeComputation();
           routeToComputation();
+          isExtendchecked.value = false;
         }, () {
           Get.back();
           selectedNumber -= deductTime;
@@ -296,7 +310,30 @@ class BookingController extends GetxController
   }
 
   void toggleExtendChecked(bool value) async {
+    DateTime now = await Functions.getTimeNow();
+    var dateIn = DateTime.parse("${startDate.text} ${timeInParam.text}");
+
+    DateTime dateOut = dateIn.add(
+      Duration(
+        hours: selectedNumber.value,
+      ),
+    );
+
+    DateTime cTime = DateFormat('yyyy-MM-dd HH:mm').parse(
+        "${now.toString().split(" ")[0]} ${parameters["areaData"]["closed_time"].toString().trim()}");
+    String dtOut =
+        "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${paramEndTime.value}";
+    DateTime finalDateOut = DateTime.parse(dtOut);
     isExtendchecked.value = value;
+    if (finalDateOut.isAfter(cTime) || finalDateOut.isAtSameMomentAs(cTime)) {
+      CustomDialog().infoDialog("Auto Extend",
+          "Unfortunately, auto-extend is not available at this time. Please be aware that the parking area is about to close soon.",
+          () {
+        Get.back();
+        isExtendchecked.value = false;
+      });
+      return;
+    }
   }
 
   //Get Vehicle Formatter or if there is vehicle in this area

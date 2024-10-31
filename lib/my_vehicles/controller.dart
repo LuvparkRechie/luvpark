@@ -92,6 +92,7 @@ class MyVehiclesController extends GetxController {
         });
         return;
       }
+
       if (myVehicles == null || myVehicles["items"].isEmpty) {
         isNetConn.value = true;
         vehicleData.clear();

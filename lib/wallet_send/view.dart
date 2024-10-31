@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
 import 'package:luvpark_get/auth/authentication.dart';
@@ -352,7 +351,7 @@ class WalletSend extends GetView<WalletSendController> {
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: walletBalance >= data["value"]
-                      ? (data["is_active"] ? Colors.white : Colors.grey)
+                      ? (data["is_active"] ? Colors.white : Colors.black)
                       : Colors.grey,
                   minFontSize: 8,
                 ),

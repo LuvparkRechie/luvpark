@@ -169,6 +169,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 controller: controller.firstName,
                 onChange: (value) {
                   String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
+                  validateText(value, controller.firstName);
                   if (trimmedValue.isNotEmpty) {
                     controller.firstName.value = TextEditingValue(
                       text: Variables.capitalizeAllWord(trimmedValue),
@@ -183,12 +184,16 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \-.]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "First name is required";
+                  }
+                  if ((value.endsWith(' ') ||
+                      value.endsWith('-') ||
+                      value.endsWith('.'))) {
+                    return "First name cannot end with a space, hyphen, or period";
                   }
                   return null;
                 },
@@ -198,17 +203,11 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
-                  SimpleNameFormatter(),
                   LengthLimitingTextInputFormatter(30),
                 ],
-                // onChange: (value) {
-                //   // Capitalize the new text
-                //   controller.middleName.value = TextEditingValue(
-                //     text: Variables.capitalizeAllWord(value.trim()),
-                //     selection: TextSelection.collapsed(
-                //         offset: value.trim().length), // Move cursor to the end
-                //   );
-                // },
+                onChange: (inputText) {
+                  validateText(inputText, controller.middleName);
+                },
                 validator: (value) {
                   if (value != null &&
                       (value.endsWith(' ') ||
@@ -226,7 +225,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 controller: controller.lastName,
                 onChange: (value) {
                   String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-
+                  validateText(value, controller.lastName);
                   if (trimmedValue.isNotEmpty) {
                     controller.lastName.value = TextEditingValue(
                       text: Variables.capitalizeAllWord(trimmedValue),
@@ -241,12 +240,16 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r"[a-zA-Z \- ]")),
                   LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return "Last name is required";
+                  }
+                  if ((value.endsWith(' ') ||
+                      value.endsWith('-') ||
+                      value.endsWith('.'))) {
+                    return "Last name cannot end with a space, hyphen, or period";
                   }
                   return null;
                 },
@@ -792,6 +795,27 @@ class UpdateProfile extends GetView<UpdateProfileController> {
         ),
       ],
     );
+  }
+
+  String validateText(String inputText, TextEditingController txtController) {
+    // Check if the first character is a space or special character
+    if (inputText.isNotEmpty && !RegExp(r'^[a-zA-Z0-9]').hasMatch(inputText)) {
+      return 'Text must not start with a space or special character';
+    }
+
+    // Replace multiple spaces with a single space
+    String formattedText = inputText.replaceAll(RegExp(r'\s+'), ' ');
+
+    // Update error message if input is not valid
+    if (formattedText != inputText) {
+      txtController.text = formattedText;
+
+      txtController.selection = TextSelection.fromPosition(
+        TextPosition(offset: formattedText.length),
+      );
+    }
+
+    return ''; // Return an empty string if valid
   }
 }
 

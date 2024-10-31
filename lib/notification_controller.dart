@@ -301,6 +301,7 @@ Future<void> getParkingTrans(int ctr) async {
     api:
         "${ApiKeys.gApiSubFolderGetActiveParking}?luvpay_id=${akongId.toString()}",
   ).get().then((notificationData) async {
+    print("notificationData $notificationData");
     if (notificationData == "No Internet") {
       return;
     }
@@ -363,17 +364,30 @@ Future<void> getParkingTrans(int ctr) async {
           );
           await NotificationDatabase.instance.insertUpdate(resData);
         } else {
-          if (dataRow["dt_in"].toString().toLowerCase() !=
-              returnData["dt_in"].toString().toLowerCase()) {
-            NotificationController.cancelNotificationsById(
-                dataRow["mreservation_id"] + 1);
-            NotificationController.parkingNotif(
-              int.parse(dataRow["reservation_id"].toString()),
-              0,
-              'Parking Auto Extend',
-              "You've paid ${dataRow["amount"]} for your parking. Please check your balance.",
-              "parking",
-            );
+          if (dataRow["is_auto_extend"] == "Y") {
+            if (dataRow["dt_in"].toString().toLowerCase() !=
+                returnData["dt_in"].toString().toLowerCase()) {
+              NotificationController.cancelNotificationsById(
+                  dataRow["mreservation_id"] + 1);
+              NotificationController.parkingNotif(
+                int.parse(dataRow["reservation_id"].toString()),
+                0,
+                'Parking Auto Extend',
+                "You've paid ${dataRow["amount"]} for your parking. Please check your balance.",
+                "parking",
+              );
+              NotificationController.scheduleNewNotification(
+                int.parse(dataRow["reservation_id"].toString()) + 1,
+                "luvpark",
+                "Your Parking at ${dataRow["park_area_name"]} is about to expire.",
+                dataRow["dt_out"].toString(),
+                "parking",
+              );
+              await NotificationDatabase.instance.insertUpdate(resData);
+            }
+          } else {
+            AwesomeNotifications()
+                .cancel(int.parse(dataRow["reservation_id"].toString()) + 1);
             NotificationController.scheduleNewNotification(
               int.parse(dataRow["reservation_id"].toString()) + 1,
               "luvpark",
@@ -381,7 +395,6 @@ Future<void> getParkingTrans(int ctr) async {
               dataRow["dt_out"].toString(),
               "parking",
             );
-            await NotificationDatabase.instance.insertUpdate(resData);
           }
         }
       }

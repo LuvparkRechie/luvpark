@@ -55,8 +55,6 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                 child: ListView.builder(
                                   itemCount: controller.vehicleData.length,
                                   itemBuilder: (context, index) {
-                                    print(
-                                        "inataya ${controller.vehicleData[index]["image"].isEmpty}");
                                     String removeInvalidCharacters(
                                         String input) {
                                       final RegExp validChars =
