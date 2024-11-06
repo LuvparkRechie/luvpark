@@ -30,7 +30,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
   const DashboardMapScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Get.put(DashboardMapController());
     Variables.init(context);
     return Obx(() {
       if (!controller.netConnected.value) {

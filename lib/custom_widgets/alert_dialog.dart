@@ -615,4 +615,55 @@ class CustomDialog {
       ),
     );
   }
+
+  void locationDialog(
+    String title,
+    String paragraph,
+    VoidCallback onTapConfirm, {
+    Color? btnOkBackgroundColor,
+    Color? btnOkTextColor,
+  }) {
+    Get.dialog(dialogBody(
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Center(
+            child: SvgPicture.asset("assets/images/info.svg"),
+          ),
+          Container(height: 20),
+          CustomTitle(
+            text: title,
+            color: Color(0xFF0D0E0E),
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            maxlines: 1,
+          ),
+          const SizedBox(height: 15),
+          // Paragraph
+          CustomParagraph(
+            text: paragraph,
+            color: Color(0xFF666666),
+            fontWeight: FontWeight.w600,
+            textAlign: TextAlign.center,
+          ),
+          // Single Button
+          Container(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              Expanded(
+                child: CustomDialogButton(
+                  btnColor: AppColor.primaryColor,
+                  txtColor: Colors.white,
+                  borderColor: AppColor.primaryColor,
+                  text: "Enable location",
+                  onTap: onTapConfirm,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ));
+  }
 }

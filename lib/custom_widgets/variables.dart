@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
+import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -632,5 +634,23 @@ class Variables {
     double metersPerPixel = initialMapSize * cos(latitude * pi / 180);
     double zoom = log(metersPerPixel / radius) / log(2);
     return zoom.toDouble();
+  }
+
+  static Future<bool> checkInternet() async {
+    try {
+      final result = await InternetAddress.lookup('google.com');
+      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+        final ping = Ping('google.com', count: 3);
+        final pingResult =
+            await ping.stream.firstWhere((event) => event.summary != null);
+
+        if (pingResult.summary!.received > 0) {
+          return true;
+        }
+      }
+      return false;
+    } on SocketException catch (_) {
+      return false;
+    }
   }
 }

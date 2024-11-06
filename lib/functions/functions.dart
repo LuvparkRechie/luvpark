@@ -302,8 +302,7 @@ class Functions {
       if (hasInternet) {
         try {
           final places = gmp.GoogleMapsPlaces(
-              apiKey:
-                  'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'); // Replace with your API key securely
+              apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
           gmp.PlacesSearchResponse response = await places.searchByText(query);
 
           if (response.isOkay) {

@@ -4,14 +4,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:location/location.dart';
 import 'package:luvpark_get/auth/authentication.dart';
 import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
 import 'package:luvpark_get/custom_widgets/custom_text.dart';
@@ -178,28 +176,9 @@ class DashboardMapController extends GetxController
     WidgetsBinding.instance.removeObserver(this);
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _checkLocationService();
-    }
-  }
-
   Future<void> _checkLocationService() async {
-    Location location = Location();
-    bool serviceEnabled = await location.serviceEnabled();
-
-    if (!serviceEnabled) {
-      serviceEnabled = await location.requestService();
-      if (!serviceEnabled) {
-        AppSettings.openAppSettings(type: AppSettingsType.location);
-        return;
-      }
-    }
-    if (isLoading.value) {
-      getUserData();
-      getDefaultLocation();
-    }
+    getUserData();
+    getDefaultLocation();
   }
 
   Future<void> onSearchChanged() async {
@@ -699,10 +678,8 @@ class DashboardMapController extends GetxController
     final url =
         'https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${searchCon.text}&location=${initialCameraPosition!.target.latitude},${initialCameraPosition!.target.longitude}&radius=${double.parse(ddRadius.toString())}&key=${Variables.mapApiKey}';
 
-    var links = http.get(Uri.parse(url));
-
+    var response = await http.get(Uri.parse(url));
     try {
-      final response = await HttpRequest.fetchDataWithTimeout(links);
       suggestions.value = [];
       if (response.statusCode == 200) {
         Get.back();

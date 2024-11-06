@@ -1,9 +1,9 @@
-// const String luvApi = "luv";
-// const String parkSpaceApi = "parkspace";
+const String luvApi = "luv";
+const String parkSpaceApi = "parkspace";
 
 //PROD
-const String luvApi = "lpw";
-const String parkSpaceApi = "ps";
+// const String luvApi = "lpw";
+// const String parkSpaceApi = "ps";
 
 // production api
 // https://app.luvpark.ph/ords/lpw/
@@ -11,10 +11,10 @@ const String parkSpaceApi = "ps";
 
 class ApiKeys {
   //Prod Path
-  static const gApiURL = 'app.luvpark.ph';
+  //static const gApiURL = 'app.luvpark.ph';
   //Testing Path
-  // static const gApiURL =
-  //     'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
+  static const gApiURL =
+      'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
   //get Payment key
   static const gApiSubFolderPayments = '/ords/$luvApi/ps/qr/';
   //Get luv ReferenceNo
