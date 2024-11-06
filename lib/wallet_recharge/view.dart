@@ -90,7 +90,15 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                         ),
                       ),
                       Container(
-                        height: 20,
+                        height: 5,
+                      ),
+                      CustomParagraph(
+                          text: 'Minimum load of 20 pesos',
+                          fontSize: 10,
+                          color: AppColor.primaryColor,
+                          fontWeight: FontWeight.w700),
+                      const SizedBox(
+                        height: 15,
                       ),
                       const CustomParagraph(
                         maxlines: 2,
