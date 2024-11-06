@@ -394,6 +394,8 @@ class WalletScreen extends GetView<WalletController> {
                                         img = "wallet_sharetoken";
                                       } else if (trans.contains("received")) {
                                         img = "wallet_receivetoken";
+                                      } else if (trans.contains("credit")) {
+                                        img = "wallet_receivetoken";
                                       } else {
                                         img = "wallet_payparking";
                                       }
