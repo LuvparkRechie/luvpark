@@ -185,6 +185,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                               img = "wallet_sharetoken";
                             } else if (trans.contains("received")) {
                               img = "wallet_receivetoken";
+                            } else if (trans.contains("credit")) {
+                              img = "wallet_receivetoken";
                             } else {
                               img = "wallet_payparking";
                             }
