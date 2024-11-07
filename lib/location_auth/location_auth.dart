@@ -24,7 +24,6 @@ class LocationService {
         return;
       }
     }
-
     // Check and request location permissions
     permissionGranted = await location.hasPermission();
     if (permissionGranted == PermissionStatus.denied) {

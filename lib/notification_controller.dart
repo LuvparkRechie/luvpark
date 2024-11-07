@@ -301,7 +301,6 @@ Future<void> getParkingTrans(int ctr) async {
     api:
         "${ApiKeys.gApiSubFolderGetActiveParking}?luvpay_id=${akongId.toString()}",
   ).get().then((notificationData) async {
-    print("notificationData $notificationData");
     if (notificationData == "No Internet") {
       return;
     }
@@ -309,7 +308,6 @@ Future<void> getParkingTrans(int ctr) async {
       NotificationDatabase.instance.deleteAll();
       AwesomeNotifications().cancelAllSchedules();
       AwesomeNotifications().cancelAll();
-      Authentication().setLastBooking('');
       return;
     }
     if (notificationData != null && notificationData["items"] != null) {

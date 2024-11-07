@@ -122,6 +122,7 @@ class DashboardMapController extends GetxController
   String parkSched = "";
   RxList<dynamic> vehicleTypes = <dynamic>[].obs;
   RxList<dynamic> vehicleRates = <dynamic>[].obs;
+  RxList<dynamic> balanceData = <dynamic>[].obs;
   RxBool isOpen = false.obs;
   RxInt tabIndex = 0.obs;
   LatLng lastLatlng = LatLng(0, 0);
@@ -252,6 +253,7 @@ class DashboardMapController extends GetxController
     HttpRequest(api: subApi).get().then((returnBalance) async {
       if (returnBalance["items"].isNotEmpty) {
         userBal.value = returnBalance["items"][0]["amount_bal"];
+        balanceData.value = returnBalance["items"];
       }
     });
   }
@@ -401,18 +403,6 @@ class DashboardMapController extends GetxController
     );
 
     animateCamera();
-  }
-
-  //Get last available booking
-  Future<void> getLastBooking() async {
-    dynamic data = await Authentication().getLastBooking();
-    if (data.isEmpty || data == null) {
-      hasLastBooking.value = false;
-    } else {
-      hasLastBooking.value = true;
-      plateNo.value = data["plate_no"];
-      brandName.value = data["brand_name"];
-    }
   }
 
   //get curr location
@@ -814,18 +804,20 @@ class DashboardMapController extends GetxController
               query.toLowerCase().trim();
         }),
       );
-      lastLatlng = filteredMarkers[0].position;
-      gMapController!.animateCamera(
-        CameraUpdate.newCameraPosition(
-          CameraPosition(
-            target: filteredMarkers[0].position,
-            zoom: 17,
+      Future.delayed(Duration(seconds: 1), () {
+        lastLatlng = filteredMarkers[0].position;
+        gMapController!.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: filteredMarkers[0].position,
+              zoom: 17,
+            ),
           ),
-        ),
-      );
-      isHidePanel.value = true;
+        );
+        isHidePanel.value = true;
 
-      getAmenities(filteredMarkers[0].markerId.value);
+        getAmenities(filteredMarkers[0].markerId.value);
+      });
     }
   }
 
@@ -1296,45 +1288,34 @@ class DashboardMapController extends GetxController
       });
       return;
     }
-    Functions.getUserBalance(Get.context!, (dataBalance) async {
-      final userdata = dataBalance[0];
-      final items = userdata["items"];
-
-      if (userdata["success"]) {
-        if (double.parse(items[0]["amount_bal"].toString()) <
-            double.parse(items[0]["min_wallet_bal"].toString())) {
+    if (double.parse(balanceData[0]["amount_bal"].toString()) <
+        double.parse(balanceData[0]["min_wallet_bal"].toString())) {
+      Get.back();
+      CustomDialog().errorDialog(
+        Get.context!,
+        "Attention",
+        "Your balance is below the required minimum for this feature. "
+            "Please ensure a minimum balance of ${balanceData[0]["min_wallet_bal"]} tokens to access the requested service.",
+        () {
           Get.back();
-          CustomDialog().errorDialog(
-            Get.context!,
-            "Attention",
-            "Your balance is below the required minimum for this feature. "
-                "Please ensure a minimum balance of ${items[0]["min_wallet_bal"]} tokens to access the requested service.",
-            () {
-              Get.back();
-            },
-          );
-          return;
-        } else {
-          Functions.computeDistanceResorChckIN(
-              Get.context!,
-              LatLng(
-                  markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
-              (success) {
-            Get.back();
+        },
+      );
+      return;
+    } else {
+      Functions.computeDistanceResorChckIN(Get.context!,
+          LatLng(markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
+          (success) {
+        Get.back();
 
-            if (success["success"]) {
-              Get.toNamed(Routes.booking, arguments: {
-                "currentLocation": success["location"],
-                "areaData": markerData[0],
-                "canCheckIn": success["can_checkIn"],
-                "userData": items,
-              });
-            }
+        if (success["success"]) {
+          Get.toNamed(Routes.booking, arguments: {
+            "currentLocation": success["location"],
+            "areaData": markerData[0],
+            "canCheckIn": success["can_checkIn"],
+            "userData": balanceData,
           });
         }
-      } else {
-        Get.back();
-      }
-    });
+      });
+    }
   }
 }

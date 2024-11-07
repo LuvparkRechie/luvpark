@@ -137,6 +137,7 @@ class Authentication {
   //SET LAST BOOKING AREA_ID
   Future<void> setLastBooking(data) async {
     final prefs = await SharedPreferences.getInstance();
+    print("set last booking $data");
     prefs.setString('last_booking', data);
   }
 
@@ -146,10 +147,10 @@ class Authentication {
     String? data = prefs.getString('last_booking');
 
     if (data == null) {
-      return "";
+      return [];
     }
     if (data == '') {
-      return "";
+      return [];
     }
     return jsonDecode(data);
   }

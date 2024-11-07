@@ -233,31 +233,6 @@ class Functions {
     ];
   }
 
-  static hasInternetConnection(Function callBack) async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        final ping = Ping('google.com', count: 1);
-
-        ping.stream.listen((event) {
-          if (event.summary == null) {
-          } else {
-            if (event.summary!.received > 0) {
-              callBack(true);
-            } else {
-              callBack(false);
-            }
-          }
-        });
-      } else {
-        callBack(false);
-      }
-    } on SocketException catch (_) {
-      callBack(false);
-    }
-  }
-
   // //search place
   // static Future<void> searchPlaces(
   //     context, String query, Function callback) async {
@@ -298,48 +273,47 @@ class Functions {
   // }
   static Future<void> searchPlaces(
       BuildContext context, String query, Function callback) async {
-    hasInternetConnection((hasInternet) async {
-      if (hasInternet) {
-        try {
-          final places = gmp.GoogleMapsPlaces(
-              apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
-          gmp.PlacesSearchResponse response = await places.searchByText(query);
+    bool hasNet = await Variables.checkInternet();
+    if (hasNet) {
+      try {
+        final places = gmp.GoogleMapsPlaces(
+            apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
+        gmp.PlacesSearchResponse response = await places.searchByText(query);
 
-          if (response.isOkay) {
-            if (response.results.isNotEmpty) {
-              callback([
-                response.results[0].geometry!.location.lat,
-                response.results[0].geometry!.location.lng,
-              ]);
-            } else {
-              callback([]);
-              CustomDialog().errorDialog(
-                  context, "luvpark", "No parking areas found.", () {
-                Get.back();
-              });
-            }
+        if (response.isOkay) {
+          if (response.results.isNotEmpty) {
+            callback([
+              response.results[0].geometry!.location.lat,
+              response.results[0].geometry!.location.lng,
+            ]);
           } else {
             callback([]);
-            CustomDialog().errorDialog(
-                context, "Error", "Failed to retrieve data. Please try again.",
-                () {
+            CustomDialog()
+                .errorDialog(context, "luvpark", "No parking areas found.", () {
               Get.back();
             });
           }
-        } catch (e) {
+        } else {
           callback([]);
-
-          CustomDialog().errorDialog(context, "Error", "$e", () {
+          CustomDialog().errorDialog(
+              context, "Error", "Failed to retrieve data. Please try again.",
+              () {
             Get.back();
           });
         }
-      } else {
+      } catch (e) {
         callback([]);
-        CustomDialog().internetErrorDialog(context, () {
+
+        CustomDialog().errorDialog(context, "Error", "$e", () {
           Get.back();
         });
       }
-    });
+    } else {
+      callback([]);
+      CustomDialog().internetErrorDialog(context, () {
+        Get.back();
+      });
+    }
   }
 
   //Checking if open area
@@ -494,126 +468,126 @@ class Functions {
       context, LatLng dest, Function cb) async {
     LocationService.grantPermission(Get.context!, (isGranted) {
       if (isGranted) {
-        Functions.getLocation(context, (location) {
+        Functions.getLocation(context, (location) async {
           LatLng ll = location;
 
-          hasInternetConnection((hasInternet) async {
-            if (hasInternet) {
-              final estimatedData = await Functions.fetchETA(
-                  LatLng(ll.latitude, ll.longitude), dest);
+          bool hasNet = await Variables.checkInternet();
+          if (hasNet) {
+            final estimatedData = await Functions.fetchETA(
+                LatLng(ll.latitude, ll.longitude), dest);
 
-              if (estimatedData[0]["error"] == "No Internet") {
-                cb({"success": false});
-                print("No internet eta");
-
-                CustomDialog().internetErrorDialog(context, () {
-                  Get.back();
-                });
-                return;
-              }
-              if (estimatedData.isEmpty) {
-                cb({"success": false});
-                CustomDialog().errorDialog(context, "luvpark",
-                    Variables.popUpMessageOutsideArea, () {});
-                return;
-              } else {
-                const HttpRequest(api: ApiKeys.gApiLuvParkGetComputeDistance)
-                    .get()
-                    .then((returnData) async {
-                  if (returnData == "No Internet") {
-                    cb({"success": false});
-                    print("No internet eta gApiLuvParkGetComputeDistance");
-                    CustomDialog().internetErrorDialog(context, () {
-                      Get.back();
-                    });
-                    return;
-                  }
-                  if (returnData == null) {
-                    cb({"success": false});
-                    CustomDialog().serverErrorDialog(context, () {
-                      Get.back();
-                    });
-
-                    return;
-                  } else {
-                    bool canCheckIn = Variables.convertToMeters2(
-                                estimatedData[0]["distance"]) >
-                            5
-                        ? false
-                        : true;
-                    //COMPUTE DISTANCE BY TIME IF AVAILABLE FOR RESERVATION`
-                    if (returnData["items"][0]["user_chk_in_um"] == "TM") {
-                      int estimatedMinute = int.parse(
-                          estimatedData[0]["time"].toString().split(" ")[0]);
-                      // double distanceCanChkIn = Variables.convertToMeters(
-                      //     returnData["items"][0]["user_chk_in_within"]
-                      //         .toString());
-                      //COMPUTE DISTANCE BY TIME IF ABLE TO RESERVE BY 20000 METERS AWAY`
-                      if (estimatedMinute >=
-                              int.parse(returnData["items"][0]["min_psr_from"]
-                                  .toString()) &&
-                          estimatedMinute <=
-                              int.parse(returnData["items"][0]["max_psr_from"]
-                                  .toString())) {
-                        cb({
-                          "success": true,
-                          // "can_checkIn": estimatedMinute <= distanceCanChkIn,
-                          "can_checkIn": canCheckIn,
-                          "location": ll,
-                          "message":
-                              "Early check-in is not allowed if you are more than ${returnData["items"][0]["user_chk_in_within"].toString()} minutes away from the selected parking area.",
-                        });
-                      } else {
-                        cb({"success": false});
-
-                        CustomDialog().errorDialog(context, "luvpark",
-                            "Early booking is not allowed if you are more than ${returnData["items"][0]["max_psr_from"].toString()} minutes away from the selected parking area.",
-                            () {
-                          Get.back();
-                        });
-                      }
-                    } else {
-                      //COMPUTE DISTANCE BY DISTANCE IN METERS IF AVAILABLE FOR RESERVATION
-                      double estimatedDistance = Variables.convertToMeters2(
-                          estimatedData[0]["distance"].toString());
-                      double minDistance = Variables.convertToMeters2(
-                          returnData["items"][0]["min_psr_from"].toString());
-                      // double maxDistance = double.parse(
-                      //     returnData["items"][0]["max_psr_from"].toString());
-                      double distanceCanChkIn = Variables.convertToMeters2(
-                          "${returnData["items"][0]["user_chk_in_within"].toString()} km");
-
-                      if (estimatedDistance.toDouble() >=
-                              minDistance.toDouble() &&
-                          estimatedDistance.toDouble() <=
-                              distanceCanChkIn.toDouble()) {
-                        cb({
-                          "success": true,
-                          // "can_checkIn": estimatedDistance <= distanceCanChkIn,
-                          "can_checkIn": canCheckIn,
-                          "location": ll,
-                          "message": "",
-                        });
-                      } else {
-                        cb({"success": false});
-                        CustomDialog().errorDialog(context, "luvpark",
-                            "Early booking is not allowed if you are more than ${returnData["items"][0]["max_psr_from"].toString()} meters away from the selected parking area.",
-                            () {
-                          Get.back();
-                        });
-                      }
-                    }
-                  }
-                });
-              }
-            } else {
+            if (estimatedData[0]["error"] == "No Internet") {
               cb({"success": false});
+
               CustomDialog().internetErrorDialog(context, () {
                 Get.back();
               });
               return;
             }
-          });
+            if (estimatedData.isEmpty) {
+              cb({"success": false});
+              CustomDialog().errorDialog(
+                  context, "luvpark", Variables.popUpMessageOutsideArea, () {});
+              return;
+            } else {
+              print("No get apis");
+              const HttpRequest(api: ApiKeys.gApiLuvParkGetComputeDistance)
+                  .get()
+                  .then((returnData) async {
+                print("No get apis returnData $returnData");
+                if (returnData == "No Internet") {
+                  cb({"success": false});
+                  print("No internet eta gApiLuvParkGetComputeDistance");
+                  CustomDialog().internetErrorDialog(context, () {
+                    Get.back();
+                  });
+                  return;
+                }
+                if (returnData == null) {
+                  cb({"success": false});
+                  CustomDialog().serverErrorDialog(context, () {
+                    Get.back();
+                  });
+
+                  return;
+                } else {
+                  bool canCheckIn =
+                      Variables.convertToMeters2(estimatedData[0]["distance"]) >
+                              5
+                          ? false
+                          : true;
+                  //COMPUTE DISTANCE BY TIME IF AVAILABLE FOR RESERVATION`
+                  if (returnData["items"][0]["user_chk_in_um"] == "TM") {
+                    int estimatedMinute = int.parse(
+                        estimatedData[0]["time"].toString().split(" ")[0]);
+                    // double distanceCanChkIn = Variables.convertToMeters(
+                    //     returnData["items"][0]["user_chk_in_within"]
+                    //         .toString());
+                    //COMPUTE DISTANCE BY TIME IF ABLE TO RESERVE BY 20000 METERS AWAY`
+                    if (estimatedMinute >=
+                            int.parse(returnData["items"][0]["min_psr_from"]
+                                .toString()) &&
+                        estimatedMinute <=
+                            int.parse(returnData["items"][0]["max_psr_from"]
+                                .toString())) {
+                      cb({
+                        "success": true,
+                        // "can_checkIn": estimatedMinute <= distanceCanChkIn,
+                        "can_checkIn": canCheckIn,
+                        "location": ll,
+                        "message":
+                            "Early check-in is not allowed if you are more than ${returnData["items"][0]["user_chk_in_within"].toString()} minutes away from the selected parking area.",
+                      });
+                    } else {
+                      cb({"success": false});
+
+                      CustomDialog().errorDialog(context, "luvpark",
+                          "Early booking is not allowed if you are more than ${returnData["items"][0]["max_psr_from"].toString()} minutes away from the selected parking area.",
+                          () {
+                        Get.back();
+                      });
+                    }
+                  } else {
+                    //COMPUTE DISTANCE BY DISTANCE IN METERS IF AVAILABLE FOR RESERVATION
+                    double estimatedDistance = Variables.convertToMeters2(
+                        estimatedData[0]["distance"].toString());
+                    double minDistance = Variables.convertToMeters2(
+                        returnData["items"][0]["min_psr_from"].toString());
+                    // double maxDistance = double.parse(
+                    //     returnData["items"][0]["max_psr_from"].toString());
+                    double distanceCanChkIn = Variables.convertToMeters2(
+                        "${returnData["items"][0]["user_chk_in_within"].toString()} km");
+
+                    if (estimatedDistance.toDouble() >=
+                            minDistance.toDouble() &&
+                        estimatedDistance.toDouble() <=
+                            distanceCanChkIn.toDouble()) {
+                      cb({
+                        "success": true,
+                        // "can_checkIn": estimatedDistance <= distanceCanChkIn,
+                        "can_checkIn": canCheckIn,
+                        "location": ll,
+                        "message": "",
+                      });
+                    } else {
+                      cb({"success": false});
+                      CustomDialog().errorDialog(context, "luvpark",
+                          "Early booking is not allowed if you are more than ${returnData["items"][0]["max_psr_from"].toString()} meters away from the selected parking area.",
+                          () {
+                        Get.back();
+                      });
+                    }
+                  }
+                }
+              });
+            }
+          } else {
+            cb({"success": false});
+            CustomDialog().internetErrorDialog(context, () {
+              Get.back();
+            });
+            return;
+          }
         });
       } else {
         CustomDialog()

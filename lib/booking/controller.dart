@@ -60,8 +60,6 @@ class BookingController extends GetxController
   //VH OPTION PARAm
   final GlobalKey<FormState> bookKey = GlobalKey<FormState>();
   RxBool isFirstScreen = true.obs;
-  RxBool isLoadingVehicles = true.obs;
-  RxBool isNetConnVehicles = true.obs;
   RxBool isShowNotice = false.obs;
   RxList myVehiclesData = [].obs;
   RxList ddVehiclesData = [].obs;
@@ -84,8 +82,7 @@ class BookingController extends GetxController
   void onInit() {
     super.onInit();
     selectedNumber.value = 1;
-    _startInactivityTimer();
-    _updateMaskFormatter("");
+
     int endNumber =
         int.parse(parameters["areaData"]["res_max_hours"].toString());
     numbersList.value = List.generate(
@@ -100,10 +97,187 @@ class BookingController extends GetxController
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      getAvailabeAreaVh();
+
+    getDropdownVehicles();
+    _startInactivityTimer();
+    _updateMaskFormatter("");
+  }
+
+  //GET drodown vehicles per area
+  Future<void> getDropdownVehicles() async {
+    HttpRequest(
+            api:
+                "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=${parameters["areaData"]["park_area_id"]}")
+        .get()
+        .then((returnData) async {
+      if (returnData == "No Internet") {
+        Get.back();
+        isInternetConn.value = false;
+        isLoadingPage.value = false;
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+
+        return;
+      }
+      if (returnData == null) {
+        isInternetConn.value = true;
+        isLoadingPage.value = true;
+        Get.back();
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+
+      ddVehiclesData.value = [];
+
+      if (returnData["items"].length > 0) {
+        dynamic items = returnData["items"];
+        ddVehiclesData.value = items.map((item) {
+          return {
+            "text": item["vehicle_type_desc"],
+            "value": item["vehicle_type_id"],
+            "base_hours": item["base_hours"],
+            "base_rate": item["base_rate"],
+            "succeeding_rate": item["succeeding_rate"],
+            "vehicle_type": item["vehicle_type_desc"],
+          };
+        }).toList();
+      }
+      getMyVehicle();
     });
   }
+
+  //GET my registered vehicle
+  Future<void> getMyVehicle() async {
+    final item = await Authentication().getUserData();
+    CustomDialog().loadingDialog(Get.context!);
+
+    isFirstScreen.value = true;
+    plateNo.text = "";
+    int userId = jsonDecode(item!)["user_id"];
+    String api =
+        "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
+
+    HttpRequest(api: api).get().then((myVehicles) async {
+      if (myVehicles == "No Internet") {
+        Get.back();
+        isInternetConn.value = false;
+        isLoadingPage.value = false;
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+
+        return;
+      }
+      if (myVehicles == null) {
+        Get.back();
+        isInternetConn.value = true;
+        isLoadingPage.value = true;
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+
+      myVehiclesData.value = [];
+      if (myVehicles["items"].length > 0) {
+        for (var row in myVehicles["items"]) {
+          String brandName = await Functions.getBrandName(
+              row["vehicle_type_id"], row["vehicle_brand_id"]);
+
+          myVehiclesData.add({
+            "vehicle_type_id": row["vehicle_type_id"],
+            "vehicle_brand_id": row["vehicle_brand_id"],
+            "vehicle_brand_name": brandName,
+            "vehicle_plate_no": row["vehicle_plate_no"],
+          });
+        }
+        List dataLastBooking = await Authentication().getLastBooking();
+        if (dataLastBooking.isNotEmpty) {
+          selectedVh.value = dataLastBooking;
+        } else {
+          List vhDatas = [myVehiclesData[0]];
+          dynamic recData = ddVehiclesData;
+          Map<int, Map<String, dynamic>> recDataMap = {
+            for (var item in recData) item['value']: item
+          };
+          for (var vh in vhDatas) {
+            int typeId = vh['vehicle_type_id'];
+            if (recDataMap.containsKey(typeId)) {
+              var rec = recDataMap[typeId];
+              vh['base_hours'] = rec?['base_hours'];
+              vh['base_rate'] = rec?['base_rate'];
+              vh['succeeding_rate'] = rec?['succeeding_rate'];
+              vh['vehicle_type'] = rec?['vehicle_type'];
+            }
+          }
+
+          selectedVh.value = vhDatas;
+        }
+
+        selectedNumber.value = selectedVh[0]["base_hours"];
+        timeComputation();
+        routeToComputation();
+      }
+      getNotice();
+    });
+  }
+
+  Future<void> getNotice() async {
+    isShowNotice.value = true;
+    String subApi = "${ApiKeys.gApiLuvParkGetNotice}?msg_code=PREBOOKMSG";
+
+    HttpRequest(api: subApi).get().then((retDataNotice) async {
+      Get.back();
+      if (retDataNotice == "No Internet") {
+        isLoadingPage.value = false;
+        isInternetConn.value = false;
+        noticeData.value = [];
+        isShowNotice.value = false;
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+      if (retDataNotice == null) {
+        isInternetConn.value = true;
+        isLoadingPage.value = true;
+        noticeData.value = [];
+        isShowNotice.value = false;
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      }
+      if (retDataNotice["items"].length > 0) {
+        isInternetConn.value = true;
+        isLoadingPage.value = false;
+        noticeData.value = retDataNotice["items"];
+        Timer(Duration(milliseconds: 500), () {
+          CustomDialog().bookingNotice(
+              noticeData[0]["msg_title"], noticeData[0]["msg"], () {
+            Get.back();
+            Get.back();
+          }, () {
+            isShowNotice.value = false;
+            Get.back();
+          });
+        });
+      } else {
+        isInternetConn.value = true;
+        isLoadingPage.value = false;
+        noticeData.value = [];
+        isShowNotice.value = false;
+        CustomDialog().errorDialog(Get.context!, "luvpark", "No data found",
+            () {
+          Get.back();
+        });
+      }
+    });
+  }
+
+  ///end
 
   void _startInactivityTimer() {
     inactivityTimer?.cancel();
@@ -138,9 +312,6 @@ class BookingController extends GetxController
     paramEndTime.value = DateFormat('HH:mm')
         .format(parsedTime.add(Duration(hours: selectedNumber.value)))
         .toString();
-    // WidgetsBinding.instance.addPostFrameCallback((_) {
-    //   getAvailabeAreaVh();
-    // });
   }
 
   void onUserInteraction() {
@@ -191,8 +362,6 @@ class BookingController extends GetxController
 
     DateTime cTime = DateFormat('yyyy-MM-dd HH:mm').parse(
         "${now.toString().split(" ")[0]} ${parameters["areaData"]["closed_time"].toString().trim()}");
-
-    print("cTime $selectedVh");
 
     if (parameters["areaData"]["is_24_hrs"] == "N") {
       if (pTime.isAfter(cTime)) {
@@ -255,6 +424,7 @@ class BookingController extends GetxController
   }
 
   void displaySelVh() {
+    isFirstScreen.value = true;
     Get.bottomSheet(
       isScrollControlled: true,
       VehicleOption(
@@ -273,7 +443,7 @@ class BookingController extends GetxController
             }).toList();
             selectedVh.value = objData;
           }
-
+          print("selected vh $selectedVh");
           selectedNumber.value = selectedVh[0]["base_hours"];
           timeComputation();
           routeToComputation();
@@ -336,154 +506,9 @@ class BookingController extends GetxController
     }
   }
 
-  //Get Vehicle Formatter or if there is vehicle in this area
-  Future<void> getAvailabeAreaVh() async {
-    isLoadingPage.value = true;
-    final dataVehicle = [];
-    HttpRequest(
-            api:
-                "${ApiKeys.gApiSubFolderGetVehicleType}?park_area_id=${parameters["areaData"]["park_area_id"]}")
-        .get()
-        .then((returnData) async {
-      if (returnData == "No Internet") {
-        isInternetConn.value = false;
-        isLoadingPage.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (returnData == null) {
-        isLoadingPage.value = false;
-        isInternetConn.value = true;
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      isInternetConn.value = true;
-      if (returnData["items"].length > 0) {
-        isLoadingPage.value = false;
-
-        for (var items in returnData["items"]) {
-          dataVehicle.add({
-            "vehicle_id": items["vehicle_type_id"],
-            "vehicle_desc": items["vehicle_type_desc"],
-            "format": items["input_format"],
-          });
-        }
-        vehicleTypeData.value = dataVehicle;
-        _updateMaskFormatter(vehicleTypeData[0]["format"]);
-      }
-      getNotice();
-    });
-  }
-
   //Vehicle
   void onScreenChanged(bool value) {
     isFirstScreen.value = value;
-  }
-
-  //GET my registered vehicle
-  Future<void> getMyVehicle() async {
-    final item = await Authentication().getUserData();
-    CustomDialog().loadingDialog(Get.context!);
-    if (selectedVh.isEmpty) {
-      isBtnLoading.value = true;
-    }
-    isFirstScreen.value = true;
-    plateNo.text = "";
-    int userId = jsonDecode(item!)["user_id"];
-    String api =
-        "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
-
-    HttpRequest(api: api).get().then((myVehicles) async {
-      if (myVehicles == "No Internet") {
-        isNetConnVehicles.value = false;
-        isLoadingVehicles.value = false;
-        Get.back();
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-
-        return;
-      }
-      if (myVehicles == null) {
-        isNetConnVehicles.value = true;
-        isLoadingVehicles.value = true;
-        Get.back();
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-
-      myVehiclesData.value = [];
-      if (myVehicles["items"].length > 0) {
-        for (var row in myVehicles["items"]) {
-          String brandName = await Functions.getBrandName(
-              row["vehicle_type_id"], row["vehicle_brand_id"]);
-
-          myVehiclesData.add({
-            "vehicle_type_id": row["vehicle_type_id"],
-            "vehicle_brand_id": row["vehicle_brand_id"],
-            "vehicle_brand_name": brandName,
-            "vehicle_plate_no": row["vehicle_plate_no"],
-          });
-        }
-        getDropdownVehicles();
-      } else {
-        getDropdownVehicles();
-      }
-    });
-  }
-
-  //GET drodown vehicles per area
-  Future<void> getDropdownVehicles() async {
-    HttpRequest(
-            api:
-                "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=${parameters["areaData"]["park_area_id"]}")
-        .get()
-        .then((returnData) async {
-      isBtnLoading.value = false;
-      if (returnData == "No Internet") {
-        isNetConnVehicles.value = false;
-        isLoadingVehicles.value = true;
-        Get.back();
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-
-        return;
-      }
-      if (returnData == null) {
-        isNetConnVehicles.value = true;
-        isLoadingVehicles.value = true;
-        Get.back();
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-
-      isNetConnVehicles.value = true;
-      isLoadingVehicles.value = false;
-      ddVehiclesData.value = [];
-      Get.back();
-      if (returnData["items"].length > 0) {
-        dynamic items = returnData["items"];
-        ddVehiclesData.value = items.map((item) {
-          return {
-            "text": item["vehicle_type_desc"],
-            "value": item["vehicle_type_id"],
-            "base_hours": item["base_hours"],
-            "base_rate": item["base_rate"],
-            "succeeding_rate": item["succeeding_rate"],
-          };
-        }).toList();
-      }
-      displaySelVh();
-    });
   }
 
   //Reservation Submit
@@ -594,13 +619,8 @@ class BookingController extends GetxController
             'status': "B",
             'paramsCalc': bookingParams[0]
           };
-          Map<String, dynamic> lastBookingData = {
-            "plate_no": selectedVh[0]["vehicle_plate_no"].toString(),
-            "brand_name": selectedVh[0]["vehicle_brand_name"].toString(),
-            "park_area_id": parameters["areaData"]["park_area_id"].toString(),
-          };
 
-          Authentication().setLastBooking(jsonEncode(lastBookingData));
+          Authentication().setLastBooking(jsonEncode(selectedVh));
           if (parameters["canCheckIn"]) {
             checkIn(objData["reservation_id"], userId, paramArgs);
             return;
@@ -744,59 +764,6 @@ class BookingController extends GetxController
     }
 
     isLoadingPage.value = false;
-  }
-
-  Future<void> getNotice() async {
-    isInternetConn.value = true;
-    isLoadingPage.value = true;
-    isShowNotice.value = true;
-    String subApi = "${ApiKeys.gApiLuvParkGetNotice}?msg_code=PREBOOKMSG";
-
-    HttpRequest(api: subApi).get().then((retDataNotice) async {
-      if (retDataNotice == "No Internet") {
-        isLoadingPage.value = false;
-        isInternetConn.value = false;
-        noticeData.value = [];
-        isShowNotice.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (retDataNotice == null) {
-        isInternetConn.value = true;
-        isLoadingPage.value = true;
-        noticeData.value = [];
-        isShowNotice.value = false;
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      }
-      if (retDataNotice["items"].length > 0) {
-        isInternetConn.value = true;
-        isLoadingPage.value = false;
-        noticeData.value = retDataNotice["items"];
-        Timer(Duration(milliseconds: 500), () {
-          CustomDialog().bookingNotice(
-              noticeData[0]["msg_title"], noticeData[0]["msg"], () {
-            Get.back();
-            Get.back();
-          }, () {
-            isShowNotice.value = false;
-            Get.back();
-          });
-        });
-      } else {
-        isInternetConn.value = true;
-        isLoadingPage.value = false;
-        noticeData.value = [];
-        isShowNotice.value = false;
-        CustomDialog().errorDialog(Get.context!, "luvpark", "No data found",
-            () {
-          Get.back();
-        });
-      }
-    });
   }
 
   @override

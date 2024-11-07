@@ -15,8 +15,6 @@ import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
 import 'package:luvpark_get/custom_widgets/no_data_found.dart';
 import 'package:luvpark_get/custom_widgets/no_internet.dart';
 
-import '../custom_widgets/page_loader.dart';
-
 class BookingPage extends GetView<BookingController> {
   const BookingPage({Key? key}) : super(key: key);
 
@@ -34,17 +32,17 @@ class BookingPage extends GetView<BookingController> {
             child: Scaffold(
                 backgroundColor: AppColor.bodyColor,
                 body: SafeArea(
-                  child: controller.isLoadingPage.value
-                      ? const Center(
-                          child: SizedBox(
-                            width: 40,
-                            height: 40,
-                            child: CircularProgressIndicator(),
-                          ),
+                  child: !controller.isInternetConn.value
+                      ? NoInternetConnected(
+                          onTap: controller.getMyVehicle,
                         )
-                      : !controller.isInternetConn.value
-                          ? NoInternetConnected(
-                              onTap: controller.getAvailabeAreaVh,
+                      : controller.isLoadingPage.value
+                          ? const Center(
+                              child: SizedBox(
+                                width: 40,
+                                height: 40,
+                                child: CircularProgressIndicator(),
+                              ),
                             )
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -274,7 +272,7 @@ class BookingPage extends GetView<BookingController> {
                                                   WidgetsBinding.instance
                                                       .addPostFrameCallback(
                                                           (_) {
-                                                    controller.getMyVehicle();
+                                                    controller.displaySelVh();
                                                   });
                                                 },
                                                 child: Row(
@@ -1452,9 +1450,7 @@ class VehicleOption extends GetView<BookingController> {
       children: [
         Obx(
           () => Container(
-            height: controller.isFirstScreen.value &&
-                    controller.isNetConnVehicles.value &&
-                    !controller.isLoadingVehicles.value
+            height: controller.isFirstScreen.value
                 ? MediaQuery.of(context).viewInsets.bottom != 0
                     ? MediaQuery.of(context).viewInsets.bottom
                     : null
@@ -1463,268 +1459,228 @@ class VehicleOption extends GetView<BookingController> {
               borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
               color: Colors.white,
             ),
-            child: !controller.isNetConnVehicles.value
-                ? NoInternetConnected(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(height: 10),
+                  InkWell(
                     onTap: () {
-                      controller.getMyVehicle();
+                      if (!controller.isFirstScreen.value) {
+                        controller
+                            .onScreenChanged(!controller.isFirstScreen.value);
+                        return;
+                      }
+                      Get.back();
                     },
-                  )
-                : controller.isLoadingVehicles.value
-                    ? const PageLoader()
-                    : Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(height: 10),
-                            InkWell(
-                              onTap: () {
-                                if (!controller.isFirstScreen.value) {
-                                  controller.onScreenChanged(
-                                      !controller.isFirstScreen.value);
-                                  return;
-                                }
-                                Get.back();
-                              },
-                              child: const Icon(
-                                Icons.chevron_left,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Container(height: 20),
-                            controller.isFirstScreen.value
-                                ? Form(
-                                    key: controller.bookKey,
-                                    child: SingleChildScrollView(
-                                      physics: BouncingScrollPhysics(),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          const CustomTitle(
-                                            text: "What's your plate number?",
-                                          ),
-                                          Container(height: 10),
-                                          CustomTextField(
-                                            labelText: "Plate No.",
-                                            controller: controller.plateNo,
-                                            textCapitalization:
-                                                TextCapitalization.characters,
-                                            inputFormatters: [
-                                              FilteringTextInputFormatter.deny(
-                                                  RegExp(r'\s')),
-                                            ],
-                                            validator: (data) {
-                                              if (data == null ||
-                                                  data.isEmpty) {
-                                                return "Plate no is required";
-                                              }
-                                              if (!data.contains(
-                                                  RegExp(r'^[A-Z0-9-]+$'))) {
-                                                return "Plate No. should only contain letters, numbers, and dashes";
-                                              }
-                                              if (data.startsWith('-') ||
-                                                  data.endsWith('-')) {
-                                                return "Plate No. should not start or end with a dash";
-                                              }
-                                              return null;
-                                            },
-                                          ),
-                                          if (MediaQuery.of(context)
-                                                  .viewInsets
-                                                  .bottom ==
-                                              0)
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                CustomDropdown(
-                                                  labelText: "Vehicle Type",
-                                                  ddData:
-                                                      controller.ddVehiclesData,
-                                                  ddValue:
-                                                      controller.dropdownValue,
-                                                  onChange: (newValue) {
-                                                    controller.dropdownValue =
-                                                        newValue;
-                                                  },
-                                                ),
-                                                Container(height: 30),
-                                                CustomButton(
-                                                  text: "Confirm",
-                                                  onPressed: () {
-                                                    if (ct.bookKey.currentState!
-                                                        .validate()) {
-                                                      dynamic selVh = ct
-                                                          .ddVehiclesData
-                                                          .where((element) {
-                                                        return element[
-                                                                "value"] ==
-                                                            int.parse(ct
-                                                                .dropdownValue!
-                                                                .toString());
-                                                      }).toList()[0];
-
-                                                      callback([
-                                                        {
-                                                          'vehicle_type_id': ct
-                                                              .dropdownValue!
-                                                              .toString(),
-                                                          'vehicle_brand_id': 0,
-                                                          'vehicle_brand_name':
-                                                              selVh["text"],
-                                                          'vehicle_plate_no':
-                                                              controller
-                                                                  .plateNo.text,
-                                                          'base_hours': selVh[
-                                                              "base_hours"],
-                                                          'base_rate': selVh[
-                                                              "base_rate"],
-                                                          'succeeding_rate': selVh[
-                                                              "succeeding_rate"],
-                                                          'vehicle_type':
-                                                              selVh["text"]
-                                                        }
-                                                      ]);
-                                                      Get.back();
-                                                    }
-                                                  },
-                                                ),
-                                                Container(height: 15),
-                                                CustomButtonCancel(
-                                                    borderColor: Colors.black,
-                                                    textColor: Colors.black,
-                                                    color: AppColor.bodyColor,
-                                                    text: "My Vehicle",
-                                                    onPressed: () {
-                                                      controller
-                                                          .onScreenChanged(!ct
-                                                              .isFirstScreen
-                                                              .value);
-                                                    }),
-                                                if (Platform.isIOS)
-                                                  Container(height: 20),
-                                              ],
-                                            ),
-                                        ],
+                    child: const Icon(
+                      Icons.chevron_left,
+                      color: Colors.black,
+                    ),
+                  ),
+                  Container(height: 20),
+                  controller.isFirstScreen.value
+                      ? Form(
+                          key: controller.bookKey,
+                          child: SingleChildScrollView(
+                            physics: BouncingScrollPhysics(),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const CustomTitle(
+                                  text: "What's your plate number?",
+                                ),
+                                Container(height: 10),
+                                CustomTextField(
+                                  labelText: "Plate No.",
+                                  controller: controller.plateNo,
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.deny(
+                                        RegExp(r'\s')),
+                                  ],
+                                  validator: (data) {
+                                    if (data == null || data.isEmpty) {
+                                      return "Plate no is required";
+                                    }
+                                    if (!data
+                                        .contains(RegExp(r'^[A-Z0-9-]+$'))) {
+                                      return "Plate No. should only contain letters, numbers, and dashes";
+                                    }
+                                    if (data.startsWith('-') ||
+                                        data.endsWith('-')) {
+                                      return "Plate No. should not start or end with a dash";
+                                    }
+                                    return null;
+                                  },
+                                ),
+                                if (MediaQuery.of(context).viewInsets.bottom ==
+                                    0)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomDropdown(
+                                        labelText: "Vehicle Type",
+                                        ddData: controller.ddVehiclesData,
+                                        ddValue: controller.dropdownValue,
+                                        onChange: (newValue) {
+                                          controller.dropdownValue = newValue;
+                                        },
                                       ),
-                                    ),
-                                  )
-                                : Expanded(
-                                    child: controller.myVehiclesData.isEmpty
-                                        ? const NoDataFound(
-                                            text:
-                                                "Your registered vehicle isn’t suitable for this area. Please consider other options ",
-                                          )
-                                        : Scrollbar(
-                                            child: ListView.separated(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10),
-                                              itemCount: controller
-                                                  .myVehiclesData.length,
-                                              itemBuilder: (context, index) {
-                                                return ListTile(
-                                                  title: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      CustomTitle(
-                                                        text: controller
-                                                                    .myVehiclesData[
-                                                                index][
-                                                            "vehicle_plate_no"],
-                                                        fontSize: 14,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  subtitle: Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment.end,
-                                                    children: [
-                                                      CustomParagraph(
-                                                        text: controller
-                                                                    .myVehiclesData[
-                                                                index][
-                                                            "vehicle_brand_name"],
-                                                        fontSize: 12,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  leading: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                            top: 5),
-                                                    child: Icon(
-                                                      int.parse(controller
-                                                                  .myVehiclesData[
-                                                                      index][
-                                                                      "vehicle_type_id"]
-                                                                  .toString()) ==
-                                                              1
-                                                          ? Icons
-                                                              .motorcycle_outlined
-                                                          : Icons.time_to_leave,
-                                                    ),
-                                                  ),
-                                                  trailing: const Icon(Icons
-                                                      .keyboard_arrow_right),
-                                                  onTap: () {
-                                                    List vhDatas = [
-                                                      controller
-                                                          .myVehiclesData[index]
-                                                    ];
-                                                    dynamic recData = controller
-                                                        .ddVehiclesData;
+                                      Container(height: 30),
+                                      CustomButton(
+                                        text: "Confirm",
+                                        onPressed: () {
+                                          if (ct.bookKey.currentState!
+                                              .validate()) {
+                                            dynamic selVh = ct.ddVehiclesData
+                                                .where((element) {
+                                              return element["value"] ==
+                                                  int.parse(ct.dropdownValue!
+                                                      .toString());
+                                            }).toList()[0];
 
-                                                    Map<
-                                                            int,
-                                                            Map<String,
-                                                                dynamic>>
-                                                        recDataMap = {
-                                                      for (var item in recData)
-                                                        item['value']: item
-                                                    };
-
-                                                    // Merge base_hours and succeeding_rate into vhDatas
-                                                    for (var vh in vhDatas) {
-                                                      int typeId =
-                                                          vh['vehicle_type_id'];
-                                                      if (recDataMap
-                                                          .containsKey(
-                                                              typeId)) {
-                                                        var rec =
-                                                            recDataMap[typeId];
-                                                        vh['base_hours'] =
-                                                            rec?['base_hours'];
-                                                        vh['base_rate'] =
-                                                            rec?['base_rate'];
-                                                        vh['succeeding_rate'] =
-                                                            rec?[
-                                                                'succeeding_rate'];
-                                                      }
-                                                    }
-
-                                                    Get.back();
-                                                    callback(vhDatas);
-                                                  },
-                                                );
-                                              },
-                                              separatorBuilder:
-                                                  (BuildContext context,
-                                                      int index) {
-                                                return Divider(
-                                                  color: Colors.black
-                                                      .withOpacity(
-                                                          0.05000000074505806),
-                                                );
-                                              },
-                                            ),
-                                          ),
+                                            callback([
+                                              {
+                                                'vehicle_type_id': ct
+                                                    .dropdownValue!
+                                                    .toString(),
+                                                'vehicle_brand_id': 0,
+                                                'vehicle_brand_name':
+                                                    selVh["text"],
+                                                'vehicle_plate_no':
+                                                    controller.plateNo.text,
+                                                'base_hours':
+                                                    selVh["base_hours"],
+                                                'base_rate': selVh["base_rate"],
+                                                'succeeding_rate':
+                                                    selVh["succeeding_rate"],
+                                                'vehicle_type': selVh["text"]
+                                              }
+                                            ]);
+                                            Get.back();
+                                          }
+                                        },
+                                      ),
+                                      Container(height: 15),
+                                      CustomButtonCancel(
+                                          borderColor: Colors.black,
+                                          textColor: Colors.black,
+                                          color: AppColor.bodyColor,
+                                          text: "My Vehicle",
+                                          onPressed: () {
+                                            controller.onScreenChanged(
+                                                !ct.isFirstScreen.value);
+                                          }),
+                                      if (Platform.isIOS) Container(height: 20),
+                                    ],
                                   ),
-                          ],
+                              ],
+                            ),
+                          ),
+                        )
+                      : Expanded(
+                          child: controller.myVehiclesData.isEmpty
+                              ? const NoDataFound(
+                                  text:
+                                      "Your registered vehicle isn’t suitable for this area. Please consider other options ",
+                                )
+                              : Scrollbar(
+                                  child: ListView.separated(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    itemCount: controller.myVehiclesData.length,
+                                    itemBuilder: (context, index) {
+                                      return ListTile(
+                                        title: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            CustomTitle(
+                                              text: controller
+                                                      .myVehiclesData[index]
+                                                  ["vehicle_plate_no"],
+                                              fontSize: 14,
+                                            ),
+                                          ],
+                                        ),
+                                        subtitle: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            CustomParagraph(
+                                              text: controller
+                                                      .myVehiclesData[index]
+                                                  ["vehicle_brand_name"],
+                                              fontSize: 12,
+                                            ),
+                                          ],
+                                        ),
+                                        leading: Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 5),
+                                          child: Icon(
+                                            int.parse(controller
+                                                        .myVehiclesData[index]
+                                                            ["vehicle_type_id"]
+                                                        .toString()) ==
+                                                    1
+                                                ? Icons.motorcycle_outlined
+                                                : Icons.time_to_leave,
+                                          ),
+                                        ),
+                                        trailing: const Icon(
+                                            Icons.keyboard_arrow_right),
+                                        onTap: () {
+                                          List vhDatas = [
+                                            controller.myVehiclesData[index]
+                                          ];
+                                          dynamic recData =
+                                              controller.ddVehiclesData;
+
+                                          Map<int, Map<String, dynamic>>
+                                              recDataMap = {
+                                            for (var item in recData)
+                                              item['value']: item
+                                          };
+
+                                          // Merge base_hours and succeeding_rate into vhDatas
+                                          for (var vh in vhDatas) {
+                                            int typeId = vh['vehicle_type_id'];
+                                            if (recDataMap
+                                                .containsKey(typeId)) {
+                                              var rec = recDataMap[typeId];
+                                              vh['base_hours'] =
+                                                  rec?['base_hours'];
+                                              vh['base_rate'] =
+                                                  rec?['base_rate'];
+                                              vh['succeeding_rate'] =
+                                                  rec?['succeeding_rate'];
+                                              vh['vehicle_type'] =
+                                                  rec?['vehicle_type'];
+                                            }
+                                          }
+                                          Get.back();
+                                          callback(vhDatas);
+                                        },
+                                      );
+                                    },
+                                    separatorBuilder:
+                                        (BuildContext context, int index) {
+                                      return Divider(
+                                        color: Colors.black
+                                            .withOpacity(0.05000000074505806),
+                                      );
+                                    },
+                                  ),
+                                ),
                         ),
-                      ),
+                ],
+              ),
+            ),
           ),
         )
       ],
