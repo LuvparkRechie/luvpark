@@ -171,16 +171,18 @@ class WalletSendController extends GetxController
     });
   }
 
-  // Future<void> timerPeriodic() async {
-  //   _timer = Timer.periodic(Duration(seconds: 5), (timer) {
-  //     refreshUserData();
-  //   });
-  // }
+  Future<void> timerPeriodic() async {
+    refreshUserData();
+    await Future.delayed(Duration(seconds: 1), refreshUserData);
+    _timer = Timer.periodic(Duration(hours: 1), (timer) {
+      refreshUserData();
+    });
+  }
 
   @override
   void onInit() {
-    // timerPeriodic();
-    refreshUserData();
+    timerPeriodic();
+    //refreshUserData();
     padData.value = dataList;
     super.onInit();
   }
