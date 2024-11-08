@@ -350,6 +350,7 @@ class PayQr extends GetView<QrWalletController> {
                                                 children: [
                                                   Text(
                                                     "Share",
+                                                    maxLines: 1,
                                                     style: Platform.isAndroid
                                                         ? GoogleFonts.dmSans(
                                                             color: Color(
@@ -357,14 +358,14 @@ class PayQr extends GetView<QrWalletController> {
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             letterSpacing: 1,
-                                                            fontSize: 14)
+                                                            fontSize: 12)
                                                         : TextStyle(
                                                             color: Color(
                                                                 0xFF0078FF),
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                             letterSpacing: 1,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                             fontFamily:
                                                                 "SFProTextReg",
                                                           ),
@@ -580,6 +581,7 @@ class ReceiveQr extends GetView<QrWalletController> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
+                                maxLines: 1,
                                 "Share",
                                 style: Platform.isAndroid
                                     ? GoogleFonts.dmSans(
