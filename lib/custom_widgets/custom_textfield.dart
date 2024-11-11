@@ -87,6 +87,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
           focusNode: focusNode,
           decoration: InputDecoration(
             errorText: widget.errorText,
+            errorStyle: paragraphStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.normal,
+              fontSize: 10,
+            ),
             filled: widget.isFilled,
             fillColor: widget.filledColor,
             contentPadding:
@@ -183,6 +188,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         enabled: widget.isEnabled,
         keyboardType: widget.keyboardType!,
         decoration: InputDecoration(
+          errorStyle: paragraphStyle(),
           labelText: widget.labelText,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
