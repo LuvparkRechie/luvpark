@@ -87,6 +87,7 @@ class LoginScreen extends GetView<LoginScreenController> {
                         labelText: "10 digit mobile number",
                         controller: controller.mobileNumber,
                         inputFormatters: [Variables.maskFormatter],
+                        keyboardType: TextInputType.number,
                       ),
                       Obx(
                         () => CustomTextField(
@@ -139,12 +140,26 @@ class LoginScreen extends GetView<LoginScreenController> {
                                     controller.toggleLoading(
                                         !controller.isLoading.value);
                                     CustomDialog().snackbarDialog(
-                                        context,
-                                        "Mobile number is empty",
-                                        Colors.red,
-                                        () {});
+                                      context,
+                                      "Mobile number is empty",
+                                      Colors.red,
+                                      () {},
+                                    );
+                                    return;
+                                  } else if (controller
+                                          .mobileNumber.text.length !=
+                                      12) {
+                                    controller.toggleLoading(
+                                        !controller.isLoading.value);
+                                    CustomDialog().snackbarDialog(
+                                      context,
+                                      "Incorrect mobile number",
+                                      Colors.red,
+                                      () {},
+                                    );
                                     return;
                                   }
+
                                   if (controller.password.text.isEmpty) {
                                     controller.toggleLoading(
                                         !controller.isLoading.value);
