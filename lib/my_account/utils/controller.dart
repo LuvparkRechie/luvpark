@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import '../../http/api_keys.dart';
 import '../../http/http_request.dart';
@@ -420,16 +420,18 @@ class UpdateProfileController extends GetxController {
       case 0:
         if (formKeyStep1.currentState!.validate()) {
           pageController.nextPage(
-              duration: const Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut);
         }
+
         break;
       case 1:
         if (formKeyStep2.currentState!.validate()) {
           pageController.nextPage(
-              duration: const Duration(milliseconds: 100),
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeInOut);
         }
+
         break;
       case 2:
         if (formKeyStep3.currentState!.validate()) {

@@ -2,7 +2,7 @@
 // import 'dart:convert';
 
 // import 'package:http/http.dart' as http;
-// import 'package:luvpark_get/http/api_keys.dart';
+// import 'package:luvpark/http/api_keys.dart';
 
 // class HttpRequest {
 //   final String api;
@@ -132,8 +132,8 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/http/api_keys.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/http/api_keys.dart';
 
 class HttpRequest {
   final String api;
@@ -148,6 +148,8 @@ class HttpRequest {
         var response = await http.get(
           Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
           headers: {"Content-Type": 'application/json; charset=utf-8'},
+        ).timeout(
+          Duration(seconds: 5),
         );
 
         if (response.statusCode == 200) {

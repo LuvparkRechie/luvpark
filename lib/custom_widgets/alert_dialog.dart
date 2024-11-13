@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 class CustomDialog {
   void internetErrorDialog(
@@ -22,14 +22,13 @@ class CustomDialog {
             text: "Internet Error",
             color: Color(0xFF0D0E0E),
             fontSize: 20,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             maxlines: 1,
           ),
           const SizedBox(height: 15),
           // Paragraph
           CustomParagraph(
             text: "Please check your internet connection and try again.",
-            fontWeight: FontWeight.w600,
             textAlign: TextAlign.center,
           ),
           // Buttons
@@ -70,14 +69,15 @@ class CustomDialog {
             text: "Server Error",
             color: Color(0xFF0D0E0E),
             fontSize: 20,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             maxlines: 1,
           ),
           const SizedBox(height: 15),
           // Paragraph
           CustomParagraph(
-            text: "Error while connecting to server, Please try again.",
-            fontWeight: FontWeight.w600,
+            text:
+                "We're experiencing issues with submitting on the server at the moment."
+                " Please try again later or contact support for assistance.",
             textAlign: TextAlign.center,
           ),
           // Buttons
@@ -136,7 +136,7 @@ class CustomDialog {
                       text: title,
                       color: Color(0xFF0D0E0E),
                       fontSize: 20,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       maxlines: 1,
                     ),
                     const SizedBox(height: 15),
@@ -144,7 +144,6 @@ class CustomDialog {
                     CustomParagraph(
                       text: paragraph,
                       color: Color(0xFF666666),
-                      fontWeight: FontWeight.w600,
                       textAlign: TextAlign.center,
                     ),
                     // Single Button
@@ -192,7 +191,7 @@ class CustomDialog {
             text: title,
             color: Color(0xFF0D0E0E),
             fontSize: 20,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
             maxlines: 1,
           ),
           const SizedBox(height: 15),
@@ -200,7 +199,6 @@ class CustomDialog {
           CustomParagraph(
             text: paragraph,
             color: Color(0xFF666666),
-            fontWeight: FontWeight.w600,
             textAlign: TextAlign.center,
           ),
           // Single Button
@@ -246,13 +244,12 @@ class CustomDialog {
             color: Color(0xFF0D0E0E),
             fontSize: 20,
             maxlines: 1,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w600,
           ),
           const SizedBox(height: 15),
           // Paragraph
           CustomParagraph(
             text: paragraph,
-            fontWeight: FontWeight.w600,
             textAlign: TextAlign.center,
           ),
           // Buttons
@@ -296,7 +293,7 @@ class CustomDialog {
               text: title,
               color: Color(0xFF0D0E0E),
               fontSize: 20,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w600,
               maxlines: 1,
               textAlign: TextAlign.center,
             ),
@@ -310,7 +307,6 @@ class CustomDialog {
                       // Paragraph
                       CustomParagraph(
                         text: paragraph,
-                        fontWeight: FontWeight.w600,
                         textAlign: TextAlign.start,
                       ),
                       // Buttons
@@ -379,7 +375,6 @@ class CustomDialog {
             // Paragraph
             CustomParagraph(
               text: paragraph,
-              fontWeight: FontWeight.w600,
               textAlign: TextAlign.left,
             ),
             // Buttons

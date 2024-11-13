@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_separator.dart';
 import '../../custom_widgets/custom_text.dart';
@@ -56,7 +57,7 @@ class TransactionDetails extends StatelessWidget {
                         fontSize: 20,
                         maxlines: 1,
                         color: Color(0xFF070707),
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     Container(
@@ -66,21 +67,19 @@ class TransactionDetails extends StatelessWidget {
                       child: CustomParagraph(
                         text: "${data[index]["tran_desc"]}",
                         color: Color(0xFF616161),
-                        fontWeight: FontWeight.w400,
                         textAlign: TextAlign.left,
-                        fontSize: 16,
                         minFontSize: 8,
                         maxlines: 1,
                       ),
                     ),
                     Container(
-                      height: 10,
+                      height: 20,
                     ),
                     const MySeparator(
                       color: Color(0xFFD9D9D9),
                     ),
                     Container(
-                      height: 10,
+                      height: 20,
                     ),
                     rowWidget("Date",
                         Variables.formatDateLocal(data[index]["tran_date"])),
@@ -100,7 +99,7 @@ class TransactionDetails extends StatelessWidget {
                     rowWidget("Current Balance",
                         toCurrencyString(data[index]["bal_after"].toString())),
                     Container(
-                      height: 10,
+                      height: 20,
                     ),
                     const MySeparator(
                       color: Color(0xFFD9D9D9),
@@ -115,8 +114,8 @@ class TransactionDetails extends StatelessWidget {
                           child: CustomParagraph(
                             maxlines: 1,
                             minFontSize: 8,
-                            color: Color(0xFF070707),
                             fontSize: 12,
+                            fontWeight: FontWeight.w500,
                             text: "Reference No: ",
                           ),
                         ),
@@ -132,10 +131,9 @@ class TransactionDetails extends StatelessWidget {
                           },
                           child: SelectableText(
                             toolbarOptions: ToolbarOptions(copy: true),
-                            style: TextStyle(
+                            style: paragraphStyle(
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF070707),
-                              fontSize: 12,
+                              color: AppColor.headerColor,
                             ),
                             data[index]["ref_no"].toString(),
                           ),
@@ -150,7 +148,6 @@ class TransactionDetails extends StatelessWidget {
                       onPressed: () {
                         Navigator.of(context).pop();
                       },
-                      btnHeight: 12,
                     ),
                   ],
                 ),
@@ -190,8 +187,7 @@ class TransactionDetails extends StatelessWidget {
         CustomParagraph(
           maxlines: 1,
           minFontSize: 8,
-          fontWeight: FontWeight.w400,
-          color: Color(0xFF070707),
+          color: Color(0xFF616161),
           text: label,
         ),
         Expanded(
@@ -199,7 +195,11 @@ class TransactionDetails extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: CustomParagraph(
               text: value,
-              color: Color(0xFF616161),
+              maxlines: 1,
+              fontWeight: FontWeight.w600,
+              color: AppColor.headerColor,
+              fontSize: 13,
+              minFontSize: 10,
             ),
           ),
         ),

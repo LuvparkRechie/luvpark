@@ -4,13 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/wallet_send/index.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/wallet_send/index.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/scanner.dart';
@@ -340,7 +340,7 @@ class WalletSend extends GetView<WalletSendController> {
                   maxlines: 1,
                   minFontSize: 8,
                   text: "${data["value"]}",
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: walletBalance >= data["value"]
                       ? (data["is_active"] ? Colors.white : Colors.black)
                       : Colors.grey,

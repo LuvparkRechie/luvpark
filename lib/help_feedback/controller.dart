@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/web_view/webview.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/web_view/webview.dart';
 
 import '../functions/functions.dart';
 import '../login/controller.dart';
@@ -74,7 +74,7 @@ class HelpandFeedbackController extends GetxController {
         callback: () async {
           CustomDialog().loadingDialog(Get.context!);
           Get.put(LoginScreenController());
-          final lc = Get.find<LoginScreenController>();
+
           final userData = await Authentication().getUserData2();
 
           Functions.getAccountStatus(userData["mobile_no"], (obj) {

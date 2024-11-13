@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/landing/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/landing/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import '../web_view/webview.dart';
 

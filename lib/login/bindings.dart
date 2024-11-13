@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:luvpark_get/login/controller.dart';
+import 'package:luvpark/login/controller.dart';
 
 class LoginScreenBinding implements Bindings {
   @override

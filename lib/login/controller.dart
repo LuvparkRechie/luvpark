@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/routes/routes.dart';
 
 class LoginScreenController extends GetxController {
   LoginScreenController();

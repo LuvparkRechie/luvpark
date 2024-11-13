@@ -6,9 +6,9 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
 
 class CustomTextField extends StatefulWidget {
   final String? labelText;
@@ -87,13 +87,14 @@ class _CustomTextFieldState extends State<CustomTextField> {
           focusNode: focusNode,
           decoration: InputDecoration(
             errorText: widget.errorText,
-            errorStyle: paragraphStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.normal,
-              fontSize: 10,
-            ),
             filled: widget.isFilled,
             fillColor: widget.filledColor,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(
+                color: AppColor.borderColor,
+              ),
+            ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             focusedBorder: OutlineInputBorder(
@@ -101,12 +102,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 borderSide: BorderSide(color: Color(0xFF0078FF))),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderSide: BorderSide(
+                color: AppColor.borderColor,
+              ),
             ),
             errorBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.all(Radius.circular(12)),
                 borderSide: BorderSide(color: Color(0xFFDF0000))),
-            labelText: widget.title ?? widget.labelText,
-            hintText: widget.labelText,
             suffixIcon: widget.suffixIcon != null
                 ? InkWell(
                     onTap: () {
@@ -123,8 +125,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     child: widget.prefixIcon,
                   )
                 : null,
+            labelText: widget.title ?? widget.labelText,
+            hintText: widget.labelText,
+            hintStyle: paragraphStyle(
+              color: AppColor.hintColor,
+              fontWeight: FontWeight.w400,
+            ),
+            labelStyle: paragraphStyle(
+                fontWeight: FontWeight.w400, color: AppColor.hintColor),
+            floatingLabelStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+            ),
           ),
-          style: paragraphStyle(color: Colors.black),
+          style:
+              paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
           onChanged: (value) {
             widget.onChange!(value);
           },
@@ -188,15 +203,24 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         enabled: widget.isEnabled,
         keyboardType: widget.keyboardType!,
         decoration: InputDecoration(
-          errorStyle: paragraphStyle(),
+          isDense: true,
           labelText: widget.labelText,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide(
+              color: AppColor.borderColor,
+            ),
+          ),
           focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide(color: Color(0xFF0078FF))),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderSide: BorderSide(
+              color: AppColor.borderColor,
+            ),
           ),
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
@@ -240,9 +264,20 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               ],
             ),
           ),
+
+          hintText: widget.labelText,
+          hintStyle: paragraphStyle(
+            color: AppColor.hintColor,
+            fontWeight: FontWeight.w400,
+          ),
+          labelStyle: paragraphStyle(
+              fontWeight: FontWeight.w400, color: AppColor.hintColor),
+          floatingLabelStyle: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 15,
+          ),
         ),
-        style: paragraphStyle(color: Colors.black),
-        onChanged: widget.onChange,
+        style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
         onTap: widget.isEnabled ? widget.onTap : null,
         validator: widget.validator ??
             (value) {
@@ -260,79 +295,6 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
 
               return null;
             },
-      ),
-    );
-  }
-}
-
-class CustomDropdown extends StatefulWidget {
-  final String? ddValue;
-  final List ddData;
-  final String labelText;
-  final ValueChanged<String>? onChange;
-  final Function? onTap;
-  final FormFieldValidator<String>? validator;
-  const CustomDropdown(
-      {super.key,
-      required this.labelText,
-      required this.ddData,
-      this.onChange,
-      this.validator,
-      required this.ddValue,
-      this.onTap});
-
-  @override
-  State<CustomDropdown> createState() => _CustomDropdownState();
-}
-
-class _CustomDropdownState extends State<CustomDropdown> {
-  final numericRegex = RegExp(r'[0-9]');
-  final upperCaseRegex = RegExp(r'[A-Z]');
-  FocusNode focusNode = FocusNode();
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10.0, bottom: 10),
-      child: IntrinsicHeight(
-        child: DropdownButtonFormField(
-          dropdownColor: Colors.white,
-          focusNode: focusNode,
-          decoration: InputDecoration(
-              floatingLabelStyle: TextStyle(fontWeight: FontWeight.w600),
-              contentPadding:
-                  const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-              focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(12)),
-                  borderSide: BorderSide(color: Color(0xFF0078FF))),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(7.0),
-              ),
-              labelText: widget.labelText,
-              labelStyle: paragraphStyle()),
-          style: paragraphStyle(color: Colors.black),
-          value: widget.ddValue,
-          isExpanded: true,
-          onChanged: (value) {
-            widget.onChange!(value!);
-          },
-          validator: widget.validator,
-          items: widget.ddData.map((item) {
-            return DropdownMenuItem(
-                value: item['value'].toString(),
-                child: AutoSizeText(
-                  item['text'],
-                  style: paragraphStyle(color: Colors.black),
-                  overflow: TextOverflow.ellipsis,
-                  maxFontSize: 15,
-                  maxLines: 2,
-                ));
-          }).toList(),
-        ),
       ),
     );
   }
@@ -369,4 +331,66 @@ class _CustomButtonCloseState extends State<CustomButtonClose> {
       ),
     );
   }
+}
+
+DropdownButtonFormField<String> customDropdown({
+  required String labelText,
+  required List items,
+  required String? selectedValue,
+  required ValueChanged<String?> onChanged,
+  String? Function(String?)? validator,
+}) {
+  return DropdownButtonFormField<String>(
+    decoration: InputDecoration(
+      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+      enabledBorder: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: AppColor.borderColor,
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+      ),
+      focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderSide: BorderSide(color: Color(0xFF0078FF))),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(15),
+        borderSide: BorderSide(
+          color: AppColor.borderColor,
+        ),
+      ),
+      labelText: labelText,
+      hintStyle: paragraphStyle(
+        color: AppColor.hintColor,
+        fontWeight: FontWeight.w400,
+      ),
+      labelStyle: paragraphStyle(
+          fontWeight: FontWeight.w400, color: AppColor.hintColor),
+      floatingLabelStyle: TextStyle(
+        fontWeight: FontWeight.w400,
+        fontSize: 15,
+      ),
+    ),
+    style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w400),
+    items: items.map((item) {
+      return DropdownMenuItem(
+          value: item['value'].toString(),
+          child: AutoSizeText(
+            item['text'].toString().toUpperCase(),
+            style: paragraphStyle(
+                color: Colors.black, fontWeight: FontWeight.w500),
+            overflow: TextOverflow.ellipsis,
+            maxFontSize: 16,
+            maxLines: 2,
+          ));
+    }).toList(),
+    value: selectedValue,
+    onChanged: onChanged,
+    validator: validator,
+    isExpanded: true,
+    focusNode: FocusNode(),
+    icon: Icon(Icons.arrow_drop_down,
+        color: items.isEmpty ? Colors.grey : Colors.black),
+    dropdownColor: Colors.white,
+    autovalidateMode: AutovalidateMode.onUserInteraction,
+  );
 }

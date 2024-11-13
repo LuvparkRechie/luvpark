@@ -3,11 +3,11 @@ import 'dart:async';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:luvpark_get/booking/utils/extend.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
+import 'package:luvpark/booking/utils/extend.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
 
 import '../../../auth/authentication.dart';
 

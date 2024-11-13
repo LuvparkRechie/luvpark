@@ -4,11 +4,11 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/no_data_found.dart';
-import 'package:luvpark_get/parking_areas/controller.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/no_data_found.dart';
+import 'package:luvpark/parking_areas/controller.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/showup_animation.dart';
@@ -69,10 +69,15 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                           hintText: "Search parking zone/address",
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.only(left: 10),
-                          hintStyle:
-                              paragraphStyle(fontWeight: FontWeight.w600),
+                          hintStyle: paragraphStyle(
+                              color: AppColor.hintColor,
+                              fontWeight: FontWeight.w500),
+                          labelStyle: paragraphStyle(
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.hintColor),
                         ),
-                        style: paragraphStyle(),
+                        style: paragraphStyle(
+                            color: Colors.black, fontWeight: FontWeight.w500),
                         onChanged: (String value) async {
                           ct.onSearch(value);
                         },
@@ -85,7 +90,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
             Container(height: 20),
             const CustomParagraph(
               text: "Nearest Parking",
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
             Container(height: 10),
             Obx(
@@ -201,8 +206,9 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                           fontSize: 16,
                                                           maxlines: 1,
                                                           fontWeight:
-                                                              FontWeight.w800,
+                                                              FontWeight.w700,
                                                         ),
+                                                        Container(height: 5),
                                                         CustomParagraph(
                                                           text: ct.searchedZone[
                                                               index]["address"],
@@ -210,10 +216,6 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          color:
-                                                              Color(0xFF1E1E1E),
                                                         ),
                                                       ],
                                                     ),
@@ -291,7 +293,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                             ? "Open"
                                                             : "Close",
                                                         fontWeight:
-                                                            FontWeight.w700,
+                                                            FontWeight.w500,
                                                         maxlines: 1,
                                                         fontSize: 12,
                                                         minFontSize: 10,
@@ -336,7 +338,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                         text:
                                                             '${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString())} ${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
                                                         fontWeight:
-                                                            FontWeight.w700,
+                                                            FontWeight.w500,
                                                         maxlines: 1,
                                                         fontSize: 12,
                                                         minFontSize: 10,
@@ -372,9 +374,9 @@ class ParkingAreas extends GetView<ParkingAreasController> {
         Flexible(
           child: CustomParagraph(
             text: text,
-            fontWeight: FontWeight.w700,
             maxlines: 1,
             fontSize: 12,
+            fontWeight: FontWeight.w500,
             minFontSize: 10,
           ),
         )

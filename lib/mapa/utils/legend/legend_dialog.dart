@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 import '../../../custom_widgets/app_color.dart';
 
@@ -135,8 +135,8 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
           style: TextStyle(
             color: Color(0xFF1E1E1E),
             fontSize: 20,
-            fontFamily: 'Manrope',
-            fontWeight: FontWeight.w800,
+            fontFamily: 'openSans',
+            fontWeight: FontWeight.w700,
           ),
         ),
         SizedBox(height: 8),
@@ -146,7 +146,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
           style: TextStyle(
             color: Color(0xFF616161),
             fontSize: 14,
-            fontFamily: 'Manrope',
+            fontFamily: 'openSans',
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -180,22 +180,15 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Private Parking',
-                            style: TextStyle(
-                              color: Color(0xFF1E1E1E),
-                              fontSize: 14,
-                              fontFamily: 'Manrope',
-                              fontWeight: FontWeight.w700,
-                            ),
+                          CustomTitle(
+                            text: "Private Parking",
+                            fontSize: 16,
                           ),
                           Container(height: 5),
                           CustomParagraph(
                             text:
                                 'These parking spaces are located within private establishments.',
-                            color: Color(0xFF616161),
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
                           ),
                         ],
                       ),
@@ -220,22 +213,15 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Street Parking',
-                            style: TextStyle(
-                              color: Color(0xFF1E1E1E),
-                              fontSize: 14,
-                              fontFamily: 'Manrope',
-                              fontWeight: FontWeight.w700,
-                            ),
+                          CustomTitle(
+                            text: "Commercial Parking",
+                            fontSize: 16,
                           ),
                           Container(height: 5),
                           CustomParagraph(
                             text:
                                 'Discover parking options in public\nareas, including street spaces.',
-                            color: Color(0xFF616161),
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
                           ),
                         ],
                       ),
@@ -255,22 +241,15 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Commercial Parking',
-                            style: TextStyle(
-                              color: Color(0xFF1E1E1E),
-                              fontSize: 14,
-                              fontFamily: 'Manrope',
-                              fontWeight: FontWeight.w700,
-                            ),
+                          CustomTitle(
+                            text: "Street Parking",
+                            fontSize: 16,
                           ),
                           Container(height: 5),
                           CustomParagraph(
                             text:
                                 'Parking areas are located in business districts and commercial zones.',
-                            color: Color(0xFF616161),
                             fontSize: 12,
-                            fontWeight: FontWeight.w500,
                           ),
                         ],
                       ),
@@ -298,8 +277,8 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
           style: TextStyle(
             color: Color(0xFF1E1E1E),
             fontSize: 20,
-            fontFamily: 'Manrope',
-            fontWeight: FontWeight.w800,
+            fontFamily: 'openSans',
+            fontWeight: FontWeight.w700,
           ),
         ),
         SizedBox(height: 8),
@@ -309,7 +288,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
           style: TextStyle(
             color: Color(0xFF616161),
             fontSize: 14,
-            fontFamily: 'Manrope',
+            fontFamily: 'openSans',
             fontWeight: FontWeight.w400,
           ),
         ),
@@ -356,7 +335,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                             style: TextStyle(
                               color: Color(0xFF1E1E1E),
                               fontSize: 12,
-                              fontFamily: 'Manrope',
+                              fontFamily: 'openSans',
                               fontWeight: FontWeight.w700,
                             ),
                           )
@@ -391,7 +370,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                             style: TextStyle(
                               color: Color(0xFF1E1E1E),
                               fontSize: 12,
-                              fontFamily: 'Manrope',
+                              fontFamily: 'openSans',
                               fontWeight: FontWeight.w700,
                             ),
                           )
@@ -430,7 +409,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                             style: TextStyle(
                               color: Color(0xFF1E1E1E),
                               fontSize: 12,
-                              fontFamily: 'Manrope',
+                              fontFamily: 'openSans',
                               fontWeight: FontWeight.w700,
                             ),
                           )
@@ -466,7 +445,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                             style: TextStyle(
                               color: Color(0xFF1E1E1E),
                               fontSize: 12,
-                              fontFamily: 'Manrope',
+                              fontFamily: 'openSans',
                               fontWeight: FontWeight.w700,
                             ),
                           )

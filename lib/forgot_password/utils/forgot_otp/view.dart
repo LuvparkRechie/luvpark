@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
 import 'package:pinput/pinput.dart';
 
 import 'controller.dart';
@@ -85,7 +85,7 @@ class ForgotPassOtp extends GetView<ForgotPassOtpController> {
                               TextSpan(
                                   text:
                                       "We have sent an OTP to your registered\nmobile number",
-                                  style: GoogleFonts.manrope(
+                                  style: GoogleFonts.openSans(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14,
                                     color: AppColor.paragraphColor,
@@ -115,11 +115,10 @@ class ForgotPassOtp extends GetView<ForgotPassOtpController> {
                       child: Pinput(
                         length: 6,
                         controller: controller.pinController,
-                        androidSmsAutofillMethod:
-                            AndroidSmsAutofillMethod.smsUserConsentApi,
-                        listenForMultipleSmsOnAndroid: true,
                         defaultPinTheme: getDefaultPinTheme(),
                         hapticFeedbackType: HapticFeedbackType.lightImpact,
+                        androidSmsAutofillMethod:
+                            AndroidSmsAutofillMethod.smsUserConsentApi,
                         onCompleted: (pin) {
                           if (pin.length == 6) {
                             controller.onInputChanged(pin);
@@ -199,7 +198,7 @@ class ForgotPassOtp extends GetView<ForgotPassOtpController> {
                               controller.seconds.value != 0)
                             CustomLinkLabel(
                               text:
-                                  "(${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
+                                  " (${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
                             ),
                         ],
                       ),

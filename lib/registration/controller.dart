@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
 
 class RegistrationController extends GetxController
     with GetSingleTickerProviderStateMixin {

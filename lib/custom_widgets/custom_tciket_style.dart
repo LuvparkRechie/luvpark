@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
 
 class TicketStyle extends StatelessWidget {
   final Color? dtColor;

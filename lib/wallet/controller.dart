@@ -4,10 +4,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
 
 import '../custom_widgets/custom_text.dart';
 
@@ -83,12 +83,11 @@ class WalletController extends GetxController
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CustomParagraph(
+                CustomTitle(
                   text: "Verification incomplete",
                   textAlign: TextAlign.start,
                   fontSize: 16,
                   color: Colors.white,
-                  fontWeight: FontWeight.w800,
                 ),
                 SizedBox(height: 5),
                 CustomParagraph(

@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 class CustomButton extends StatelessWidget {
   final String text;
@@ -12,6 +12,7 @@ class CustomButton extends StatelessWidget {
   final Color? bordercolor;
   final Color? textColor;
   final double? borderRadius;
+  final double? btnHeight;
   const CustomButton(
       {super.key,
       required this.text,
@@ -21,7 +22,7 @@ class CustomButton extends StatelessWidget {
       this.textColor,
       this.loading,
       this.borderRadius = 7,
-      int? btnHeight});
+      this.btnHeight});
 
   @override
   Widget build(BuildContext context) {
@@ -30,6 +31,7 @@ class CustomButton extends StatelessWidget {
         onPressed();
       },
       child: Container(
+        height: btnHeight,
         width: MediaQuery.of(context).size.width,
         decoration: BoxDecoration(
           color: btnColor ?? AppColor.primaryColor,
@@ -40,10 +42,11 @@ class CustomButton extends StatelessWidget {
           padding: const EdgeInsets.all(13),
           child: Center(
             child: loading == null
-                ? CustomLinkLabel(
+                ? CustomParagraph(
                     text: text,
                     textAlign: TextAlign.center,
                     color: textColor ?? Colors.white,
+                    fontWeight: FontWeight.w500,
                     maxlines: 1,
                   )
                 : loading!
@@ -55,11 +58,12 @@ class CustomButton extends StatelessWidget {
                           strokeWidth: 2,
                         ),
                       )
-                    : CustomLinkLabel(
+                    : CustomParagraph(
                         text: text,
                         maxlines: 1,
                         textAlign: TextAlign.center,
                         color: textColor ?? Colors.white,
+                        fontWeight: FontWeight.w500,
                       ),
           ),
         ),
@@ -153,9 +157,9 @@ class CustomDialogButton extends StatelessWidget {
           text: text,
           color: txtColor ?? Color(0xFF0078FF),
           fontSize: 14,
-          fontWeight: FontWeight.w700,
           letterSpacing: 0.50,
           textAlign: TextAlign.center,
+          fontWeight: FontWeight.w500,
           maxlines: 1,
         ),
       ),

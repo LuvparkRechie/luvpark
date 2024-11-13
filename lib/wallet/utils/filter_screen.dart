@@ -3,9 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/wallet/controller.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/wallet/controller.dart';
 
 import '../../custom_widgets/custom_text.dart';
 

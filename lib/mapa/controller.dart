@@ -10,17 +10,17 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/location_auth/location_auth.dart';
-import 'package:luvpark_get/mapa/utils/legend/legend_dialog.dart';
-import 'package:luvpark_get/mapa/utils/target.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/location_auth/location_auth.dart';
+import 'package:luvpark/mapa/utils/legend/legend_dialog.dart';
+import 'package:luvpark/mapa/utils/target.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
@@ -865,6 +865,7 @@ class DashboardMapController extends GetxController
         element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
         return element;
       }).toList();
+      print("orientation ${markerData[0]["park_orientation"]}");
       if (markerData[0]["park_orientation"] != null) {
         item.insert(0, {
           "zone_amenity_id": 0,

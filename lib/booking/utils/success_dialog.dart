@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/booking/utils/rateus.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_tciket_style.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/booking/utils/rateus.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class BookingDialog extends StatefulWidget {

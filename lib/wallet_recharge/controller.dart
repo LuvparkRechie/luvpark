@@ -8,6 +8,7 @@ class WalletRechargeController extends GetxController
   WalletRechargeController();
   final parameter = Get.arguments;
   Timer? _debounce;
+  final GlobalKey<FormState> formKeyBuyLoad = GlobalKey<FormState>();
   TextEditingController tokenAmount = TextEditingController();
   RxBool isActiveBtn = false.obs;
   RxBool isShowKeyboard = false.obs;

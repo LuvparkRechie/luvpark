@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
-import 'package:luvpark_get/forgot_password/controller.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
+import 'package:luvpark/forgot_password/controller.dart';
 
 class ForgotPassword extends GetView<ForgotPasswordController> {
   const ForgotPassword({super.key});

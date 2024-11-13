@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/variables.dart';

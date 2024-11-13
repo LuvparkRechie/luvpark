@@ -1,7 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
 
 class CustomTitle extends StatelessWidget {
   final String text;
@@ -71,7 +71,7 @@ class CustomParagraph extends StatelessWidget {
     this.fontSize = 14.0,
     this.color,
     this.height,
-    this.fontWeight = FontWeight.w600,
+    this.fontWeight = FontWeight.w400,
     this.fontStyle = FontStyle.normal,
     this.letterSpacing = 0.0,
     this.maxlines,
@@ -155,7 +155,7 @@ TextStyle linkStyle({
   FontStyle fontStyle = FontStyle.normal,
   double letterSpacing = 0.0,
 }) {
-  return GoogleFonts.manrope(
+  return GoogleFonts.openSans(
     fontSize: fontSize,
     color: color ?? AppColor.primaryColor,
     fontWeight: fontWeight,
@@ -168,15 +168,15 @@ TextStyle linkStyle({
 TextStyle paragraphStyle({
   double fontSize = 14.0,
   Color? color, // Default value if not provided
-  FontWeight fontWeight = FontWeight.w600,
+  FontWeight? fontWeight = FontWeight.w400,
   FontStyle fontStyle = FontStyle.normal,
   double letterSpacing = 0.0,
   double? height,
   TextDecoration? textDecoration,
 }) {
-  return GoogleFonts.manrope(
+  return GoogleFonts.roboto(
     fontSize: fontSize,
-    color: color ?? AppColor.paragraphColor,
+    color: color ?? AppColor.headerColor,
     fontWeight: fontWeight,
     fontStyle: fontStyle,
     letterSpacing: letterSpacing,
@@ -195,7 +195,7 @@ TextStyle titleStyle({
   double wordSpacing = 2.0,
   double? height,
 }) {
-  return GoogleFonts.manrope(
+  return GoogleFonts.openSans(
     fontSize: fontSize,
     color: color ?? AppColor.titleColor,
     fontWeight: fontWeight,

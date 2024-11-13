@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:rive/rive.dart';
 
 class NoInternetConnected extends StatefulWidget {
@@ -62,7 +62,7 @@ class _NoInternetConnectedState extends State<NoInternetConnected> {
           ),
           const CustomParagraph(
             text: "No Internet Connection",
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             fontSize: 22,
             color: Color(0xFF1E1E1E),
             letterSpacing: -0.408,

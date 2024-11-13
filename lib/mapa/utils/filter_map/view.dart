@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/custom_widgets/page_loader.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
 
 import '../../../custom_widgets/alert_dialog.dart';
 import '../../../http/api_keys.dart';
@@ -390,10 +391,10 @@ class _FilterMapState extends State<FilterMap> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const CustomParagraph(
+                                CustomParagraph(
                                   text: "Vehicle Type",
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.headerColor,
                                 ),
                                 Container(height: 10),
                                 SingleChildScrollView(
@@ -409,10 +410,11 @@ class _FilterMapState extends State<FilterMap> {
                                 ),
                                 Container(height: 10),
                                 //PARKING TYPE
-                                const CustomParagraph(
+
+                                CustomParagraph(
                                   text: "Parking Type",
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.headerColor,
                                 ),
                                 Container(height: 10),
                                 SingleChildScrollView(
@@ -427,10 +429,10 @@ class _FilterMapState extends State<FilterMap> {
                                   ),
                                 ),
                                 Container(height: 10),
-                                const CustomParagraph(
+                                CustomParagraph(
                                   text: "Radius",
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.headerColor,
                                 ),
                                 //RADIUS
                                 Row(
@@ -468,12 +470,12 @@ class _FilterMapState extends State<FilterMap> {
                                   ],
                                 ),
                                 //OVERNIGHT PARKING
-                                const CustomParagraph(
+                                Container(height: 10),
+
+                                CustomParagraph(
                                   text: "Overnight Parking",
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
-                                  letterSpacing: -0.408,
-                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.headerColor,
                                 ),
                                 Container(height: 10),
                                 SingleChildScrollView(
@@ -502,7 +504,8 @@ class _FilterMapState extends State<FilterMap> {
                                             decoration: BoxDecoration(
                                               color: selectedOvp == index
                                                   ? const Color(0xFFEDF7FF)
-                                                  : const Color(0xFFE6EBF0),
+                                                  : Color.fromARGB(
+                                                      255, 242, 245, 247),
                                               borderRadius:
                                                   const BorderRadius.all(
                                                 Radius.circular(
@@ -511,11 +514,11 @@ class _FilterMapState extends State<FilterMap> {
                                             ),
                                             child: CustomParagraph(
                                               text: items[index]["text"],
-                                              fontSize: 14,
+                                              fontSize: 12,
                                               color: selectedOvp == index
                                                   ? const Color(0xFF0078FF)
-                                                  : const Color(0xFFB6C1CC),
-                                              fontWeight: FontWeight.w600,
+                                                  : Color.fromARGB(
+                                                      255, 165, 176, 187),
                                             ),
                                           ),
                                         ),
@@ -531,10 +534,10 @@ class _FilterMapState extends State<FilterMap> {
                                 Container(height: 10),
 
                                 //Amenities
-                                const CustomParagraph(
+                                CustomParagraph(
                                   text: "Amenities",
-                                  color: Colors.black87,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.headerColor,
                                 ),
                                 Container(height: 10),
                                 Row(
@@ -612,8 +615,8 @@ class _FilterMapState extends State<FilterMap> {
               setState(() {});
             },
             child: SizedBox(
-              width: MediaQuery.of(Get.context!).size.width / 4,
-              height: MediaQuery.of(Get.context!).size.width / 4,
+              width: MediaQuery.of(Get.context!).size.width / 3.8,
+              height: MediaQuery.of(Get.context!).size.width / 3.8,
               child: Column(
                 children: [
                   SvgPicture.asset(
@@ -626,12 +629,12 @@ class _FilterMapState extends State<FilterMap> {
                     width: 40.0,
                     height: 40.0,
                   ),
-                  const SizedBox(height: 5.0),
+                  const SizedBox(height: 10.0),
                   CustomParagraph(
                     minFontSize: 8,
                     maxlines: 2,
                     textAlign: TextAlign.center,
-                    fontSize: 10,
+                    fontSize: 12,
                     text: vhTypeData[i]["text"].toString(),
                     color: sfVt.contains(vhTypeData[i]["value"].toString())
                         ? Colors.black
@@ -694,8 +697,8 @@ class _FilterMapState extends State<FilterMap> {
                   setState(() {});
                 },
                 child: SizedBox(
-                  width: MediaQuery.of(Get.context!).size.width / 4,
-                  height: MediaQuery.of(Get.context!).size.width / 4,
+                  width: MediaQuery.of(Get.context!).size.width / 3.8,
+                  height: MediaQuery.of(Get.context!).size.width / 3.8,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10.0),
                     child: Column(
@@ -709,11 +712,11 @@ class _FilterMapState extends State<FilterMap> {
                           width: 40.0,
                           height: 40.0,
                         ),
-                        const SizedBox(height: 5.0),
+                        const SizedBox(height: 10.0),
                         CustomParagraph(
                           minFontSize: 8, maxlines: 2,
                           textAlign: TextAlign.center,
-                          fontSize: 10,
+                          fontSize: 12,
                           text: capitalizeWords(
                             parkTypeData[i]["parking_type_name"].toString(),
                           ),
@@ -772,8 +775,8 @@ class _FilterMapState extends State<FilterMap> {
           children: [
             for (int i = 0; i < amenitiesData.length; i++)
               SizedBox(
-                width: MediaQuery.of(Get.context!).size.width / 4,
-                height: MediaQuery.of(Get.context!).size.width / 4,
+                width: MediaQuery.of(Get.context!).size.width / 3.8,
+                height: MediaQuery.of(Get.context!).size.width / 3.8,
                 child: GestureDetector(
                   onTap: () {
                     bool isSelected = sfAmen.contains(
@@ -808,7 +811,7 @@ class _FilterMapState extends State<FilterMap> {
                           width: 40.0,
                           height: 40.0,
                         ),
-                        const SizedBox(height: 5.0),
+                        const SizedBox(height: 10.0),
                         CustomParagraph(
                           minFontSize: 8,
                           maxlines: 2,
@@ -816,8 +819,7 @@ class _FilterMapState extends State<FilterMap> {
                           text: _capitalTextAmen(
                             amenitiesData[i]["parking_amenity_code"].toString(),
                           ),
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 12,
                           color: sfAmen.contains(amenitiesData[i]
                                       ["parking_amenity_code"]
                                   .toString())

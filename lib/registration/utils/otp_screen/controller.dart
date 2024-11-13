@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/login/controller.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/login/controller.dart';
 
 import '../../../http/api_keys.dart';
 import 'view.dart';

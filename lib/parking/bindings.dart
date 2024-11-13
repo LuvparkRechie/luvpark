@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:luvpark_get/parking/index.dart';
+import 'package:luvpark/parking/index.dart';
 
 class ParkingBinding implements Bindings {
   @override

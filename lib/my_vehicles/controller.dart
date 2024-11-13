@@ -5,13 +5,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/my_vehicles/utils/add_vehicle.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/my_vehicles/utils/add_vehicle.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:path/path.dart' as paths; // Import the path package
 
 import '../custom_widgets/variables.dart';
 import '../sqlite/vehicle_brands_table.dart';
@@ -55,8 +56,10 @@ class MyVehiclesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _updateMaskFormatter("");
-    getMyVehicle();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _updateMaskFormatter("");
+      getMyVehicle();
+    });
   }
 
   @override
@@ -85,6 +88,7 @@ class MyVehiclesController extends GetxController {
 
     HttpRequest(api: api).get().then((myVehicles) async {
       isLoadingPage.value = false;
+      print("myVehicles $myVehicles");
       if (myVehicles == "No Internet") {
         isNetConn.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -155,7 +159,9 @@ class MyVehiclesController extends GetxController {
         });
       }
 
-      Get.to(const AddVehicles());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Get.to(const AddVehicles());
+      });
     });
   }
 
@@ -243,13 +249,15 @@ class MyVehiclesController extends GetxController {
 
   void takePhoto(ImageSource source, bool isOr) async {
     final pickedFile = await picker.pickImage(
-      source: source,
-      imageQuality: Platform.isIOS ? 18 : 20,
-      maxWidth: Platform.isIOS ? 300 : 400,
-    );
+        source: source,
+        imageQuality: Platform.isIOS ? 18 : 20,
+        maxWidth: Platform.isIOS ? 300 : 400,
+        requestFullMetadata: true);
 
     imageFile = pickedFile != null ? File(pickedFile.path) : null;
-
+    String fileName =
+        paths.basename(pickedFile!.path); // Get the file name from the path
+    print("Real file name: $fileName"); // Print the file name
     if (imageFile != null) {
       state = AppState.picked;
       final data = await imageFile!.readAsBytes();
@@ -351,5 +359,43 @@ class MyVehiclesController extends GetxController {
         }
       });
     });
+  }
+
+  void subscrbeVh(String scQr, String plateNo) async {
+    CustomDialog().loadingDialog(Get.context!);
+    int? lpId = await Authentication().getUserId();
+    dynamic param = {
+      "qr_code": scQr,
+      "luvpay_id": lpId,
+      "vehicle_plate_no": plateNo
+    };
+    print("param $param");
+    final returnPost =
+        await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
+            .postBody();
+    print("returnPost $returnPost");
+    if (returnPost == "No Internet") {
+      Get.back();
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+    } else if (returnPost == null) {
+      Get.back();
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+    } else if (returnPost["success"] == 'N') {
+      Get.back();
+      CustomDialog().errorDialog(Get.context!, "Error", returnPost["msg"], () {
+        Get.back();
+      });
+    } else {
+      Get.back();
+      onRefresh();
+      CustomDialog().successDialog(
+          Get.context!, "Success", returnPost["msg"], "Okay", () {
+        Get.back();
+      });
+    }
   }
 }

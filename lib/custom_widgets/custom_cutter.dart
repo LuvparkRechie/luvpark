@@ -1,8 +1,5 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 
-import 'app_color.dart';
 import 'flex_widget.dart';
 
 class LineCutter extends StatelessWidget {

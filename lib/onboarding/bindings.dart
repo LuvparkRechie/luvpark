@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:luvpark_get/onboarding/controller.dart';
+import 'package:luvpark/onboarding/controller.dart';
 
 class OnboardingBinding implements Bindings {
   @override

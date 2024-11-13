@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/voice_search/controller.dart';
+import 'package:luvpark/voice_search/controller.dart';
 
 class VoiceSearchPopup extends StatelessWidget {
   const VoiceSearchPopup({super.key});
@@ -9,7 +9,6 @@ class VoiceSearchPopup extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetBuilder<VoiceSearchController>(
       init: VoiceSearchController(),
-      
       builder: (controller) {
         return AlertDialog(
           shape: RoundedRectangleBorder(

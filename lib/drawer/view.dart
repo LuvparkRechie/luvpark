@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/mapa/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/mapa/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import '../mapa/utils/legend/legend_dialog.dart';
 
@@ -85,16 +85,8 @@ class CustomDrawer extends GetView<DashboardMapController> {
                                   minFontSize: 8,
                                   overflow: TextOverflow.ellipsis,
                                 )
-                              : CustomParagraph(
+                              : CustomTitle(
                                   text: "Not Verified",
-                                  color: Colors.black,
-                                  fontWeight: FontWeight.w700,
-                                  fontStyle: FontStyle.normal,
-                                  textAlign: TextAlign.center,
-                                  fontSize: 16,
-                                  maxlines: 1,
-                                  minFontSize: 8,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                           OutlinedButton(
                             onPressed: () {
@@ -117,9 +109,8 @@ class CustomDrawer extends GetView<DashboardMapController> {
                               text: "View Profile",
                               fontSize: 14,
                               fontStyle: FontStyle.normal,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w500,
                               textAlign: TextAlign.center,
-                              letterSpacing: -0.408,
                               color: AppColor.primaryColor,
                             ),
                           ),
@@ -144,14 +135,14 @@ class CustomDrawer extends GetView<DashboardMapController> {
                         minLeadingWidth: 18,
                         leading: Icon(
                           LucideIcons.car,
-                          color: Colors.black,
+                          color: AppColor.headerColor,
                         ),
-                        title: const CustomParagraph(
+                        title: CustomParagraph(
                           text: "My Parking",
                           fontSize: 16,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1C1C1E),
+                          color: AppColor.headerColor,
                         ),
                         onTap: () {
                           Get.toNamed(Routes.parking, arguments: "D");
@@ -164,14 +155,14 @@ class CustomDrawer extends GetView<DashboardMapController> {
                         //     color: const Color(0xFF000000)),
                         leading: Icon(
                           LucideIcons.walletCards,
-                          color: const Color.fromARGB(221, 32, 32, 32),
+                          color: AppColor.headerColor,
                         ),
-                        title: const CustomParagraph(
+                        title: CustomParagraph(
                           text: "Wallet",
                           fontSize: 16,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1C1C1E),
+                          color: AppColor.headerColor,
                         ),
 
                         onTap: () async {
@@ -187,7 +178,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                           children: [
                             Icon(
                               LucideIcons.messageSquare,
-                              color: const Color.fromARGB(221, 32, 32, 32),
+                              color: AppColor.headerColor,
                             ),
                             Visibility(
                               visible: controller.unreadMsg.value != 0,
@@ -204,7 +195,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                                     "${controller.unreadMsg.value}",
                                     style: TextStyle(
                                         color: Colors.white,
-                                        fontFamily: "Manrope",
+                                        fontFamily: "openSans",
                                         fontWeight: FontWeight.w600),
                                     maxLines: 1,
                                   ),
@@ -213,12 +204,12 @@ class CustomDrawer extends GetView<DashboardMapController> {
                             )
                           ],
                         ),
-                        title: const CustomParagraph(
+                        title: CustomParagraph(
                           text: "Messages",
                           fontSize: 16,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1C1C1E),
+                          color: AppColor.headerColor,
                         ),
                         onTap: () async {
                           Get.toNamed(Routes.message);
@@ -229,14 +220,14 @@ class CustomDrawer extends GetView<DashboardMapController> {
                         minLeadingWidth: 18,
                         leading: Icon(
                           LucideIcons.info,
-                          color: Colors.black,
+                          color: AppColor.headerColor,
                         ),
-                        title: const CustomParagraph(
+                        title: CustomParagraph(
                           text: "Help & Feedback",
                           fontSize: 16,
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF1C1C1E),
+                          color: AppColor.headerColor,
                         ),
                         onTap: () {
                           Get.toNamed(Routes.helpfeedback);
@@ -275,8 +266,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                       ),
                       subtitle: CustomParagraph(
                         text: "Parking Icons, Zones etc.",
-                        letterSpacing: -0.408,
-                        fontWeight: FontWeight.w600,
+                        maxlines: 1,
                       ),
                       onTap: () {
                         Get.back();

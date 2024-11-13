@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
 
 import '../routes/routes.dart';
 
@@ -25,7 +25,7 @@ class ParkingController extends GetxController
   bool isAllowToSync = true;
   RxInt tabIndex = 0.obs;
 
-  RxBool isLoading = false.obs;
+  RxBool isLoading = true.obs;
   ParkingController();
 
   @override
@@ -40,8 +40,8 @@ class ParkingController extends GetxController
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onRefresh();
+      streamData();
     });
-    streamData();
   }
 
   @override
@@ -82,7 +82,6 @@ class ParkingController extends GetxController
 
   //Get Reserve Data
   Future<void> getReserveData(String status) async {
-    isLoading.value = true;
     DateTime now = await Functions.getTimeNow();
     Functions.getUserBalance2(Get.context!, (userData) async {
       if (!userData[0]["has_net"]) {

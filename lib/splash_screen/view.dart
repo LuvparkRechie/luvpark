@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/login/controller.dart';
-import 'package:luvpark_get/splash_screen/controller.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
+import 'package:luvpark/login/controller.dart';
+import 'package:luvpark/splash_screen/controller.dart';
 
 class SplashScreen extends GetView<SplashController> {
   const SplashScreen({super.key});

@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:luvpark_get/registration/controller.dart';
+import 'package:luvpark/registration/controller.dart';
 
 class RegistrationBinding implements Bindings {
   @override

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/routes/routes.dart';
-import 'package:luvpark_get/web_view/webview.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/routes/routes.dart';
+import 'package:luvpark/web_view/webview.dart';
 
 import 'controller.dart';
 
@@ -18,14 +18,55 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
-      appBar: const CustomAppbar(title: ""),
+      appBar: AppBar(
+        toolbarHeight: 0,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+      ),
       body: StretchingOverscrollIndicator(
         axisDirection: AxisDirection.down,
         child: ScrollConfiguration(
           behavior: ScrollBehavior().copyWith(overscroll: false),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Container(height: 10),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: InkWell(
+                  onTap: () {
+                    Get.back();
+                  },
+                  child: Container(
+                      padding: const EdgeInsets.all(10),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: ShapeDecoration(
+                        color: Color(0xFF0078FF),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(43),
+                        ),
+                        shadows: [
+                          BoxShadow(
+                            color: Color(0x0C000000),
+                            blurRadius: 15,
+                            offset: Offset(0, 5),
+                            spreadRadius: 0,
+                          )
+                        ],
+                      ),
+                      child: Icon(
+                        LucideIcons.arrowLeft,
+                        color: Colors.white,
+                        size: 16,
+                      )),
+                ),
+              ),
+              Container(height: 20),
               Column(
                 children: [
                   Container(
@@ -58,10 +99,7 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                     children: [
                       CustomTitle(
                         text: "Help and Feedback",
-                        fontSize: 16,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.408,
                         color: Color(0xFF1C1C1E),
                       ),
                     ],
@@ -93,13 +131,10 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                         text: "About Us",
                         fontSize: 14,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.408,
                       ),
                       subtitle: const CustomParagraph(
                         text:
                             "Know the meaning and purpose of the application.",
-                        letterSpacing: -0.408,
                         fontSize: 12,
                       ),
                       trailing: const Icon(Icons.chevron_right_sharp,
@@ -126,13 +161,10 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                         text: "FAQs",
                         fontSize: 14,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.408,
                       ),
                       subtitle: const CustomParagraph(
                         text:
                             "Your guide to common questions and quick solutions.",
-                        letterSpacing: -0.408,
                         fontSize: 12,
                       ),
                       trailing: const Icon(Icons.chevron_right_sharp,
@@ -159,12 +191,9 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                         text: "Terms of Use",
                         fontSize: 14,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.408,
                       ),
                       subtitle: const CustomParagraph(
                         text: "Know the conditions for using our application.",
-                        letterSpacing: -0.408,
                         fontSize: 12,
                       ),
                       trailing: const Icon(Icons.chevron_right_sharp,
@@ -205,13 +234,10 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                         text: "Privacy Policy",
                         fontSize: 14,
                         fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.408,
                       ),
                       subtitle: const CustomParagraph(
                         text:
                             "Understand how we handle your personal information.",
-                        letterSpacing: -0.408,
                         fontSize: 12,
                       ),
                       trailing: const Icon(Icons.chevron_right_sharp,

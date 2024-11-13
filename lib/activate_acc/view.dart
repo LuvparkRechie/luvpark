@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/custom_widgets/page_loader.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:pinput/pinput.dart';
 
 import 'controller.dart';
@@ -99,7 +99,7 @@ class ActivateAccount extends GetView<ActivateAccountController> {
                                             TextSpan(
                                                 text:
                                                     "We have sent an OTP to your registered\nmobile number",
-                                                style: GoogleFonts.manrope(
+                                                style: GoogleFonts.openSans(
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 14,
                                                   color:
@@ -131,11 +131,10 @@ class ActivateAccount extends GetView<ActivateAccountController> {
                                   child: Pinput(
                                     length: 6,
                                     controller: controller.pinController,
+                                    defaultPinTheme: getDefaultPinTheme(),
                                     androidSmsAutofillMethod:
                                         AndroidSmsAutofillMethod
                                             .smsUserConsentApi,
-                                    listenForMultipleSmsOnAndroid: true,
-                                    defaultPinTheme: getDefaultPinTheme(),
                                     hapticFeedbackType:
                                         HapticFeedbackType.lightImpact,
                                     onCompleted: (pin) {
@@ -218,7 +217,7 @@ class ActivateAccount extends GetView<ActivateAccountController> {
                                           controller.seconds.value != 0)
                                         CustomLinkLabel(
                                           text:
-                                              "(${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
+                                              " (${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
                                         ),
                                     ],
                                   ),

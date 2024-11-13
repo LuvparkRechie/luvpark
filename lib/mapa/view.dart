@@ -8,14 +8,14 @@ import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_body.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/drawer/view.dart';
-import 'package:luvpark_get/functions/functions.dart';
-import 'package:luvpark_get/voice_search/view.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_body.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
+import 'package:luvpark/drawer/view.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/voice_search/view.dart';
 import 'package:material_symbols_icons/symbols.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -259,7 +259,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                             const CustomParagraph(
                                               text: "My balance",
                                               maxlines: 1,
-                                              fontWeight: FontWeight.w800,
+                                              fontWeight: FontWeight.w500,
                                               minFontSize: 8,
                                             ),
                                             Obx(() => CustomTitle(
@@ -267,8 +267,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                                       controller.userBal
                                                           .toString()),
                                                   maxlines: 1,
-                                                  letterSpacing: -0.41,
-                                                  fontWeight: FontWeight.w900,
                                                 ))
                                           ],
                                         ),
@@ -487,7 +485,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             text: "Where do you want to go today?",
             color: Color(0xFF131313),
             fontSize: 18,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             letterSpacing: -0.41,
           ),
           Container(height: 20),
@@ -497,17 +495,14 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
               controller: controller.searchCon,
               autofocus: false,
               focusNode: controller.focusNode,
-              style: paragraphStyle(color: Colors.black, fontSize: 16),
+
+              style: paragraphStyle(
+                  color: Colors.black, fontWeight: FontWeight.w500),
               maxLines: 1, // Ensures single line input
               textAlign: TextAlign.left,
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.symmetric(vertical: 10),
                 hintText: 'Search parking',
-                hintStyle: paragraphStyle(
-                  color: Color(0xFF6A6161),
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
                 filled: true,
                 fillColor: const Color(0xFFFBFBFB),
                 focusedBorder: OutlineInputBorder(
@@ -608,6 +603,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                     ),
                   ],
                 ),
+                hintStyle: paragraphStyle(
+                    color: AppColor.hintColor, fontWeight: FontWeight.w500),
+                labelStyle: paragraphStyle(
+                    fontWeight: FontWeight.w500, color: AppColor.hintColor),
               ),
               onTap: () {
                 controller.panelController.open();
@@ -680,7 +679,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                       border: InputBorder.none,
                     ),
                     textAlign: TextAlign.center,
-                    style: paragraphStyle(color: Colors.black),
+                    style: paragraphStyle(color: AppColor.headerColor),
                     onChanged: (text) {
                       controller.fetchSuggestions(() {});
                     },
@@ -783,11 +782,11 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                               BorderRadius.circular(37.39),
                                         ),
                                       ),
-                                      child: const Padding(
+                                      child: Padding(
                                         padding: EdgeInsets.all(10),
                                         child: Icon(
                                           Symbols.close,
-                                          color: Colors.black,
+                                          color: AppColor.headerColor,
                                           size: 16,
                                           weight: 1500,
                                         ),
@@ -836,7 +835,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                   text: controller.markerData[0]
                                                           ["park_area_name"]
                                                       .toString(),
-                                                  fontSize: 20,
+                                                  fontSize: 18,
                                                 ),
                                                 Container(height: 5),
                                                 CustomParagraph(
@@ -847,8 +846,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   fontSize: 12,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF1E1E1E),
                                                 )
                                               ],
                                             ),
@@ -919,7 +916,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                                 text: controller.isOpen.value
                                                     ? "Open"
                                                     : "Close",
-                                                fontWeight: FontWeight.w700,
+                                                fontWeight: FontWeight.w500,
                                                 maxlines: 1,
                                                 fontSize: 12,
                                                 minFontSize: 10,
@@ -960,7 +957,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                               CustomParagraph(
                                                 text:
                                                     '${int.parse(controller.markerData[0]["ps_vacant_count"].toString())} ${int.parse(controller.markerData[0]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
-                                                fontWeight: FontWeight.w700,
+                                                fontWeight: FontWeight.w500,
                                                 maxlines: 1,
                                                 fontSize: 12,
                                                 minFontSize: 10,
@@ -974,8 +971,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                         text: "Available vehicle slots",
                                         maxlines: 1,
                                         fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
+                                        color: AppColor.headerColor,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       Container(height: 10),
                                       _vehicles(),
@@ -993,8 +990,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                         text: "Parking Amenities",
                                         maxlines: 1,
                                         fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
+                                        color: AppColor.headerColor,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       _amenities(),
                                       Container(height: 20),
@@ -1002,8 +999,8 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                         text: "Parking Rates",
                                         maxlines: 1,
                                         fontStyle: FontStyle.normal,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
+                                        color: AppColor.headerColor,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       _parkRates(),
                                       Container(height: 20)
@@ -1082,7 +1079,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
         Flexible(
           child: CustomParagraph(
             text: text,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
             maxlines: 1,
             fontSize: 12,
             minFontSize: 10,
@@ -1119,15 +1116,15 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                     children: [
                       CustomParagraph(
                         text: '${controller.vehicleTypes[j]['name']}',
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                         fontSize: 12,
                       ),
                       Container(height: 5),
                       CustomParagraph(
                         text: '${controller.vehicleTypes[j]['count']} slots',
-                        color: Colors.black,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
+                        color: AppColor.headerColor,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
                       ),
                     ],
                   ),
@@ -1194,14 +1191,15 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                             padding: EdgeInsets.all(10),
                             decoration: ShapeDecoration(
                               color: controller.denoInd.value == i
-                                  ? AppColor.primaryColor.withOpacity(.1)
-                                  : AppColor.bodyColor, //,
+                                  ? const Color(0xFFEDF7FF)
+                                  : Color.fromARGB(255, 242, 245, 247),
                               shape: RoundedRectangleBorder(
                                 side: BorderSide(
-                                    width: 1,
-                                    color: controller.denoInd.value == i
-                                        ? AppColor.primaryColor
-                                        : Color(0xFFDFE7EF)),
+                                  width: 1,
+                                  color: controller.denoInd.value == i
+                                      ? AppColor.primaryColor
+                                      : Color.fromARGB(255, 242, 245, 247),
+                                ),
                                 borderRadius: BorderRadius.circular(100),
                               ),
                               shadows: [
@@ -1228,11 +1226,10 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                                 Container(width: 5),
                                 CustomParagraph(
                                   text: controller.vehicleTypes[i]["name"],
-                                  fontWeight: FontWeight.w700,
                                   fontSize: 12,
                                   color: controller.denoInd.value == i
                                       ? AppColor.primaryColor
-                                      : Color(0xFFB6C1CC),
+                                      : Colors.grey[600],
                                 ),
                               ],
                             ),
@@ -1300,7 +1297,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                 textAlign: TextAlign.left,
                 maxlines: 2,
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
                 minFontSize: 6,
               ),
             ),
@@ -1329,7 +1325,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
               child: const CustomParagraph(
                 text: "",
                 textAlign: TextAlign.left,
-                fontWeight: FontWeight.w600,
                 maxlines: 2,
                 fontSize: 12,
               ),

@@ -2,10 +2,10 @@
 // import 'package:flutter/material.dart';
 // import 'package:get/get.dart';
 // import 'package:location/location.dart';
-// import 'package:luvpark_get/custom_widgets/app_color.dart';
-// import 'package:luvpark_get/custom_widgets/custom_body.dart';
-// import 'package:luvpark_get/custom_widgets/custom_text.dart';
-// import 'package:luvpark_get/routes/routes.dart';
+// import 'package:luvpark/custom_widgets/app_color.dart';
+// import 'package:luvpark/custom_widgets/custom_body.dart';
+// import 'package:luvpark/custom_widgets/custom_text.dart';
+// import 'package:luvpark/routes/routes.dart';
 
 // import '../custom_widgets/custom_button.dart';
 
@@ -155,10 +155,10 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:location/location.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_body.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_body.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import '../custom_widgets/custom_button.dart';
 

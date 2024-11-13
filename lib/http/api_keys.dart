@@ -239,4 +239,6 @@ class ApiKeys {
       '/ords/$parkSpaceApi/pm/extendAdvancedParking';
   //Cancel Auto Extend  POSt  parameter: reservation_id
   static const gApiCancelAutoExtend = '/ords/$parkSpaceApi/pm/cancelAutoExtend';
+  //subscribe
+  static const gApiSubscribeVh = '/ords/$parkSpaceApi/zone/subscribe';
 }

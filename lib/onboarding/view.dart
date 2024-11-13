@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/onboarding/controller.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/onboarding/controller.dart';
 
 class MyOnboardingPage extends StatelessWidget {
   const MyOnboardingPage({Key? key}) : super(key: key);
@@ -136,7 +136,7 @@ class MyOnboardingPage extends StatelessWidget {
             text: title,
             maxlines: 1,
             fontSize: 20,
-            fontWeight: FontWeight.w800,
+            fontWeight: FontWeight.w700,
             textAlign: TextAlign.center,
           ),
         ),
@@ -147,6 +147,7 @@ class MyOnboardingPage extends StatelessWidget {
           child: CustomParagraph(
             text: subTitle,
             textAlign: TextAlign.center,
+            fontWeight: FontWeight.w400,
           ),
         ),
       ],

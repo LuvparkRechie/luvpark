@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
 
 import '../http/api_keys.dart';
 import '../http/http_request.dart';

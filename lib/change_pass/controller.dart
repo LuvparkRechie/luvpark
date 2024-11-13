@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/authentication.dart';
@@ -141,7 +141,7 @@ class ChangePasswordController extends GetxController
 
           await Authentication().setLogin(jsonEncode(userData[0]));
           Get.back();
-          Get.offAllNamed(Routes.splash);
+          Get.offAllNamed(Routes.login);
         });
       } else {
         Get.back();

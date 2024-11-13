@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/page_loader.dart';
-import 'package:luvpark_get/profile/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/profile/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../auth/authentication.dart';
@@ -117,15 +117,10 @@ class Profile extends GetView<ProfileScreenController> {
                                 )
                               ],
                             )
-                          : const Center(
-                              child: CustomTitle(
-                                text: "Not Verified",
-                                color: Colors.black,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                textAlign: TextAlign.center,
-                              ),
+                          : CustomTitle(
+                              text: "Not Verified",
                             ),
+                      Container(height: 2),
                       Center(
                         child: CustomParagraph(
                           text: "+${controller.userData[0]['mobile_no']}",
@@ -156,10 +151,6 @@ class Profile extends GetView<ProfileScreenController> {
                                   title: const CustomTitle(
                                     text: "My Profile",
                                     fontSize: 14,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -0.408,
-                                    color: Color(0xFF1C1C1E),
                                   ),
                                   trailing: Icon(Icons.chevron_right_sharp,
                                       color: AppColor.primaryColor),
@@ -179,10 +170,6 @@ class Profile extends GetView<ProfileScreenController> {
                                   title: const CustomTitle(
                                     text: "My Vehicles",
                                     fontSize: 14,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -0.408,
-                                    color: Color(0xFF1C1C1E),
                                   ),
                                   trailing: Icon(Icons.chevron_right_sharp,
                                       color: AppColor.primaryColor),
@@ -199,10 +186,6 @@ class Profile extends GetView<ProfileScreenController> {
                                   title: const CustomTitle(
                                     text: "Security Settings",
                                     fontSize: 14,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -0.408,
-                                    color: Color(0xFF1C1C1E),
                                   ),
                                   trailing: Icon(Icons.chevron_right_sharp,
                                       color: AppColor.primaryColor),
@@ -219,10 +202,6 @@ class Profile extends GetView<ProfileScreenController> {
                                   title: const CustomTitle(
                                     text: "Logout",
                                     fontSize: 14,
-                                    fontStyle: FontStyle.normal,
-                                    fontWeight: FontWeight.w700,
-                                    letterSpacing: -0.408,
-                                    color: Color(0xFF1C1C1E),
                                   ),
                                   trailing: Icon(Icons.chevron_right_sharp,
                                       color: AppColor.primaryColor),

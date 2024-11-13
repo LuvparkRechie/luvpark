@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
 
 import '../functions/functions.dart';
 import '../http/api_keys.dart';

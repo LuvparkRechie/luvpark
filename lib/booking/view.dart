@@ -6,14 +6,14 @@ import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark_get/booking/index.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/custom_widgets/no_data_found.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
+import 'package:luvpark/booking/index.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/no_data_found.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
 
 class BookingPage extends GetView<BookingController> {
   const BookingPage({Key? key}) : super(key: key);
@@ -86,9 +86,11 @@ class BookingPage extends GetView<BookingController> {
                                               )),
                                         ),
                                         Container(height: 26),
-                                        const CustomTitle(
+                                        CustomParagraph(
                                           text: "You are parking at",
-                                          fontWeight: FontWeight.w800,
+                                          color: AppColor.headerColor,
+                                          fontWeight: FontWeight.w600,
+                                          fontSize: 16,
                                         ),
                                         Container(height: 15),
                                         Row(
@@ -215,7 +217,7 @@ class BookingPage extends GetView<BookingController> {
                                                         CrossAxisAlignment
                                                             .center,
                                                     children: [
-                                                      CustomTitle(
+                                                      CustomParagraph(
                                                         text: controller
                                                                     .parameters[
                                                                 "areaData"][
@@ -224,6 +226,8 @@ class BookingPage extends GetView<BookingController> {
                                                         fontSize: 14,
                                                         letterSpacing: -0.41,
                                                         maxlines: 2,
+                                                        fontWeight:
+                                                            FontWeight.w500,
                                                       ),
                                                     ],
                                                   ),
@@ -238,9 +242,11 @@ class BookingPage extends GetView<BookingController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const CustomTitle(
+                                            CustomParagraph(
                                               text: "Vehicle details",
-                                              fontWeight: FontWeight.w800,
+                                              color: AppColor.headerColor,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
                                             ),
                                             Container(height: 10),
                                             Container(
@@ -301,7 +307,7 @@ class BookingPage extends GetView<BookingController> {
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
-                                                                        .w500,
+                                                                        .w400,
                                                                 letterSpacing:
                                                                     -0.41,
                                                               )
@@ -313,13 +319,16 @@ class BookingPage extends GetView<BookingController> {
                                                                     MainAxisAlignment
                                                                         .center,
                                                                 children: [
-                                                                  CustomTitle(
+                                                                  CustomParagraph(
                                                                     text: controller
                                                                             .selectedVh[0]
                                                                         [
                                                                         "vehicle_plate_no"],
-                                                                    fontSize:
-                                                                        16,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: AppColor
+                                                                        .headerColor,
                                                                   ),
                                                                   Container(
                                                                       height:
@@ -345,12 +354,14 @@ class BookingPage extends GetView<BookingController> {
                                                       child: controller
                                                               .selectedVh
                                                               .isNotEmpty
-                                                          ? CustomLinkLabel(
+                                                          ? CustomParagraph(
                                                               text:
                                                                   "Switch vehicle",
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w800,
+                                                                      .w500,
+                                                              color: AppColor
+                                                                  .primaryColor,
                                                             )
                                                           : Icon(
                                                               Icons.add,
@@ -374,10 +385,12 @@ class BookingPage extends GetView<BookingController> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Container(height: 20),
-                                              const CustomTitle(
+                                              CustomParagraph(
                                                 text:
                                                     "How long do you want to park?",
-                                                fontWeight: FontWeight.w800,
+                                                fontSize: 16,
+                                                color: AppColor.headerColor,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                               Container(height: 15),
                                               Container(
@@ -474,7 +487,12 @@ class BookingPage extends GetView<BookingController> {
                                                                     MainAxisAlignment
                                                                         .center,
                                                                 children: [
-                                                                  CustomLinkLabel(
+                                                                  CustomParagraph(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                    color: AppColor
+                                                                        .primaryColor,
                                                                     text:
                                                                         "${controller.selectedNumber.value} ${int.parse(controller.selectedNumber.value.toString()) > 1 ? "Hours" : "Hour"}",
                                                                   ),
@@ -733,9 +751,11 @@ class BookingPage extends GetView<BookingController> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            const CustomTitle(
-                                              text: "Payment Details",
-                                              fontWeight: FontWeight.w800,
+                                            CustomParagraph(
+                                              text: "Payment details",
+                                              fontSize: 16,
+                                              color: AppColor.headerColor,
+                                              fontWeight: FontWeight.w600,
                                             ),
                                             Container(height: 10),
                                             Row(
@@ -1119,12 +1139,15 @@ class BookingPage extends GetView<BookingController> {
                                       children: [
                                         Row(
                                           children: [
-                                            const Expanded(
-                                              child: CustomTitle(
+                                            Expanded(
+                                              child: CustomParagraph(
                                                 text: "Total",
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColor.headerColor,
                                               ),
                                             ),
                                             CustomTitle(
+                                              color: AppColor.headerColor,
                                               text: toCurrencyString(
                                                   controller.totalAmount.value),
                                             ),
@@ -1216,7 +1239,7 @@ class BookingPage extends GetView<BookingController> {
                                                                 .confirmationDialog(
                                                                     context,
                                                                     "Enable Auto Extend",
-                                                                    "Your parking duration will be automatically extended using your available balance if it is enabled.\nWould you like to enable it?",
+                                                                    "Your parking duration will be automatically extended using your available balance if it is enabled.\n\nWould you like to enable it?",
                                                                     "No",
                                                                     "Yes", () {
                                                               Get.back();
@@ -1488,8 +1511,11 @@ class VehicleOption extends GetView<BookingController> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const CustomTitle(
+                                CustomParagraph(
                                   text: "What's your plate number?",
+                                  fontSize: 16,
+                                  color: AppColor.headerColor,
+                                  fontWeight: FontWeight.w600,
                                 ),
                                 Container(height: 10),
                                 CustomTextField(
@@ -1522,13 +1548,25 @@ class VehicleOption extends GetView<BookingController> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      CustomDropdown(
-                                        labelText: "Vehicle Type",
-                                        ddData: controller.ddVehiclesData,
-                                        ddValue: controller.dropdownValue,
-                                        onChange: (newValue) {
-                                          controller.dropdownValue = newValue;
-                                        },
+                                      Padding(
+                                        padding: const EdgeInsets.only(
+                                            top: 15.0, bottom: 10),
+                                        child: customDropdown(
+                                          labelText: "Vehicle type",
+                                          items: controller.ddVehiclesData,
+                                          selectedValue:
+                                              controller.dropdownValue,
+                                          onChanged: (newValue) {
+                                            controller.dropdownValue = newValue;
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Vehicle type is required";
+                                            }
+                                            return null;
+                                          },
+                                        ),
                                       ),
                                       Container(height: 30),
                                       CustomButton(

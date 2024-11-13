@@ -4,15 +4,15 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
-import 'package:luvpark_get/login/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
+import 'package:luvpark/login/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 
 class LoginScreen extends GetView<LoginScreenController> {
   const LoginScreen({super.key});
@@ -71,7 +71,7 @@ class LoginScreen extends GetView<LoginScreenController> {
                         color: Colors.black,
                         maxlines: 1,
                         fontSize: 20,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         textAlign: TextAlign.center,
                         letterSpacing: -.1,
                       ),
@@ -87,7 +87,6 @@ class LoginScreen extends GetView<LoginScreenController> {
                         labelText: "10 digit mobile number",
                         controller: controller.mobileNumber,
                         inputFormatters: [Variables.maskFormatter],
-                        keyboardType: TextInputType.number,
                       ),
                       Obx(
                         () => CustomTextField(
@@ -114,9 +113,8 @@ class LoginScreen extends GetView<LoginScreenController> {
                                     Get.toNamed(Routes.forgotPass);
                                   },
                             child: CustomParagraph(
-                                fontSize: 14,
                                 color: AppColor.primaryColor,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                                 text: "Forgot password"),
                           )),
                       const SizedBox(
@@ -140,26 +138,12 @@ class LoginScreen extends GetView<LoginScreenController> {
                                     controller.toggleLoading(
                                         !controller.isLoading.value);
                                     CustomDialog().snackbarDialog(
-                                      context,
-                                      "Mobile number is empty",
-                                      Colors.red,
-                                      () {},
-                                    );
-                                    return;
-                                  } else if (controller
-                                          .mobileNumber.text.length !=
-                                      12) {
-                                    controller.toggleLoading(
-                                        !controller.isLoading.value);
-                                    CustomDialog().snackbarDialog(
-                                      context,
-                                      "Incorrect mobile number",
-                                      Colors.red,
-                                      () {},
-                                    );
+                                        context,
+                                        "Mobile number is empty",
+                                        Colors.red,
+                                        () {});
                                     return;
                                   }
-
                                   if (controller.password.text.isEmpty) {
                                     controller.toggleLoading(
                                         !controller.isLoading.value);
@@ -239,13 +223,13 @@ class LoginScreen extends GetView<LoginScreenController> {
                                       text: "New to luvpark? ",
                                       style: paragraphStyle(
                                           color: Colors.black,
-                                          fontWeight: FontWeight.w800),
+                                          fontWeight: FontWeight.w500),
                                     ),
                                     TextSpan(
                                       text: 'Create Account',
                                       style: paragraphStyle(
                                         color: AppColor.primaryColor,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                       recognizer: TapGestureRecognizer()
                                         ..onTap = controller.isLoading.value

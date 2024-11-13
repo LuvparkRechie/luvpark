@@ -1,5 +1,5 @@
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/sqlite/notification_model.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/sqlite/notification_model.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 

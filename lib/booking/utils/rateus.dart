@@ -5,11 +5,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
 import 'package:rive/rive.dart';
 
 import '../../custom_widgets/app_color.dart';
@@ -61,7 +61,6 @@ class _RateUsState extends State<RateUs> {
             "Please check your internet connection and try again.", () {
           Get.back();
         });
-
         return;
       }
       if (returnData == null) {
@@ -120,8 +119,8 @@ class _RateUsState extends State<RateUs> {
                 child: CustomTitle(
                   text: "How's your Experience?".toUpperCase(),
                   color: AppColor.primaryColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.w900,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
                   textAlign: TextAlign.center,
                   maxlines: 1,
                 ),
@@ -130,14 +129,14 @@ class _RateUsState extends State<RateUs> {
               CustomParagraph(
                 text:
                     "Your feedback is important to us,\nplease rate your experience.",
-                fontWeight: FontWeight.w500,
                 textAlign: TextAlign.center,
+                fontSize: 13,
               ),
               const SizedBox(height: 10),
               Center(
                 child: CustomTitle(
                   text: "Rating (${myRate.round()}/5)",
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: Colors.black54,
                   fontSize: 14,
                 ),
@@ -183,7 +182,6 @@ class _RateUsState extends State<RateUs> {
               CustomButton(
                 text: "Submit",
                 onPressed: postRatingComments,
-                btnHeight: 10,
               ),
               Container(
                 height: 10,

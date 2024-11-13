@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:luvpark_get/profile/controller.dart';
+import 'package:luvpark/profile/controller.dart';
 
 class ProfileScreenBinding implements Bindings {
   @override

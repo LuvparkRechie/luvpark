@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/about_us/index.dart';
-import 'package:luvpark_get/about_us/utils/email_sender.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/about_us/index.dart';
+import 'package:luvpark/about_us/utils/email_sender.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 import '../custom_widgets/app_color.dart';
 
@@ -56,7 +56,8 @@ class AboutUs extends GetView<AboutUsController> {
                 ),
                 const SizedBox(height: 10),
                 InkWell(
-                overlayColor: MaterialStateProperty.all(Colors.blue.withOpacity(0.2)),
+                  overlayColor:
+                      MaterialStateProperty.all(Colors.blue.withOpacity(0.2)),
                   onTap: () {
                     Get.to(EmailSender());
                   },

@@ -6,13 +6,13 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
-import 'package:luvpark_get/booking/utils/booking_receipt/controller.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_tciket_style.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/booking/utils/booking_receipt/controller.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:screenshot/screenshot.dart';
@@ -115,8 +115,6 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                                                                     .parameters[
                                                                 "address"],
                                                             maxlines: 2,
-                                                            fontWeight:
-                                                                FontWeight.w600,
                                                           ),
                                                         ],
                                                       ),
@@ -400,12 +398,11 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                         Get.back();
 
                         // ignore: deprecated_member_use
-                        await Share.shareFiles([imgFile.path]);
+                        await Share.share(imgFile.path);
                       }),
+                      Container(height: 10),
                       CustomParagraph(
                         text: "Share",
-                        letterSpacing: -0.41,
-                        fontWeight: FontWeight.w600,
                         color: AppColor.primaryColor,
                       ),
                     ],
@@ -437,10 +434,9 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                           });
                         });
                       }),
+                      Container(height: 10),
                       CustomParagraph(
                         text: "Save",
-                        letterSpacing: -0.41,
-                        fontWeight: FontWeight.w600,
                         color: AppColor.primaryColor,
                       ),
                     ],
@@ -537,7 +533,9 @@ class BookingReceipt extends GetView<BookingReceiptController> {
       children: [
         Expanded(
           flex: 2,
-          child: CustomParagraph(text: firstTitle),
+          child: CustomParagraph(
+            text: firstTitle,
+          ),
         ),
         Expanded(
           flex: 3,
@@ -545,8 +543,10 @@ class BookingReceipt extends GetView<BookingReceiptController> {
             alignment: Alignment.centerRight,
             child: CustomParagraph(
               text: firstDesc,
-              fontWeight: FontWeight.w700,
               maxlines: 1,
+              fontWeight: FontWeight.w600,
+              color: AppColor.headerColor,
+              fontSize: 13,
               minFontSize: 10,
             ),
           ),

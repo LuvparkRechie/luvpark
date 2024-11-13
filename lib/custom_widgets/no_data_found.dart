@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 class NoDataFound extends StatelessWidget {
   final double? size;
@@ -31,7 +31,6 @@ class NoDataFound extends StatelessWidget {
             ),
             CustomParagraph(
               text: text ?? "No data found",
-              fontWeight: FontWeight.w500,
               textAlign: TextAlign.center,
             ),
             Container(

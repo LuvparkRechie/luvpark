@@ -4,16 +4,16 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/custom_widgets/page_loader.dart';
-import 'package:luvpark_get/my_account/utils/controller.dart';
-
-import '../../custom_widgets/variables.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/my_account/utils/controller.dart';
 
 class UpdateProfile extends GetView<UpdateProfileController> {
   const UpdateProfile({super.key});
@@ -42,41 +42,83 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 }
               },
               child: Scaffold(
-                appBar: CustomAppbar(
+                appBar: AppBar(
+                  toolbarHeight: 0,
                   elevation: 0,
-                  bgColor: Colors.white,
-                  statusBarBrightness: Brightness.dark,
-                  title: "Update Profile",
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                    if (controller.currentPage.value == 0) {
-                      CustomDialog().confirmationDialog(
-                          context,
-                          "Close Page",
-                          "Are you sure you want to close this page?",
-                          "No",
-                          "Yes", () {
-                        Get.back();
-                      }, () {
-                        Get.back();
-                        Get.back();
-                      });
-                      return;
-                    } else {
-                      controller.pageController.previousPage(
-                        duration: const Duration(milliseconds: 100),
-                        curve: Curves.easeInOut,
-                      );
-                    }
-                  },
+                  backgroundColor: Colors.white,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.white,
+                    statusBarBrightness: Brightness.light,
+                    statusBarIconBrightness: Brightness.dark,
+                  ),
                 ),
                 body: Padding(
-                  padding: const EdgeInsets.all(15),
+                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                   child: ScrollConfiguration(
                     behavior: ScrollBehavior().copyWith(overscroll: false),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        Container(height: 10),
+                        InkWell(
+                          onTap: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+                            if (controller.currentPage.value == 0) {
+                              CustomDialog().confirmationDialog(
+                                  context,
+                                  "Close Page",
+                                  "Are you sure you want to close this page?",
+                                  "No",
+                                  "Yes", () {
+                                Get.back();
+                              }, () {
+                                Get.back();
+                                Get.back();
+                              });
+                              return;
+                            } else {
+                              controller.pageController.previousPage(
+                                duration: const Duration(milliseconds: 100),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(10),
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: Color(0xFF0078FF),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(43),
+                                ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x0C000000),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 5),
+                                    spreadRadius: 0,
+                                  )
+                                ],
+                              ),
+                              child: Icon(
+                                LucideIcons.arrowLeft,
+                                color: Colors.white,
+                                size: 16,
+                              )),
+                        ),
+                        Container(height: 20),
+                        Text(
+                          controller.currentPage.value == 0
+                              ? "Personal Information"
+                              : controller.currentPage.value == 1
+                                  ? "Address"
+                                  : "Security Question",
+                          style: GoogleFonts.openSans(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.headerColor,
+                          ),
+                        ),
                         Container(height: 20),
                         Row(
                           children: [
@@ -156,13 +198,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomTitle(
-                text: "Personal Information",
-                color: Color.fromARGB(255, 17, 16, 16),
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-              Container(height: 20),
               CustomTextField(
                 labelText: "First Name",
                 title: "First Name",
@@ -297,19 +332,23 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   return null;
                 },
               ),
-              CustomDropdown(
-                labelText: "Civil status",
-                ddData: controller.civilData,
-                ddValue: controller.selectedCivil.value,
-                onChange: (String? newValue) {
-                  controller.selectedCivil.value = newValue!;
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return "Civil status is required";
-                  }
-                  return null;
-                },
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 10),
+                child: customDropdown(
+                  labelText: "Civil status",
+                  items: controller.civilData,
+                  selectedValue: controller.selectedCivil.value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Civil status is required";
+                    }
+
+                    return null;
+                  },
+                  onChanged: (data) {
+                    controller.selectedCivil.value = data!;
+                  },
+                ),
               ),
               Row(
                 children: [
@@ -328,7 +367,11 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               : Colors.grey.shade400,
                         ),
                         Container(width: 5),
-                        const CustomParagraph(text: "Male", color: Colors.black)
+                        CustomParagraph(
+                          text: "Male",
+                          color: AppColor.headerColor,
+                          fontWeight: FontWeight.w500,
+                        )
                       ],
                     ),
                   ),
@@ -348,9 +391,10 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               : Colors.grey.shade400,
                         ),
                         Container(width: 5),
-                        const CustomParagraph(
+                        CustomParagraph(
                           text: "Female",
-                          color: Colors.black,
+                          color: AppColor.headerColor,
+                          fontWeight: FontWeight.w500,
                         )
                       ],
                     ),
@@ -377,112 +421,80 @@ class UpdateProfile extends GetView<UpdateProfileController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomTitle(
-                text: "Provide your address",
-                color: Color.fromARGB(255, 17, 16, 16),
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 10),
+                child: customDropdown(
+                  labelText: "Region",
+                  items: controller.regionData,
+                  selectedValue: controller.selectedRegion.value,
+                  onChanged: (String? newValue) {
+                    controller.selectedRegion.value = newValue.toString();
+                    controller.getProvinceData(newValue);
+                  },
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Region is required";
+                    }
+                    return null;
+                  },
+                ),
               ),
-              Container(height: 20),
-              CustomDropdown(
-                labelText: "Region",
-                ddData: controller.regionData,
-                ddValue: controller.selectedRegion.value,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Region is required';
-                  }
-                  return null;
-                },
-                onChange: (data) {
-                  controller.selectedRegion.value = data.toString();
-                  controller.getProvinceData(data);
-                },
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 10),
+                child: customDropdown(
+                  labelText: "Province",
+                  items: controller.provinceData,
+                  selectedValue: controller.selectedProvince.value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Province is required';
+                    }
+
+                    return null;
+                  },
+                  onChanged: (data) {
+                    controller.selectedProvince.value = data.toString();
+                    controller.getCityData(data);
+                  },
+                ),
               ),
-              controller.provinceData.isEmpty
-                  ? CustomTextField(
-                      labelText: "Province",
-                      controller: TextEditingController(),
-                      isReadOnly: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Province is required';
-                        }
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 10),
+                child: customDropdown(
+                  labelText: "City",
+                  items: controller.cityData,
+                  selectedValue: controller.selectedCity.value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'City is required';
+                    }
 
-                        return null;
-                      },
-                    )
-                  : CustomDropdown(
-                      labelText: "Province",
-                      ddData: controller.provinceData,
-                      ddValue: controller.selectedProvince.value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Province is required';
-                        }
+                    return null;
+                  },
+                  onChanged: (data) {
+                    controller.selectedCity.value = data.toString();
+                    controller.getBrgyData(data);
+                  },
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top: 15.0, bottom: 10),
+                child: customDropdown(
+                  labelText: "Barangay",
+                  items: controller.brgyData,
+                  selectedValue: controller.selectedBrgy.value,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Barangay is required';
+                    }
 
-                        return null;
-                      },
-                      onChange: (data) {
-                        controller.selectedProvince.value = data.toString();
-                        controller.getCityData(data);
-                      },
-                    ),
-              controller.cityData.isEmpty
-                  ? CustomTextField(
-                      labelText: "City",
-                      controller: TextEditingController(),
-                      isReadOnly: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'City is required';
-                        }
-                        return null;
-                      },
-                    )
-                  : CustomDropdown(
-                      labelText: "City",
-                      ddData: controller.cityData,
-                      ddValue: controller.selectedCity.value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'City is required';
-                        }
-                        return null;
-                      },
-                      onChange: (data) {
-                        controller.selectedCity.value = data.toString();
-                        controller.getBrgyData(data);
-                      },
-                    ),
-              controller.brgyData.isEmpty
-                  ? CustomTextField(
-                      labelText: "Barangay",
-                      controller: TextEditingController(),
-                      isReadOnly: true,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Barangay is required';
-                        }
-
-                        return null;
-                      },
-                    )
-                  : CustomDropdown(
-                      labelText: "Barangay",
-                      ddData: controller.brgyData,
-                      ddValue: controller.selectedBrgy.value,
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Barangay is required';
-                        }
-
-                        return null;
-                      },
-                      onChange: (data) {
-                        controller.selectedBrgy.value = data.toString();
-                      },
-                    ),
+                    return null;
+                  },
+                  onChanged: (data) {
+                    controller.selectedBrgy.value = data.toString();
+                  },
+                ),
+              ),
               CustomTextField(
                 labelText: 'Zip Code',
                 controller: controller.zipCode,
@@ -528,14 +540,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const CustomTitle(
-                text: "Security Question",
-                color: Color.fromARGB(255, 17, 16, 16),
-                fontSize: 20,
-                fontWeight: FontWeight.w800,
-              ),
-              Container(height: 20),
-              //Question 1
               Column(
                 children: [
                   Container(
@@ -564,6 +568,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                                   child: CustomParagraph(
                                     text: controller.question1.value,
                                     maxlines: 2,
+                                    color: AppColor.headerColor,
                                   ),
                                 ),
                                 Container(width: 10),
@@ -628,6 +633,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                                   child: CustomParagraph(
                                     text: controller.question2.value,
                                     maxlines: 2,
+                                    color: AppColor.headerColor,
                                   ),
                                 ),
                                 Container(width: 10),
@@ -692,6 +698,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                                   child: CustomParagraph(
                                     text: controller.question3.value,
                                     maxlines: 2,
+                                    color: AppColor.headerColor,
                                   ),
                                 ),
                                 Container(width: 10),

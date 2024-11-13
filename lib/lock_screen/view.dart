@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/lock_screen/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
+import 'package:luvpark/lock_screen/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import '../custom_widgets/custom_button.dart';
 
@@ -40,7 +40,7 @@ class LockScreen extends GetView<LockScreenController> {
                             text: "Account Locked",
                             color: Color(0xFF0078FF),
                             fontSize: 26,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                           ),
                           Container(height: 10),
                           CustomParagraph(

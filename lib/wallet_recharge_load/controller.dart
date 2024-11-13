@@ -3,9 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/web_view/webview.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/web_view/webview.dart';
 
 import '../auth/authentication.dart';
 import '../custom_widgets/variables.dart';
@@ -32,7 +32,7 @@ class WalletRechargeLoadController extends GetxController
   RxBool isSelectedPartner = false.obs;
   RxBool isValidNumber = false.obs;
   final TextEditingController mobNum = TextEditingController();
-  final GlobalKey<FormState> page1Key = GlobalKey<FormState>();
+  final GlobalKey<FormState> topUpKey = GlobalKey<FormState>();
   RxString pageUrl = "".obs;
   TextEditingController rname = TextEditingController();
 
@@ -51,6 +51,7 @@ class WalletRechargeLoadController extends GetxController
   @override
   void onClose() {
     _debounce?.cancel();
+    topUpKey.currentState?.reset();
     super.onClose();
   }
 
@@ -197,7 +198,7 @@ class WalletRechargeLoadController extends GetxController
   Future<void> onPay() async {
     final item = await Authentication().getUserData2();
 
-    if (page1Key.currentState!.validate()) {
+    if (topUpKey.currentState!.validate()) {
       FocusManager.instance.primaryFocus!.unfocus();
       if (!isActiveBtn.value) {
         return;

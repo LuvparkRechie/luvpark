@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
   @override
@@ -94,8 +95,8 @@ class CustomAppbar extends StatelessWidget implements PreferredSizeWidget {
           : CustomTitle(
               text: title!,
               fontSize: titleSize ?? 16,
-              fontWeight: FontWeight.w900,
-              color: titleColor ?? Colors.black,
+              fontWeight: FontWeight.w700,
+              color: titleColor ?? AppColor.headerColor,
             ),
       actions: action,
       bottom: bottom ?? bottom,

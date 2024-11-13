@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_body.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/custom_button.dart';
@@ -17,136 +18,156 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
 
   @override
   Widget build(BuildContext context) {
-    return CustomScaffold(
-      bodyColor: AppColor.bodyColor,
-      canPop: true,
-      children: SingleChildScrollView(
-        child: Column(
-          children: [
-            const CustomAppbar(title: "Load"),
-            Obx(() => Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 20,
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border:
-                              Border.all(color: Colors.grey.shade200, width: 1),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0),
-                          child: Column(
-                            children: [
-                              Center(
-                                child: SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.50,
-                                  child: TextFormField(
-                                      controller: controller.tokenAmount,
-                                      inputFormatters: <TextInputFormatter>[
-                                        FilteringTextInputFormatter.digitsOnly,
-                                        FilteringTextInputFormatter.allow(
-                                            RegExp(r'^\d*\.?\d*$')),
-                                      ],
-                                      keyboardType: Platform.isAndroid
-                                          ? TextInputType.number
-                                          : const TextInputType
-                                              .numberWithOptions(
-                                              signed: true, decimal: false),
-                                      textInputAction: TextInputAction.done,
-                                      textAlign: TextAlign.center,
-                                      decoration: InputDecoration(
-                                          contentPadding:
-                                              EdgeInsets.only(left: 5),
-                                          hintText: "0.00",
-                                          hintStyle: paragraphStyle()),
-                                      onChanged: (valueee) {
-                                        controller.pads(
-                                            int.parse(valueee.toString()));
-                                        controller.onTextChange();
-                                      },
-                                      style: titleStyle()),
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+      ),
+      body: Form(
+        key: controller.formKeyBuyLoad,
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Obx(() => Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 20,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 10),
+                        InkWell(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Container(
+                              padding: const EdgeInsets.all(10),
+                              clipBehavior: Clip.antiAlias,
+                              decoration: ShapeDecoration(
+                                color: Color(0xFF0078FF),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(43),
                                 ),
+                                shadows: [
+                                  BoxShadow(
+                                    color: Color(0x0C000000),
+                                    blurRadius: 15,
+                                    offset: Offset(0, 5),
+                                    spreadRadius: 0,
+                                  )
+                                ],
                               ),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              CustomParagraph(
-                                  text: '1 token = 1 peso',
-                                  fontSize: 10,
-                                  color: AppColor.primaryColor,
-                                  fontWeight: FontWeight.w700),
-                              const SizedBox(
-                                height: 30,
-                              ),
-                            ],
+                              child: Icon(
+                                LucideIcons.arrowLeft,
+                                color: Colors.white,
+                                size: 16,
+                              )),
+                        ),
+                        Container(height: 20),
+                        Text(
+                          "Buy Load",
+                          style: GoogleFonts.openSans(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.headerColor,
                           ),
                         ),
-                      ),
-                      Container(
-                        height: 5,
-                      ),
-                      CustomParagraph(
-                          text: 'Minimum load of 20 pesos',
-                          fontSize: 10,
-                          color: AppColor.primaryColor,
-                          fontWeight: FontWeight.w700),
-                      const SizedBox(
-                        height: 15,
-                      ),
-                      const CustomParagraph(
-                        maxlines: 2,
-                        text:
-                            'Enter a desired amount or choose from any denominations below.',
-                        color: Colors.black87,
-                        fontWeight: FontWeight.w600,
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      for (int i = 0; i < controller.padData.length; i += 3)
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            for (int j = i;
-                                j < i + 3 && j < controller.padData.length;
-                                j++)
-                              myPads(controller.padData[j], j)
+                        Container(height: 20),
+                        CustomParagraph(
+                          text: "Load Amount",
+                          color: AppColor.headerColor,
+                        ),
+                        Container(height: 5),
+                        CustomTextField(
+                          controller: controller.tokenAmount,
+                          labelText: "Enter amount",
+                          inputFormatters: <TextInputFormatter>[
+                            FilteringTextInputFormatter.digitsOnly,
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'^\d*\.?\d*$')),
                           ],
+                          keyboardType: Platform.isAndroid
+                              ? TextInputType.number
+                              : const TextInputType.numberWithOptions(
+                                  signed: true, decimal: false),
+                          onChange: (d) {
+                            controller.pads(int.parse(d.toString()));
+                            controller.onTextChange();
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return "Amount must not be empty";
+                            }
+                            if (double.parse(value.toString()) < 20) {
+                              return "Minimum load amount is 20";
+                            }
+                            return null;
+                          },
                         ),
-                      Container(
-                        height: MediaQuery.of(context).size.height / 15,
-                      ),
-                      if (MediaQuery.of(context).viewInsets.bottom ==
-                          0) //hide button
-                        CustomButton(
-                          text: "Proceed",
-                          btnColor: controller.isActiveBtn.value
-                              ? AppColor.primaryColor
-                              : AppColor.primaryColor.withOpacity(.7),
-                          onPressed: controller.isActiveBtn.value
-                              ? () {
-                                  FocusScope.of(Get.context!)
-                                      .requestFocus(FocusNode());
-                                  Get.toNamed(
-                                    Routes.walletrechargeload,
-                                    arguments: controller.tokenAmount.text
-                                        .replaceAll(" ", ""),
-                                  );
-                                }
-                              : () {},
+                        const SizedBox(
+                          height: 20,
                         ),
-                    ],
-                  ),
-                ))
-          ],
+                        const CustomParagraph(
+                          maxlines: 2,
+                          text:
+                              'Enter a desired amount or choose from any denominations below.',
+                          fontWeight: FontWeight.w500,
+                          textAlign: TextAlign.center,
+                          fontSize: 12,
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        for (int i = 0; i < controller.padData.length; i += 3)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              for (int j = i;
+                                  j < i + 3 && j < controller.padData.length;
+                                  j++)
+                                myPads(controller.padData[j], j)
+                            ],
+                          ),
+                        Container(
+                          height: MediaQuery.of(context).size.height / 15,
+                        ),
+                        if (MediaQuery.of(context).viewInsets.bottom ==
+                            0) //hide button
+                          CustomButton(
+                            text: "Proceed",
+                            btnColor: controller.isActiveBtn.value
+                                ? AppColor.primaryColor
+                                : AppColor.primaryColor.withOpacity(.7),
+                            onPressed: controller.isActiveBtn.value
+                                ? () {
+                                    FocusScope.of(Get.context!)
+                                        .requestFocus(FocusNode());
+                                    if (!controller.formKeyBuyLoad.currentState!
+                                        .validate()) {
+                                      return; // Stop submission if the form is not valid
+                                    }
+                                    Get.toNamed(
+                                      Routes.walletrechargeload,
+                                      arguments: controller.tokenAmount.text
+                                          .replaceAll(" ", ""),
+                                    );
+                                  }
+                                : () {},
+                          ),
+                      ],
+                    ),
+                  ))
+            ],
+          ),
         ),
       ),
     );
@@ -178,7 +199,7 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                   maxlines: 1,
                   minFontSize: 8,
                   text: "${data["value"]}",
-                  fontWeight: FontWeight.w800,
+                  fontWeight: FontWeight.w700,
                   color: data["is_active"] ? Colors.white : Colors.black,
                 ),
                 CustomParagraph(

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/no_data_found.dart';
-import 'package:luvpark_get/custom_widgets/no_internet.dart';
-import 'package:luvpark_get/custom_widgets/park_shimmer.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/no_data_found.dart';
+import 'package:luvpark/custom_widgets/no_internet.dart';
+import 'package:luvpark/custom_widgets/park_shimmer.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/routes/routes.dart';
 
 import 'controller.dart';
 
@@ -124,6 +124,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                       child: Center(
                                         child: CustomParagraph(
                                           text: "Reservations",
+                                          fontWeight: FontWeight.w500,
                                           fontSize: 14,
                                           color:
                                               controller.currentPage.value != 0
@@ -165,6 +166,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                       child: Center(
                                           child: CustomParagraph(
                                         text: "Active Parking",
+                                        fontWeight: FontWeight.w500,
                                         fontSize: 14,
                                         color: controller.currentPage.value != 1
                                             ? Colors.white38
@@ -333,7 +335,7 @@ class ListCard extends GetView<ParkingController> {
                             letterSpacing: -0.41,
                             maxlines: 1,
                             fontSize: 16,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w700,
                           ),
                         ),
                         if (data["is_auto_extend"] == "Y")
@@ -377,7 +379,7 @@ class ListCard extends GetView<ParkingController> {
                       Container(width: 8),
                       CustomParagraph(
                         text: date,
-                        fontSize: 14,
+                        fontSize: 12,
                         fontWeight: FontWeight.w600,
                         letterSpacing: -0.41,
                       ),
@@ -401,7 +403,7 @@ class ListCard extends GetView<ParkingController> {
                               Flexible(
                                 child: CustomParagraph(
                                   text: time,
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   letterSpacing: -0.41,
                                   maxlines: 1,

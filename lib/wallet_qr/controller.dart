@@ -7,12 +7,12 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/page_loader.dart';
-import 'package:luvpark_get/http/api_keys.dart';
-import 'package:luvpark_get/http/http_request.dart';
-import 'package:luvpark_get/main.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/http/api_keys.dart';
+import 'package:luvpark/http/http_request.dart';
+import 'package:luvpark/main.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
@@ -26,7 +26,7 @@ import '../routes/routes.dart';
 class QrWalletController extends GetxController
     with GetSingleTickerProviderStateMixin {
   QrWalletController();
-
+  final ScreenshotController screenshotController = ScreenshotController();
   RxInt currentPage = 0.obs;
   RxString firstlastCapital = ''.obs;
   RxString fullName = "".obs;
@@ -36,7 +36,7 @@ class QrWalletController extends GetxController
   RxString mobNum = "".obs;
   RxString mono = ''.obs;
   RxString payKey = "".obs;
-  final ScreenshotController screenshotController = ScreenshotController();
+
   late TabController tabController;
   late final TextEditingController imageSizeEditingController;
   // ignore: prefer_typing_uninitialized_variables
@@ -190,7 +190,7 @@ class QrWalletController extends GetxController
     imgFile.writeAsBytes(pngBytes);
     Get.back();
     // ignore: deprecated_member_use
-    await Share.shareFiles([imgFile.path]);
+    await Share.share(imgFile.path);
   }
 
   Widget myWidget() => Container(

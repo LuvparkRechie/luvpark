@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/custom_widgets/password_indicator.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
-import 'package:luvpark_get/forgot_password/utils/create_new/controller.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/password_indicator.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
+import 'package:luvpark/forgot_password/utils/create_new/controller.dart';
 
 class CreateNewPassword extends GetView<CreateNewPassController> {
   const CreateNewPassword({super.key});
@@ -44,13 +44,12 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                           color: Colors.black,
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
-                          letterSpacing: -.1,
-                          wordspacing: 4,
                         ),
                         Container(height: 10),
                         const CustomParagraph(
                           text:
                               "Your new password must be different from previous used passwords.",
+                          fontWeight: FontWeight.w400,
                         ),
                         const VerticalHeight(height: 20),
                         CustomTextField(

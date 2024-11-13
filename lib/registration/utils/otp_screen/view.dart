@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
-import 'package:luvpark_get/registration/utils/otp_screen/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
+import 'package:luvpark/registration/utils/otp_screen/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../custom_widgets/custom_appbar.dart';
@@ -89,7 +89,7 @@ class OtpScreen extends GetView<OtpController> {
                               TextSpan(
                                   text:
                                       "We have sent an OTP to your registered\nmobile number",
-                                  style: GoogleFonts.manrope(
+                                  style: GoogleFonts.openSans(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14,
                                     color: AppColor.paragraphColor,
@@ -122,11 +122,10 @@ class OtpScreen extends GetView<OtpController> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           length: 6,
                           controller: controller.pinController,
-                          androidSmsAutofillMethod:
-                              AndroidSmsAutofillMethod.smsUserConsentApi,
-                          listenForMultipleSmsOnAndroid: true,
                           defaultPinTheme: getDefaultPinTheme(),
                           hapticFeedbackType: HapticFeedbackType.lightImpact,
+                          androidSmsAutofillMethod:
+                              AndroidSmsAutofillMethod.smsUserConsentApi,
                           onCompleted: (pin) {
                             if (pin.length == 6) {
                               controller.onInputChanged(pin);
@@ -213,7 +212,7 @@ class OtpScreen extends GetView<OtpController> {
                               controller.seconds.value != 0)
                             CustomLinkLabel(
                               text:
-                                  "(${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
+                                  " (${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
                             ),
                         ],
                       ),

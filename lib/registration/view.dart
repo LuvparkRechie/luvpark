@@ -4,16 +4,16 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
-import 'package:luvpark_get/custom_widgets/alert_dialog.dart';
-import 'package:luvpark_get/custom_widgets/custom_button.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/custom_textfield.dart';
-import 'package:luvpark_get/custom_widgets/password_indicator.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/custom_widgets/vertical_height.dart';
-import 'package:luvpark_get/registration/controller.dart';
-import 'package:luvpark_get/routes/routes.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/password_indicator.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/custom_widgets/vertical_height.dart';
+import 'package:luvpark/registration/controller.dart';
+import 'package:luvpark/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../custom_widgets/app_color.dart';
@@ -78,7 +78,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                 color: Colors.black,
                                 maxlines: 1,
                                 fontSize: 20,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w700,
                                 textAlign: TextAlign.center,
                                 letterSpacing: -.1,
                               ),
@@ -137,6 +137,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                 () => Container(
                                   clipBehavior: Clip.antiAlias,
                                   decoration: ShapeDecoration(
+                                    color: Colors.grey.shade50,
                                     shape: RoundedRectangleBorder(
                                       side: BorderSide(
                                         width: 1,
@@ -313,7 +314,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                   },
                                 ),
                               Container(
-                                height: 20,
+                                height: 30,
                               ),
                               if (MediaQuery.of(context).viewInsets.bottom == 0)
                                 Center(
@@ -324,13 +325,13 @@ class RegistrationPage extends GetView<RegistrationController> {
                                           text: "Already a luvpark user? ",
                                           style: paragraphStyle(
                                               color: Colors.black,
-                                              fontWeight: FontWeight.w800),
+                                              fontWeight: FontWeight.w500),
                                         ),
                                         TextSpan(
                                           text: 'Login',
                                           style: paragraphStyle(
                                             color: AppColor.primaryColor,
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w700,
                                           ),
                                           recognizer: TapGestureRecognizer()
                                             ..onTap = controller.isLoading.value

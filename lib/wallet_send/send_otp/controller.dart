@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/auth/authentication.dart';
+import 'package:luvpark/auth/authentication.dart';
 
 import '../../custom_widgets/alert_dialog.dart';
 import '../../http/api_keys.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:tutorial_coach_mark/tutorial_coach_mark.dart';
 
 List<TargetFocus> addTargetsPage({
