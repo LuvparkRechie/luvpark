@@ -286,14 +286,15 @@ class PayQr extends GetView<QrWalletController> {
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              .60,
+                                              .80,
+                                          height: 40,
                                           padding: const EdgeInsets.all(
                                               10), // Padding values
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             border: Border.all(
                                               color: Color(0xFF0078FF),
-                                              width: 1.0, // 1-pixel width
+                                              width: 1.0,
                                             ),
                                             borderRadius:
                                                 BorderRadius.circular(7),
@@ -301,22 +302,23 @@ class PayQr extends GetView<QrWalletController> {
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
                                             children: const [
+                                              CustomParagraph(
+                                                textAlign: TextAlign.center,
+                                                minFontSize: 12,
+                                                text: 'Generate QR code',
+                                                color: Color(0xFF0078FF),
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                              SizedBox(
+                                                width: 5,
+                                              ),
                                               Icon(
                                                 Icons.sync_outlined,
-                                                size: 28.0,
+                                                size: 20.0,
                                                 color: Color(0xFF0078FF),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Expanded(
-                                                child: CustomParagraph(
-                                                  textAlign: TextAlign.center,
-                                                  minFontSize: 8,
-                                                  maxlines: 1,
-                                                  text: 'Generate QR code',
-                                                  color: Color(0xFF0078FF),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
                                               ),
                                             ],
                                           ),
@@ -333,6 +335,11 @@ class PayQr extends GetView<QrWalletController> {
                                             controller.shareQr();
                                           },
                                           child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .37,
+                                            height: 40,
                                             decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(7)),
@@ -342,39 +349,28 @@ class PayQr extends GetView<QrWalletController> {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.fromLTRB(
-                                                      20, 14, 20, 14),
+                                                      20, 0, 20, 0),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(
-                                                    "Share",
-                                                    style: Platform.isAndroid
-                                                        ? GoogleFonts.dmSans(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 14)
-                                                        : TextStyle(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                                "SFProTextReg",
-                                                          ),
+                                                  CustomParagraph(
+                                                    textAlign: TextAlign.center,
+                                                    minFontSize: 12,
+                                                    text: 'Share',
+                                                    color: Color(0xFF0078FF),
+                                                    fontWeight:
+                                                        FontWeight.normal,
                                                   ),
                                                   SizedBox(
-                                                    width: 8,
+                                                    width: 5,
                                                   ),
-                                                  const Icon(
-                                                    Icons.ios_share_outlined,
+                                                  Icon(
+                                                    Icons.share_outlined,
+                                                    size: 17.0,
                                                     color: Color(0xFF0078FF),
-                                                    size: 25,
                                                   ),
                                                 ],
                                               ),
@@ -389,7 +385,11 @@ class PayQr extends GetView<QrWalletController> {
                                             controller.saveQr();
                                           },
                                           child: Container(
-                                            width: 117,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                .37,
+                                            height: 40,
                                             decoration: BoxDecoration(
                                                 borderRadius: BorderRadius.all(
                                                     Radius.circular(7)),
@@ -399,40 +399,29 @@ class PayQr extends GetView<QrWalletController> {
                                             child: Padding(
                                               padding:
                                                   const EdgeInsets.fromLTRB(
-                                                      20, 14, 20, 14),
+                                                      20, 0, 20, 0),
                                               child: Row(
                                                 mainAxisAlignment:
                                                     MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
                                                 children: [
-                                                  Text(
-                                                    maxLines: 1,
-                                                    "Save",
-                                                    style: Platform.isAndroid
-                                                        ? GoogleFonts.dmSans(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 12)
-                                                        : TextStyle(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "SFProTextReg",
-                                                          ),
+                                                  CustomParagraph(
+                                                    textAlign: TextAlign.center,
+                                                    minFontSize: 12,
+                                                    text: 'Save',
+                                                    color: Color(0xFF0078FF),
+                                                    fontWeight:
+                                                        FontWeight.normal,
                                                   ),
                                                   SizedBox(
                                                     width: 5,
                                                   ),
-                                                  const Icon(
-                                                    Icons.download,
+                                                  Icon(
+                                                    Icons
+                                                        .download_for_offline_outlined,
+                                                    size: 20.0,
                                                     color: Color(0xFF0078FF),
-                                                    size: 25,
                                                   ),
                                                 ],
                                               ),
@@ -568,39 +557,33 @@ class ReceiveQr extends GetView<QrWalletController> {
                         controller.shareQr();
                       },
                       child: Container(
+                        width: MediaQuery.of(context).size.width * .37,
+                        height: 40,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(7)),
                             border: Border.all(
                               color: Color(0xFF0078FF),
                             )),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                "Share",
-                                style: Platform.isAndroid
-                                    ? GoogleFonts.dmSans(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12)
-                                    : TextStyle(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12,
-                                        fontFamily: "SFProTextReg",
-                                      ),
+                              CustomParagraph(
+                                textAlign: TextAlign.center,
+                                minFontSize: 12,
+                                text: 'Share',
+                                color: Color(0xFF0078FF),
+                                fontWeight: FontWeight.normal,
                               ),
                               SizedBox(
                                 width: 5,
                               ),
-                              const Icon(
-                                Icons.ios_share_outlined,
+                              Icon(
+                                Icons.share_outlined,
+                                size: 17.0,
                                 color: Color(0xFF0078FF),
-                                size: 25,
                               ),
                             ],
                           ),
@@ -615,40 +598,33 @@ class ReceiveQr extends GetView<QrWalletController> {
                         controller.saveQr();
                       },
                       child: Container(
-                        width: 117,
+                        width: MediaQuery.of(context).size.width * .37,
+                        height: 40,
                         decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(7)),
                             border: Border.all(
                               color: Color(0xFF0078FF),
                             )),
                         child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
+                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Text(
-                                "Save",
-                                style: Platform.isAndroid
-                                    ? GoogleFonts.dmSans(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12)
-                                    : TextStyle(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12,
-                                        fontFamily: "SFProTextReg",
-                                      ),
+                              CustomParagraph(
+                                textAlign: TextAlign.center,
+                                minFontSize: 12,
+                                text: 'Save',
+                                color: Color(0xFF0078FF),
+                                fontWeight: FontWeight.normal,
                               ),
                               SizedBox(
                                 width: 5,
                               ),
-                              const Icon(
-                                Icons.download,
+                              Icon(
+                                Icons.download_for_offline_outlined,
+                                size: 20.0,
                                 color: Color(0xFF0078FF),
-                                size: 25,
                               ),
                             ],
                           ),
