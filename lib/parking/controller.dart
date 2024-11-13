@@ -15,8 +15,7 @@ class ParkingController extends GetxController
   String parameter = Get.arguments;
   late TabController tabController;
   TextEditingController searchCtrl = TextEditingController();
-  late StreamController<void> _dataController;
-  late StreamSubscription<void> _dataSubscription;
+
   PageController pageController = PageController();
   RxInt currentPage = 0.obs;
   RxList resData = [].obs;
@@ -24,8 +23,9 @@ class ParkingController extends GetxController
   RxDouble tabHeight = 0.0.obs;
   bool isAllowToSync = true;
   RxInt tabIndex = 0.obs;
-
+  RxBool tabLoading = true.obs;
   RxBool isLoading = true.obs;
+  Timer? _timer;
   ParkingController();
 
   @override
@@ -33,14 +33,13 @@ class ParkingController extends GetxController
     super.onInit();
 
     tabController = TabController(vsync: this, length: 2);
-    _dataController = StreamController<void>();
 
     if (parameter == "N") {
       onTabTapped(1);
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onRefresh();
-      streamData();
+      onTimerRun();
     });
   }
 
@@ -48,88 +47,91 @@ class ParkingController extends GetxController
   void onClose() {
     tabController.dispose();
     pageController.dispose();
-    _dataController.close();
     searchCtrl.dispose();
-    _dataSubscription.cancel();
+    _timer?.cancel();
     super.onClose();
+  }
+
+  void onTimerRun() {
+    _timer = Timer.periodic(Duration(seconds: 5), (t) async {
+      DateTime now = await Functions.getTimeNow();
+      final id = await Authentication().getUserId();
+      String api =
+          "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
+
+      final returnData = await HttpRequest(api: api).get();
+      resData.value = [];
+      resData.value = [];
+      List itemData = returnData["items"];
+      if (itemData.isNotEmpty) {
+        itemData = itemData.where((element) {
+          DateTime timeNow = now;
+          DateTime timeOut = DateTime.parse(element["dt_out"].toString());
+          return timeNow.isBefore(timeOut);
+        }).toList();
+      }
+      resData.value = itemData;
+
+      resData.value = itemData;
+    });
   }
 
   void onTabTapped(int index) {
     currentPage.value = index;
+    tabLoading.value = true;
 
     getReserveData(index == 0 ? "C" : "U");
   }
 
   Future<void> onRefresh() async {
+    isLoading.value = true;
     getReserveData(currentPage.value == 0 ? "C" : "U");
-  }
-
-  void streamData() {
-    _dataSubscription = _dataController.stream.listen((data) {});
-    fetchDataPeriodically();
-  }
-
-  void fetchDataPeriodically() async {
-    _dataSubscription = Stream.periodic(const Duration(seconds: 10), (count) {
-      fetchData();
-    }).listen((event) {});
-  }
-
-  Future<void> fetchData() async {
-    await Future.delayed(const Duration(seconds: 5));
-    onRefresh();
   }
 
   //Get Reserve Data
   Future<void> getReserveData(String status) async {
     DateTime now = await Functions.getTimeNow();
-    Functions.getUserBalance2(Get.context!, (userData) async {
-      if (!userData[0]["has_net"]) {
-        isLoading.value = false;
+    final id = await Authentication().getUserId();
+
+    String api =
+        "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
+
+    try {
+      final returnData = await HttpRequest(api: api).get();
+      print("returnData $returnData");
+      tabLoading.value = false;
+      if (returnData == "No Internet") {
+        isLoading.value = false; // End loading
         hasNet.value = false;
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
         return;
       }
-      final id = await Authentication().getUserId();
-
-      String api =
-          "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
-      print("api $api");
-      try {
-        final returnData = await HttpRequest(api: api).get();
-
-        if (returnData == "No Internet") {
-          isLoading.value = false; // End loading
-          hasNet.value = false;
-          CustomDialog().internetErrorDialog(Get.context!, () {
-            Get.back();
-          });
-          return;
+      isLoading.value = false; // End loading
+      hasNet.value = true;
+      if (returnData == null) {
+        CustomDialog().errorDialog(Get.context!, "Internet Error",
+            "Error while connecting to server, Please contact support.", () {
+          Get.back();
+        });
+        return;
+      } else {
+        resData.value = [];
+        List itemData = returnData["items"];
+        if (itemData.isNotEmpty) {
+          itemData = itemData.where((element) {
+            DateTime timeNow = now;
+            DateTime timeOut = DateTime.parse(element["dt_out"].toString());
+            return timeNow.isBefore(timeOut);
+          }).toList();
         }
-        isLoading.value = false; // End loading
-        hasNet.value = true;
-        if (returnData == null) {
-          CustomDialog().errorDialog(Get.context!, "Internet Error",
-              "Error while connecting to server, Please contact support.", () {
-            Get.back();
-          });
-          return;
-        } else {
-          resData.value = [];
-          List itemData = returnData["items"];
-          if (itemData.isNotEmpty) {
-            itemData = itemData.where((element) {
-              DateTime timeNow = now;
-              DateTime timeOut = DateTime.parse(element["dt_out"].toString());
-              return timeNow.isBefore(timeOut);
-            }).toList();
-          }
 
-          resData.value = itemData;
-        }
-      } finally {
-        isLoading.value = false;
+        resData.value = itemData;
       }
-    });
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   // BTN details

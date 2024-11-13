@@ -278,7 +278,9 @@ class WalletRechargeLoadController extends GetxController
 
   Future<void> onSearchChanged(mobile, isFirst) async {
     isActiveBtn.value = false;
+    print("mobile $mobile");
     if (_debounce?.isActive ?? false) _debounce?.cancel();
+
     if (mobile.toString().length < 10) {
       return;
     }

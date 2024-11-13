@@ -97,7 +97,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () {
-                                      if (controller.isLoading.value) {
+                                      if (controller.tabLoading.value) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
@@ -139,7 +139,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                 Expanded(
                                   child: GestureDetector(
                                     onTap: () {
-                                      if (controller.isLoading.value) {
+                                      if (controller.tabLoading.value) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
@@ -183,7 +183,8 @@ class ParkingScreen extends GetView<ParkingController> {
                     ),
                     Container(height: 10),
                     Expanded(
-                      child: controller.isLoading.value
+                      child: controller.isLoading.value ||
+                              controller.tabLoading.value
                           ? const ParkShimmer()
                           : !controller.hasNet.value
                               ? NoInternetConnected(

@@ -86,6 +86,7 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                       controller: controller.mobNum,
                       inputFormatters: [Variables.maskFormatter],
                       onChange: (value) {
+                        print("pisti $value");
                         controller.isActiveBtn.value = true;
                         controller.onSearchChanged(
                             value.replaceAll(" ", ""), false);

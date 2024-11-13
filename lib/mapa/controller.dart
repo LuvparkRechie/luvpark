@@ -310,7 +310,7 @@ class DashboardMapController extends GetxController
   void getNearest(LatLng coordinates) async {
     String params =
         "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-    print("params $params");
+
     try {
       var returnData = await HttpRequest(api: params).get();
 
@@ -865,7 +865,7 @@ class DashboardMapController extends GetxController
         element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
         return element;
       }).toList();
-      print("orientation ${markerData[0]["park_orientation"]}");
+
       if (markerData[0]["park_orientation"] != null) {
         item.insert(0, {
           "zone_amenity_id": 0,
@@ -1207,6 +1207,15 @@ class DashboardMapController extends GetxController
     DateTime now = await Functions.getTimeNow();
     CustomDialog().loadingDialog(Get.context!);
     isClkBook.value = false;
+
+    if (markerData.isEmpty) {
+      Get.back();
+      CustomDialog()
+          .infoDialog("Not Available", "No data found please refresh.", () {
+        Get.back();
+      });
+      return;
+    }
     if (markerData[0]["is_allow_reserve"] == "N") {
       Get.back();
       CustomDialog().infoDialog("Not Open to Public Yet",
@@ -1281,6 +1290,7 @@ class DashboardMapController extends GetxController
         return;
       }
     }
+
     if (int.parse(markerData[0]["res_vacant_count"].toString()) == 0) {
       Get.back();
       CustomDialog().infoDialog("Booking not availabe",

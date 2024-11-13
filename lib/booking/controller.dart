@@ -627,9 +627,10 @@ class BookingController extends GetxController
           } else {
             isSubmitBooking.value = false;
             inactivityTimer?.cancel();
+            // Get.back();
             Get.back();
-            Get.back();
-            Get.to(BookingDialog(data: [paramArgs]));
+            Get.offAll(BookingDialog(data: [paramArgs]));
+            // Get.to();
             return;
           }
         }

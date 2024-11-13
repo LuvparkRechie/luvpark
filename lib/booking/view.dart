@@ -898,26 +898,27 @@ class BookingPage extends GetView<BookingController> {
                                                   width: MediaQuery.of(context)
                                                       .size
                                                       .width,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            7),
+                                                  decoration: ShapeDecoration(
                                                     color: Colors.white,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(0.1),
-                                                        spreadRadius: 1,
-                                                        blurRadius: 4,
-                                                        offset:
-                                                            const Offset(0, 2),
-                                                      ),
-                                                    ],
-                                                    border: Border.all(
-                                                      color: Colors.black
-                                                          .withOpacity(0.2),
-                                                      width: 1,
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      side: BorderSide(
+                                                          width: 1,
+                                                          color: Color(
+                                                              0xFFDFE7EF)),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              7),
                                                     ),
+                                                    shadows: [
+                                                      BoxShadow(
+                                                        color:
+                                                            Color(0x0C000000),
+                                                        blurRadius: 15,
+                                                        offset: Offset(0, 5),
+                                                        spreadRadius: 0,
+                                                      )
+                                                    ],
                                                   ),
                                                   child: Padding(
                                                     padding:
@@ -1080,11 +1081,17 @@ class BookingPage extends GetView<BookingController> {
                                                                       MainAxisAlignment
                                                                           .spaceBetween,
                                                                   children: [
-                                                                    const CustomParagraph(
-                                                                        text:
-                                                                            ' Total ',
-                                                                        letterSpacing:
-                                                                            -0.41),
+                                                                    CustomParagraph(
+                                                                      text:
+                                                                          ' Total ',
+                                                                      letterSpacing:
+                                                                          -0.41,
+                                                                      color: AppColor
+                                                                          .headerColor,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
                                                                     Padding(
                                                                       padding: const EdgeInsets
                                                                           .only(
@@ -1096,6 +1103,8 @@ class BookingPage extends GetView<BookingController> {
                                                                             .toString(),
                                                                         color: AppColor
                                                                             .primaryColor,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
                                                                       ),
                                                                     ),
                                                                   ],
