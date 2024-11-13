@@ -1,664 +1,447 @@
-// ignore_for_file: prefer_const_constructors
-
-import 'dart:convert';
-import 'dart:io';
+// ignore_for_file: prefer_const_constructorss, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
-import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
-import 'package:luvpark/custom_widgets/no_internet.dart';
-import 'package:luvpark/custom_widgets/page_loader.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:luvpark/custom_widgets/no_data_found.dart';
+import 'package:luvpark/routes/routes.dart';
+import 'package:luvpark/wallet/controller.dart';
+import 'package:luvpark/wallet/utils/transaction_details.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../auth/authentication.dart';
+import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/app_color.dart';
-import 'controller.dart';
+import 'utils/transaction_history/index.dart';
 
-class QrWallet extends GetView<QrWalletController> {
-  const QrWallet({super.key});
-
+class WalletScreen extends GetView<WalletController> {
+  const WalletScreen({super.key});
   @override
   Widget build(BuildContext context) {
-    return Obx(() => Scaffold(
-          backgroundColor: AppColor.primaryColor,
-          body: Column(
+    return Scaffold(
+      appBar: CustomAppbar(
+        elevation: 0,
+        title: "My Wallet",
+        hasBtnColor: true,
+        onTap: () {
+          Get.back();
+        },
+      ),
+      body: Obx(
+        () => SafeArea(
+          child: Column(
             children: [
-              CustomAppbar(
-                title: controller.currentPage.value == 0 ? "Payment" : "My QR",
-                bgColor: AppColor.primaryColor,
-                titleColor: Colors.white,
-                textColor: Colors.white,
-                btnColor: null,
-              ),
-              Container(
-                color: AppColor.primaryColor,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
-                  child: Container(
-                    padding: const EdgeInsets.all(0),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0D62C3),
-                      borderRadius: BorderRadius.circular(7),
-                      border: Border.all(
-                        color: const Color(0xFF0D62C3),
+              Stack(
+                children: [
+                  Container(
+                    color: Color(0xFFE8F0F9),
+                    width: double.infinity,
+                    height: 60,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(15, 15, 15, 23),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(7)),
+                        border: Border(
+                          left: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                          top: BorderSide(color: Color(0xFFDFE7EF)),
+                          right: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                          bottom:
+                              BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x0C000000),
+                            blurRadius: 15,
+                            offset: Offset(0, 5),
+                            spreadRadius: 0,
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                    height: 30, "assets/images/logo.png"),
+                                SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomParagraph(
+                                        text: "My balance",
+                                      ),
+                                      CustomTitle(
+                                        text: !controller.isNetConnCard.value
+                                            ? "........"
+                                            : controller.isLoadingCard.value
+                                                ? "........"
+                                                : toCurrencyString(controller
+                                                    .userData[0]["amount_bal"]),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Divider(
+                            color: Colors.black12,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
+                            child: Row(
+                              children: [
+                                Image.asset(
+                                    height: 30, "assets/images/rewardicon.png"),
+                                SizedBox(width: 14),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CustomParagraph(
+                                        text: "My rewards",
+                                      ),
+                                      CustomTitle(
+                                        text: !controller.isNetConnCard.value
+                                            ? "........"
+                                            : controller.isLoadingCard.value
+                                                ? "........"
+                                                : toCurrencyString(controller
+                                                    .userData[0]["points_bal"]
+                                                    .toString()),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    child: Row(children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (controller.isLoading.value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Loading on progress, Please wait...'),
-                                  duration: Duration(seconds: 2),
-                                  backgroundColor: Colors.blue,
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                              return;
-                            }
-                            controller.onTabChanged(0);
-                          },
-                          child: AnimatedContainer(
-                            duration: Duration(milliseconds: 200),
-                            curve: Curves.easeIn,
-                            padding: const EdgeInsets.all(10),
-                            decoration: controller.currentPage.value != 0
-                                ? decor2()
-                                : decor1(),
-                            child: Center(
-                              child: CustomParagraph(
-                                text: "QR Pay",
-                                fontSize: 10,
-                                color: controller.currentPage.value != 0
-                                    ? Colors.white38
-                                    : Colors.white,
-                              ),
-                            ),
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 23),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
+                      onTap: () async {
+                        final item = await Authentication().getUserData2();
+                        String? fname = item["first_name"];
+
+                        if (fname == null) {
+                          CustomDialog().infoDialog("Unverified Account",
+                              "Complete your account information to access the requested service.\nGo to profile and update your account.",
+                              () {
+                            Get.back();
+                          });
+                          return;
+                        }
+                        Get.toNamed(Routes.walletrecharge);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.6,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 13),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                            borderRadius: BorderRadius.circular(41),
                           ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/wallet_wallet.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            Container(
+                              width: 10,
+                            ),
+                            CustomParagraph(
+                              text: "Load",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
                         ),
                       ),
-                      Container(width: 5),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            if (controller.isLoading.value) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'Loading on progress, Please wait...'),
-                                  duration: Duration(seconds: 2),
-                                  backgroundColor: Colors.blue,
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                              return;
-                            }
-                            controller.onTabChanged(1);
-                          },
-                          child: AnimatedContainer(
-                            duration: Duration(milliseconds: 200),
-                            curve: Curves.easeOut,
-                            padding: const EdgeInsets.all(10),
-                            decoration: controller.currentPage.value != 1
-                                ? decor2()
-                                : decor1(),
-                            child: Center(
-                              child: CustomParagraph(
-                                text: "My QR",
-                                fontSize: 10,
-                                color: controller.currentPage.value != 1
-                                    ? Colors.white38
-                                    : Colors.white,
-                              ),
-                            ),
+                    ),
+                    Container(width: 5),
+                    InkWell(
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
+                      onTap: () {
+                        Get.toNamed(Routes.walletsend);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.6,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 13),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                            borderRadius: BorderRadius.circular(41),
                           ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/wallet_send.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            Container(
+                              width: 10,
+                            ),
+                            CustomParagraph(
+                              text: "Send",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
                         ),
                       ),
-                    ]),
+                    ),
+                    Container(width: 5),
+                    InkWell(
+                      overlayColor:
+                          MaterialStatePropertyAll(Colors.transparent),
+                      onTap: () {
+                        Get.toNamed(Routes.qrwallet);
+                      },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width / 3.2,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 13),
+                        decoration: ShapeDecoration(
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            side:
+                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
+                            borderRadius: BorderRadius.circular(41),
+                          ),
+                          shadows: [
+                            BoxShadow(
+                              color: Color(0x0C000000),
+                              blurRadius: 15,
+                              offset: Offset(0, 5),
+                              spreadRadius: 0,
+                            )
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              'assets/images/wallet_qr.svg',
+                              height: 20,
+                              width: 20,
+                            ),
+                            Container(
+                              width: 5,
+                            ),
+                            CustomParagraph(
+                              text: "QR Code",
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 23),
+                child: InkWell(
+                  onTap: () {
+                    Get.toNamed(Routes.myaccount);
+                  },
+                  child: Column(
+                    children: controller.unverified.toList(),
                   ),
                 ),
               ),
               Expanded(
-                child:
-                    controller.currentPage.value == 0 ? PayQr() : ReceiveQr(),
-              )
-            ],
-          ),
-        ));
-  }
-
-//selected tab
-  BoxDecoration decor1() {
-    return BoxDecoration(
-      color: Colors.white30,
-      borderRadius: BorderRadius.circular(7),
-      border: Border.all(
-        color: Colors.transparent,
-      ),
-    );
-  }
-
-//unselected tab
-  BoxDecoration decor2() {
-    return BoxDecoration(
-      borderRadius: BorderRadius.circular(7),
-      color: const Color(0xFF0D62C3),
-      border: Border.all(
-        color: const Color(0xFF0D62C3),
-      ),
-    );
-  }
-}
-
-class PayQr extends GetView<QrWalletController> {
-  const PayQr({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Obx(() => Padding(
-          padding: const EdgeInsets.all(15),
-          child: Container(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    blurRadius: 1,
-                    spreadRadius: 1,
-                    offset: Offset(0, 1),
-                    color: AppColor.primaryColor.withOpacity(.5),
-                  )
-                ]),
-            child: !controller.isInternetConn.value
-                ? NoInternetConnected(onTap: controller.getQrData)
-                : controller.isLoading.value
-                    ? PageLoader()
-                    : ScrollConfiguration(
-                        behavior: ScrollBehavior().copyWith(overscroll: false),
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.fromLTRB(15, 17, 15, 15),
-                                child: Column(
-                                  children: [
-                                    controller.userImage.isEmpty
-                                        ? Container(
-                                            height: 70,
-                                            width: 70,
-                                            decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                                border: Border.all(
-                                                    color: AppColor.primaryColor
-                                                        .withOpacity(.6))),
-                                            child: Icon(
-                                              Icons.person,
-                                              color: Colors.blueAccent,
-                                            ),
-                                          )
-                                        : CircleAvatar(
-                                            radius: 40,
-                                            backgroundImage: MemoryImage(
-                                              base64Decode(
-                                                  controller.userImage.value),
-                                            )),
-                                    SizedBox(
-                                      height: 10,
-                                    ),
-                                    CustomTitle(
-                                      text: controller.fullName.value,
-                                      maxlines: 2,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    Container(height: 5),
-                                    CustomParagraph(
-                                      text: controller.mono.value,
-                                      fontWeight: FontWeight.w600,
-                                      color: Color(0xFF616161),
-                                      maxlines: 2,
-                                      textAlign: TextAlign.center,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              TicketStyle(
-                                dtColor: AppColor.primaryColor,
-                              ),
-                              Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Container(
-                                    height: MediaQuery.of(context).size.height /
-                                        4.5,
-                                    child: PrettyQrView(
-                                      decoration: const PrettyQrDecoration(
-                                          image: PrettyQrDecorationImage(
-                                              image: AssetImage(
-                                                  "assets/images/logo.png"))),
-                                      qrImage: QrImage(QrCode.fromData(
-                                          data: controller.payKey.value,
-                                          errorCorrectLevel:
-                                              QrErrorCorrectLevel.H)),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  // QrImageView(
-                                  //   data: controller.payKey.value,
-                                  //   version: QrVersions.auto,
-                                  //   size: 200,
-                                  //   gapless: false,
-                                  // ),
-                                  CustomTitle(
-                                    text: controller.isLoading.value
-                                        ? ""
-                                        : 'Scan QR code to pay',
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: const Color(0xFF070707),
-                                  ),
-                                ],
-                              ),
-                              Container(height: 20),
-                              TicketStyle(
-                                dtColor: AppColor.primaryColor,
-                              ),
-                              Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(15, 10, 15, 10),
-                                child: Column(
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        controller.generateQr();
-                                      },
-                                      child: Center(
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              .60,
-                                          padding: const EdgeInsets.all(
-                                              10), // Padding values
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            border: Border.all(
-                                              color: Color(0xFF0078FF),
-                                              width: 1.0, // 1-pixel width
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(7),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: const [
-                                              Icon(
-                                                Icons.sync_outlined,
-                                                size: 28.0,
-                                                color: Color(0xFF0078FF),
-                                              ),
-                                              SizedBox(width: 5),
-                                              Expanded(
-                                                child: CustomParagraph(
-                                                  textAlign: TextAlign.center,
-                                                  minFontSize: 8,
-                                                  maxlines: 1,
-                                                  text: 'Generate QR code',
-                                                  color: Color(0xFF0078FF),
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(height: 15),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        InkWell(
-                                          onTap: () {
-                                            controller.shareQr();
-                                          },
-                                          child: Container(
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(7)),
-                                                border: Border.all(
-                                                  color: Color(0xFF0078FF),
-                                                )),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      20, 14, 20, 14),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    "Share",
-                                                    style: Platform.isAndroid
-                                                        ? GoogleFonts.dmSans(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 14)
-                                                        : TextStyle(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 14,
-                                                            fontFamily:
-                                                                "SFProTextReg",
-                                                          ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  const Icon(
-                                                    Icons.ios_share_outlined,
-                                                    color: Color(0xFF0078FF),
-                                                    size: 25,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        InkWell(
-                                          onTap: () {
-                                            controller.saveQr();
-                                          },
-                                          child: Container(
-                                            width: 117,
-                                            decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(7)),
-                                                border: Border.all(
-                                                  color: Color(0xFF0078FF),
-                                                )),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.fromLTRB(
-                                                      20, 14, 20, 14),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                    maxLines: 1,
-                                                    "Save",
-                                                    style: Platform.isAndroid
-                                                        ? GoogleFonts.dmSans(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 12)
-                                                        : TextStyle(
-                                                            color: Color(
-                                                                0xFF0078FF),
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            letterSpacing: 1,
-                                                            fontSize: 12,
-                                                            fontFamily:
-                                                                "SFProTextReg",
-                                                          ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: 5,
-                                                  ),
-                                                  const Icon(
-                                                    Icons.download,
-                                                    color: Color(0xFF0078FF),
-                                                    size: 25,
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: 15),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-          ),
-        ));
-  }
-}
-
-class ReceiveQr extends GetView<QrWalletController> {
-  const ReceiveQr({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(15),
-      child: Container(
-        decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                blurRadius: 1,
-                spreadRadius: 1,
-                offset: Offset(0, 1),
-                color: AppColor.primaryColor.withOpacity(.5),
-              )
-            ]),
-        child: ScrollConfiguration(
-          behavior: ScrollBehavior().copyWith(overscroll: false),
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.fromLTRB(0, 17, 0, 15),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 26),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(color: Colors.white),
                   child: Column(
                     children: [
-                      controller.userImage.value.isEmpty
-                          ? Container(
-                              height: 70,
-                              width: 70,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                      color: AppColor.primaryColor
-                                          .withOpacity(.6))),
-                              child: Icon(
-                                Icons.person,
-                                color: Colors.blueAccent,
-                              ),
-                            )
-                          : CircleAvatar(
-                              radius: 40,
-                              backgroundImage: MemoryImage(
-                                base64Decode(controller.userImage.value),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 15),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            CustomTitle(
+                              text: "Current Transactions",
+                              fontSize: 16,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Get.to(TransactionHistory());
+                              },
+                              child: CustomParagraph(
+                                text: "See all",
+                                color: AppColor.primaryColor,
                               ),
                             ),
-                      SizedBox(
-                        height: 10,
+                          ],
+                        ),
                       ),
-                      CustomTitle(
-                        text: controller.fullName.value,
-                        maxlines: 1,
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 5),
-                      CustomParagraph(
-                        text: controller.mono.value,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF616161),
+                      Expanded(
+                        child: controller.isLoadingLogs.value
+                            ? Shimmer.fromColors(
+                                baseColor: Colors.grey[300]!,
+                                highlightColor: Colors.grey[100]!,
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  itemCount: 10,
+                                  itemBuilder: (context, index) => Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 8.0),
+                                    child: ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: Container(
+                                        width: 40,
+                                        height: 40,
+                                        color: Colors.grey[300],
+                                      ),
+                                      title: Container(
+                                        width: double.infinity,
+                                        height: 16,
+                                        color: Colors.grey[300],
+                                      ),
+                                      subtitle: Container(
+                                        width: 15,
+                                        height: 14,
+                                        color: Colors.grey[300],
+                                      ),
+                                      trailing: Container(
+                                        width: 60,
+                                        height: 16,
+                                        color: Colors.grey[300],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )
+                            : controller.logs.isEmpty
+                                ? NoDataFound()
+                                : ListView.builder(
+                                    physics: BouncingScrollPhysics(
+                                        decelerationRate:
+                                            ScrollDecelerationRate.fast),
+                                    padding: EdgeInsets.zero,
+                                    itemCount: controller.logs.length,
+                                    itemBuilder: (context, index) {
+                                      var log = controller.logs[index];
+                                      String trans = log["tran_desc"]
+                                          .toString()
+                                          .toLowerCase();
+                                      String img = "";
+                                      if (trans.contains("share")) {
+                                        img = "wallet_sharetoken";
+                                      } else if (trans.contains("received")) {
+                                        img = "wallet_receivetoken";
+                                      } else if (trans.contains("credit")) {
+                                        img = "wallet_receivetoken";
+                                      } else {
+                                        img = "wallet_payparking";
+                                      }
+                                      return GestureDetector(
+                                        onTap: () {
+                                          Get.bottomSheet(TransactionDetails(
+                                              data: controller.logs,
+                                              index: index));
+                                        },
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          leading: SvgPicture.asset(
+                                            fit: BoxFit.cover,
+                                            "assets/images/$img.svg",
+                                          ),
+                                          title: CustomTitle(
+                                            text: log["tran_desc"],
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.w600,
+                                            maxlines: 1,
+                                          ),
+                                          subtitle: CustomParagraph(
+                                            text:
+                                                DateFormat('MMM d, yyyy h:mm a')
+                                                    .format(DateTime.parse(
+                                                        log["tran_date"])),
+                                            fontSize: 12,
+                                            maxlines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          trailing: CustomTitle(
+                                            text: log["amount"],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                                double.parse(log["amount"]) < 0
+                                                    ? const Color(0xFFFF0000)
+                                                    : const Color(0xFF0078FF),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
                       ),
                     ],
                   ),
                 ),
-                TicketStyle(
-                  dtColor: AppColor.primaryColor,
-                ),
-                Column(
-                  children: [
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      height: MediaQuery.of(context).size.height / 4.5,
-                      child: PrettyQrView(
-                        decoration: const PrettyQrDecoration(
-                            image: PrettyQrDecorationImage(
-                                image: AssetImage("assets/images/logo.png"))),
-                        qrImage: QrImage(QrCode.fromData(
-                            data: controller.mobNum.value,
-                            errorCorrectLevel: QrErrorCorrectLevel.H)),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    // QrImageView(
-                    //   data: controller.mobNum.value,
-                    //   version: QrVersions.auto,
-                    //   gapless: false,
-                    //   size: 200,
-                    // ),
-                    CustomTitle(
-                      text: 'Scan QR code to receive',
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF070707),
-                    ),
-                  ],
-                ),
-                Container(height: 20),
-                TicketStyle(
-                  dtColor: AppColor.primaryColor,
-                ),
-                Container(height: 40),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        controller.shareQr();
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                            border: Border.all(
-                              color: Color(0xFF0078FF),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Share",
-                                style: Platform.isAndroid
-                                    ? GoogleFonts.dmSans(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12)
-                                    : TextStyle(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12,
-                                        fontFamily: "SFProTextReg",
-                                      ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              const Icon(
-                                Icons.ios_share_outlined,
-                                color: Color(0xFF0078FF),
-                                size: 25,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 20,
-                    ),
-                    InkWell(
-                      onTap: () {
-                        controller.saveQr();
-                      },
-                      child: Container(
-                        width: 117,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(7)),
-                            border: Border.all(
-                              color: Color(0xFF0078FF),
-                            )),
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 14, 20, 14),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Save",
-                                style: Platform.isAndroid
-                                    ? GoogleFonts.dmSans(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12)
-                                    : TextStyle(
-                                        color: Color(0xFF0078FF),
-                                        fontWeight: FontWeight.w500,
-                                        letterSpacing: 1,
-                                        fontSize: 12,
-                                        fontFamily: "SFProTextReg",
-                                      ),
-                              ),
-                              SizedBox(
-                                width: 5,
-                              ),
-                              const Icon(
-                                Icons.download,
-                                color: Color(0xFF0078FF),
-                                size: 25,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
+              )
+            ],
           ),
         ),
       ),

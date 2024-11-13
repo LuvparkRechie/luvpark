@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:luvpark_get/custom_widgets/app_color.dart';
-import 'package:luvpark_get/custom_widgets/custom_appbar.dart';
-import 'package:luvpark_get/custom_widgets/custom_text.dart';
-import 'package:luvpark_get/custom_widgets/page_loader.dart';
-import 'package:luvpark_get/custom_widgets/variables.dart';
-import 'package:luvpark_get/my_account/controller.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/my_account/controller.dart';
 
 import '../custom_widgets/no_data_found.dart';
 
@@ -129,16 +129,10 @@ class MyAccount extends GetView<MyAccountScreenController> {
                               : const CustomTitle(
                                   text: "Not Verified",
                                   color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  fontStyle: FontStyle.normal,
-                                  textAlign: TextAlign.center,
-                                  letterSpacing: -0.408,
                                 ),
                           CustomParagraph(
                             text: "+${controller.userData[0]['mobile_no']}",
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
+                            color: const Color.fromARGB(255, 240, 240, 240),
                           ),
                           const SizedBox(height: 15),
                         ],
