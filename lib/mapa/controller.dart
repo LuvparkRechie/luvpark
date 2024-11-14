@@ -418,6 +418,15 @@ class DashboardMapController extends GetxController
     getDefaultLocation();
   }
 
+  Future<void> resetFilter() async {
+    ddRadius.value = "10000";
+    pTypeCode = "";
+    amenities = "";
+    vtypeId = "";
+    addressText = "".obs;
+    isAllowOverNight = "";
+  }
+
   //get curr location
   Future<void> getFilterNearest(data) async {
     ddRadius.value = data[0]["radius"];
