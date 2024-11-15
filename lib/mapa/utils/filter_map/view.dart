@@ -70,6 +70,7 @@ class _FilterMapState extends State<FilterMap> {
     ];
 
     setState(() {});
+    widget.cb([]);
   }
   //convert to km
 
@@ -562,7 +563,9 @@ class _FilterMapState extends State<FilterMap> {
                                               textColor: Colors.blue,
                                               btnColor: Colors.white,
                                               text: "Reset",
-                                              onPressed: resetFilters),
+                                              onPressed: () {
+                                                resetFilters();
+                                              }),
                                         ),
                                         Container(width: 10),
                                         Expanded(

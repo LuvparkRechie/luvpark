@@ -574,7 +574,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 return FilterMap(
                                     data: filterParam,
                                     cb: (data) {
-                                      controller.getFilterNearest(data);
+                                      if (data.isEmpty) {
+                                        controller.resetFilter();
+                                      } else
+                                        controller.getFilterNearest(data);
                                     });
                               },
                               isScrollControlled:
