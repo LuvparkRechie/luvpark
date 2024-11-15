@@ -53,7 +53,7 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                         ),
                         const VerticalHeight(height: 20),
                         CustomTextField(
-                          labelText: "Enter your new password",
+                          labelText: "New password",
                           controller: controller.newPass,
                           isObscure: !controller.isShowNewPass.value,
                           suffixIcon: !controller.isShowNewPass.value
@@ -82,7 +82,7 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                           },
                         ),
                         CustomTextField(
-                          labelText: "Confirm your new password",
+                          labelText: "Confirm password",
                           controller: controller.confirmPass,
                           isObscure: !controller.isShowConfirmPass.value,
                           suffixIcon: !controller.isShowConfirmPass.value
@@ -99,9 +99,6 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                           validator: (txtValue) {
                             if (txtValue == null || txtValue.isEmpty) {
                               return "Field is required";
-                            }
-                            if (txtValue.length < 8 || txtValue.length > 32) {
-                              return "Password must be between 8 and 32 characters";
                             }
                             if (txtValue != controller.newPass.text) {
                               return "Password doesn't match";
