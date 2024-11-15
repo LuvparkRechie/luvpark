@@ -1,9 +1,10 @@
-import 'dart:io';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/booking/index.dart';
@@ -12,8 +13,10 @@ import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
-import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
+
+import '../custom_widgets/custom_expansion.dart';
+import '../custom_widgets/variables.dart';
 
 class BookingPage extends GetView<BookingController> {
   const BookingPage({Key? key}) : super(key: key);
@@ -30,6 +33,16 @@ class BookingPage extends GetView<BookingController> {
               controller.onUserInteraction();
             },
             child: Scaffold(
+                appBar: AppBar(
+                  toolbarHeight: 0,
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  systemOverlayStyle: SystemUiOverlayStyle(
+                    statusBarColor: Colors.white,
+                    statusBarBrightness: Brightness.light,
+                    statusBarIconBrightness: Brightness.dark,
+                  ),
+                ),
                 backgroundColor: AppColor.bodyColor,
                 body: SafeArea(
                   child: !controller.isInternetConn.value
@@ -47,12 +60,13 @@ class BookingPage extends GetView<BookingController> {
                           : Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
+                                Container(height: 10),
                                 Expanded(
                                     child: StretchingOverscrollIndicator(
                                   axisDirection: AxisDirection.down,
                                   child: SingleChildScrollView(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        15, 20, 15, 10),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 15),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -85,14 +99,50 @@ class BookingPage extends GetView<BookingController> {
                                                 size: 16,
                                               )),
                                         ),
-                                        Container(height: 26),
-                                        CustomParagraph(
-                                          text: "You are parking at",
-                                          color: AppColor.headerColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16,
-                                        ),
-                                        Container(height: 15),
+
+                                        Container(height: 20),
+                                        // Container(
+                                        //   width: double.infinity,
+                                        //   padding: EdgeInsets.all(15),
+                                        //   decoration: BoxDecoration(
+                                        //     borderRadius:
+                                        //         BorderRadius.circular(15),
+                                        //     color: Colors.grey.shade300,
+                                        //   ),
+                                        //   child: Row(
+                                        //     children: [
+                                        //       Expanded(
+                                        //         child: Column(
+                                        //           crossAxisAlignment:
+                                        //               CrossAxisAlignment.start,
+                                        //           children: [
+                                        //             CustomTitle(
+                                        //                 text: controller
+                                        //                             .parameters[
+                                        //                         "areaData"]
+                                        //                     ["park_area_name"]),
+                                        //             Container(height: 5),
+                                        //             CustomParagraph(
+                                        //               text:
+                                        //                   controller.parameters[
+                                        //                           "areaData"]
+                                        //                       ["address"],
+                                        //               maxlines: 2,
+                                        //             )
+                                        //           ],
+                                        //         ),
+                                        //       ),
+                                        //       Container(width: 10),
+                                        //       CustomParagraph(
+                                        //         text:
+                                        //             "${controller.parameters["areaData"]["distance_display"].toString().split("away")[0]}\naway",
+                                        //         fontSize: 10,
+                                        //         color: AppColor.primaryColor,
+                                        //         fontWeight: FontWeight.w600,
+                                        //       ),
+                                        //     ],
+                                        //   ),
+                                        // ),
                                         Row(
                                           children: [
                                             Expanded(
@@ -187,16 +237,6 @@ class BookingPage extends GetView<BookingController> {
                                                     bottomRight:
                                                         Radius.circular(7),
                                                   ),
-                                                  boxShadow: [
-                                                    BoxShadow(
-                                                      color: Colors.black
-                                                          .withOpacity(0.2),
-                                                      spreadRadius: 1,
-                                                      blurRadius: 4,
-                                                      offset:
-                                                          const Offset(2, 2),
-                                                    ),
-                                                  ],
                                                   border: Border.all(
                                                     color: Colors.black
                                                         .withOpacity(0.2),
@@ -236,1047 +276,557 @@ class BookingPage extends GetView<BookingController> {
                                             )
                                           ],
                                         ),
-                                        Container(height: 24),
 
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                        Container(height: 20),
+                                        CustomTextField(
+                                          labelText: "Plate No",
+                                          controller: controller.plateNo,
+                                          suffixIcon: LucideIcons.menu,
+                                          onIconTap: () {
+                                            WidgetsBinding.instance
+                                                .addPostFrameCallback((_) {
+                                              controller.displaySelVh();
+                                            });
+                                          },
+                                          onChange: (value) {
+                                            String trimmedValue = value
+                                                .toUpperCase()
+                                                .replaceFirst(
+                                                    RegExp(r'[^a-zA-Z0-9. ]'),
+                                                    '');
+                                            controller.validateText(
+                                                value, controller.plateNo);
+                                            if (trimmedValue.isNotEmpty) {
+                                              controller.plateNo.value =
+                                                  TextEditingValue(
+                                                text:
+                                                    Variables.capitalizeAllWord(
+                                                        trimmedValue),
+                                                selection: controller
+                                                    .plateNo.selection,
+                                              );
+                                            } else {
+                                              controller.plateNo.value =
+                                                  TextEditingValue(
+                                                text: "",
+                                                selection:
+                                                    TextSelection.collapsed(
+                                                        offset: 0),
+                                              );
+                                            }
+                                          },
+                                          validator: (value) {
+                                            if (value == null ||
+                                                value.isEmpty) {
+                                              return "Plate No. is required";
+                                            }
+                                            // if (!value.contains(RegExp(r'^[A-Z0-9-]+$'))) {
+                                            //   return "Plate No. should only contain letters, numbers, and dashes";
+                                            // }
+                                            if (value.startsWith('-') ||
+                                                value.endsWith('-')) {
+                                              return "Plate No. should not start or end with a dash";
+                                            }
+                                            if ((value.endsWith(' ') ||
+                                                value.endsWith('-') ||
+                                                value.endsWith('.'))) {
+                                              return "Middle name cannot end with a space, hyphen, or period";
+                                            }
+
+                                            return null;
+                                          },
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                              top: 15.0, bottom: 10),
+                                          child: customDropdown(
+                                            labelText: "Vehicle type",
+                                            items: controller.ddVehiclesData,
+                                            selectedValue:
+                                                controller.dropdownValue,
+                                            onChanged: (value) {
+                                              controller.onChangedVtype(value);
+                                            },
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return "Vehicle type is required";
+                                              }
+                                              return null;
+                                            },
+                                          ),
+                                        ),
+                                        Container(height: 10),
+                                        CustomTitle(
+                                          text: "How long do you want to park?",
+                                          fontSize: 16,
+                                        ),
+                                        Container(height: 15),
+                                        Row(
                                           children: [
-                                            CustomParagraph(
-                                              text: "Vehicle details",
-                                              color: AppColor.headerColor,
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                            ),
-                                            Container(height: 10),
-                                            Container(
-                                              height:
-                                                  controller.selectedVh.isEmpty
-                                                      ? 71
-                                                      : null,
-                                              padding: EdgeInsets.all(12),
-                                              decoration: ShapeDecoration(
-                                                color: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  side: BorderSide(
-                                                      width: 1,
-                                                      color: Color(0xFFDFE7EF)),
-                                                  borderRadius:
-                                                      BorderRadius.circular(7),
-                                                ),
-                                                shadows: [
-                                                  BoxShadow(
-                                                    color: Color(0x0C000000),
-                                                    blurRadius: 15,
-                                                    offset: Offset(0, 5),
-                                                    spreadRadius: 0,
-                                                  )
-                                                ],
-                                              ),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  WidgetsBinding.instance
-                                                      .addPostFrameCallback(
-                                                          (_) {
-                                                    controller.displaySelVh();
-                                                  });
-                                                },
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                          left: 10,
-                                                          right: 10,
-                                                        ),
-                                                        child: controller
-                                                                .selectedVh
-                                                                .isEmpty
-                                                            ? CustomParagraph(
-                                                                text:
-                                                                    "Tap to add vehicle",
-                                                                color: controller
-                                                                        .selectedVh
-                                                                        .isEmpty
-                                                                    ? AppColor
-                                                                        .primaryColor
-                                                                    : Colors
-                                                                        .grey,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                                letterSpacing:
-                                                                    -0.41,
-                                                              )
-                                                            : Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  CustomParagraph(
-                                                                    text: controller
-                                                                            .selectedVh[0]
-                                                                        [
-                                                                        "vehicle_plate_no"],
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    color: AppColor
-                                                                        .headerColor,
-                                                                  ),
-                                                                  Container(
-                                                                      height:
-                                                                          5),
-                                                                  CustomParagraph(
-                                                                    text: controller
-                                                                            .selectedVh[0]
-                                                                        [
-                                                                        "vehicle_type"],
-                                                                    letterSpacing:
-                                                                        -0.41,
-                                                                    fontSize:
-                                                                        10,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                      ),
+                                            Expanded(
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            15),
+                                                    color:
+                                                        Colors.grey.shade300),
+                                                child: TextField(
+                                                  controller:
+                                                      controller.noHours,
+                                                  textAlign: TextAlign.center,
+                                                  textInputAction:
+                                                      TextInputAction.done,
+                                                  keyboardType:
+                                                      TextInputType.number,
+                                                  decoration: InputDecoration(
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            vertical: 10,
+                                                            horizontal: 12),
+                                                    hintText: "1 Hour",
+                                                    border: InputBorder.none,
+                                                    hintStyle: paragraphStyle(
+                                                      color: AppColor.hintColor,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                     ),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 15),
-                                                      child: controller
-                                                              .selectedVh
-                                                              .isNotEmpty
-                                                          ? CustomParagraph(
-                                                              text:
-                                                                  "Switch vehicle",
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: AppColor
-                                                                  .primaryColor,
-                                                            )
-                                                          : Icon(
-                                                              Icons.add,
-                                                              color: AppColor
-                                                                  .primaryColor,
-                                                              size: 20,
-                                                            ),
-                                                    )
-                                                  ],
+                                                    labelStyle: paragraphStyle(
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color:
+                                                            AppColor.hintColor),
+                                                    floatingLabelStyle:
+                                                        TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      fontSize: 15,
+                                                    ),
+                                                  ),
+                                                  style: paragraphStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 20),
                                                 ),
                                               ),
+                                            ),
+                                            Container(width: 10),
+                                            Container(
+                                              decoration: ShapeDecoration(
+                                                  shape: CircleBorder(),
+                                                  color: Colors.grey.shade100),
+                                              child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {
+                                                    if (controller.selectedVh
+                                                        .isEmpty) return;
+                                                    controller
+                                                        .onTapChanged(false);
+                                                  },
+                                                  icon: Icon(
+                                                    LucideIcons.minus,
+                                                    color:
+                                                        AppColor.primaryColor,
+                                                  )),
+                                            ),
+                                            Container(width: 10),
+                                            Container(
+                                              decoration: ShapeDecoration(
+                                                  shape: CircleBorder(),
+                                                  color: AppColor.primaryColor),
+                                              child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  onPressed: () {
+                                                    if (controller.selectedVh
+                                                        .isEmpty) return;
+                                                    controller
+                                                        .onTapChanged(true);
+                                                  },
+                                                  icon: Icon(
+                                                    LucideIcons.plus,
+                                                    color: Colors.white,
+                                                  )),
                                             ),
                                           ],
                                         ),
-
+                                        Container(height: 10),
                                         Visibility(
                                           visible:
-                                              controller.selectedVh.isNotEmpty,
+                                              controller.numbersList.isNotEmpty,
+                                          child: CustomParagraph(
+                                            text:
+                                                "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
+                                            fontSize: 6,
+                                          ),
+                                        ),
+                                        Container(height: 20),
+                                        CustomTitle(
+                                          text: "Payment Details",
+                                          fontSize: 16,
+                                        ),
+                                        Container(height: 10),
+                                        Container(
+                                          width: double.infinity,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            border: Border.all(
+                                              width: 1,
+                                              color: Color(0xFFDFE7EF),
+                                            ),
+                                          ),
                                           child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
                                             children: [
-                                              Container(height: 20),
-                                              CustomParagraph(
-                                                text:
-                                                    "How long do you want to park?",
-                                                fontSize: 16,
-                                                color: AppColor.headerColor,
-                                                fontWeight: FontWeight.w600,
-                                              ),
-                                              Container(height: 15),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                decoration: ShapeDecoration(
-                                                  color: Colors.white,
-                                                  shape: RoundedRectangleBorder(
-                                                    side: BorderSide(
-                                                        width: 1,
-                                                        color:
-                                                            Color(0xFFDFE7EF)),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            7),
-                                                  ),
-                                                  shadows: [
-                                                    BoxShadow(
-                                                      color: Color(0x0C000000),
-                                                      blurRadius: 15,
-                                                      offset: Offset(0, 5),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
+                                              ListTile(
+                                                leading: Icon(
+                                                  Icons.check_circle_outline,
+                                                  color: Colors.green,
+                                                  size: 20,
                                                 ),
-                                                child: Column(
+                                                title: Text(
+                                                  "Current Balance",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w500),
+                                                ),
+                                                trailing: CustomParagraph(
+                                                  text: toCurrencyString(
+                                                          controller.parameters[
+                                                                  "userData"][0]
+                                                                  ["amount_bal"]
+                                                              .toString())
+                                                      .toString(),
+                                                  color: AppColor.headerColor,
+                                                  fontWeight: FontWeight.w500,
+                                                  textAlign: TextAlign.right,
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: double.parse(controller
+                                                        .displayRewards
+                                                        .toString()) >
+                                                    0,
+                                                child: Container(
+                                                  height: 1,
+                                                  color: Colors.grey.shade200,
+                                                  width: double.infinity,
+                                                ),
+                                              ),
+                                              Visibility(
+                                                visible: double.parse(controller
+                                                        .displayRewards
+                                                        .toString()) >
+                                                    0,
+                                                child: CustomExpandableItem(
+                                                  trailingIcon:
+                                                      LucideIcons.edit,
+                                                  trailTap: () {
+                                                    Get.bottomSheet(
+                                                      rewardDialog(),
+                                                      isScrollControlled: true,
+                                                      isDismissible: false,
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  15.0),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  15.0),
+                                                        ),
+                                                      ),
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                    );
+                                                  },
+                                                  leading: Icon(
+                                                    controller.isExpandedPansion
+                                                            .value
+                                                        ? Icons
+                                                            .check_circle_outline
+                                                        : Icons.circle_outlined,
+                                                    color: controller
+                                                            .isExpandedPansion
+                                                            .value
+                                                        ? Colors.green
+                                                        : Colors.grey,
+                                                    size: 20,
+                                                  ),
+                                                  title: "Points",
                                                   children: [
                                                     Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 10),
-                                                      child: Row(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              10.0),
+                                                      child: Column(
                                                         children: [
-                                                          InkWell(
-                                                            onTap: () {
-                                                              if (controller
-                                                                  .selectedVh
-                                                                  .isEmpty) {
-                                                                return;
-                                                              }
-                                                              controller
-                                                                  .onTapChanged(
-                                                                      false);
-                                                            },
-                                                            child: Container(
-                                                              width: 70,
-                                                              height: 36,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          23,
-                                                                      vertical:
-                                                                          6),
-                                                              clipBehavior: Clip
-                                                                  .antiAlias,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border: Border(
-                                                                  right:
-                                                                      BorderSide(
-                                                                    color: Colors
-                                                                        .black12,
-                                                                  ),
-                                                                ),
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              CustomParagraph(
+                                                                text:
+                                                                    "Points: ",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontSize: 12,
                                                               ),
-                                                              child: Center(
-                                                                child:
-                                                                    IconButton(
-                                                                        padding:
-                                                                            EdgeInsets
-                                                                                .zero,
-                                                                        onPressed:
-                                                                            null,
-                                                                        icon:
-                                                                            Icon(
-                                                                          LucideIcons
-                                                                              .minus,
-                                                                          color:
-                                                                              Colors.black,
-                                                                        )),
+                                                              CustomParagraph(
+                                                                text: toCurrencyString(controller
+                                                                        .displayRewards
+                                                                        .toString())
+                                                                    .toString(),
+                                                                color: AppColor
+                                                                    .headerColor,
+                                                                fontSize: 12,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                maxlines: 1,
                                                               ),
-                                                            ),
+                                                            ],
                                                           ),
-                                                          Expanded(
-                                                            child: Padding(
+                                                          Container(height: 15),
+                                                          for (dynamic data
+                                                              in controller
+                                                                  .pointsData)
+                                                            Padding(
                                                               padding:
                                                                   const EdgeInsets
                                                                       .only(
-                                                                      top: 8.0),
-                                                              child: Column(
+                                                                      bottom:
+                                                                          5),
+                                                              child: Row(
                                                                 mainAxisAlignment:
                                                                     MainAxisAlignment
-                                                                        .center,
+                                                                        .spaceBetween,
                                                                 children: [
                                                                   CustomParagraph(
+                                                                    text:
+                                                                        "${data["name"]}:",
+                                                                    fontSize:
+                                                                        12,
+                                                                  ),
+                                                                  CustomParagraph(
+                                                                    text: toCurrencyString(
+                                                                            data["value"].toString())
+                                                                        .toString(),
+                                                                    color: AppColor
+                                                                        .headerColor,
+                                                                    fontSize:
+                                                                        12,
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w500,
-                                                                    color: AppColor
-                                                                        .primaryColor,
-                                                                    text:
-                                                                        "${controller.selectedNumber.value} ${int.parse(controller.selectedNumber.value.toString()) > 1 ? "Hours" : "Hour"}",
-                                                                  ),
-                                                                  Container(
-                                                                      height:
-                                                                          4),
-                                                                  CustomParagraph(
-                                                                    text:
-                                                                        "${controller.startTime.value} - ${controller.endTime.value}",
-                                                                    fontSize:
-                                                                        10,
-                                                                    letterSpacing:
-                                                                        -0.41,
-                                                                    textAlign:
-                                                                        TextAlign
-                                                                            .center,
+                                                                    maxlines: 1,
                                                                   ),
                                                                 ],
                                                               ),
                                                             ),
-                                                          ),
-                                                          InkWell(
-                                                            onTap: () {
-                                                              if (controller
-                                                                  .selectedVh
-                                                                  .isEmpty)
-                                                                return;
-                                                              controller
-                                                                  .onTapChanged(
-                                                                      true);
-                                                            },
-                                                            child: Container(
-                                                              width: 70,
-                                                              height: 36,
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          23,
-                                                                      vertical:
-                                                                          6),
-                                                              clipBehavior: Clip
-                                                                  .antiAlias,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border: Border(
-                                                                  left:
-                                                                      BorderSide(
-                                                                    color: Colors
-                                                                        .black12,
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                              child: IconButton(
-                                                                  padding:
-                                                                      EdgeInsets
-                                                                          .zero,
-                                                                  onPressed:
-                                                                      null,
-                                                                  icon: Icon(
-                                                                    LucideIcons
-                                                                        .plus,
-                                                                    color: Colors
-                                                                        .black,
-                                                                  )),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ),
-                                                    Divider(
-                                                      color: Colors.black12,
-                                                    ),
-                                                    Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 10,
-                                                          horizontal: 20),
-                                                      child: Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                CustomTitle(
-                                                                  text:
-                                                                      "Auto Extend",
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  fontSize: 15,
-                                                                ),
-                                                                Container(
-                                                                  height: 5,
-                                                                ),
-                                                                CustomParagraph(
-                                                                  text:
-                                                                      "${toCurrencyString(controller.selectedVh.isEmpty ? "0" : controller.selectedVh[0]["succeeding_rate"].toString())}/Succeeding hours",
-                                                                  letterSpacing:
-                                                                      -0.41,
-                                                                  fontSize: 10,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Container(width: 10),
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              controller.toggleExtendChecked(
-                                                                  !controller
-                                                                      .isExtendchecked
-                                                                      .value);
-                                                            },
-                                                            child: Container(
-                                                              width: 60,
-                                                              height: 30,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            30),
-                                                                gradient:
-                                                                    LinearGradient(
-                                                                  colors: controller
-                                                                          .isExtendchecked
-                                                                          .value
-                                                                      ? [
-                                                                          Colors
-                                                                              .green,
-                                                                          Colors
-                                                                              .lightGreen
-                                                                        ]
-                                                                      : [
-                                                                          Colors
-                                                                              .red,
-                                                                          Colors
-                                                                              .redAccent
-                                                                        ],
-                                                                ),
-                                                              ),
-                                                              child: Stack(
-                                                                alignment:
-                                                                    Alignment
-                                                                        .center,
-                                                                children: [
-                                                                  if (controller
-                                                                      .isExtendchecked
-                                                                      .value)
-                                                                    Positioned(
-                                                                      left: 10,
-                                                                      child:
-                                                                          Icon(
-                                                                        LucideIcons
-                                                                            .check,
-                                                                        color: Colors
-                                                                            .white,
-                                                                        size:
-                                                                            15,
-                                                                      ),
-                                                                    ),
-                                                                  if (!controller
-                                                                      .isExtendchecked
-                                                                      .value)
-                                                                    Positioned(
-                                                                      right: 10,
-                                                                      child:
-                                                                          Icon(
-                                                                        Icons
-                                                                            .clear,
-                                                                        color: Colors
-                                                                            .white,
-                                                                        size:
-                                                                            15,
-                                                                      ),
-                                                                    ),
-                                                                  AnimatedPositioned(
-                                                                    duration:
-                                                                        Duration(
-                                                                      milliseconds:
-                                                                          200,
-                                                                    ),
-                                                                    left: controller
-                                                                            .isExtendchecked
-                                                                            .value
-                                                                        ? 30
-                                                                        : 5,
-                                                                    child:
-                                                                        Container(
-                                                                      width: 20,
-                                                                      height:
-                                                                          20,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .white,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(30),
-                                                                        boxShadow: [
-                                                                          BoxShadow(
-                                                                            color:
-                                                                                Colors.black26,
-                                                                            blurRadius:
-                                                                                4.0,
-                                                                            spreadRadius:
-                                                                                2.0,
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
                                                         ],
                                                       ),
                                                     ),
                                                   ],
-                                                ),
-                                              ),
-                                              Container(height: 5),
-                                              Visibility(
-                                                visible: controller
-                                                    .numbersList.isNotEmpty,
-                                                child: Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4,
-                                                      horizontal: 6),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.blue.shade50,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                      12,
-                                                    ),
-                                                  ),
-                                                  child: CustomParagraph(
-                                                    text:
-                                                        "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
-                                                    color:
-                                                        AppColor.primaryColor,
-                                                    fontSize: 6,
-                                                  ),
                                                 ),
                                               ),
                                             ],
                                           ),
                                         ),
                                         Container(height: 20),
-
-                                        //payment details
-
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            CustomParagraph(
-                                              text: "Payment details",
-                                              fontSize: 16,
-                                              color: AppColor.headerColor,
-                                              fontWeight: FontWeight.w600,
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 15, vertical: 10),
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(15),
+                                            border: Border.all(
+                                              width: 1,
+                                              color: Color(0xFFDFE7EF),
                                             ),
-                                            Container(height: 10),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(7),
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          AppColor.primaryColor,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(7),
-                                                        bottomLeft:
-                                                            Radius.circular(7),
-                                                      ),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color:
-                                                              Color(0x0C000000),
-                                                          blurRadius: 15,
-                                                          offset: Offset(0, 5),
-                                                          spreadRadius: 0,
-                                                        )
-                                                      ],
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    CustomTitle(
+                                                      text: "Auto Extend",
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                      fontSize: 15,
                                                     ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        CustomTitle(
-                                                          text: toCurrencyString(controller
-                                                                  .parameters[
-                                                                      "userData"]
-                                                                      [0][
-                                                                      "amount_bal"]
-                                                                  .toString())
-                                                              .toString(),
-                                                          fontSize: 16,
-                                                          maxlines: 1,
-                                                          color: Colors.white,
-                                                        ),
-                                                        Container(height: 5),
-                                                        const CustomParagraph(
-                                                          text:
-                                                              "Wallet Balance",
-                                                          letterSpacing: -0.41,
-                                                          fontSize: 10,
-                                                          color: Colors.white,
-                                                        ),
-                                                      ],
+                                                    Container(
+                                                      height: 5,
                                                     ),
-                                                  ),
+                                                    CustomParagraph(
+                                                      text:
+                                                          "${toCurrencyString(controller.selectedVh.isEmpty ? "0" : controller.selectedVh[0]["succeeding_rate"].toString())}/Succeeding hours",
+                                                      letterSpacing: -0.41,
+                                                      fontSize: 10,
+                                                    ),
+                                                  ],
                                                 ),
-                                                Expanded(
-                                                  child: Container(
-                                                    padding:
-                                                        const EdgeInsets.all(7),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.only(
-                                                        topRight:
-                                                            Radius.circular(7),
-                                                        bottomRight:
-                                                            Radius.circular(7),
-                                                      ),
-                                                      border: Border(
-                                                        bottom: BorderSide(
-                                                            width: 1,
-                                                            color: Color(
-                                                                0xFFDFE7EF)),
-                                                        right: BorderSide(
-                                                            width: 1,
-                                                            color: Color(
-                                                                0xFFDFE7EF)),
-                                                        top: BorderSide(
-                                                            width: 1,
-                                                            color: Color(
-                                                                0xFFDFE7EF)),
-                                                      ),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color:
-                                                              Color(0x0C000000),
-                                                          blurRadius: 15,
-                                                          offset: Offset(0, 5),
-                                                          spreadRadius: 0,
-                                                        )
-                                                      ],
-                                                    ),
-                                                    child: Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        CustomTitle(
-                                                          text: toCurrencyString(
-                                                                  controller
-                                                                      .displayRewards
-                                                                      .toString())
-                                                              .toString(),
-                                                          fontSize: 16,
-                                                          maxlines: 1,
-                                                        ),
-                                                        Container(height: 5),
-                                                        const CustomParagraph(
-                                                          text: "Rewards",
-                                                          letterSpacing: -0.41,
-                                                          fontSize: 10,
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Container(height: 20),
-                                            // if (double.parse(
-                                            //         controller.rewardsCon.text) !=
-                                            //     0.0)
-                                            if (double.parse(controller
-                                                        .parameters["userData"]
-                                                    [0]["points_bal"]) !=
-                                                0.0)
+                                              ),
+                                              Container(width: 10),
                                               GestureDetector(
                                                 onTap: () {
                                                   controller
-                                                      .toggleRewardChecked(
+                                                      .toggleExtendChecked(
                                                           !controller
-                                                              .isRewardchecked
+                                                              .isExtendchecked
                                                               .value);
                                                 },
                                                 child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(vertical: 15),
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  decoration: ShapeDecoration(
-                                                    color: Colors.white,
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                          width: 1,
-                                                          color: Color(
-                                                              0xFFDFE7EF)),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              7),
+                                                  width: 60,
+                                                  height: 30,
+                                                  decoration: BoxDecoration(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                    gradient: LinearGradient(
+                                                      colors: controller
+                                                              .isExtendchecked
+                                                              .value
+                                                          ? [
+                                                              Colors.green,
+                                                              Colors.lightGreen
+                                                            ]
+                                                          : [
+                                                              Colors.red,
+                                                              Colors.redAccent
+                                                            ],
                                                     ),
-                                                    shadows: [
-                                                      BoxShadow(
-                                                        color:
-                                                            Color(0x0C000000),
-                                                        blurRadius: 15,
-                                                        offset: Offset(0, 5),
-                                                        spreadRadius: 0,
-                                                      )
-                                                    ],
                                                   ),
-                                                  child: Padding(
-                                                    padding:
-                                                        const EdgeInsets.only(
-                                                      left: 20.0,
-                                                      right: 20,
-                                                    ),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Icon(
-                                                              controller
-                                                                      .isRewardchecked
-                                                                      .value
-                                                                  ? Icons
-                                                                      .check_circle_outline
-                                                                  : Icons
-                                                                      .circle_outlined,
-                                                              color: controller
-                                                                      .isRewardchecked
-                                                                      .value
-                                                                  ? AppColor
-                                                                      .primaryColor
-                                                                  : Colors.grey,
-                                                            ),
-                                                            Container(width: 5),
-                                                            const Expanded(
-                                                              child:
-                                                                  CustomTitle(
-                                                                text:
-                                                                    "Use Reward Points",
-                                                                fontSize: 14,
-                                                                letterSpacing:
-                                                                    -0.41,
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .left,
-                                                              ),
-                                                            ),
-                                                            Container(width: 5),
-                                                            if (controller
-                                                                .isRewardchecked
-                                                                .value)
-                                                              GestureDetector(
-                                                                onTap: () {
-                                                                  if (double.parse(controller.parameters["userData"]
-                                                                              [
-                                                                              0]
-                                                                          [
-                                                                          "points_bal"]) ==
-                                                                      0.0) {
-                                                                    CustomDialog().errorDialog(
-                                                                        context,
-                                                                        "luvpark",
-                                                                        "You don't have enough rewards to proceed.",
-                                                                        () {
-                                                                      Get.back();
-                                                                    });
-                                                                    return;
-                                                                  }
-                                                                  Get.dialog(
-                                                                    RewardsDialog(
-                                                                      data: controller
-                                                                          .parameters,
-                                                                      cb: (data) {
-                                                                        controller
-                                                                            .computeRewards(data);
-                                                                      },
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .edit_note,
-                                                                  color: AppColor
-                                                                      .primaryColor,
-                                                                ),
-                                                              )
-                                                          ],
-                                                        ),
-                                                        if (controller
-                                                            .isRewardchecked
-                                                            .value)
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(10),
-                                                            child: Column(
-                                                              children: [
-                                                                const Divider(
-                                                                  color: Colors
-                                                                      .grey,
-                                                                ),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    const CustomParagraph(
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w400,
-                                                                        text:
-                                                                            ' Reward Points :',
-                                                                        letterSpacing:
-                                                                            -0.41),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right:
-                                                                              20),
-                                                                      child:
-                                                                          CustomParagraph(
-                                                                        text: toCurrencyString(controller
-                                                                            .usedRewards
-                                                                            .toString()),
-                                                                        color: AppColor
-                                                                            .primaryColor,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Container(
-                                                                    height: 5),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    const CustomParagraph(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      text:
-                                                                          ' Token :',
-                                                                      letterSpacing:
-                                                                          -0.41,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right:
-                                                                              20),
-                                                                      child:
-                                                                          CustomParagraph(
-                                                                        text: toCurrencyString(controller
-                                                                            .tokenRewards
-                                                                            .toString()),
-                                                                        color: AppColor
-                                                                            .primaryColor,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                                Container(
-                                                                    height: 10),
-                                                                Row(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    CustomParagraph(
-                                                                      text:
-                                                                          ' Total ',
-                                                                      letterSpacing:
-                                                                          -0.41,
-                                                                      color: AppColor
-                                                                          .headerColor,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                    ),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .only(
-                                                                          right:
-                                                                              20),
-                                                                      child:
-                                                                          CustomParagraph(
-                                                                        text: toCurrencyString(controller.totalAmount.value)
-                                                                            .toString(),
-                                                                        color: AppColor
-                                                                            .primaryColor,
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                )
-                                                              ],
-                                                            ),
+                                                  child: Stack(
+                                                    alignment: Alignment.center,
+                                                    children: [
+                                                      if (controller
+                                                          .isExtendchecked
+                                                          .value)
+                                                        Positioned(
+                                                          left: 10,
+                                                          child: Icon(
+                                                            LucideIcons.check,
+                                                            color: Colors.white,
+                                                            size: 15,
                                                           ),
-                                                      ],
-                                                    ),
+                                                        ),
+                                                      if (!controller
+                                                          .isExtendchecked
+                                                          .value)
+                                                        Positioned(
+                                                          right: 10,
+                                                          child: Icon(
+                                                            Icons.clear,
+                                                            color: Colors.white,
+                                                            size: 15,
+                                                          ),
+                                                        ),
+                                                      AnimatedPositioned(
+                                                        duration: Duration(
+                                                          milliseconds: 200,
+                                                        ),
+                                                        left: controller
+                                                                .isExtendchecked
+                                                                .value
+                                                            ? 30
+                                                            : 5,
+                                                        child: Container(
+                                                          width: 20,
+                                                          height: 20,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors.white,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        30),
+                                                            boxShadow: [
+                                                              BoxShadow(
+                                                                color: Colors
+                                                                    .black26,
+                                                                blurRadius: 4.0,
+                                                                spreadRadius:
+                                                                    2.0,
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ),
-                                            Container(
-                                              height: 10,
-                                            ),
-                                          ],
-                                        )
+                                            ],
+                                          ),
+                                        ),
+                                        Container(height: 10),
+                                        CustomParagraph(
+                                          text:
+                                              "Your parking duration will be automatically extended using your "
+                                              "available balance if it is enabled.",
+                                          fontSize: 10,
+                                        ),
+                                        Container(height: 20),
+
+                                        //end
                                       ],
                                     ),
                                   ),
                                 )),
                                 Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15),
                                   decoration: BoxDecoration(
-                                    color: Colors.white,
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(15)),
                                     border: Border(
-                                        top: BorderSide(
-                                            color: Colors.grey.shade100)),
-                                    borderRadius: const BorderRadius.vertical(
-                                      top: Radius.circular(7),
+                                      top: BorderSide(
+                                        width: 1,
+                                        color: Color(0xFFDFE7EF),
+                                      ),
                                     ),
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 20,
-                                        left: 20.0,
-                                        right: 20.0,
-                                        bottom: 20),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: CustomParagraph(
-                                                text: "Total",
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColor.headerColor,
-                                              ),
-                                            ),
-                                            CustomTitle(
+                                  child: Column(
+                                    children: [
+                                      Container(height: 20),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: CustomParagraph(
+                                              text: "Total",
+                                              fontWeight: FontWeight.w500,
                                               color: AppColor.headerColor,
-                                              text: toCurrencyString(
-                                                  controller.totalAmount.value),
                                             ),
-                                          ],
-                                        ),
-                                        Container(height: 20),
-                                        Row(
-                                          children: [
-                                            Expanded(
-                                              child: CustomButton(
-                                                  loading: controller
-                                                      .isSubmitBooking.value,
-                                                  text: controller.parameters[
-                                                          "canCheckIn"]
-                                                      ? "Check In"
-                                                      : "Book now",
-                                                  btnColor: controller
-                                                          .selectedVh.isEmpty
-                                                      ? AppColor.primaryColor
-                                                          .withOpacity(.6)
-                                                      : AppColor.primaryColor,
-                                                  textColor: Colors.white,
-                                                  onPressed: controller
-                                                          .selectedVh.isEmpty
-                                                      ? () {}
-                                                      : () {
-                                                          var dateIn =
-                                                              DateTime.parse(
-                                                                  "${controller.startDate.text} ${controller.timeInParam.text}");
-
-                                                          var dateOut =
-                                                              dateIn.add(
-                                                            Duration(
-                                                              hours: controller
-                                                                  .selectedNumber
-                                                                  .value,
-                                                            ),
-                                                          );
-
-                                                          String finalDateOut =
-                                                              "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${controller.paramEndTime.value}";
-
-                                                          void bongGo() {
-                                                            Map<String, dynamic>
-                                                                parameters = {
-                                                              "client_id": controller
-                                                                          .parameters[
-                                                                      "areaData"]
-                                                                  ["client_id"],
-                                                              "park_area_id": controller
-                                                                          .parameters[
-                                                                      "areaData"]
-                                                                  [
-                                                                  "park_area_id"],
-                                                              "vehicle_plate_no":
-                                                                  controller
-                                                                          .selectedVh[0]
-                                                                      [
-                                                                      "vehicle_plate_no"],
-                                                              "vehicle_type_id":
-                                                                  controller
-                                                                      .selectedVh[
-                                                                          0][
-                                                                          "vehicle_type_id"]
-                                                                      .toString(),
-                                                              "dt_in": dateIn
-                                                                  .toString()
-                                                                  .toString()
-                                                                  .split(
-                                                                      ".")[0],
-                                                              "dt_out":
-                                                                  finalDateOut,
-                                                              "no_hours": controller
-                                                                  .selectedNumber,
-                                                              "tran_type": "R",
-                                                            };
-
-                                                            controller
-                                                                .submitReservation(
-                                                                    parameters);
-                                                          }
-
-                                                          if (controller
-                                                              .isExtendchecked
-                                                              .value) {
-                                                            bongGo();
-                                                          } else {
-                                                            CustomDialog()
-                                                                .confirmationDialog(
-                                                                    context,
-                                                                    "Enable Auto Extend",
-                                                                    "Your parking duration will be automatically extended using your available balance if it is enabled.\n\nWould you like to enable it?",
-                                                                    "No",
-                                                                    "Yes", () {
-                                                              Get.back();
-                                                              controller
-                                                                  .isExtendchecked
-                                                                  .value = false;
-                                                              bongGo();
-                                                            }, () {
-                                                              Get.back();
-                                                              controller
-                                                                  .isExtendchecked
-                                                                  .value = true;
-                                                              bongGo();
-                                                            });
-                                                          }
-                                                          print(
-                                                              "militaryTime  ");
-                                                        }),
-                                            ),
-                                          ],
-                                        ),
-                                        Container(
-                                          height: 10,
-                                        ),
-                                      ],
-                                    ),
+                                          ),
+                                          CustomTitle(
+                                            text: toCurrencyString(controller
+                                                    .totalAmount.value)
+                                                .toString(),
+                                            fontSize: 20,
+                                            color: AppColor.headerColor,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ],
+                                      ),
+                                      Container(height: 20),
+                                      CustomButton(
+                                        text: "Book now",
+                                        onPressed: controller.confirmBooking,
+                                      )
+                                    ],
                                   ),
                                 ),
+                                Container(height: 10),
                               ],
                             ),
                 )),
@@ -1285,561 +835,428 @@ class BookingPage extends GetView<BookingController> {
       ),
     );
   }
+
+  Container rewardDialog() {
+    return Container(
+      padding: EdgeInsets.fromLTRB(15, 30, 15, 10),
+      height: MediaQuery.of(Get.context!).size.height * .50,
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () {
+              controller.rewardsCon.clear();
+              Get.back();
+            },
+            child: Container(
+                padding: const EdgeInsets.all(10),
+                clipBehavior: Clip.antiAlias,
+                decoration: ShapeDecoration(
+                  color: Color(0xFF0078FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(43),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x0C000000),
+                      blurRadius: 15,
+                      offset: Offset(0, 5),
+                      spreadRadius: 0,
+                    )
+                  ],
+                ),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  color: Colors.white,
+                  size: 16,
+                )),
+          ),
+          Container(
+            height: 20,
+          ),
+          CustomTitle(
+            text: "Reward points",
+            fontSize: 20,
+          ),
+          CustomTextField(
+            labelText: "Amount",
+            controller: controller.rewardsCon,
+            keyboardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            onChange: (value) {
+              if (int.parse(value.toString()) >=
+                  int.parse(controller.totalAmount.value)) {
+                FocusManager.instance.primaryFocus!.unfocus();
+                Future.delayed(Duration(milliseconds: 500), () {
+                  CustomDialog().infoDialog("Amount Exceed", "Invalid amount",
+                      () {
+                    Get.back();
+                    controller.rewardsCon.text =
+                        value.substring(0, value.length - 1);
+                  });
+                });
+              }
+            },
+          ),
+          Container(height: 10),
+          CustomParagraph(
+            text:
+                "Reward points should not be greater than the total bill for parking",
+            maxlines: 2,
+            fontSize: 10,
+          ),
+          Container(height: 50),
+          CustomButton(
+            text: "Proceed",
+            onPressed: () {},
+          )
+        ],
+      ),
+    );
+  }
 }
 
-class BookingDuration extends GetView<BookingController> {
-  final List numbersList;
-  final String maxHours;
-  final Function(int) onTap;
-  const BookingDuration(
-      {super.key,
-      required this.numbersList,
-      required this.maxHours,
-      required this.onTap});
+class MyVhList extends GetView<BookingController> {
+  final Function callback;
+  const MyVhList(this.callback, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    BookingController ct = Get.put(BookingController());
-    return Obx(() => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 17),
-          height: numbersList.length >= 5
-              ? MediaQuery.of(context).size.height * .50
-              : null,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(17),
-              topRight: Radius.circular(17),
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Column(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      Get.back();
-                    },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Container(
-                          height: 15,
-                          width: 200,
-                          decoration: const BoxDecoration(
-                            color: Colors.transparent,
-                            borderRadius: BorderRadius.all(Radius.circular(56)),
-                          ),
-                        ),
-                        Container(
-                          height: 6,
-                          width: 71,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFD9D9D9),
-                            borderRadius: BorderRadius.all(Radius.circular(56)),
-                          ),
-                        ),
-                      ],
+    return Scaffold(
+      appBar: AppBar(
+        toolbarHeight: 0,
+        elevation: 0,
+        backgroundColor: Colors.white,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.white,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.dark,
+        ),
+      ),
+      backgroundColor: AppColor.bodyColor,
+      body: Container(
+        padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+        color: AppColor.bodyColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(height: 10),
+            InkWell(
+              onTap: () {
+                Get.back();
+              },
+              child: Container(
+                  padding: const EdgeInsets.all(10),
+                  clipBehavior: Clip.antiAlias,
+                  decoration: ShapeDecoration(
+                    color: Color(0xFF0078FF),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(43),
                     ),
-                  ),
-                  CustomTextField(
-                    labelText: "Input number of hours",
-                    title: "No. of hours",
-                    controller: controller.noHours,
-                    inputFormatters: <TextInputFormatter>[
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x0C000000),
+                        blurRadius: 15,
+                        offset: Offset(0, 5),
+                        spreadRadius: 0,
+                      )
                     ],
-                    keyboardType: Platform.isAndroid
-                        ? TextInputType.number
-                        : const TextInputType.numberWithOptions(
-                            signed: true, decimal: false),
-                    onChange: (value) {
-                      controller.noHours.text =
-                          value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-                      controller.inpDisplay.text =
-                          value.replaceAll(RegExp(r'[^a-zA-Z0-9]'), '');
-
-                      if (value.isNotEmpty &&
-                          int.parse(value) >
-                              int.parse(controller.parameters["areaData"]
-                                      ["res_max_hours"]
-                                  .toString()) &&
-                          int.parse(controller.parameters["areaData"]
-                                      ["res_max_hours"]
-                                  .toString()) !=
-                              0) {
-                        CustomDialog().errorDialog(context, "luvpark",
-                            "Booking limit is up to ${controller.parameters["areaData"]["res_max_hours"].toString()} hours only.",
-                            () {
-                          Get.back();
-                          controller.noHours.text = controller.noHours.text
-                              .substring(0, controller.noHours.text.length - 1);
-
-                          controller.inpDisplay.text = controller.noHours.text
-                              .substring(0, controller.noHours.text.length - 1);
-                          controller.inpDisplay.text = controller.noHours.text
-                              .substring(0, controller.noHours.text.length - 1);
-
-                          controller.noHours.selection =
-                              TextSelection.fromPosition(TextPosition(
-                                  offset: controller.noHours.text.length));
-
-                          controller.selectedNumber.value =
-                              int.parse(controller.noHours.text);
-                        });
-                      }
-
-                      controller.selectedNumber.value =
-                          (controller.noHours.text.isEmpty
-                              ? null
-                              : int.parse(controller.noHours.text))!;
-                    },
                   ),
-                ],
-              ),
-              Container(height: 10),
-              if (numbersList.isNotEmpty)
-                if (numbersList.length >= 5)
-                  if (MediaQuery.of(context).viewInsets.bottom == 0)
-                    Expanded(
-                      child: ListView.separated(
-                          itemBuilder: (context, index) {
-                            return numberHoursWidget(numbersList, index, ct);
-                          },
-                          separatorBuilder: (context, index) {
-                            return const Divider(
-                              height: 2,
-                            );
-                          },
-                          itemCount: numbersList.length),
-                    ),
-              if (MediaQuery.of(context).viewInsets.bottom == 0)
-                if (numbersList.isNotEmpty)
-                  if (numbersList.length < 5)
-                    for (int i = 0; i < numbersList.length; i++)
-                      numberHoursWidget(numbersList, i, ct),
-              if (MediaQuery.of(context).viewInsets.bottom == 0)
-                const Divider(),
-              if (MediaQuery.of(context).viewInsets.bottom == 0)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: CustomButton(
-                      text: "Confirm",
-                      onPressed: () {
-                        if (controller.selectedNumber.value == 0) return;
-                        controller.inputTimeLabel.value =
-                            "${controller.selectedNumber.value} ${controller.selectedNumber.value > 1 ? "Hours" : "Hour"}";
-                        onTap(controller.selectedNumber.value);
-                        Get.back();
-                      }),
-                ),
-              if (Platform.isIOS) Container(height: 20),
-            ],
-          ),
-        ));
-  }
-
-  Widget numberHoursWidget(data, i, ct) {
-    return Obx(
-      () => Container(
-        color: controller.selectedNumber.value == data[i]
-            ? const Color(0xFFe8f3fe)
-            : null,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: ListTile(
-            onTap: () {
-              controller.onTapChanged(i);
-            },
-            contentPadding: EdgeInsets.zero,
-            title: CustomParagraph(
-              text: '${data[i]} ${data[i] > 1 ? "hours" : "hour"}',
-              color: controller.selectedNumber.value == numbersList[i]
-                  ? AppColor.primaryColor
-                  : Colors.black,
+                  child: Icon(
+                    LucideIcons.arrowLeft,
+                    color: Colors.white,
+                    size: 16,
+                  )),
             ),
-            trailing: controller.selectedNumber.value == data[i]
-                ? Icon(Icons.check, color: AppColor.primaryColor)
-                : null,
-          ),
+            Container(height: 20),
+            Text(
+              "My Vehicle",
+              style: GoogleFonts.openSans(
+                fontSize: 25,
+                fontWeight: FontWeight.w700,
+                color: AppColor.headerColor,
+              ),
+            ),
+            Container(height: 10),
+            CustomParagraph(text: "Choose vehicle from the list"),
+            Container(height: 20),
+            Expanded(
+              child: Scrollbar(
+                child: ListView.builder(
+                  itemCount: controller.myVehiclesData.length,
+                  itemBuilder: (context, index) {
+                    String removeInvalidCharacters(String input) {
+                      final RegExp validChars = RegExp(r'[^A-Za-z0-9+/=]');
+
+                      return input.replaceAll(validChars, '');
+                    }
+
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          List vhDatas = [controller.myVehiclesData[index]];
+                          dynamic recData = controller.ddVehiclesData;
+
+                          Map<int, Map<String, dynamic>> recDataMap = {
+                            for (var item in recData) item['value']: item
+                          };
+                          // Merge base_hours and succeeding_rate into vhDatas
+                          for (var vh in vhDatas) {
+                            int typeId = vh['vehicle_type_id'];
+                            if (recDataMap.containsKey(typeId)) {
+                              var rec = recDataMap[typeId];
+                              vh['base_hours'] = rec?['base_hours'];
+                              vh['base_rate'] = rec?['base_rate'];
+                              vh['succeeding_rate'] = rec?['succeeding_rate'];
+                              vh['vehicle_type'] = rec?['vehicle_type'];
+                            }
+                          }
+                          Get.back();
+                          callback(vhDatas);
+                        },
+                        child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              border: Border.all(
+                                color: Colors.grey.shade300,
+                                width: 1.0,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CustomParagraph(
+                                            text: controller
+                                                .myVehiclesData[index]
+                                                    ["vehicle_brand_name"]
+                                                .toString()
+                                                .toUpperCase(),
+                                            color: AppColor.headerColor,
+                                            fontSize: 12,
+                                          ),
+                                          Container(height: 5),
+                                          CustomParagraph(
+                                            text: controller
+                                                .myVehiclesData[index]
+                                                    ["vehicle_plate_no"]
+                                                .toString()
+                                                .toUpperCase(),
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.black,
+                                            fontSize: 16,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Expanded(
+                                      child: Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            fit: BoxFit.contain,
+                                            image: controller.myVehiclesData[
+                                                            index]["image"] ==
+                                                        null ||
+                                                    controller
+                                                        .myVehiclesData[index]
+                                                            ["image"]
+                                                        .isEmpty
+                                                ? AssetImage(
+                                                        "assets/images/no_image.png")
+                                                    as ImageProvider
+                                                : MemoryImage(
+                                                    base64Decode(
+                                                      removeInvalidCharacters(
+                                                          controller
+                                                                  .myVehiclesData[
+                                                              index]["image"]),
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-class VehicleOption extends GetView<BookingController> {
-  final Function callback;
-  const VehicleOption({super.key, required this.callback});
+class ConfirmBooking extends GetView<BookingController> {
+  const ConfirmBooking({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final BookingController ct = Get.find();
+    bool isNewDay = false;
+    var dateIn = DateTime.parse(
+        "${controller.startDate.text} ${controller.timeInParam.text}");
 
-    return Wrap(
-      children: [
-        Obx(
-          () => Container(
-            height: controller.isFirstScreen.value
-                ? MediaQuery.of(context).viewInsets.bottom != 0
-                    ? MediaQuery.of(context).viewInsets.bottom
-                    : null
-                : MediaQuery.of(context).size.height * .50,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.vertical(top: Radius.circular(7)),
-              color: Colors.white,
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(height: 10),
-                  InkWell(
-                    onTap: () {
-                      if (!controller.isFirstScreen.value) {
-                        controller
-                            .onScreenChanged(!controller.isFirstScreen.value);
-                        return;
-                      }
-                      Get.back();
-                    },
-                    child: const Icon(
-                      Icons.chevron_left,
-                      color: Colors.black,
-                    ),
-                  ),
-                  Container(height: 20),
-                  controller.isFirstScreen.value
-                      ? Form(
-                          key: controller.bookKey,
-                          child: SingleChildScrollView(
-                            physics: BouncingScrollPhysics(),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomParagraph(
-                                  text: "What's your plate number?",
-                                  fontSize: 16,
-                                  color: AppColor.headerColor,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                Container(height: 10),
-                                CustomTextField(
-                                  labelText: "Plate No.",
-                                  controller: controller.plateNo,
-                                  textCapitalization:
-                                      TextCapitalization.characters,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.deny(
-                                        RegExp(r'\s')),
-                                  ],
-                                  validator: (data) {
-                                    if (data == null || data.isEmpty) {
-                                      return "Plate no is required";
-                                    }
-                                    if (!data
-                                        .contains(RegExp(r'^[A-Z0-9-]+$'))) {
-                                      return "Plate No. should only contain letters, numbers, and dashes";
-                                    }
-                                    if (data.startsWith('-') ||
-                                        data.endsWith('-')) {
-                                      return "Plate No. should not start or end with a dash";
-                                    }
-                                    return null;
-                                  },
-                                ),
-                                if (MediaQuery.of(context).viewInsets.bottom ==
-                                    0)
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.only(
-                                            top: 15.0, bottom: 10),
-                                        child: customDropdown(
-                                          labelText: "Vehicle type",
-                                          items: controller.ddVehiclesData,
-                                          selectedValue:
-                                              controller.dropdownValue,
-                                          onChanged: (newValue) {
-                                            controller.dropdownValue = newValue;
-                                          },
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Vehicle type is required";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                      ),
-                                      Container(height: 30),
-                                      CustomButton(
-                                        text: "Confirm",
-                                        onPressed: () {
-                                          if (ct.bookKey.currentState!
-                                              .validate()) {
-                                            dynamic selVh = ct.ddVehiclesData
-                                                .where((element) {
-                                              return element["value"] ==
-                                                  int.parse(ct.dropdownValue!
-                                                      .toString());
-                                            }).toList()[0];
-
-                                            callback([
-                                              {
-                                                'vehicle_type_id': ct
-                                                    .dropdownValue!
-                                                    .toString(),
-                                                'vehicle_brand_id': 0,
-                                                'vehicle_brand_name':
-                                                    selVh["text"],
-                                                'vehicle_plate_no':
-                                                    controller.plateNo.text,
-                                                'base_hours':
-                                                    selVh["base_hours"],
-                                                'base_rate': selVh["base_rate"],
-                                                'succeeding_rate':
-                                                    selVh["succeeding_rate"],
-                                                'vehicle_type': selVh["text"]
-                                              }
-                                            ]);
-                                            Get.back();
-                                          }
-                                        },
-                                      ),
-                                      Container(height: 15),
-                                      CustomButtonCancel(
-                                          borderColor: Colors.black,
-                                          textColor: Colors.black,
-                                          color: AppColor.bodyColor,
-                                          text: "My Vehicle",
-                                          onPressed: () {
-                                            controller.onScreenChanged(
-                                                !ct.isFirstScreen.value);
-                                          }),
-                                      if (Platform.isIOS) Container(height: 20),
-                                    ],
-                                  ),
-                              ],
-                            ),
-                          ),
-                        )
-                      : Expanded(
-                          child: controller.myVehiclesData.isEmpty
-                              ? const NoDataFound(
-                                  text:
-                                      "Your registered vehicle isn’t suitable for this area. Please consider other options ",
-                                )
-                              : Scrollbar(
-                                  child: ListView.separated(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10),
-                                    itemCount: controller.myVehiclesData.length,
-                                    itemBuilder: (context, index) {
-                                      return ListTile(
-                                        title: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            CustomTitle(
-                                              text: controller
-                                                      .myVehiclesData[index]
-                                                  ["vehicle_plate_no"],
-                                              fontSize: 14,
-                                            ),
-                                          ],
-                                        ),
-                                        subtitle: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            CustomParagraph(
-                                              text: controller
-                                                      .myVehiclesData[index]
-                                                  ["vehicle_brand_name"],
-                                              fontSize: 12,
-                                            ),
-                                          ],
-                                        ),
-                                        leading: Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 5),
-                                          child: Icon(
-                                            int.parse(controller
-                                                        .myVehiclesData[index]
-                                                            ["vehicle_type_id"]
-                                                        .toString()) ==
-                                                    1
-                                                ? Icons.motorcycle_outlined
-                                                : Icons.time_to_leave,
-                                          ),
-                                        ),
-                                        trailing: const Icon(
-                                            Icons.keyboard_arrow_right),
-                                        onTap: () {
-                                          List vhDatas = [
-                                            controller.myVehiclesData[index]
-                                          ];
-                                          dynamic recData =
-                                              controller.ddVehiclesData;
-
-                                          Map<int, Map<String, dynamic>>
-                                              recDataMap = {
-                                            for (var item in recData)
-                                              item['value']: item
-                                          };
-
-                                          // Merge base_hours and succeeding_rate into vhDatas
-                                          for (var vh in vhDatas) {
-                                            int typeId = vh['vehicle_type_id'];
-                                            if (recDataMap
-                                                .containsKey(typeId)) {
-                                              var rec = recDataMap[typeId];
-                                              vh['base_hours'] =
-                                                  rec?['base_hours'];
-                                              vh['base_rate'] =
-                                                  rec?['base_rate'];
-                                              vh['succeeding_rate'] =
-                                                  rec?['succeeding_rate'];
-                                              vh['vehicle_type'] =
-                                                  rec?['vehicle_type'];
-                                            }
-                                          }
-                                          Get.back();
-                                          callback(vhDatas);
-                                        },
-                                      );
-                                    },
-                                    separatorBuilder:
-                                        (BuildContext context, int index) {
-                                      return Divider(
-                                        color: Colors.black
-                                            .withOpacity(0.05000000074505806),
-                                      );
-                                    },
-                                  ),
-                                ),
-                        ),
-                ],
-              ),
-            ),
-          ),
-        )
-      ],
+    var dateOut = dateIn.add(
+      Duration(
+        hours: controller.selectedNumber.value,
+      ),
     );
-  }
-}
+    String dtOut = DateFormat('E, dd MMM yyyy').format(dateOut);
+    String dtIn = DateFormat('E, dd MMM yyyy').format(dateOut);
 
-class RewardsDialog extends StatefulWidget {
-  final Map<String, dynamic> data;
-  final Function cb;
-  const RewardsDialog({super.key, required this.data, required this.cb});
+    if (dateIn.day.toString() == dateOut.day.toString()) {
+      isNewDay = false;
+    } else {
+      isNewDay = true;
+    }
 
-  @override
-  State<RewardsDialog> createState() => _RewardsDialogState();
-}
-
-class _RewardsDialogState extends State<RewardsDialog> {
-  final TextEditingController rewardsCon = TextEditingController();
-
-  bool isExceed = false;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return MediaQuery(
-      data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(15),
-              child: Container(
-                padding: const EdgeInsets.all(15),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(15),
-                  color: Colors.white,
-                ),
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CustomTitle(
-                      text: "Reward Points",
-                      fontWeight: FontWeight.w700,
-                      fontSize: 19,
-                    ),
-                    Container(height: 20),
-                    const CustomParagraph(
-                        text: "Enter desired amount to be used"),
-                    Container(height: 5),
-                    CustomTextField(
-                      labelText: "Amount",
-                      controller: rewardsCon,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      onChange: (value) {
-                        if (int.parse(value) >
-                            double.parse(
-                                widget.data["userData"][0]["points_bal"])) {
-                          setState(() {
-                            isExceed = true;
-                            rewardsCon.text =
-                                value.substring(0, value.length - 1);
-                          });
-                        } else {
-                          setState(() {
-                            isExceed = false;
-                          });
-                        }
-                      },
-                    ),
-                    if (isExceed)
-                      const CustomParagraph(
-                        text:
-                            "Reward points inputted should not be greater than the total bill for parking",
-                        maxlines: 2,
-                        fontSize: 10,
-                        color: Colors.red,
-                      ),
-                    Container(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                          child: const Text('Cancel'),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                          },
-                        ),
-                        TextButton(
-                          child: const Text('OK'),
-                          onPressed: () {
-                            int amtReward = int.parse(rewardsCon.text);
-
-                            Get.back();
-                            widget.cb(amtReward);
-                          },
-                        ),
-                      ],
+    return Padding(
+      padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          InkWell(
+            onTap: () {
+              Get.back();
+            },
+            child: Container(
+                padding: const EdgeInsets.all(10),
+                clipBehavior: Clip.antiAlias,
+                decoration: ShapeDecoration(
+                  color: Color(0xFF0078FF),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(43),
+                  ),
+                  shadows: [
+                    BoxShadow(
+                      color: Color(0x0C000000),
+                      blurRadius: 15,
+                      offset: Offset(0, 5),
+                      spreadRadius: 0,
                     )
                   ],
                 ),
+                child: Icon(
+                  LucideIcons.arrowLeft,
+                  color: Colors.white,
+                  size: 16,
+                )),
+          ),
+          Container(height: 20),
+          CustomTitle(
+            text: "Confirm Booking",
+            fontSize: 20,
+          ),
+          Container(height: 5),
+          CustomParagraph(
+            text: "Your booking summary",
+            fontSize: 14,
+          ),
+          Container(height: 30),
+          Row(
+            children: [
+              Icon(
+                LucideIcons.calendarRange,
+                color: Colors.blue,
               ),
-            ),
-          ],
-        ),
+              Container(width: 10),
+              CustomParagraph(
+                text: isNewDay ? "$dtIn → $dtOut" : dtIn,
+                fontWeight: FontWeight.w500,
+              ),
+            ],
+          ),
+          Container(height: 30),
+          Row(
+            children: [
+              Icon(
+                LucideIcons.clock,
+                color: Colors.blue,
+              ),
+              Container(width: 10),
+              CustomParagraph(
+                text:
+                    "${controller.startTime.value} → ${controller.endTime.value}",
+                fontWeight: FontWeight.w500,
+              ),
+            ],
+          ),
+          Container(height: 30),
+          CustomTitle(
+            text: toCurrencyString(controller.totalAmount.value).toString(),
+            fontSize: 20,
+            color: AppColor.headerColor,
+            fontWeight: FontWeight.w600,
+          ),
+          CustomParagraph(
+            text: "Total deducted token from your wallet",
+            fontSize: 12,
+          ),
+          Container(height: 30),
+          CustomButton(
+              text:
+                  controller.parameters["canCheckIn"] ? "Check In" : "Confirm",
+              btnColor: controller.selectedVh.isEmpty
+                  ? AppColor.primaryColor.withOpacity(.6)
+                  : AppColor.primaryColor,
+              textColor: Colors.white,
+              onPressed: controller.selectedVh.isEmpty
+                  ? () {}
+                  : () {
+                      var dateIn = DateTime.parse(
+                          "${controller.startDate.text} ${controller.timeInParam.text}");
+
+                      var dateOut = dateIn.add(
+                        Duration(
+                          hours: controller.selectedNumber.value,
+                        ),
+                      );
+
+                      String finalDateOut =
+                          "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${controller.paramEndTime.value}";
+
+                      void bongGo() {
+                        Map<String, dynamic> parameters = {
+                          "client_id": controller.parameters["areaData"]
+                              ["client_id"],
+                          "park_area_id": controller.parameters["areaData"]
+                              ["park_area_id"],
+                          "vehicle_plate_no": controller.selectedVh[0]
+                              ["vehicle_plate_no"],
+                          "vehicle_type_id": controller.selectedVh[0]
+                                  ["vehicle_type_id"]
+                              .toString(),
+                          "dt_in": dateIn.toString().toString().split(".")[0],
+                          "dt_out": finalDateOut,
+                          "no_hours": controller.selectedNumber,
+                          "tran_type": "R",
+                        };
+
+                        controller.submitReservation(parameters);
+                      }
+
+                      bongGo();
+                    }),
+        ],
       ),
     );
   }

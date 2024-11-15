@@ -297,7 +297,7 @@ class WalletScreen extends GetView<WalletController> {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(15, 0, 15, 23),
+                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
                 child: InkWell(
                   onTap: () {
                     Get.toNamed(Routes.myaccount);
@@ -309,8 +309,7 @@ class WalletScreen extends GetView<WalletController> {
               ),
               Expanded(
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 15, vertical: 26),
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 5),
                   clipBehavior: Clip.antiAlias,
                   decoration: BoxDecoration(color: Colors.white),
                   child: Column(

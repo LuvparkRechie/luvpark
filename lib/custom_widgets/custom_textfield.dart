@@ -375,7 +375,7 @@ DropdownButtonFormField<String> customDropdown({
       labelStyle: paragraphStyle(
           fontWeight: FontWeight.w400, color: AppColor.hintColor),
       floatingLabelStyle: TextStyle(
-        fontWeight: FontWeight.w400,
+        fontWeight: FontWeight.w500,
         fontSize: 15,
       ),
     ),

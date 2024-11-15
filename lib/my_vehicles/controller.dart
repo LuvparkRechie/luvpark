@@ -373,7 +373,7 @@ class MyVehiclesController extends GetxController {
     final returnPost =
         await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
             .postBody();
-    print("returnPost $returnPost");
+
     if (returnPost == "No Internet") {
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {

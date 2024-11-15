@@ -24,10 +24,10 @@ class BookingController extends GetxController
 
   TextEditingController timeInParam = TextEditingController();
   TextEditingController plateNo = TextEditingController();
+  TextEditingController noHours = TextEditingController();
   TextEditingController startDate = TextEditingController();
   TextEditingController endDate = TextEditingController();
 
-  TextEditingController noHours = TextEditingController();
   TextEditingController inpDisplay = TextEditingController();
   TextEditingController rewardsCon = TextEditingController();
 
@@ -53,6 +53,12 @@ class BookingController extends GetxController
   RxList numbersList = [].obs;
   RxList selectedVh = [].obs;
   RxList vehicleTypeData = [].obs;
+  RxBool isExpandedPansion = false.obs;
+  RxList pointsData = [
+    {"name": "Token", "value": 100},
+    {"name": "Points", "value": 100},
+    {"name": "Total", "value": 100}
+  ].obs;
   RxInt selectedNumber = RxInt(1);
   RxString totalAmount = "0.0".obs;
   RxString vehicleTypeValue = "".obs;
@@ -82,6 +88,7 @@ class BookingController extends GetxController
   void onInit() {
     super.onInit();
     selectedNumber.value = 1;
+    noHours.text = 1.toString();
 
     int endNumber =
         int.parse(parameters["areaData"]["res_max_hours"].toString());
@@ -184,17 +191,19 @@ class BookingController extends GetxController
       myVehiclesData.value = [];
       if (myVehicles["items"].length > 0) {
         for (var row in myVehicles["items"]) {
-          String brandName = await Functions.getBrandName(
+          List dataVBrand = await Functions.getBranding(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
 
           myVehiclesData.add({
             "vehicle_type_id": row["vehicle_type_id"],
             "vehicle_brand_id": row["vehicle_brand_id"],
-            "vehicle_brand_name": brandName,
+            "vehicle_brand_name": dataVBrand[0]["vehicle_brand_name"],
             "vehicle_plate_no": row["vehicle_plate_no"],
+            "image": dataVBrand[0]["imageb64"]
           });
         }
         List dataLastBooking = await Authentication().getLastBooking();
+        print("dataLastBooking $dataLastBooking");
         if (dataLastBooking.isNotEmpty) {
           selectedVh.value = dataLastBooking;
         } else {
@@ -216,10 +225,8 @@ class BookingController extends GetxController
 
           selectedVh.value = vhDatas;
         }
-
-        selectedNumber.value = selectedVh[0]["base_hours"];
-        timeComputation();
-        routeToComputation();
+        CustomDialog().loadingDialog(Get.context!);
+        krowkrow();
       }
       getNotice();
     });
@@ -378,6 +385,7 @@ class BookingController extends GetxController
             "Okay", () {
           Get.back();
           selectedNumber -= deductTime;
+          noHours.text = selectedNumber.value.toString();
 
           timeComputation();
           routeToComputation();
@@ -385,8 +393,10 @@ class BookingController extends GetxController
         }, () {
           Get.back();
           selectedNumber -= deductTime;
+          noHours.text = selectedNumber.value.toString();
           if (selectedNumber.value == 0) {
             selectedNumber.value = 1;
+            noHours.text = selectedNumber.value.toString();
           }
           endTime.value = DateFormat('h:mm a').format(cTime).toString();
           paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
@@ -401,10 +411,12 @@ class BookingController extends GetxController
     if (isIncrement) {
       if (selectedNumber.value == numbersList.length) return;
       selectedNumber.value++;
+      noHours.text = selectedNumber.value.toString();
       timeComputation();
     } else {
       if (selectedNumber.value == inatay) return;
       selectedNumber--;
+      noHours.text = selectedNumber.value.toString();
       timeComputation();
     }
     if (selectedVh.isEmpty) return;
@@ -424,33 +436,66 @@ class BookingController extends GetxController
   }
 
   void displaySelVh() {
-    isFirstScreen.value = true;
-    Get.bottomSheet(
-      isScrollControlled: true,
-      VehicleOption(
-        callback: (data) {
-          List objData = data;
+    Get.to(
+      transition: Transition.rightToLeftWithFade,
+      curve: Curves.easeInOut,
+      MyVhList((data) {
+        CustomDialog().loadingDialog(Get.context!);
+        List objData = data;
 
-          List filterData = ddVehiclesData.where((obj) {
-            return obj["value"] == data[0]["vehicle_type_id"];
+        List filterData = ddVehiclesData.where((obj) {
+          return obj["value"] == data[0]["vehicle_type_id"];
+        }).toList();
+
+        if (filterData.isEmpty) {
+          selectedVh.value = objData;
+        } else {
+          objData = objData.map((e) {
+            e["vehicle_type"] = filterData[0]["text"];
+            return e;
           }).toList();
-          if (filterData.isEmpty) {
-            selectedVh.value = objData;
-          } else {
-            objData = objData.map((e) {
-              e["vehicle_type"] = filterData[0]["text"];
-              return e;
-            }).toList();
-            selectedVh.value = objData;
-          }
-          print("selected vh $selectedVh");
-          selectedNumber.value = selectedVh[0]["base_hours"];
-          timeComputation();
-          routeToComputation();
-        },
-      ),
+          selectedVh.value = objData;
+        }
+        krowkrow();
+      }),
     );
   }
+
+  void krowkrow() {
+    Future.delayed(Duration(seconds: 2), () async {
+      selectedNumber.value = selectedVh[0]["base_hours"];
+      plateNo.text = selectedVh[0]["vehicle_plate_no"];
+      dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
+      noHours.text = selectedNumber.value.toString();
+      Get.back();
+      timeComputation();
+      routeToComputation();
+    });
+  }
+
+  //dynamic on change vehicle changed selected vh data
+  void onChangedVtype(ddvalue) {
+    CustomDialog().loadingDialog(Get.context!);
+    dynamic selVh = ddVehiclesData.where((element) {
+      return element["value"] == int.parse(ddvalue!.toString());
+    }).toList()[0];
+
+    selectedVh.value = [
+      {
+        'vehicle_type_id': dropdownValue!.toString(),
+        'vehicle_brand_id': 0,
+        'vehicle_brand_name': selVh["text"],
+        'vehicle_plate_no': plateNo.text,
+        'base_hours': selVh["base_hours"],
+        'base_rate': selVh["base_rate"],
+        'succeeding_rate': selVh["succeeding_rate"],
+        'vehicle_type': selVh["text"]
+      }
+    ];
+    print("selectedVh $selectedVh");
+    krowkrow();
+  }
+  //display
 
 //Compute booking payment
   Future<void> routeToComputation() async {
@@ -513,6 +558,7 @@ class BookingController extends GetxController
 
   //Reservation Submit
   void submitReservation(params) async {
+    CustomDialog().loadingDialog(Get.context!);
     List bookingParams = [params];
 
     int userId = await Authentication().getUserId();
@@ -560,7 +606,7 @@ class BookingController extends GetxController
       "points_used": double.parse(usedRewards.toString()),
       "auto_extend": isExtendchecked.value ? "Y" : "N"
     };
-
+    Get.back();
     CustomDialog().confirmationDialog(
         Get.context!,
         "Confirm Booking",
@@ -572,23 +618,27 @@ class BookingController extends GetxController
       Get.back();
     }, () {
       Get.back();
+      CustomDialog().loadingDialog(Get.context!);
 
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
+          Get.back();
           CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();
           });
           return;
         }
         if (objData == null) {
+          Get.back();
           isSubmitBooking.value = false;
           CustomDialog().serverErrorDialog(Get.context!, () {
             Get.back();
           });
         }
+
         if (objData["success"] == "Y") {
           dynamic paramArgs = {
             'parkArea': parameters["areaData"]["park_area_name"],
@@ -765,6 +815,40 @@ class BookingController extends GetxController
     }
 
     isLoadingPage.value = false;
+  }
+
+  String validateText(String inputText, TextEditingController txtController) {
+    // Check if the first character is a space or special character
+    if (inputText.isNotEmpty && !RegExp(r'^[a-zA-Z0-9]').hasMatch(inputText)) {
+      return 'Text must not start with a space or special character';
+    }
+
+    // Replace multiple spaces with a single space
+    String formattedText = inputText.replaceAll(RegExp(r'\s+'), ' ');
+
+    // Update error message if input is not valid
+    if (formattedText != inputText) {
+      txtController.text = formattedText;
+
+      txtController.selection = TextSelection.fromPosition(
+        TextPosition(offset: formattedText.length),
+      );
+    }
+
+    return ''; // Return an empty string if valid
+  }
+
+  void confirmBooking() {
+    Get.bottomSheet(
+      ConfirmBooking(),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
+      ),
+      backgroundColor: Colors.white,
+    );
   }
 
   @override

@@ -22,8 +22,8 @@ class FilterMap extends StatefulWidget {
 
 class _FilterMapState extends State<FilterMap> {
   final List items = [
-    {"text": "Allow Overnight", "value": "Y"},
-    {"text": "No Overnight", "value": "N"},
+    {"text": "Allowed", "value": "Y"},
+    {"text": "Not Allowed", "value": "N"},
     {"text": "Both", "value": ""},
   ];
   double currentDistance = 1.0;

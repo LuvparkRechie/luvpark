@@ -82,11 +82,6 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                           ),
                         ),
                         Container(height: 20),
-                        CustomParagraph(
-                          text: "Load Amount",
-                          color: AppColor.headerColor,
-                        ),
-                        Container(height: 5),
                         CustomTextField(
                           controller: controller.tokenAmount,
                           labelText: "Enter amount",

@@ -220,7 +220,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                           Container(height: 5),
                           CustomParagraph(
                             text:
-                                'Discover parking options in public\nareas, including street spaces.',
+                                'Parking areas are located in business districts and commercial zones.',
                             fontSize: 12,
                           ),
                         ],
@@ -248,7 +248,7 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                           Container(height: 5),
                           CustomParagraph(
                             text:
-                                'Parking areas are located in business districts and commercial zones.',
+                                'Discover parking options in public\nareas, including street spaces.',
                             fontSize: 12,
                           ),
                         ],

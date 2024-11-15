@@ -252,23 +252,29 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                       ),
                                       Container(width: 5),
                                       Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            const CustomParagraph(
-                                              text: "My balance",
-                                              maxlines: 1,
-                                              fontWeight: FontWeight.w500,
-                                              minFontSize: 8,
-                                            ),
-                                            Obx(() => CustomTitle(
-                                                  text: toCurrencyString(
-                                                      controller.userBal
-                                                          .toString()),
-                                                  maxlines: 1,
-                                                ))
-                                          ],
+                                        child: Obx(
+                                          () => Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const CustomParagraph(
+                                                text: "My balance",
+                                                maxlines: 1,
+                                                fontWeight: FontWeight.w500,
+                                                minFontSize: 8,
+                                              ),
+                                              CustomTitle(
+                                                text: controller.userBal
+                                                        .toString()
+                                                        .isEmpty
+                                                    ? "Loading..."
+                                                    : toCurrencyString(
+                                                        controller.userBal
+                                                            .toString()),
+                                                maxlines: 1,
+                                              )
+                                            ],
+                                          ),
                                         ),
                                       ),
                                       Container(width: 5),
