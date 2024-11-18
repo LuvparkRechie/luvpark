@@ -124,37 +124,50 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           ],
                           controller: controller.plateNo,
                           onChange: (value) {
-                            String trimmedValue = value
-                                .toUpperCase()
-                                .replaceFirst(RegExp(r'[^a-zA-Z0-9. ]'), '');
-                            validateText(value, controller.plateNo);
-                            if (trimmedValue.isNotEmpty) {
-                              controller.plateNo.value = TextEditingValue(
-                                text: Variables.capitalizeAllWord(trimmedValue),
-                                selection: controller.plateNo.selection,
-                              );
+                            print(controller.maskFormatter.value);
+
+                            if (controller.maskFormatter.value == null) {
+                              String trimmedValue = value
+                                  .toUpperCase()
+                                  .replaceFirst(RegExp(r'[^a-zA-Z0-9. ]'), '');
+                              validateText(value, controller.plateNo);
+                              if (trimmedValue.isNotEmpty) {
+                                controller.plateNo.value = TextEditingValue(
+                                  text:
+                                      Variables.capitalizeAllWord(trimmedValue),
+                                  selection: controller.plateNo.selection,
+                                );
+                              } else {
+                                controller.plateNo.value = TextEditingValue(
+                                  text: "",
+                                  selection: TextSelection.collapsed(offset: 0),
+                                );
+                              }
                             } else {
-                              // If the trimmed value is empty, just keep the selection unchanged
+                              String capitalizeWords(String input) {
+                                return input.toUpperCase();
+                              }
+
+                              String text = capitalizeWords(value);
                               controller.plateNo.value = TextEditingValue(
-                                text: "",
-                                selection: TextSelection.collapsed(offset: 0),
+                                text: text,
                               );
                             }
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return "Plate No. is required";
+                              return "Plate no. is required";
                             }
-                            // if (!value.contains(RegExp(r'^[A-Z0-9-]+$'))) {
-                            //   return "Plate No. should only contain letters, numbers, and dashes";
-                            // }
+                            if (value.length > 15) {
+                              return "Plate no. should not exceed 15 characters";
+                            }
                             if (value.startsWith('-') || value.endsWith('-')) {
-                              return "Plate No. should not start or end with a dash";
+                              return "Plate no. should not start or end with a dash";
                             }
                             if ((value.endsWith(' ') ||
                                 value.endsWith('-') ||
                                 value.endsWith('.'))) {
-                              return "Middle name cannot end with a space, hyphen, or period";
+                              return "Plate no. should not contain space, hyphen, or period";
                             }
 
                             return null;

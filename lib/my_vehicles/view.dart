@@ -184,6 +184,7 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                       height:
                                                                           5),
                                                                   CustomParagraph(
+                                                                    maxlines: 1,
                                                                     text: controller
                                                                         .vehicleData[
                                                                             index]
