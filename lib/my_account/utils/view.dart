@@ -219,7 +219,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  LengthLimitingTextInputFormatter(30),
+                  SimpleNameFormatter(),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -238,7 +238,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
-                  LengthLimitingTextInputFormatter(30),
+                  SimpleNameFormatter(),
                 ],
                 onChange: (inputText) {
                   validateText(inputText, controller.middleName);
@@ -275,7 +275,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   }
                 },
                 inputFormatters: [
-                  LengthLimitingTextInputFormatter(30),
+                  SimpleNameFormatter(),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
