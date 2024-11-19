@@ -1,11 +1,12 @@
-// ignore_for_file: unused_import
+// ignore_for_file: unused_import, deprecated_member_use
 
 import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+import 'package:gallery_saver_plus/gallery_saver.dart';
+// import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
@@ -189,8 +190,7 @@ class QrWalletController extends GetxController
     final imgFile = File('$directory/screenshot.png');
     imgFile.writeAsBytes(pngBytes);
     Get.back();
-    // ignore: deprecated_member_use
-    await Share.share(imgFile.path);
+    await Share.shareFiles([imgFile.path]);
   }
 
   Widget myWidget() => Container(
