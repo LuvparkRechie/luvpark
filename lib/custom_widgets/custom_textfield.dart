@@ -208,7 +208,11 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         enabled: widget.isEnabled,
         keyboardType: widget.keyboardType!,
         decoration: InputDecoration(
-          errorStyle: paragraphStyle(),
+          errorStyle: paragraphStyle(
+            color: Colors.red,
+            fontWeight: FontWeight.normal,
+            fontSize: 10,
+          ),
           isDense: true,
           labelText: widget.labelText,
           contentPadding:
@@ -351,6 +355,11 @@ DropdownButtonFormField<String> customDropdown({
 }) {
   return DropdownButtonFormField<String>(
     decoration: InputDecoration(
+      errorStyle: paragraphStyle(
+        color: Colors.red,
+        fontWeight: FontWeight.normal,
+        fontSize: 10,
+      ),
       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(

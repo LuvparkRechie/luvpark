@@ -194,7 +194,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep1,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: AutovalidateMode
+              .onUserInteraction, // Validate on user interaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -211,12 +212,13 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       selection: controller.firstName.selection,
                     );
                   } else {
-                    // If the trimmed value is empty, just keep the selection unchanged
                     controller.firstName.value = TextEditingValue(
                       text: "",
                       selection: TextSelection.collapsed(offset: 0),
                     );
                   }
+                  // Manually trigger validation when text is changed
+                  controller.formKeyStep1.currentState?.validate();
                 },
                 inputFormatters: [
                   SimpleNameFormatter(),
@@ -242,6 +244,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 ],
                 onChange: (inputText) {
                   validateText(inputText, controller.middleName);
+                  // Manually trigger validation when text is changed
+                  controller.formKeyStep1.currentState?.validate();
                 },
                 validator: (value) {
                   if (value != null &&
@@ -250,7 +254,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           value.endsWith('.'))) {
                     return "Middle name cannot end with a space, hyphen, or period";
                   }
-
                   return null;
                 },
               ),
@@ -267,12 +270,13 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                       selection: controller.lastName.selection,
                     );
                   } else {
-                    // If the trimmed value is empty, just keep the selection unchanged
                     controller.lastName.value = TextEditingValue(
                       text: "",
                       selection: TextSelection.collapsed(offset: 0),
                     );
                   }
+                  // Manually trigger validation when text is changed
+                  controller.formKeyStep1.currentState?.validate();
                 },
                 inputFormatters: [
                   SimpleNameFormatter(),
@@ -295,19 +299,20 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 controller: controller.email,
                 onChange: (value) {
                   String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-
                   if (trimmedValue.isNotEmpty) {
+                    // Do something here
                   } else {
-                    // If the trimmed value is empty, just keep the selection unchanged
                     controller.email.value = TextEditingValue(
                       text: "",
                       selection: TextSelection.collapsed(offset: 0),
                     );
                   }
+                  // Manually trigger validation when text is changed
+                  controller.formKeyStep1.currentState?.validate();
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Email adress is required';
+                    return 'Email address is required';
                   }
                   if (!EmailValidator.validate(value) ||
                       !Variables.emailRegex.hasMatch(value)) {
@@ -342,7 +347,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     if (value == null || value.isEmpty) {
                       return "Civil status is required";
                     }
-
                     return null;
                   },
                   onChanged: (data) {
@@ -371,7 +375,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           text: "Male",
                           color: AppColor.headerColor,
                           fontWeight: FontWeight.w500,
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -395,7 +399,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           text: "Female",
                           color: AppColor.headerColor,
                           fontWeight: FontWeight.w500,
-                        )
+                        ),
                       ],
                     ),
                   ),
@@ -417,7 +421,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep2,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: AutovalidateMode
+              .onUserInteraction, // Validate on user interaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -430,6 +435,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   onChanged: (String? newValue) {
                     controller.selectedRegion.value = newValue.toString();
                     controller.getProvinceData(newValue);
+                    // Manually trigger validation when the dropdown is changed
+                    controller.formKeyStep2.currentState?.validate();
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -449,12 +456,13 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     if (value == null || value.isEmpty) {
                       return 'Province is required';
                     }
-
                     return null;
                   },
                   onChanged: (data) {
                     controller.selectedProvince.value = data.toString();
                     controller.getCityData(data);
+                    // Manually trigger validation when the dropdown is changed
+                    controller.formKeyStep2.currentState?.validate();
                   },
                 ),
               ),
@@ -468,12 +476,13 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     if (value == null || value.isEmpty) {
                       return 'City is required';
                     }
-
                     return null;
                   },
                   onChanged: (data) {
                     controller.selectedCity.value = data.toString();
                     controller.getBrgyData(data);
+                    // Manually trigger validation when the dropdown is changed
+                    controller.formKeyStep2.currentState?.validate();
                   },
                 ),
               ),
@@ -487,11 +496,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     if (value == null || value.isEmpty) {
                       return 'Barangay is required';
                     }
-
                     return null;
                   },
                   onChanged: (data) {
                     controller.selectedBrgy.value = data.toString();
+                    // Manually trigger validation when the dropdown is changed
+                    controller.formKeyStep2.currentState?.validate();
                   },
                 ),
               ),
@@ -509,6 +519,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 onChange: (value) {
                   controller.zipCode.selection = TextSelection.fromPosition(
                       TextPosition(offset: controller.zipCode.text.length));
+                  // Manually trigger validation when text is changed
+                  controller.formKeyStep2.currentState?.validate();
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -518,7 +530,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   } else if (!RegExp(r'^\d{4}$').hasMatch(value)) {
                     return 'ZIP code must be numeric';
                   }
-
                   return null; // Valid input
                 },
               ),
@@ -536,7 +547,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep3,
-          autovalidateMode: AutovalidateMode.onUserInteraction,
+          autovalidateMode: AutovalidateMode.disabled,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
