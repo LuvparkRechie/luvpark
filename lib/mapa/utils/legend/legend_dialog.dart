@@ -28,7 +28,14 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
       child: PopScope(
-        canPop: false,
+        canPop: true,
+        // ignore: deprecated_member_use
+        onPopInvoked: (didPop) {
+          Get.back();
+          if (widget.callback != null) {
+            widget.callback!();
+          }
+        },
         child: Scaffold(
           backgroundColor: Colors.transparent,
           body: Container(
