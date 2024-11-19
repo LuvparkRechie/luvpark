@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:gallery_saver/gallery_saver.dart';
+import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/booking/utils/booking_receipt/controller.dart';
@@ -398,7 +398,7 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                         Get.back();
 
                         // ignore: deprecated_member_use
-                        await Share.share(imgFile.path);
+                        await Share.shareFiles([imgFile.path]);
                       }),
                       Container(height: 10),
                       CustomParagraph(
