@@ -84,6 +84,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                           child: customDropdown(
                             labelText: "Vehicle type",
+                            isDisabled: false,
                             items: controller.vehicleDdData,
                             selectedValue: controller.ddVhType,
                             onChanged: (String? newValue) {
@@ -101,6 +102,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                           child: customDropdown(
                             labelText: "Vehicle brand",
+                            isDisabled: false,
                             items: controller.vehicleBrandData,
                             selectedValue: controller.ddVhBrand.value,
                             validator: (value) {

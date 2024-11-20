@@ -76,7 +76,7 @@ class CustomDialog {
           // Paragraph
           CustomParagraph(
             text:
-                "We're experiencing issues with submitting on the server at the moment."
+                "We are currently experiencing technical issues connecting to the server."
                 " Please try again later or contact support for assistance.",
             textAlign: TextAlign.center,
           ),

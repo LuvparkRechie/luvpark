@@ -45,7 +45,7 @@ class NoDataFound extends StatelessWidget {
                         size: 17,
                       ),
                       CustomParagraph(
-                        text: " Tap to retry",
+                        text: " Tap to refresh",
                         fontWeight: FontWeight.normal,
                         fontSize: 12,
                       ),

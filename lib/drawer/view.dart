@@ -272,6 +272,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                         Get.back();
                         Get.dialog(LegendDialogScreen(
                           callback: () {
+                            print("callback");
                             controller.dashboardScaffoldKey.currentState
                                 ?.openDrawer();
                           },

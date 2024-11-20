@@ -351,7 +351,7 @@ class WalletSend extends GetView<WalletSendController> {
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
                   color: walletBalance >= data["value"]
-                      ? (data["is_active"] ? Colors.white : Colors.black)
+                      ? (data["is_active"] ? Colors.white : null)
                       : Colors.grey,
                   minFontSize: 8,
                 ),

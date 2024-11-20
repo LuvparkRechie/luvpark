@@ -87,9 +87,9 @@ class MyVehiclesController extends GetxController {
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=";
 
     HttpRequest(api: api).get().then((myVehicles) async {
-      isLoadingPage.value = false;
       print("myVehicles $myVehicles");
       if (myVehicles == "No Internet") {
+        isLoadingPage.value = false;
         isNetConn.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
@@ -98,13 +98,15 @@ class MyVehiclesController extends GetxController {
       }
 
       if (myVehicles == null || myVehicles["items"].isEmpty) {
+        isLoadingPage.value = false;
         isNetConn.value = true;
         vehicleData.clear();
         return;
       }
-
-      isNetConn.value = true;
       vehicleData.clear();
+      isLoadingPage.value = false;
+      isNetConn.value = true;
+
       for (var row in myVehicles["items"]) {
         List dataVBrand = await Functions.getBranding(
             row["vehicle_type_id"], row["vehicle_brand_id"]);
@@ -361,19 +363,21 @@ class MyVehiclesController extends GetxController {
     });
   }
 
-  void subscrbeVh(String scQr, String plateNo) async {
+  void subscrbeVh(String scQr, String plateNo, String brandId) async {
+    print("brandId $brandId");
     CustomDialog().loadingDialog(Get.context!);
     int? lpId = await Authentication().getUserId();
     dynamic param = {
       "qr_code": scQr,
       "luvpay_id": lpId,
-      "vehicle_plate_no": plateNo
+      "vehicle_plate_no": plateNo,
+      "vehicle_brand_id": brandId,
     };
     print("param $param");
     final returnPost =
         await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
             .postBody();
-
+    print("returnPost $returnPost");
     if (returnPost == "No Internet") {
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {

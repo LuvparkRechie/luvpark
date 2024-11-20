@@ -178,7 +178,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               controller.onNextPage();
                             },
                           ),
-                        if (Platform.isIOS) Container(height: 20),
+                        Container(height: 20),
                       ],
                     ),
                   ),
@@ -341,6 +341,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 10),
                 child: customDropdown(
                   labelText: "Civil status",
+                  isDisabled: false,
                   items: controller.civilData,
                   selectedValue: controller.selectedCivil.value,
                   validator: (value) {
@@ -430,6 +431,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 10),
                 child: customDropdown(
                   labelText: "Region",
+                  isDisabled: false,
                   items: controller.regionData,
                   selectedValue: controller.selectedRegion.value,
                   onChanged: (String? newValue) {
@@ -450,6 +452,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 10),
                 child: customDropdown(
                   labelText: "Province",
+                  isDisabled: false,
                   items: controller.provinceData,
                   selectedValue: controller.selectedProvince.value,
                   validator: (value) {
@@ -470,6 +473,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 10),
                 child: customDropdown(
                   labelText: "City",
+                  isDisabled: false,
                   items: controller.cityData,
                   selectedValue: controller.selectedCity.value,
                   validator: (value) {
@@ -490,6 +494,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 padding: const EdgeInsets.only(top: 15.0, bottom: 10),
                 child: customDropdown(
                   labelText: "Barangay",
+                  isDisabled: false,
                   items: controller.brgyData,
                   selectedValue: controller.selectedBrgy.value,
                   validator: (value) {

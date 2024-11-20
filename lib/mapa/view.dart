@@ -750,6 +750,14 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
               child: Obx(
                 () => Column(
                   children: [
+                    Container(height: 10),
+                    Container(
+                      width: 100,
+                      height: 5,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                          color: Colors.grey.shade200),
+                    ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                       child: ScrollConfiguration(
@@ -1064,8 +1072,6 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                               borderRadius: 25,
                               text: "Book now",
                               onPressed: () {
-                                if (controller.isClkBook.value) return;
-                                controller.isClkBook.value = true;
                                 controller.onClickBooking();
                               },
                             ),
@@ -1149,23 +1155,25 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
   Widget _amenities() {
     return SingleChildScrollView(
       padding: const EdgeInsets.only(top: 20),
-      child: Column(
-        children: [
-          for (int i = 0; i < controller.amenData.length; i += 2)
-            Row(
-              //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: controller.amenData.isEmpty
+          ? CustomParagraph(text: "No amenities")
+          : Column(
               children: [
-                for (int j = i; j < i + 2; j++)
-                  j < controller.amenData.length
-                      ? _buildColumn(
-                          controller.amenData[j]["parking_amenity_desc"],
-                          controller.amenData[j]["icon"],
-                        )
-                      : _buildPlaceholder(),
+                for (int i = 0; i < controller.amenData.length; i += 2)
+                  Row(
+                    //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      for (int j = i; j < i + 2; j++)
+                        j < controller.amenData.length
+                            ? _buildColumn(
+                                controller.amenData[j]["parking_amenity_desc"],
+                                controller.amenData[j]["icon"],
+                              )
+                            : _buildPlaceholder(),
+                    ],
+                  ),
               ],
             ),
-        ],
-      ),
     );
   }
 

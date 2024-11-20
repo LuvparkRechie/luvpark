@@ -202,7 +202,7 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                   maxlines: 1,
                   fontSize: 10,
                   fontWeight: FontWeight.w500,
-                  color: data["is_active"] ? Colors.white : Colors.black,
+                  color: data["is_active"] ? Colors.white : null,
                   minFontSize: 8,
                 ),
               ],

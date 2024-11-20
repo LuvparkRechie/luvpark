@@ -77,7 +77,7 @@ class MyVehicles extends GetView<MyVehiclesController> {
                         ),
                         Container(height: 20),
                         Text(
-                          "My Vehicle",
+                          "My Vehicles",
                           style: GoogleFonts.openSans(
                             fontSize: 25,
                             fontWeight: FontWeight.w700,
@@ -203,12 +203,6 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                   Container(
                                                                       height:
                                                                           5),
-                                                                  CustomParagraph(
-                                                                    text:
-                                                                        "Plate no.",
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
                                                                   Container(
                                                                       height:
                                                                           10),
@@ -221,6 +215,7 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                           () {
                                                                         FocusNode()
                                                                             .unfocus();
+
                                                                         Get.to(
                                                                             ScannerScreen(
                                                                           onchanged:
@@ -242,7 +237,7 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                               );
                                                                               return;
                                                                             } else {
-                                                                              controller.subscrbeVh(result, controller.vehicleData[index]["vehicle_plate_no"].toString());
+                                                                              controller.subscrbeVh(result, controller.vehicleData[index]["vehicle_plate_no"].toString(), controller.vehicleData[index]["vehicle_brand_id"].toString());
                                                                             }
                                                                           },
                                                                         ));

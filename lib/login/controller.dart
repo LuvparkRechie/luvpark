@@ -7,6 +7,7 @@ import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreenController extends GetxController {
   LoginScreenController();
@@ -40,6 +41,7 @@ class LoginScreenController extends GetxController {
 
   //POST LOGIN
   postLogin(context, Map<String, dynamic> param, Function cb) async {
+    final prefs = await SharedPreferences.getInstance();
     HttpRequest(api: ApiKeys.gApiSubFolderPostLogin2, parameters: param)
         .postBody()
         .then((returnPost) async {
@@ -153,7 +155,7 @@ class LoginScreenController extends GetxController {
                 "is_active": "Y",
                 "is_login": "Y",
               };
-
+              prefs.remove("userData");
               Authentication().setLogin(jsonEncode(parameters));
               Authentication().setUserData(jsonEncode(items));
               Authentication().setPasswordBiometric(param["pwd"]);

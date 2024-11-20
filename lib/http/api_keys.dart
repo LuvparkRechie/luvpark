@@ -1,9 +1,9 @@
-const String luvApi = "luv";
-const String parkSpaceApi = "parkspace";
+// const String luvApi = "luv";
+// const String parkSpaceApi = "parkspace";
 
 //PROD
-// const String luvApi = "lpw";
-// const String parkSpaceApi = "ps";
+const String luvApi = "lpw";
+const String parkSpaceApi = "ps";
 
 // production api
 // https://app.luvpark.ph/ords/lpw/
@@ -11,10 +11,10 @@ const String parkSpaceApi = "parkspace";
 
 class ApiKeys {
   //Prod Path
-  // static const gApiURL = 'app.luvpark.ph';
+  static const gApiURL = 'app.luvpark.ph';
   //Testing Path
-  static const gApiURL =
-      'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
+  // static const gApiURL =
+  //     'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
   //get Payment key
   static const gApiSubFolderPayments = '/ords/$luvApi/ps/qr/';
   //Get luv ReferenceNo
@@ -234,6 +234,8 @@ class ApiKeys {
   //Delete advance parking
   static const gApiPostCancelParking =
       '/ords/$parkSpaceApi/pm/cancelAdvancedParking';
+  //refund booking cancelled
+  static const gApiRefundCancelled = '/ords/$luvApi/token/luvpark/refund';
   //  extendPost param reservation_id, no_hours
   static const gApiExtendParking =
       '/ords/$parkSpaceApi/pm/extendAdvancedParking';
@@ -241,4 +243,8 @@ class ApiKeys {
   static const gApiCancelAutoExtend = '/ords/$parkSpaceApi/pm/cancelAutoExtend';
   //subscribe
   static const gApiSubscribeVh = '/ords/$parkSpaceApi/zone/subscribe';
+  //subscription list
+  static const gApiSubscribedList = '/ords/$parkSpaceApi/zone/subscriptions';
+  //booking added
+  static const gApiIssueTicket = '/ords/$parkSpaceApi/pm/issueTicket';
 }

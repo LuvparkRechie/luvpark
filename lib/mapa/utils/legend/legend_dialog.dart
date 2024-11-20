@@ -24,17 +24,22 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    pageController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
       child: PopScope(
         canPop: true,
-        // ignore: deprecated_member_use
         onPopInvoked: (didPop) {
-          Get.back();
           if (widget.callback != null) {
             widget.callback!();
           }
+          return;
         },
         child: Scaffold(
           backgroundColor: Colors.transparent,
@@ -60,7 +65,9 @@ class _LegendDialogScreenState extends State<LegendDialogScreen> {
                         child: InkWell(
                           onTap: () {
                             Get.back();
-                            widget.callback!();
+                            if (widget.callback != null) {
+                              widget.callback!();
+                            }
                           },
                           child: Container(
                             decoration: ShapeDecoration(

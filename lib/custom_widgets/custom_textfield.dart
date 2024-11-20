@@ -80,25 +80,25 @@ class _CustomTextFieldState extends State<CustomTextField> {
           inputFormatters: widget.inputFormatters,
           controller: widget.controller,
           textInputAction: TextInputAction.done,
-          readOnly: widget.isReadOnly!,
+          readOnly: widget.isReadOnly ?? false,
           keyboardType: widget.keyboardType!,
           textAlign:
               widget.textAlign != null ? widget.textAlign! : TextAlign.left,
           focusNode: focusNode,
           decoration: InputDecoration(
-            errorStyle: paragraphStyle(
-              color: Colors.red,
-              fontWeight: FontWeight.normal,
-              fontSize: 10,
-            ),
             errorText: widget.errorText,
-            filled: widget.isFilled,
+            filled: widget.isFilled ?? widget.isFilled,
             fillColor: widget.filledColor,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide(
                 color: AppColor.borderColor,
               ),
+            ),
+            errorStyle: paragraphStyle(
+              color: Colors.red,
+              fontWeight: FontWeight.normal,
+              fontSize: 11,
             ),
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
@@ -119,7 +119,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     onTap: () {
                       widget.onIconTap!();
                     },
-                    child: Icon(widget.suffixIcon!),
+                    child: Icon(
+                      widget.suffixIcon!,
+                      color: widget.isFilled != null && widget.isFilled!
+                          ? AppColor.primaryColor
+                          : null,
+                    ),
                   )
                 : null,
             prefixIcon: widget.prefixIcon != null
@@ -211,7 +216,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
           errorStyle: paragraphStyle(
             color: Colors.red,
             fontWeight: FontWeight.normal,
-            fontSize: 10,
+            fontSize: 11,
           ),
           isDense: true,
           labelText: widget.labelText,
@@ -235,7 +240,6 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
           errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.all(Radius.circular(12)),
               borderSide: BorderSide(color: Color(0xFFDF0000))),
-          // labelText: widget.labelText,
           suffixIcon: widget.suffixIcon != null
               ? InkWell(
                   onTap: () {
@@ -274,7 +278,6 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               ],
             ),
           ),
-
           hintText: widget.labelText,
           hintStyle: paragraphStyle(
             color: AppColor.hintColor,
@@ -347,6 +350,7 @@ class _CustomButtonCloseState extends State<CustomButtonClose> {
 }
 
 DropdownButtonFormField<String> customDropdown({
+  required bool isDisabled,
   required String labelText,
   required List items,
   required String? selectedValue,
@@ -355,11 +359,8 @@ DropdownButtonFormField<String> customDropdown({
 }) {
   return DropdownButtonFormField<String>(
     decoration: InputDecoration(
-      errorStyle: paragraphStyle(
-        color: Colors.red,
-        fontWeight: FontWeight.normal,
-        fontSize: 10,
-      ),
+      filled: isDisabled,
+      fillColor: Colors.grey.shade200,
       contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(
@@ -387,6 +388,11 @@ DropdownButtonFormField<String> customDropdown({
         fontWeight: FontWeight.w500,
         fontSize: 15,
       ),
+      errorStyle: paragraphStyle(
+        color: Colors.red,
+        fontWeight: FontWeight.normal,
+        fontSize: 11,
+      ),
     ),
     style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w400),
     items: items.map((item) {
@@ -402,12 +408,12 @@ DropdownButtonFormField<String> customDropdown({
           ));
     }).toList(),
     value: selectedValue,
-    onChanged: onChanged,
+    onChanged: isDisabled ? null : onChanged,
     validator: validator,
     isExpanded: true,
     focusNode: FocusNode(),
     icon: Icon(Icons.arrow_drop_down,
-        color: items.isEmpty ? Colors.grey : Colors.black),
+        color: items.isEmpty || isDisabled ? Colors.grey : Colors.black),
     dropdownColor: Colors.white,
     autovalidateMode: AutovalidateMode.onUserInteraction,
   );

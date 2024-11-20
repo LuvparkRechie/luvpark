@@ -174,6 +174,8 @@ class DashboardMapController extends GetxController
     debouncePanel?.cancel();
     focusNode.dispose();
     tabController.dispose();
+    dragController.dispose();
+    dragController.reset();
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -231,7 +233,7 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> fetchData() async {
-    Timer.periodic(const Duration(seconds: 10), (timer) async {
+    Timer.periodic(const Duration(seconds: 5), (timer) async {
       getBalance();
     });
   }
@@ -262,7 +264,6 @@ class DashboardMapController extends GetxController
     String? userData = await Authentication().getUserData();
     final item = await Authentication().getUserData2();
     final profPic = await Authentication().getUserProfilePic();
-    userBal.value = item["amount_bal"];
 
     myProfPic.value = profPic;
 
@@ -864,39 +865,30 @@ class DashboardMapController extends GetxController
       );
       return;
     }
-
-    if (response["items"].isNotEmpty) {
-      List<dynamic> item = response["items"];
-      item = item.map((element) {
-        List<dynamic> icon = iconAmen.where((e) {
-          return e["code"] == element["parking_amenity_code"];
-        }).toList();
-        element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
-        return element;
+    List<dynamic> item = response["items"];
+    item = item.map((element) {
+      List<dynamic> icon = iconAmen.where((e) {
+        return e["code"] == element["parking_amenity_code"];
       }).toList();
+      element["icon"] = icon.isNotEmpty ? icon[0]["icon"] : "no_image";
+      return element;
+    }).toList();
 
-      if (markerData[0]["park_orientation"] != null) {
-        item.insert(0, {
-          "zone_amenity_id": 0,
-          "zone_id": 0,
-          "parking_amenity_code": "D",
-          "parking_amenity_desc":
-              "${markerData[0]["park_size"]} ${markerData[0]["park_orientation"]}",
-          "icon": "dimension"
-        });
-      }
-
-      amenData.value = item;
-      getParkingRates(parkId);
-    } else {
-      Get.back();
-      CustomDialog().errorDialog(
-        Get.context!,
-        "luvpark",
-        "No amenities found in this area.",
-        () => Get.back(),
-      );
+    if (markerData[0]["park_size"] != null &&
+        markerData[0]["park_orientation"].toString().toLowerCase() !=
+            "unknown") {
+      item.insert(0, {
+        "zone_amenity_id": 0,
+        "zone_id": 0,
+        "parking_amenity_code": "D",
+        "parking_amenity_desc":
+            "${markerData[0]["park_size"]} ${markerData[0]["park_orientation"]}",
+        "icon": "dimension"
+      });
     }
+
+    amenData.value = item;
+    getParkingRates(parkId);
   }
 
   Future<void> getParkingRates(parkId) async {
@@ -1026,7 +1018,7 @@ class DashboardMapController extends GetxController
       e["name"] = eName;
       return e;
     }).toList();
-
+    print("inataya $inataya");
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
 
     denoInd.value = 0;
@@ -1213,9 +1205,8 @@ class DashboardMapController extends GetxController
   }
 
   void onClickBooking() async {
-    DateTime now = await Functions.getTimeNow();
     CustomDialog().loadingDialog(Get.context!);
-    isClkBook.value = false;
+    DateTime now = await Functions.getTimeNow();
 
     if (markerData.isEmpty) {
       Get.back();
@@ -1322,6 +1313,32 @@ class DashboardMapController extends GetxController
       );
       return;
     } else {
+      String api =
+          "${ApiKeys.gApiSubscribedList}?park_area_id=${markerData[0]["park_area_id"]}";
+      final response = await HttpRequest(api: api).get();
+
+      if (response == "No Internet") {
+        Get.back();
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+      if (response == null) {
+        Get.back();
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      }
+      Variables.subsVhList.value = [];
+      List<dynamic> items = response["items"];
+      if (response["items"].isNotEmpty) {
+        for (dynamic dataItem in items) {
+          Variables.subsVhList.add(dataItem);
+        }
+      } else {
+        Variables.subsVhList.value = items;
+      }
       Functions.computeDistanceResorChckIN(Get.context!,
           LatLng(markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
           (success) {
