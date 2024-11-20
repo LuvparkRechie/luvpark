@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:scan/scan.dart';
 
 class ScannedData {
@@ -36,8 +37,13 @@ class _ScannerScreenState extends State<ScannerScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkCameraPermission();
       load();
     });
+  }
+
+  void checkCameraPermission() async {
+    final permissionStatus = await Permission.camera.status;
   }
 
   @override

@@ -95,7 +95,7 @@ class ParkingController extends GetxController
 
     String api =
         "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
-
+    print("api $api");
     try {
       final returnData = await HttpRequest(api: api).get();
       print("returnData $returnData");
@@ -111,8 +111,7 @@ class ParkingController extends GetxController
       isLoading.value = false; // End loading
       hasNet.value = true;
       if (returnData == null) {
-        CustomDialog().errorDialog(Get.context!, "Internet Error",
-            "Error while connecting to server, Please contact support.", () {
+        CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
         return;

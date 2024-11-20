@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -13,6 +13,7 @@ import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 
 import '../custom_widgets/custom_expansion.dart';
@@ -27,7 +28,7 @@ class BookingPage extends GetView<BookingController> {
       () => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
         child: PopScope(
-          canPop: true, //!controller.isBtnLoading.value,
+          canPop: !controller.isLoadingPage.value,
           child: Listener(
             onPointerDown: (PointerDownEvent event) {
               controller.onUserInteraction();
@@ -72,8 +73,15 @@ class BookingPage extends GetView<BookingController> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         InkWell(
-                                          onTap: () {
-                                            Get.back();
+                                          onTap: () async {
+                                            FocusNode().unfocus();
+                                            CustomDialog()
+                                                .loadingDialog(context);
+                                            Future.delayed(Duration(seconds: 1),
+                                                () {
+                                              Get.back();
+                                              Get.back();
+                                            });
                                           },
                                           child: Container(
                                               padding: const EdgeInsets.all(10),
@@ -278,82 +286,113 @@ class BookingPage extends GetView<BookingController> {
                                         ),
 
                                         Container(height: 20),
-                                        CustomTextField(
-                                          labelText: "Plate No",
-                                          controller: controller.plateNo,
-                                          suffixIcon: LucideIcons.menu,
-                                          onIconTap: () {
-                                            WidgetsBinding.instance
-                                                .addPostFrameCallback((_) {
-                                              controller.displaySelVh();
-                                            });
-                                          },
-                                          onChange: (value) {
-                                            String trimmedValue = value
-                                                .toUpperCase()
-                                                .replaceFirst(
-                                                    RegExp(r'[^a-zA-Z0-9. ]'),
-                                                    '');
-                                            controller.validateText(
-                                                value, controller.plateNo);
-                                            if (trimmedValue.isNotEmpty) {
-                                              controller.plateNo.value =
-                                                  TextEditingValue(
-                                                text:
-                                                    Variables.capitalizeAllWord(
-                                                        trimmedValue),
-                                                selection: controller
-                                                    .plateNo.selection,
-                                              );
-                                            } else {
-                                              controller.plateNo.value =
-                                                  TextEditingValue(
-                                                text: "",
-                                                selection:
-                                                    TextSelection.collapsed(
-                                                        offset: 0),
-                                              );
-                                            }
-                                          },
-                                          validator: (value) {
-                                            if (value == null ||
-                                                value.isEmpty) {
-                                              return "Plate No. is required";
-                                            }
-                                            // if (!value.contains(RegExp(r'^[A-Z0-9-]+$'))) {
-                                            //   return "Plate No. should only contain letters, numbers, and dashes";
-                                            // }
-                                            if (value.startsWith('-') ||
-                                                value.endsWith('-')) {
-                                              return "Plate No. should not start or end with a dash";
-                                            }
-                                            if ((value.endsWith(' ') ||
-                                                value.endsWith('-') ||
-                                                value.endsWith('.'))) {
-                                              return "Middle name cannot end with a space, hyphen, or period";
-                                            }
+                                        Form(
+                                          key: controller.formKeyBook,
+                                          autovalidateMode:
+                                              AutovalidateMode.disabled,
+                                          child: Column(
+                                            children: [
+                                              CustomTextField(
+                                                isReadOnly: controller
+                                                    .isSubscribed.value,
+                                                isFilled: controller
+                                                    .isSubscribed.value,
+                                                filledColor:
+                                                    Colors.grey.shade200,
+                                                labelText: "Plate No",
+                                                controller: controller.plateNo,
+                                                suffixIcon: LucideIcons.menu,
+                                                onIconTap: () {
+                                                  WidgetsBinding.instance
+                                                      .addPostFrameCallback(
+                                                          (_) {
+                                                    controller.displaySelVh();
+                                                  });
+                                                },
+                                                onChange: (value) {
+                                                  String trimmedValue = value
+                                                      .toUpperCase()
+                                                      .replaceFirst(
+                                                          RegExp(
+                                                              r'[^a-zA-Z0-9. ]'),
+                                                          '');
 
-                                            return null;
-                                          },
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 15.0, bottom: 10),
-                                          child: customDropdown(
-                                            labelText: "Vehicle type",
-                                            items: controller.ddVehiclesData,
-                                            selectedValue:
-                                                controller.dropdownValue,
-                                            onChanged: (value) {
-                                              controller.onChangedVtype(value);
-                                            },
-                                            validator: (value) {
-                                              if (value == null ||
-                                                  value.isEmpty) {
-                                                return "Vehicle type is required";
-                                              }
-                                              return null;
-                                            },
+                                                  if (trimmedValue.isNotEmpty) {
+                                                    controller.plateNo.value =
+                                                        TextEditingValue(
+                                                      text: Variables
+                                                          .capitalizeAllWord(
+                                                              trimmedValue),
+                                                      selection: controller
+                                                          .plateNo.selection,
+                                                    );
+                                                    controller.selectedVh[0][
+                                                            "vehicle_plate_no"] =
+                                                        Variables
+                                                            .capitalizeAllWord(
+                                                                trimmedValue);
+                                                  } else {
+                                                    controller.plateNo.value =
+                                                        TextEditingValue(
+                                                      text: "",
+                                                      selection: TextSelection
+                                                          .collapsed(offset: 0),
+                                                    );
+                                                    controller.selectedVh[0][
+                                                            "vehicle_plate_no"] =
+                                                        Variables
+                                                            .capitalizeAllWord(
+                                                                trimmedValue);
+                                                  }
+                                                  controller.onFieldChanged();
+                                                },
+                                                validator: (value) {
+                                                  if (value == null ||
+                                                      value.isEmpty) {
+                                                    return "Plate No. is required";
+                                                  }
+
+                                                  if (value.startsWith('-') ||
+                                                      value.endsWith('-')) {
+                                                    return "Plate No. should not start or end with a dash";
+                                                  }
+                                                  if ((value.endsWith(' ') ||
+                                                      value.endsWith('-') ||
+                                                      value.endsWith('.'))) {
+                                                    return "Middle name cannot end with a space, hyphen, or period";
+                                                  }
+
+                                                  return "";
+                                                },
+                                              ),
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 15.0, bottom: 10),
+                                                child: customDropdown(
+                                                  isDisabled: controller
+                                                      .isSubscribed.value,
+                                                  labelText: "Vehicle type",
+                                                  items:
+                                                      controller.ddVehiclesData,
+                                                  selectedValue:
+                                                      controller.dropdownValue,
+                                                  onChanged: (value) {
+                                                    controller.dropdownValue =
+                                                        value;
+                                                    controller.onFieldChanged();
+                                                    controller
+                                                        .onChangedVtype(value);
+                                                  },
+                                                  validator: (value) {
+                                                    if (value == null ||
+                                                        value.isEmpty) {
+                                                      return "Vehicle type is required";
+                                                    }
+                                                    return null;
+                                                  },
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                         Container(height: 10),
@@ -367,15 +406,23 @@ class BookingPage extends GetView<BookingController> {
                                             Expanded(
                                               child: Container(
                                                 decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                        color: AppColor
+                                                            .borderColor),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             15),
-                                                    color:
-                                                        Colors.grey.shade300),
-                                                child: TextField(
+                                                    color: controller
+                                                            .isSubscribed.value
+                                                        ? Colors.grey.shade200
+                                                        : Colors.grey.shade50),
+                                                child: TextFormField(
+                                                  readOnly: controller
+                                                      .isSubscribed.value,
                                                   controller:
                                                       controller.noHours,
                                                   textAlign: TextAlign.center,
+                                                  autofocus: false,
                                                   textInputAction:
                                                       TextInputAction.done,
                                                   keyboardType:
@@ -410,22 +457,52 @@ class BookingPage extends GetView<BookingController> {
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       fontSize: 20),
+                                                  onChanged: (value) {
+                                                    controller.onFieldChanged();
+                                                    if (int.parse(
+                                                            value.toString()) >
+                                                        4) {
+                                                      CustomDialog().infoDialog(
+                                                          "Booking Limit Exceed",
+                                                          "You have atleast 4 hours of booking.",
+                                                          () {
+                                                        Get.back();
+                                                        controller
+                                                                .noHours.text =
+                                                            "${controller.endNumber.value}";
+                                                        controller
+                                                                .selectedNumber
+                                                                .value =
+                                                            controller.endNumber
+                                                                .value;
+                                                      });
+                                                    }
+                                                  },
                                                 ),
                                               ),
                                             ),
                                             Container(width: 10),
                                             Container(
                                               decoration: ShapeDecoration(
-                                                  shape: CircleBorder(),
-                                                  color: Colors.grey.shade100),
+                                                shape: CircleBorder(),
+                                                color: controller
+                                                        .isSubscribed.value
+                                                    ? Colors.grey.shade200
+                                                    : Colors.grey.shade100,
+                                              ),
                                               child: IconButton(
                                                   padding: EdgeInsets.zero,
-                                                  onPressed: () {
-                                                    if (controller.selectedVh
-                                                        .isEmpty) return;
-                                                    controller
-                                                        .onTapChanged(false);
-                                                  },
+                                                  onPressed: controller
+                                                          .isSubscribed.value
+                                                      ? () {}
+                                                      : () {
+                                                          if (controller
+                                                              .selectedVh
+                                                              .isEmpty) return;
+                                                          controller
+                                                              .onTapChanged(
+                                                                  false);
+                                                        },
                                                   icon: Icon(
                                                     LucideIcons.minus,
                                                     color:
@@ -436,15 +513,24 @@ class BookingPage extends GetView<BookingController> {
                                             Container(
                                               decoration: ShapeDecoration(
                                                   shape: CircleBorder(),
-                                                  color: AppColor.primaryColor),
+                                                  color: controller
+                                                          .isSubscribed.value
+                                                      ? AppColor.primaryColor
+                                                          .withOpacity(.7)
+                                                      : AppColor.primaryColor),
                                               child: IconButton(
                                                   padding: EdgeInsets.zero,
-                                                  onPressed: () {
-                                                    if (controller.selectedVh
-                                                        .isEmpty) return;
-                                                    controller
-                                                        .onTapChanged(true);
-                                                  },
+                                                  onPressed: controller
+                                                          .isSubscribed.value
+                                                      ? () {}
+                                                      : () {
+                                                          if (controller
+                                                              .selectedVh
+                                                              .isEmpty) return;
+                                                          controller
+                                                              .onTapChanged(
+                                                                  true);
+                                                        },
                                                   icon: Icon(
                                                     LucideIcons.plus,
                                                     color: Colors.white,
@@ -452,13 +538,14 @@ class BookingPage extends GetView<BookingController> {
                                             ),
                                           ],
                                         ),
+
                                         Container(height: 10),
                                         Visibility(
                                           visible:
-                                              controller.numbersList.isNotEmpty,
+                                              controller.endNumber.value > 0,
                                           child: CustomParagraph(
                                             text:
-                                                "Booking limit is up to ${controller.numbersList.length} ${controller.numbersList.length > 1 ? "Hours" : "Hour"}",
+                                                "Booking limit is up to ${controller.endNumber.value} ${controller.endNumber.value > 1 ? "Hours" : "Hour"}",
                                             fontSize: 6,
                                           ),
                                         ),
@@ -645,6 +732,9 @@ class BookingPage extends GetView<BookingController> {
                                           padding: const EdgeInsets.symmetric(
                                               horizontal: 15, vertical: 10),
                                           decoration: BoxDecoration(
+                                            color: controller.isSubscribed.value
+                                                ? Colors.grey.shade200
+                                                : null,
                                             borderRadius:
                                                 BorderRadius.circular(15),
                                             border: Border.all(
@@ -679,13 +769,16 @@ class BookingPage extends GetView<BookingController> {
                                               ),
                                               Container(width: 10),
                                               GestureDetector(
-                                                onTap: () {
-                                                  controller
-                                                      .toggleExtendChecked(
-                                                          !controller
-                                                              .isExtendchecked
-                                                              .value);
-                                                },
+                                                onTap: controller
+                                                        .isSubscribed.value
+                                                    ? () {}
+                                                    : () {
+                                                        controller
+                                                            .toggleExtendChecked(
+                                                                !controller
+                                                                    .isExtendchecked
+                                                                    .value);
+                                                      },
                                                 child: Container(
                                                   width: 60,
                                                   height: 30,
@@ -820,8 +913,18 @@ class BookingPage extends GetView<BookingController> {
                                       ),
                                       Container(height: 20),
                                       CustomButton(
-                                        text: "Book now",
-                                        onPressed: controller.confirmBooking,
+                                        text: "Book Now",
+                                        btnColor: controller.isDisabledBtn.value
+                                            ? AppColor.primaryColor
+                                                .withOpacity(.7)
+                                            : AppColor.primaryColor,
+                                        onPressed: controller
+                                                .isDisabledBtn.value
+                                            ? () {}
+                                            : () {
+                                                print(controller.selectedVh);
+                                                controller.confirmBooking();
+                                              },
                                       )
                                     ],
                                   ),
@@ -983,121 +1086,131 @@ class MyVhList extends GetView<BookingController> {
             CustomParagraph(text: "Choose vehicle from the list"),
             Container(height: 20),
             Expanded(
-              child: Scrollbar(
-                child: ListView.builder(
-                  itemCount: controller.myVehiclesData.length,
-                  itemBuilder: (context, index) {
-                    String removeInvalidCharacters(String input) {
-                      final RegExp validChars = RegExp(r'[^A-Za-z0-9+/=]');
+              child: controller.myVehiclesData.isEmpty
+                  ? NoDataFound(
+                      text: "No registered vehicle",
+                    )
+                  : Scrollbar(
+                      child: ListView.builder(
+                        itemCount: controller.myVehiclesData.length,
+                        itemBuilder: (context, index) {
+                          String removeInvalidCharacters(String input) {
+                            final RegExp validChars =
+                                RegExp(r'[^A-Za-z0-9+/=]');
 
-                      return input.replaceAll(validChars, '');
-                    }
-
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 10),
-                      child: GestureDetector(
-                        onTap: () {
-                          List vhDatas = [controller.myVehiclesData[index]];
-                          dynamic recData = controller.ddVehiclesData;
-
-                          Map<int, Map<String, dynamic>> recDataMap = {
-                            for (var item in recData) item['value']: item
-                          };
-                          // Merge base_hours and succeeding_rate into vhDatas
-                          for (var vh in vhDatas) {
-                            int typeId = vh['vehicle_type_id'];
-                            if (recDataMap.containsKey(typeId)) {
-                              var rec = recDataMap[typeId];
-                              vh['base_hours'] = rec?['base_hours'];
-                              vh['base_rate'] = rec?['base_rate'];
-                              vh['succeeding_rate'] = rec?['succeeding_rate'];
-                              vh['vehicle_type'] = rec?['vehicle_type'];
-                            }
+                            return input.replaceAll(validChars, '');
                           }
-                          Get.back();
-                          callback(vhDatas);
-                        },
-                        child: Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 15),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              border: Border.all(
-                                color: Colors.grey.shade300,
-                                width: 1.0,
-                              ),
-                            ),
-                            child: Column(
-                              children: [
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: GestureDetector(
+                              onTap: () {
+                                List vhDatas = [
+                                  controller.myVehiclesData[index]
+                                ];
+                                dynamic recData = controller.ddVehiclesData;
+
+                                Map<int, Map<String, dynamic>> recDataMap = {
+                                  for (var item in recData) item['value']: item
+                                };
+                                // Merge base_hours and succeeding_rate into vhDatas
+                                for (var vh in vhDatas) {
+                                  int typeId = vh['vehicle_type_id'];
+                                  if (recDataMap.containsKey(typeId)) {
+                                    var rec = recDataMap[typeId];
+                                    vh['base_hours'] = rec?['base_hours'];
+                                    vh['base_rate'] = rec?['base_rate'];
+                                    vh['succeeding_rate'] =
+                                        rec?['succeeding_rate'];
+                                    vh['vehicle_type'] = rec?['vehicle_type'];
+                                  }
+                                }
+                                Get.back();
+                                callback(vhDatas);
+                              },
+                              child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    border: Border.all(
+                                      color: Colors.grey.shade300,
+                                      width: 1.0,
+                                    ),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
                                         children: [
-                                          CustomParagraph(
-                                            text: controller
-                                                .myVehiclesData[index]
-                                                    ["vehicle_brand_name"]
-                                                .toString()
-                                                .toUpperCase(),
-                                            color: AppColor.headerColor,
-                                            fontSize: 12,
+                                          Expanded(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                CustomParagraph(
+                                                  text: controller
+                                                      .myVehiclesData[index]
+                                                          ["vehicle_brand_name"]
+                                                      .toString()
+                                                      .toUpperCase(),
+                                                  color: AppColor.headerColor,
+                                                  fontSize: 12,
+                                                ),
+                                                Container(height: 5),
+                                                CustomParagraph(
+                                                  text: controller
+                                                      .myVehiclesData[index]
+                                                          ["vehicle_plate_no"]
+                                                      .toString()
+                                                      .toUpperCase(),
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.black,
+                                                  fontSize: 16,
+                                                ),
+                                              ],
+                                            ),
                                           ),
-                                          Container(height: 5),
-                                          CustomParagraph(
-                                            text: controller
-                                                .myVehiclesData[index]
-                                                    ["vehicle_plate_no"]
-                                                .toString()
-                                                .toUpperCase(),
-                                            fontWeight: FontWeight.w700,
-                                            color: Colors.black,
-                                            fontSize: 16,
+                                          Expanded(
+                                            child: Container(
+                                              width: 60,
+                                              height: 60,
+                                              decoration: BoxDecoration(
+                                                image: DecorationImage(
+                                                  fit: BoxFit.contain,
+                                                  image: controller.myVehiclesData[
+                                                                      index]
+                                                                  ["image"] ==
+                                                              null ||
+                                                          controller
+                                                              .myVehiclesData[
+                                                                  index]
+                                                                  ["image"]
+                                                              .isEmpty
+                                                      ? AssetImage(
+                                                              "assets/images/no_image.png")
+                                                          as ImageProvider
+                                                      : MemoryImage(
+                                                          base64Decode(
+                                                            removeInvalidCharacters(
+                                                                controller.myVehiclesData[
+                                                                        index]
+                                                                    ["image"]),
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ],
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: Container(
-                                        width: 60,
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          image: DecorationImage(
-                                            fit: BoxFit.contain,
-                                            image: controller.myVehiclesData[
-                                                            index]["image"] ==
-                                                        null ||
-                                                    controller
-                                                        .myVehiclesData[index]
-                                                            ["image"]
-                                                        .isEmpty
-                                                ? AssetImage(
-                                                        "assets/images/no_image.png")
-                                                    as ImageProvider
-                                                : MemoryImage(
-                                                    base64Decode(
-                                                      removeInvalidCharacters(
-                                                          controller
-                                                                  .myVehiclesData[
-                                                              index]["image"]),
-                                                    ),
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            )),
+                                    ],
+                                  )),
+                            ),
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-              ),
+                    ),
             ),
           ],
         ),
@@ -1112,6 +1225,7 @@ class ConfirmBooking extends GetView<BookingController> {
   @override
   Widget build(BuildContext context) {
     bool isNewDay = false;
+
     var dateIn = DateTime.parse(
         "${controller.startDate.text} ${controller.timeInParam.text}");
 
@@ -1120,6 +1234,7 @@ class ConfirmBooking extends GetView<BookingController> {
         hours: controller.selectedNumber.value,
       ),
     );
+
     String dtOut = DateFormat('E, dd MMM yyyy').format(dateOut);
     String dtIn = DateFormat('E, dd MMM yyyy').format(dateOut);
 
@@ -1248,9 +1363,13 @@ class ConfirmBooking extends GetView<BookingController> {
                           "dt_in": dateIn.toString().toString().split(".")[0],
                           "dt_out": finalDateOut,
                           "no_hours": controller.selectedNumber,
+                          'base_rate': controller.selectedVh[0]["base_rate"],
+                          "base_hours": controller.selectedVh[0]["base_hours"],
+                          "succeeding_rate": controller.selectedVh[0]
+                              ["succeeding_rate"],
+                          "disc_rate": 0,
                           "tran_type": "R",
                         };
-
                         controller.submitReservation(parameters);
                       }
 

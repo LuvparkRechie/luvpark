@@ -191,8 +191,9 @@ class ParkingScreen extends GetView<ParkingController> {
                                   onTap: controller.onRefresh,
                                 )
                               : controller.resData.isEmpty
-                                  ? const NoDataFound(
+                                  ? NoDataFound(
                                       text: "No parking found",
+                                      onTap: controller.onRefresh,
                                     )
                                   : RefreshIndicator(
                                       onRefresh: controller.onRefresh,

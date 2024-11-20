@@ -51,10 +51,11 @@ class _RateUsState extends State<RateUs> {
       'rating': myRate.round(),
       'comments': commentController.text,
     };
-
+    print("param post rating $param");
     return HttpRequest(api: ApiKeys.gApiLuvParkPostRating, parameters: param)
         .post()
         .then((returnData) async {
+      print("param post returnData $returnData");
       if (returnData == "No Internet") {
         Get.back();
         CustomDialog().errorDialog(context, "Error",

@@ -134,32 +134,64 @@ class BookingReceiptController extends GetxController
       Map<String, dynamic> param = {
         "reservation_id": parameters["reservationId"]
       };
-
+      print("param $param");
       HttpRequest(api: ApiKeys.gApiPostCancelParking, parameters: param)
           .postBody()
           .then((objData) async {
-        Get.back();
-
+        print("objData $objData");
         if (objData == "No Internet") {
+          Get.back();
           CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();
           });
           return;
         }
         if (objData == null) {
+          Get.back();
           CustomDialog().serverErrorDialog(Get.context!, () {
             Get.back();
           });
         }
+
         if (objData["success"] == "Y") {
-          CustomDialog().successDialog(
-              Get.context!, "Success", "Successfully cancelled booking", "Okay",
-              () {
-            Get.back();
-            Get.back();
-            parameters["onRefresh"]();
-          });
+          dynamic paramRefund = {
+            "amount": objData["amount"],
+            "points_used": objData["points_used"],
+            "luvpay_id": objData["luvpay_id"],
+            "payment_code": "RAP"
+          };
+
+          final response = await HttpRequest(
+                  api: ApiKeys.gApiRefundCancelled, parameters: paramRefund)
+              .postBody();
+
+          Get.back();
+          if (response == "No Internet") {
+            CustomDialog().internetErrorDialog(Get.context!, () {
+              Get.back();
+            });
+            return;
+          }
+          if (response == null) {
+            CustomDialog().serverErrorDialog(Get.context!, () {
+              Get.back();
+            });
+          }
+          if (response["success"] == "Y") {
+            CustomDialog().successDialog(Get.context!, "Success",
+                "Successfully cancelled booking", "Okay", () {
+              Get.back();
+              Get.back();
+              parameters["onRefresh"]();
+            });
+          } else {
+            CustomDialog().errorDialog(Get.context!, "luvpark", response["msg"],
+                () {
+              Get.back();
+            });
+          }
         } else {
+          Get.back();
           CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
               () {
             Get.back();
