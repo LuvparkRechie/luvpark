@@ -172,12 +172,12 @@ class SendOtp extends GetView<SendOtpController> {
                   ),
                   Obx(
                     () => InkWell(
-                      onTap: () {
-                        if (controller.minutes.value < 1 &&
-                            controller.seconds.value <= 59) {
-                          controller.restartTimer();
-                        }
-                      },
+                      onTap: (controller.minutes.value == 0 &&
+                              controller.seconds.value == 0)
+                          ? () {
+                              controller.restartTimer();
+                            }
+                          : null,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -185,14 +185,22 @@ class SendOtp extends GetView<SendOtpController> {
                             text: controller.minutes.value != 0 ||
                                     controller.seconds.value != 0
                                 ? "Resend OTP in"
-                                : "I didn't get a code",
+                                : "Resend OTP",
                             fontSize: 14,
+                            color: controller.minutes.value != 0 ||
+                                    controller.seconds.value != 0
+                                ? Colors.grey
+                                : AppColor.primaryColor,
                           ),
                           if (controller.minutes.value != 0 ||
                               controller.seconds.value != 0)
                             CustomLinkLabel(
                               text:
                                   " (${controller.minutes.value}:${controller.seconds.value < 10 ? "0" : ""}${controller.seconds.value})",
+                              color: controller.minutes.value != 0 ||
+                                      controller.seconds.value != 0
+                                  ? Colors.grey
+                                  : AppColor.primaryColor,
                             ),
                         ],
                       ),
