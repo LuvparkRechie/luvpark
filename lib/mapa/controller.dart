@@ -196,6 +196,9 @@ class DashboardMapController extends GetxController
           if (suggestions.isNotEmpty) {
             fabHeight.value =
                 MediaQuery.of(Get.context!).size.height * .70 + 30;
+          } else {
+            resetFilter();
+            getCurrentLoc();
           }
         });
         update();
@@ -847,6 +850,7 @@ class DashboardMapController extends GetxController
         .get();
 
     if (response == "No Internet") {
+      print("Get amenities");
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {
         filterMarkersData("", "");
@@ -895,8 +899,9 @@ class DashboardMapController extends GetxController
     HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
         .get()
         .then((returnData) async {
+      Get.back();
       if (returnData == "No Internet") {
-        Get.back();
+        print("Get Parking Rates");
         CustomDialog().internetErrorDialog(Get.context!, () {
           filterMarkersData("", "");
           Get.back();
@@ -904,7 +909,6 @@ class DashboardMapController extends GetxController
         return;
       }
       if (returnData == null) {
-        Get.back();
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
@@ -912,12 +916,10 @@ class DashboardMapController extends GetxController
       }
 
       if (returnData["items"].length > 0) {
-        Get.back();
         List<dynamic> item = returnData["items"];
         vehicleRates.value = item;
         goingBackToTheCornerWhenIFirstSawYou();
       } else {
-        Get.back();
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
             () {
           Get.back();

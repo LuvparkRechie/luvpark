@@ -460,11 +460,38 @@ class BookingPage extends GetView<BookingController> {
                                                   onChanged: (value) {
                                                     controller.onFieldChanged();
                                                     if (int.parse(
-                                                            value.toString()) >
-                                                        4) {
+                                                            value.toString()) <
+                                                        int.parse(controller
+                                                            .selectedVh[0]
+                                                                ["base_hours"]
+                                                            .toString())) {
                                                       CustomDialog().infoDialog(
-                                                          "Booking Limit Exceed",
-                                                          "You have atleast 4 hours of booking.",
+                                                          "Booking Hours",
+                                                          "You have minimum ${controller.endNumber.value} hours of booking.",
+                                                          () {
+                                                        Get.back();
+                                                        controller
+                                                                .noHours.text =
+                                                            controller
+                                                                .selectedVh[0][
+                                                                    "base_hours"]
+                                                                .toString();
+                                                        controller
+                                                                .selectedNumber
+                                                                .value =
+                                                            int.parse(controller
+                                                                .selectedVh[0][
+                                                                    "base_hours"]
+                                                                .toString());
+                                                      });
+                                                    }
+                                                    if (int.parse(
+                                                            value.toString()) >
+                                                        controller
+                                                            .endNumber.value) {
+                                                      CustomDialog().infoDialog(
+                                                          "Booking Hours",
+                                                          "You have maximum ${controller.endNumber.value} hours of booking.",
                                                           () {
                                                         Get.back();
                                                         controller

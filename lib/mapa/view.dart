@@ -538,6 +538,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           FocusManager.instance.primaryFocus!.unfocus();
                           controller.searchCon.text = "";
                           controller.panelController.close();
+
                           Future.delayed(Duration(milliseconds: 100), () {
                             controller.panelController.open();
                           });

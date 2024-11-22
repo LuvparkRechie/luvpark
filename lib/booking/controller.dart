@@ -185,6 +185,15 @@ class BookingController extends GetxController
       myVehiclesData.value = [];
       isInternetConn.value = true;
       isLoadingPage.value = true;
+
+      List filterLastBooking(String vhId) {
+        List retData = ddVehiclesData.where((obj) {
+          return int.parse(obj["value"].toString()) ==
+              int.parse(vhId.toString());
+        }).toList();
+        return retData;
+      }
+
       if (myVehicles["items"].length > 0) {
         for (var row in myVehicles["items"]) {
           List dataVBrand = await Functions.getBranding(
@@ -200,10 +209,14 @@ class BookingController extends GetxController
         }
         List dataLastBooking = await Authentication().getLastBooking();
 
-        print("dataLastBooking $dataLastBooking");
-
         if (dataLastBooking.isNotEmpty) {
-          selectedVh.value = dataLastBooking;
+          List flb = filterLastBooking(dataLastBooking[0]["vehicle_type_id"]);
+          selectedVh.value = dataLastBooking.map((e) {
+            e["base_hours"] = flb[0]["base_hours"];
+            e["succeeding_rate"] = flb[0]["succeeding_rate"];
+            e["base_rate"] = flb[0]["base_rate"];
+            return e;
+          }).toList();
           CustomDialog().loadingDialog(Get.context!);
           krowkrow();
         } else {
@@ -237,11 +250,14 @@ class BookingController extends GetxController
         }
       } else {
         List dataLastBooking = await Authentication().getLastBooking();
-
-        print("dataLastBooking $dataLastBooking");
-
         if (dataLastBooking.isNotEmpty) {
-          selectedVh.value = dataLastBooking;
+          List flb = filterLastBooking(dataLastBooking[0]["vehicle_type_id"]);
+          selectedVh.value = dataLastBooking.map((e) {
+            e["base_hours"] = flb[0]["base_hours"];
+            e["succeeding_rate"] = flb[0]["succeeding_rate"];
+            e["base_rate"] = flb[0]["base_rate"];
+            return e;
+          }).toList();
           CustomDialog().loadingDialog(Get.context!);
           krowkrow();
         }
@@ -396,7 +412,7 @@ class BookingController extends GetxController
             Get.context!,
             "Booking Time Exceeded",
             "Booking time must not exceed operating hours. You'll be charged the ${selectedVh[0]["base_hours"]}-hour${selectedVh[0]["base_hours"] > 1 ? "s" : ""} rate,"
-                "even for shorter stays, as the parking closes at ${DateFormat('h:mm').format(cTime).toString()} PM. Thank you for understanding!",
+                "even for shorter stays, as the parking closes at ${DateFormat('h:mm').format(cTime).toString()} PM.\nContinue parking?",
             "No",
             "Okay", () {
           Get.back();
@@ -575,6 +591,15 @@ class BookingController extends GetxController
         isExtendchecked.value = false;
       });
       return;
+    }
+    if (int.parse(noHours.text.toString()) >= endNumber.value) {
+      CustomDialog().infoDialog("Booking Hours",
+          "You have maximum ${endNumber.value} hours of booking.", () {
+        Get.back();
+        noHours.text = "${endNumber.value}";
+        selectedNumber.value = endNumber.value;
+        isExtendchecked.value = false;
+      });
     }
   }
 
