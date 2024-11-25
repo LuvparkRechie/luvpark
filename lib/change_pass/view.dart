@@ -103,6 +103,10 @@ class ChangePassword extends GetView<ChangePasswordController> {
                             if (txtValue == controller.oldPassword.text) {
                               return "New password must be different";
                             }
+                            if (txtValue.trim().length < 8 ||
+                                txtValue.trim().length > 32) {
+                              return "Password must be between 8 and 32 characters";
+                            }
                             return null;
                           },
                         ),
@@ -127,6 +131,10 @@ class ChangePassword extends GetView<ChangePasswordController> {
                           validator: (txtValue) {
                             if (txtValue == null || txtValue.isEmpty) {
                               return "Field is required";
+                            }
+                            if (txtValue.trim().length < 8 ||
+                                txtValue.trim().length > 32) {
+                              return "Password must be between 8 and 32 characters";
                             }
                             if (txtValue != controller.newPassword.text) {
                               return "New passwords do not match";
