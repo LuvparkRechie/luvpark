@@ -21,7 +21,7 @@ class WalletSend extends GetView<WalletSendController> {
 
   @override
   Widget build(BuildContext context) {
-    // controller.onInit();
+    controller.onInit();
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
