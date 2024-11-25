@@ -57,7 +57,6 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${filterfromDate.text}&tran_date_to=${filtertoDate.text}";
 
     HttpRequest(api: subApi).get().then((response) {
-      print(subApi);
       setState(() {
         isLoadingPage = false;
       });

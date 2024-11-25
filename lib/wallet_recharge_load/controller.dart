@@ -76,10 +76,10 @@ class WalletRechargeLoadController extends GetxController
   Future<void> getBankUrl() async {
     String subApi = "${ApiKeys.gApiSubFolderGetUbDetails}?code=UB";
     CustomDialog().loadingDialog(Get.context!);
-    print("subApi $subApi");
+
     try {
       var objData = await HttpRequest(api: subApi).get();
-      print("objData $objData");
+
       if (objData == "No Internet") {
         handleNoInternet();
         return;
@@ -122,7 +122,6 @@ class WalletRechargeLoadController extends GetxController
     String bankParamApi = "${ApiKeys.gApiSubFolderGetBankParam}?app_id=$appId";
 
     HttpRequest(api: bankParamApi).get().then((objData) {
-      print("getBankData $objData");
       if (objData == "No Internet") {
         isSelectedPartner.value = false;
         selectedBankType.value = null;
@@ -278,7 +277,7 @@ class WalletRechargeLoadController extends GetxController
 
   Future<void> onSearchChanged(mobile, isFirst) async {
     isActiveBtn.value = false;
-    print("mobile $mobile");
+
     if (_debounce?.isActive ?? false) _debounce?.cancel();
 
     if (mobile.toString().length < 10) {

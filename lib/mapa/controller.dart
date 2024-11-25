@@ -850,7 +850,6 @@ class DashboardMapController extends GetxController
         .get();
 
     if (response == "No Internet") {
-      print("Get amenities");
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {
         filterMarkersData("", "");
@@ -901,7 +900,6 @@ class DashboardMapController extends GetxController
         .then((returnData) async {
       Get.back();
       if (returnData == "No Internet") {
-        print("Get Parking Rates");
         CustomDialog().internetErrorDialog(Get.context!, () {
           filterMarkersData("", "");
           Get.back();
@@ -1020,7 +1018,7 @@ class DashboardMapController extends GetxController
       e["name"] = eName;
       return e;
     }).toList();
-    print("inataya $inataya");
+
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
 
     denoInd.value = 0;
@@ -1301,6 +1299,7 @@ class DashboardMapController extends GetxController
       });
       return;
     }
+
     if (double.parse(balanceData[0]["amount_bal"].toString()) <
         double.parse(balanceData[0]["min_wallet_bal"].toString())) {
       Get.back();
@@ -1318,7 +1317,7 @@ class DashboardMapController extends GetxController
       String api =
           "${ApiKeys.gApiSubscribedList}?park_area_id=${markerData[0]["park_area_id"]}";
       final response = await HttpRequest(api: api).get();
-
+      print("response subscrubed list $response");
       if (response == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -1341,6 +1340,7 @@ class DashboardMapController extends GetxController
       } else {
         Variables.subsVhList.value = items;
       }
+
       Functions.computeDistanceResorChckIN(Get.context!,
           LatLng(markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
           (success) {

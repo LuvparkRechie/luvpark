@@ -126,8 +126,6 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           ],
                           controller: controller.plateNo,
                           onChange: (value) {
-                            print(controller.maskFormatter.value);
-
                             if (controller.maskFormatter.value == null) {
                               String trimmedValue = value
                                   .toUpperCase()

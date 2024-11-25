@@ -456,10 +456,7 @@ class _FilterMapState extends State<FilterMap> {
                                                 convertSliderValue(value);
                                             return e;
                                           }).toList();
-                                          setState(() {
-                                            print(
-                                                "filterParameters $filterParam");
-                                          });
+                                          setState(() {});
                                         },
                                       ),
                                     ),
@@ -607,14 +604,14 @@ class _FilterMapState extends State<FilterMap> {
               } else {
                 sfVt.add(vhTypeData[i]["value"].toString());
               }
-              print("sfVt $sfVt");
+
               String filterVtype = sfVt.join('|');
-              print("filterVtype $filterVtype");
+
               filterParam = filterParam.map((e) {
                 e["vh_type"] = filterVtype.toString();
                 return e;
               }).toList();
-              print("filterParam $filterParam");
+
               setState(() {});
             },
             child: SizedBox(

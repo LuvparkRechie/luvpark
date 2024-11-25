@@ -40,6 +40,21 @@ class WalletSendController extends GetxController
     {"value": 1000, "is_active": false},
   ].obs;
   Timer? _timer;
+  @override
+  void onInit() {
+    refreshUserData();
+    padData.value = dataList;
+    super.onInit();
+  }
+
+  @override
+  void onClose() {
+    tokenAmount.clear();
+    recipient.clear();
+    message.clear();
+    _timer!.cancel();
+    super.onClose();
+  }
 
 // //naa
   Future<void> onTextChange() async {
@@ -153,11 +168,13 @@ class WalletSendController extends GetxController
 
 //naa
   Future<void> refreshUserData() async {
+    print("yawaa");
     isLoading.value = true;
     final userId = await Authentication().getUserId();
     String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$userId";
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
+      print("returnBalance $returnBalance");
       isLoading.value = false;
       if (returnBalance == "No Internet") {
         isNetConn.value = false;
@@ -169,30 +186,5 @@ class WalletSendController extends GetxController
         userData.value = returnBalance["items"];
       }
     });
-  }
-
-  Future<void> timerPeriodic() async {
-    refreshUserData();
-    await Future.delayed(Duration(seconds: 1), refreshUserData);
-    _timer = Timer.periodic(Duration(hours: 1), (timer) {
-      refreshUserData();
-    });
-  }
-
-  @override
-  void onInit() {
-    timerPeriodic();
-    //refreshUserData();
-    padData.value = dataList;
-    super.onInit();
-  }
-
-  @override
-  void onClose() {
-    tokenAmount.clear();
-    recipient.clear();
-    message.clear();
-    _timer!.cancel();
-    super.onClose();
   }
 }

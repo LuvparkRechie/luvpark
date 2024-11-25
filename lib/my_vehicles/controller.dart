@@ -12,7 +12,6 @@ import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/my_vehicles/utils/add_vehicle.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:path/path.dart' as paths; // Import the path package
 
 import '../custom_widgets/variables.dart';
 import '../sqlite/vehicle_brands_table.dart';
@@ -87,7 +86,6 @@ class MyVehiclesController extends GetxController {
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=";
 
     HttpRequest(api: api).get().then((myVehicles) async {
-      print("myVehicles $myVehicles");
       if (myVehicles == "No Internet") {
         isLoadingPage.value = false;
         isNetConn.value = false;
@@ -257,9 +255,7 @@ class MyVehiclesController extends GetxController {
         requestFullMetadata: true);
 
     imageFile = pickedFile != null ? File(pickedFile.path) : null;
-    String fileName =
-        paths.basename(pickedFile!.path); // Get the file name from the path
-    print("Real file name: $fileName"); // Print the file name
+
     if (imageFile != null) {
       state = AppState.picked;
       final data = await imageFile!.readAsBytes();
@@ -364,7 +360,6 @@ class MyVehiclesController extends GetxController {
   }
 
   void subscrbeVh(String scQr, String plateNo, String brandId) async {
-    print("brandId $brandId");
     CustomDialog().loadingDialog(Get.context!);
     int? lpId = await Authentication().getUserId();
     dynamic param = {

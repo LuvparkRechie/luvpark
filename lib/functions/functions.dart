@@ -490,14 +490,12 @@ class Functions {
                   context, "luvpark", Variables.popUpMessageOutsideArea, () {});
               return;
             } else {
-              print("No get apis");
               const HttpRequest(api: ApiKeys.gApiLuvParkGetComputeDistance)
                   .get()
                   .then((returnData) async {
-                print("No get apis returnData $returnData");
                 if (returnData == "No Internet") {
                   cb({"success": false});
-                  print("No internet eta gApiLuvParkGetComputeDistance");
+
                   CustomDialog().internetErrorDialog(context, () {
                     Get.back();
                   });
@@ -628,7 +626,6 @@ class Functions {
         "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile";
 
     HttpRequest(api: apiParam).get().then((objData) {
-      print("objData $objData");
       if (objData == "No Internet") {
         cb([
           {"has_net": false, "items": []}

@@ -34,7 +34,7 @@ class Variables {
   static String shareLocTable = 'share_location_table';
   static String lastBooking = 'booking_table';
   static RxList gVBrand = [].obs;
-  static RxList subsVhList = [].obs;
+  static RxList subsVhList = [].obs; //Subscribed Vehicle List
   //static void Timer? backgroundTimer
   static final emailRegex = RegExp(
     r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',

@@ -45,7 +45,6 @@ class LoginScreenController extends GetxController {
     HttpRequest(api: ApiKeys.gApiSubFolderPostLogin2, parameters: param)
         .postBody()
         .then((returnPost) async {
-      print("returnpost $returnPost");
       if (returnPost == "No Internet") {
         CustomDialog().internetErrorDialog(context, () {
           Get.back();
@@ -102,7 +101,6 @@ class LoginScreenController extends GetxController {
           });
           return;
         } else {
-          print("elsee");
           CustomDialog().errorDialog(context, "Error", returnPost["msg"], () {
             Get.back();
           });
@@ -114,7 +112,6 @@ class LoginScreenController extends GetxController {
             "${ApiKeys.gApiSubFolderLogin2}?mobile_no=${param["mobile_no"]}&auth_key=${returnPost["auth_key"].toString()}";
 
         HttpRequest(api: getApi).get().then((objData) async {
-          print("objData $objData");
           if (objData == "No Internet") {
             CustomDialog().internetErrorDialog(context, () {
               Get.back();
@@ -182,7 +179,7 @@ class LoginScreenController extends GetxController {
   void onInit() {
     mobileNumber = TextEditingController();
     password = TextEditingController();
-    print("ataya sulod controller");
+
     super.onInit();
   }
 

@@ -52,7 +52,6 @@ class CreateNewPassController extends GetxController {
         .post()
         .then(
       (retvalue) {
-        print("retvalue $retvalue");
         if (retvalue == "No Internet") {
           isLoading.value = false;
           CustomDialog().internetErrorDialog(Get.context!, () {

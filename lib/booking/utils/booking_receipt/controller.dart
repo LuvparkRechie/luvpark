@@ -134,11 +134,10 @@ class BookingReceiptController extends GetxController
       Map<String, dynamic> param = {
         "reservation_id": parameters["reservationId"]
       };
-      print("param $param");
+
       HttpRequest(api: ApiKeys.gApiPostCancelParking, parameters: param)
           .postBody()
           .then((objData) async {
-        print("objData $objData");
         if (objData == "No Internet") {
           Get.back();
           CustomDialog().internetErrorDialog(Get.context!, () {

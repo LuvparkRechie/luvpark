@@ -224,8 +224,6 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                                 result =
                                                                                 args.scannedHash;
 
-                                                                            print("result $result");
-
                                                                             if (result.isEmpty) {
                                                                               CustomDialog().errorDialog(
                                                                                 context,

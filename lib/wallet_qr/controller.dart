@@ -74,7 +74,6 @@ class QrWalletController extends GetxController
     isInternetConn.value = true;
     var userData = await Authentication().getUserData2();
 
-    print("items $userData");
     if (userData["first_name"] != null) {
       String middleName =
           userData['middle_name']?.toString().toUpperCase() == null

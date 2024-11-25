@@ -85,6 +85,7 @@ class BookingController extends GetxController
   RxString usedRewards = "0".obs;
   RxString tokenRewards = "0".obs;
   RxDouble displayRewards = 0.0.obs;
+  List dataLastBooking = [];
 
   @override
   void onInit() {
@@ -159,7 +160,9 @@ class BookingController extends GetxController
   //GET my registered vehicle
   Future<void> getMyVehicle() async {
     final item = await Authentication().getUserData();
+
     int userId = jsonDecode(item!)["user_id"];
+
     String api =
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
 
@@ -185,7 +188,6 @@ class BookingController extends GetxController
       myVehiclesData.value = [];
       isInternetConn.value = true;
       isLoadingPage.value = true;
-
       List filterLastBooking(String vhId) {
         List retData = ddVehiclesData.where((obj) {
           return int.parse(obj["value"].toString()) ==
@@ -207,21 +209,29 @@ class BookingController extends GetxController
             "image": dataVBrand[0]["imageb64"]
           });
         }
-        List dataLastBooking = await Authentication().getLastBooking();
+        dataLastBooking = await Authentication().getLastBooking();
 
         if (dataLastBooking.isNotEmpty) {
-          List flb = filterLastBooking(dataLastBooking[0]["vehicle_type_id"]);
-          selectedVh.value = dataLastBooking.map((e) {
-            e["base_hours"] = flb[0]["base_hours"];
-            e["succeeding_rate"] = flb[0]["succeeding_rate"];
-            e["base_rate"] = flb[0]["base_rate"];
-            return e;
-          }).toList();
-          CustomDialog().loadingDialog(Get.context!);
-          krowkrow();
+          List dataHabibi = await habibi(dataLastBooking[0]["vehicle_plate_no"],
+              dataLastBooking[0]["vehicle_type_id"]);
+
+          if (dataHabibi.isNotEmpty) {
+            checkIfSubscribed(dataHabibi);
+          } else {
+            List flb = filterLastBooking(
+                dataLastBooking[0]["vehicle_type_id"].toString());
+
+            selectedVh.value = dataLastBooking.map((e) {
+              e["base_hours"] = flb[0]["base_hours"];
+              e["succeeding_rate"] = flb[0]["succeeding_rate"];
+              e["base_rate"] = flb[0]["base_rate"];
+              return e;
+            }).toList();
+            CustomDialog().loadingDialog(Get.context!);
+            krowkrow();
+          }
         } else {
           List vhDatas = [myVehiclesData[0]];
-
           List dataHabibi = await habibi(
               vhDatas[0]["vehicle_plate_no"], vhDatas[0]["vehicle_type_id"]);
 
@@ -249,9 +259,10 @@ class BookingController extends GetxController
           }
         }
       } else {
-        List dataLastBooking = await Authentication().getLastBooking();
+        dataLastBooking = await Authentication().getLastBooking();
         if (dataLastBooking.isNotEmpty) {
-          List flb = filterLastBooking(dataLastBooking[0]["vehicle_type_id"]);
+          List flb = filterLastBooking(
+              dataLastBooking[0]["vehicle_type_id"].toString());
           selectedVh.value = dataLastBooking.map((e) {
             e["base_hours"] = flb[0]["base_hours"];
             e["succeeding_rate"] = flb[0]["succeeding_rate"];
@@ -298,6 +309,7 @@ class BookingController extends GetxController
           CustomDialog().bookingNotice(
               noticeData[0]["msg_title"], noticeData[0]["msg"], () {
             Get.back();
+            Get.back();
           }, () {
             isShowNotice.value = false;
             Get.back();
@@ -329,6 +341,9 @@ class BookingController extends GetxController
     if (isShowNotice.value) {
       Get.back();
     }
+    if (Get.isBottomSheetOpen!) {
+      Get.back();
+    }
     CustomDialog().errorDialog(Get.context!, "Screen Idle",
         "No Gestures were detected in the last minute. Reloading the page.",
         () {
@@ -340,17 +355,32 @@ class BookingController extends GetxController
   void _reloadPage() async {
     DateTime now = await Functions.getTimeNow();
 
-    startDate.text = now.toString().split(" ")[0].toString();
-    startTime.value = DateFormat('h:mm a').format(now).toString();
-    DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
-    timeInParam.text = DateFormat('HH:mm').format(parsedTime);
+    inatay() {
+      startDate.text = now.toString().split(" ")[0].toString();
+      startTime.value = DateFormat('h:mm a').format(now).toString();
+      DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
+      timeInParam.text = DateFormat('HH:mm').format(parsedTime);
 
-    endTime.value = DateFormat('h:mm a')
-        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-        .toString();
-    paramEndTime.value = DateFormat('HH:mm')
-        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-        .toString();
+      endTime.value = DateFormat('h:mm a')
+          .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+          .toString();
+      paramEndTime.value = DateFormat('HH:mm')
+          .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+          .toString();
+    }
+
+    if (dataLastBooking.isNotEmpty) {
+      List dataHabibi = await habibi(dataLastBooking[0]["vehicle_plate_no"],
+          dataLastBooking[0]["vehicle_type_id"]);
+
+      if (dataHabibi.isNotEmpty) {
+        checkIfSubscribed(dataHabibi);
+      } else {
+        inatay();
+      }
+    } else {
+      inatay();
+    }
   }
 
   void onUserInteraction() {
@@ -522,7 +552,6 @@ class BookingController extends GetxController
     dynamic selVh = ddVehiclesData.where((element) {
       return element["value"] == int.parse(ddvalue!.toString());
     }).toList()[0];
-    print("selVh $selVh");
 
     selectedVh.value = [
       {
@@ -549,7 +578,7 @@ class BookingController extends GetxController
     int selSucceedRate = int.parse(selectedVh[0]["succeeding_rate"].toString());
     int amount = int.parse(selectedVh[0]["base_rate"].toString());
     int finalData = 0;
-    print("amount $amount = $selNoHours = $selBaseHours = $selSucceedRate");
+
     if (selNoHours > selBaseHours) {
       finalData = amount + (selNoHours - selBaseHours) * selSucceedRate;
     } else {
@@ -674,7 +703,6 @@ class BookingController extends GetxController
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
-        print("ApiKeys.gApiBooking $objData");
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
           Get.back();
@@ -973,7 +1001,7 @@ class BookingController extends GetxController
   }
 
   Future<List> habibi(String plNo, int id) async {
-    print("plNo $plNo = $id");
+    //check if subscribed
     List data = Variables.subsVhList.where((obj) {
       return obj["vehicle_type_id"] == id && obj["vehicle_plate_no"] == plNo;
     }).toList();
@@ -1012,12 +1040,30 @@ class BookingController extends GetxController
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
 
-    endTime.value = DateFormat('h:mm a')
-        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-        .toString();
-    paramEndTime.value = DateFormat('HH:mm')
-        .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-        .toString();
+    // endTime.value = DateFormat('h:mm a')
+    //     .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+    //     .toString();
+    // paramEndTime.value = DateFormat('HH:mm')
+    //     .format(parsedTime.add(Duration(hours: selectedNumber.value)))
+    //     .toString();
+
+    //afdsafa
+    DateTime sTime = DateFormat('yyyy-MM-dd HH:mm')
+        .parse("${startDate.text} ${timeInParam.text}");
+
+    DateTime pTime = sTime.add(Duration(hours: selectedNumber.value));
+
+    int deductTime = pTime.difference(cTime).inHours > 0
+        ? pTime.difference(cTime).inHours
+        : 1;
+
+    selectedNumber -= deductTime;
+    noHours.text = selectedNumber.value.toString();
+
+    endTime.value = DateFormat('h:mm a').format(cTime).toString();
+    paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
+
+    //afasfd
 
     onFieldChanged();
   }

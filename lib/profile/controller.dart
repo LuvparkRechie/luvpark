@@ -44,7 +44,7 @@ class ProfileScreenController extends GetxController
   void getUserData() async {
     final profilepic = await Authentication().getUserProfilePic();
     final data = await Authentication().getUserData2();
-    print("data $data");
+
     myprofile.value = profilepic;
     userData.add(data);
 

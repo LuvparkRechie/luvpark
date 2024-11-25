@@ -22,7 +22,6 @@ class BookingDialog extends StatefulWidget {
 class _BookingDialogState extends State<BookingDialog> {
   @override
   void initState() {
-    print("BookingDialog param ${widget.data[0]}");
     Future.delayed(
       const Duration(milliseconds: 200),
       () {

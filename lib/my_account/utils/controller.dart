@@ -118,7 +118,7 @@ class UpdateProfileController extends GetxController {
             userData["first_name"].toString().isNotEmpty
         ? userData["first_name"].toString()
         : "";
-    print("afadsf ${firstName.text}");
+
     middleName.text = userData["middle_name"] != null &&
             userData["middle_name"].toString().isNotEmpty
         ? userData["middle_name"].toString().trim()

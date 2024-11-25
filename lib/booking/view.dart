@@ -28,7 +28,7 @@ class BookingPage extends GetView<BookingController> {
       () => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
         child: PopScope(
-          canPop: !controller.isLoadingPage.value,
+          canPop: true, // !controller.isLoadingPage.value,
           child: Listener(
             onPointerDown: (PointerDownEvent event) {
               controller.onUserInteraction();
@@ -945,13 +945,12 @@ class BookingPage extends GetView<BookingController> {
                                             ? AppColor.primaryColor
                                                 .withOpacity(.7)
                                             : AppColor.primaryColor,
-                                        onPressed: controller
-                                                .isDisabledBtn.value
-                                            ? () {}
-                                            : () {
-                                                print(controller.selectedVh);
-                                                controller.confirmBooking();
-                                              },
+                                        onPressed:
+                                            controller.isDisabledBtn.value
+                                                ? () {}
+                                                : () {
+                                                    controller.confirmBooking();
+                                                  },
                                       )
                                     ],
                                   ),

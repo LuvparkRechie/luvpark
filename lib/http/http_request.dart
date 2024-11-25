@@ -197,6 +197,7 @@ class HttpRequest {
           headers: {"Content-Type": 'application/json; charset=utf-8'},
           body: json.encode(parameters),
         );
+        print("response ${response.statusCode}");
         if (response.statusCode == 200) {
           return json.decode(response.body);
         } else {
