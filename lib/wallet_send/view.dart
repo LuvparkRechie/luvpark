@@ -21,7 +21,7 @@ class WalletSend extends GetView<WalletSendController> {
 
   @override
   Widget build(BuildContext context) {
-    controller.onInit();
+    // controller.onInit();
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
@@ -233,9 +233,10 @@ class WalletSend extends GetView<WalletSendController> {
                           CustomTextField(
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(
-                                90,
+                                60,
                               ),
                             ],
+                            maxLength: 60,
                             labelText: "Note",
                             controller: controller.message,
                           ),
