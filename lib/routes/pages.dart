@@ -9,7 +9,6 @@ import 'package:luvpark/my_account/utils/index.dart';
 import 'package:luvpark/my_account/utils/otp_update/index.dart';
 import 'package:luvpark/profile/index.dart';
 import 'package:luvpark/wallet_qr/index.dart';
-import 'package:luvpark/wallet_recharge/index.dart';
 import 'package:luvpark/wallet_recharge_load/index.dart';
 
 import '../activate_acc/index.dart';
@@ -123,11 +122,6 @@ class AppPages {
       page: () => BookingReceipt(),
       binding: BookingReceiptBinding(),
     ),
-    GetPage(
-      name: Routes.walletsend,
-      page: () => const WalletSend(),
-      binding: WalletSendBinding(),
-    ),
 
     GetPage(
       name: Routes.sendOtp,
@@ -144,11 +138,7 @@ class AppPages {
     //   page: () => const FilterMap(),
     //   binding: FilterMapBinding(),
     // ),
-    GetPage(
-      name: Routes.walletrecharge,
-      page: () => const WalletRechargeScreen(),
-      binding: WalletRechargeBinding(),
-    ),
+
     GetPage(
       name: Routes.aboutus,
       page: () => const AboutUs(),
@@ -234,6 +224,11 @@ class AppPages {
       name: Routes.lockScreen,
       page: () => const LockScreen(),
       binding: LockScreenBinding(),
+    ),
+    GetPage(
+      name: Routes.send2,
+      page: () => WalletSend(),
+      binding: WalletSendBinding(),
     ),
   ];
 }

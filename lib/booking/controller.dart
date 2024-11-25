@@ -806,6 +806,7 @@ class BookingController extends GetxController
       "succeeding_rate": selectedVh[0]["succeeding_rate"],
       'disc_rate': '0',
       "mobile_no": userData["mobile_no"],
+      'payment_hk': pobjData["payment_hk"]
     };
     HttpRequest(api: ApiKeys.gApiIssueTicket, parameters: param)
         .postBody()
@@ -866,7 +867,6 @@ class BookingController extends GetxController
 
           Get.back();
           Get.offAll(BookingDialog(data: [paramArgs]));
-
           return;
         }
       } else {

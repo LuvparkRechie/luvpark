@@ -204,7 +204,7 @@ class WalletScreen extends GetView<WalletController> {
                       overlayColor:
                           MaterialStatePropertyAll(Colors.transparent),
                       onTap: () {
-                        Get.toNamed(Routes.walletsend);
+                        Get.toNamed(Routes.send2);
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width / 3.6,

@@ -422,8 +422,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep2,
-          autovalidateMode: AutovalidateMode
-              .onUserInteraction, // Validate on user interaction
+          autovalidateMode:
+              AutovalidateMode.disabled, // Validate on user interaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

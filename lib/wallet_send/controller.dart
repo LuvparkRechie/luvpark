@@ -9,10 +9,8 @@ import 'package:luvpark/routes/routes.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 
-class WalletSendController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+class WalletSendController extends GetxController {
   WalletSendController();
-  final parameter = Get.arguments;
   final GlobalKey<FormState> formKeySend = GlobalKey<FormState>();
   final TextEditingController recipient = TextEditingController();
   final TextEditingController tokenAmount = TextEditingController();
@@ -39,20 +37,19 @@ class WalletSendController extends GetxController
     {"value": 500, "is_active": false},
     {"value": 1000, "is_active": false},
   ].obs;
-  Timer? _timer;
   @override
   void onInit() {
+    super.onInit();
+    print("sulod inataya nimo mae");
     refreshUserData();
     padData.value = dataList;
-    super.onInit();
   }
 
   @override
   void onClose() {
-    tokenAmount.clear();
-    recipient.clear();
-    message.clear();
-    _timer!.cancel();
+    if (formKeySend.currentState != null) {
+      formKeySend.currentState!.reset();
+    }
     super.onClose();
   }
 
@@ -168,13 +165,11 @@ class WalletSendController extends GetxController
 
 //naa
   Future<void> refreshUserData() async {
-    print("yawaa");
     isLoading.value = true;
     final userId = await Authentication().getUserId();
     String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$userId";
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
-      print("returnBalance $returnBalance");
       isLoading.value = false;
       if (returnBalance == "No Internet") {
         isNetConn.value = false;

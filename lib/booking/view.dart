@@ -28,7 +28,7 @@ class BookingPage extends GetView<BookingController> {
       () => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
         child: PopScope(
-          canPop: true, // !controller.isLoadingPage.value,
+          canPop: !controller.isLoadingPage.value,
           child: Listener(
             onPointerDown: (PointerDownEvent event) {
               controller.onUserInteraction();

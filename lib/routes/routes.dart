@@ -19,7 +19,6 @@ class Routes {
   static const booking = "/booking";
   static const bookingNotice = "/booking_notice";
   static const bookingReceipt = "/booking_receipt";
-  static const walletsend = "/wallet_send";
   static const sendOtp = "/wallet_otp";
   static const customdrawer = "/customdrawer";
   static const walletrecharge = "/wallet_recharge";
@@ -44,4 +43,5 @@ class Routes {
   static const message = "/message";
   static const helpfeedback = "/help_feedback";
   static const lockScreen = "/lock_screen";
+  static const send2 = "/send_screen_send";
 }
