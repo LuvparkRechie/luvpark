@@ -164,17 +164,39 @@ class WalletSend extends GetView<WalletSendController> {
                                   suffixIcon: Icons.qr_code,
                                   onIconTap: () async {
                                     FocusNode().unfocus();
+
+                                    // Check the current permission status
                                     final status =
                                         await Permission.camera.status;
 
-                                    if (status.isDenied) {
-                                      await Permission.camera.request();
-                                    } else if (status.isPermanentlyDenied) {
+                                    if (status == PermissionStatus.denied) {
+                                      final newStatus =
+                                          await Permission.camera.request();
+
+                                      if (newStatus ==
+                                          PermissionStatus.granted) {
+                                      } else if (newStatus ==
+                                          PermissionStatus.permanentlyDenied) {
+                                        // Camera permission permanently denied
+                                        CustomDialog().confirmationDialog(
+                                            context,
+                                            "Camera Permission Denied",
+                                            "It looks like you denied the camera permission. You can enable camera access in your device's settings.",
+                                            "Cancel",
+                                            "Enable", () {
+                                          Get.back();
+                                        }, () {
+                                          Get.back();
+                                          AppSettings.openAppSettings();
+                                        });
+                                      }
+                                    } else if (status ==
+                                        PermissionStatus.permanentlyDenied) {
+                                      // Handle case when permission is permanently denied
                                       CustomDialog().confirmationDialog(
                                           context,
                                           "Camera Permission Denied",
-                                          "It looks like you denied the camera permission."
-                                              "You can enable camera access in your device's settings.",
+                                          "It looks like you denied the camera permission. You can enable camera access in your device's settings.",
                                           "Cancel",
                                           "Enable", () {
                                         Get.back();
@@ -182,40 +204,7 @@ class WalletSend extends GetView<WalletSendController> {
                                         Get.back();
                                         AppSettings.openAppSettings();
                                       });
-                                    } else {
-                                      Get.to(ScannerScreen(
-                                        onchanged: (ScannedData args) {
-                                          String scannedMobileNumber =
-                                              args.scannedHash;
-                                          String formattedNumber =
-                                              scannedMobileNumber.replaceAll(
-                                                  RegExp(r'\D'), '');
-
-                                          if (formattedNumber.length >= 12) {
-                                            formattedNumber =
-                                                formattedNumber.substring(2);
-                                          }
-
-                                          if (formattedNumber.isEmpty ||
-                                              formattedNumber.length != 10 ||
-                                              formattedNumber[0] == '0') {
-                                            controller.recipient.text = "";
-                                            CustomDialog().errorDialog(
-                                              context,
-                                              "Invalid QR Code",
-                                              "The scanned QR code is invalid. Please try again.",
-                                              () {
-                                                Get.back();
-                                              },
-                                            );
-                                          } else {
-                                            controller.recipient.text =
-                                                formattedNumber;
-                                            controller.onTextChange();
-                                          }
-                                        },
-                                      ));
-                                    }
+                                    } else {}
                                   },
                                 ),
                                 CustomTextField(
