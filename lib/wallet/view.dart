@@ -149,7 +149,7 @@ class WalletScreen extends GetView<WalletController> {
                         final item = await Authentication().getUserData2();
                         String? fname = item["first_name"];
 
-                        if (fname == null) {
+                        if (fname == null || fname.toString().isEmpty) {
                           CustomDialog().infoDialog("Unverified Account",
                               "Complete your account information to access the requested service.\nGo to profile and update your account.",
                               () {

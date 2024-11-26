@@ -34,6 +34,7 @@ import '../registration/utils/otp_screen/index.dart';
 import '../security_settings/index.dart';
 import '../splash_screen/index.dart';
 import '../wallet/index.dart';
+import '../wallet_recharge/index.dart';
 import '../wallet_send/index.dart';
 import '../wallet_send/send_otp/index.dart';
 import 'routes.dart';
@@ -133,11 +134,11 @@ class AppPages {
       page: () => const FaqPage(),
       binding: FaqPageBinding(),
     ),
-    // GetPage(
-    //   name: Routes.mapFilter,
-    //   page: () => const FilterMap(),
-    //   binding: FilterMapBinding(),
-    // ),
+    GetPage(
+      name: Routes.walletrecharge,
+      page: () => const WalletRechargeScreen(),
+      binding: WalletRechargeBinding(),
+    ),
 
     GetPage(
       name: Routes.aboutus,
