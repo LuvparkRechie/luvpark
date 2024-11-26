@@ -204,16 +204,14 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "First Name",
                 controller: controller.firstName,
                 onChange: (value) {
-                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-                  validateText(value, controller.firstName);
-                  if (trimmedValue.isNotEmpty) {
+                  if (value.isNotEmpty) {
                     controller.firstName.value = TextEditingValue(
-                      text: Variables.capitalizeAllWord(trimmedValue),
+                      text: Variables.capitalizeAllWord(value),
                       selection: controller.firstName.selection,
                     );
                   } else {
                     controller.firstName.value = TextEditingValue(
-                      text: "",
+                      text: Variables.capitalizeAllWord(value.substring(0, 30)),
                       selection: TextSelection.collapsed(offset: 0),
                     );
                   }
@@ -221,7 +219,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   controller.formKeyStep1.currentState?.validate();
                 },
                 inputFormatters: [
-                  SimpleNameFormatter(),
+                  LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -240,11 +238,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
-                  SimpleNameFormatter(),
+                  LengthLimitingTextInputFormatter(30),
                 ],
+                textCapitalization: TextCapitalization.words,
                 onChange: (inputText) {
-                  validateText(inputText, controller.middleName);
                   // Manually trigger validation when text is changed
+
                   controller.formKeyStep1.currentState?.validate();
                 },
                 validator: (value) {
@@ -261,17 +260,16 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 labelText: "Last Name",
                 title: "Last Name",
                 controller: controller.lastName,
+                textCapitalization: TextCapitalization.words,
                 onChange: (value) {
-                  String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
-                  validateText(value, controller.lastName);
-                  if (trimmedValue.isNotEmpty) {
+                  if (value.isNotEmpty) {
                     controller.lastName.value = TextEditingValue(
-                      text: Variables.capitalizeAllWord(trimmedValue),
+                      text: Variables.capitalizeAllWord(value),
                       selection: controller.lastName.selection,
                     );
                   } else {
                     controller.lastName.value = TextEditingValue(
-                      text: "",
+                      text: Variables.capitalizeAllWord(value.substring(0, 30)),
                       selection: TextSelection.collapsed(offset: 0),
                     );
                   }
@@ -279,7 +277,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   controller.formKeyStep1.currentState?.validate();
                 },
                 inputFormatters: [
-                  SimpleNameFormatter(),
+                  LengthLimitingTextInputFormatter(30),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -303,7 +301,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     // Do something here
                   } else {
                     controller.email.value = TextEditingValue(
-                      text: "",
+                      text: Variables.capitalizeAllWord(
+                          trimmedValue.substring(0, 30)),
                       selection: TextSelection.collapsed(offset: 0),
                     );
                   }
@@ -842,34 +841,34 @@ class UpdateProfile extends GetView<UpdateProfileController> {
   }
 }
 
-class SimpleNameFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    // Updated regex to disallow specific sequences
-    final regex = RegExp(r'^(|[a-zA-Z][a-zA-Z.-]*( [a-zA-Z.-]*)? ?)$');
+// class SimpleNameFormatter extends TextInputFormatter {
+//   @override
+//   TextEditingValue formatEditUpdate(
+//       TextEditingValue oldValue, TextEditingValue newValue) {
+//     // Updated regex to disallow specific sequences
+//     final regex = RegExp(r'^(|[a-zA-Z][a-zA-Z.-]*( [a-zA-Z.-]*)? ?)$');
 
-    // Count spaces, periods, and hyphens in the new value
-    int spaceCount = newValue.text.split(' ').length - 1;
-    int periodCount = newValue.text.split('.').length - 1;
-    int hyphenCount = newValue.text.split('-').length - 1;
+//     // Count spaces, periods, and hyphens in the new value
+//     int spaceCount = newValue.text.split(' ').length - 1;
+//     int periodCount = newValue.text.split('.').length - 1;
+//     int hyphenCount = newValue.text.split('-').length - 1;
 
-    bool hasDisallowedCombination = newValue.text.contains('. -') ||
-        newValue.text.contains('- .') ||
-        newValue.text.contains(' .') ||
-        newValue.text.contains('-.') ||
-        newValue.text.contains('.-') ||
-        newValue.text.contains('- ') ||
-        newValue.text.contains(' -') ||
-        newValue.text.contains('. ');
+//     bool hasDisallowedCombination = newValue.text.contains('. -') ||
+//         newValue.text.contains('- .') ||
+//         newValue.text.contains(' .') ||
+//         newValue.text.contains('-.') ||
+//         newValue.text.contains('.-') ||
+//         newValue.text.contains('- ') ||
+//         newValue.text.contains(' -') ||
+//         newValue.text.contains('. ');
 
-    if (regex.hasMatch(newValue.text) &&
-        spaceCount <= 1 &&
-        periodCount <= 1 &&
-        hyphenCount <= 1 &&
-        !hasDisallowedCombination) {
-      return newValue;
-    }
-    return oldValue;
-  }
-}
+//     if (regex.hasMatch(newValue.text) &&
+//         spaceCount <= 1 &&
+//         periodCount <= 1 &&
+//         hyphenCount <= 1 &&
+//         !hasDisallowedCombination) {
+//       return newValue;
+//     }
+//     return oldValue;
+//   }
+// }
