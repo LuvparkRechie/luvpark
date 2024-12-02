@@ -11,6 +11,7 @@ import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/my_vehicles/utils/sub_details.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/custom_text.dart';
@@ -142,210 +143,170 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                               alignment: Alignment.topRight,
                                               children: [
                                                 Container(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                            horizontal: 10,
-                                                            vertical: 15),
-                                                    decoration: BoxDecoration(
-                                                      color: Colors.white,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
-                                                      border: Border.all(
-                                                        color: Colors
-                                                            .grey.shade300,
-                                                        width: 1.0,
-                                                      ),
+                                                  padding: EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 15),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8.0),
+                                                    border: Border.all(
+                                                      color:
+                                                          Colors.grey.shade300,
+                                                      width: 1.0,
                                                     ),
-                                                    child: Column(
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  CustomParagraph(
-                                                                    text: controller
-                                                                        .vehicleData[
-                                                                            index]
-                                                                            [
-                                                                            "vehicle_brand_name"]
-                                                                        .toString()
-                                                                        .toUpperCase(),
-                                                                    color: AppColor
-                                                                        .headerColor,
-                                                                    fontSize:
-                                                                        12,
-                                                                  ),
-                                                                  Container(
-                                                                      height:
-                                                                          5),
-                                                                  CustomParagraph(
-                                                                    maxlines: 1,
-                                                                    text: controller
-                                                                        .vehicleData[
-                                                                            index]
-                                                                            [
-                                                                            "vehicle_plate_no"]
-                                                                        .toString()
-                                                                        .toUpperCase(),
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w700,
-                                                                    color: Colors
-                                                                        .black,
-                                                                    fontSize:
-                                                                        16,
-                                                                  ),
-                                                                  Container(
-                                                                      height:
-                                                                          5),
-                                                                  Container(
-                                                                      height:
-                                                                          10),
-                                                                  CustomButton(
-                                                                      btnHeight:
-                                                                          40,
-                                                                      text:
-                                                                          "Subscribe",
-                                                                      onPressed:
-                                                                          () {
-                                                                        FocusNode()
-                                                                            .unfocus();
-
-                                                                        Get.to(
-                                                                            ScannerScreen(
-                                                                          onchanged:
-                                                                              (ScannedData args) {
-                                                                            String
-                                                                                result =
-                                                                                args.scannedHash;
-
-                                                                            if (result.isEmpty) {
-                                                                              CustomDialog().errorDialog(
-                                                                                context,
-                                                                                "Invalid QR Code",
-                                                                                "The scanned QR code is invalid. Please try again.",
-                                                                                () {
-                                                                                  Get.back();
-                                                                                },
-                                                                              );
-                                                                              return;
-                                                                            } else {
-                                                                              controller.subscrbeVh(result, controller.vehicleData[index]["vehicle_plate_no"].toString(), controller.vehicleData[index]["vehicle_brand_id"].toString());
-                                                                            }
-                                                                          },
-                                                                        ));
-                                                                      })
-                                                                ],
-                                                              ),
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                CustomParagraph(
+                                                                  text: controller
+                                                                      .vehicleData[
+                                                                          index]
+                                                                          [
+                                                                          "vehicle_brand_name"]
+                                                                      .toString()
+                                                                      .toUpperCase(),
+                                                                  color: AppColor
+                                                                      .headerColor,
+                                                                  fontSize: 12,
+                                                                ),
+                                                                Container(
+                                                                    height: 5),
+                                                                CustomParagraph(
+                                                                  maxlines: 1,
+                                                                  text: controller
+                                                                      .vehicleData[
+                                                                          index]
+                                                                          [
+                                                                          "vehicle_plate_no"]
+                                                                      .toString()
+                                                                      .toUpperCase(),
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w700,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontSize: 16,
+                                                                ),
+                                                                Container(
+                                                                    height: 5),
+                                                                Container(
+                                                                    height: 10),
+                                                              ],
                                                             ),
-                                                            Expanded(
-                                                              child: Container(
-                                                                width: 60,
-                                                                height: 60,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  image:
-                                                                      DecorationImage(
-                                                                    fit: BoxFit
-                                                                        .contain,
-                                                                    image: controller.vehicleData[index]["image"] ==
-                                                                                null ||
-                                                                            controller
-                                                                                .vehicleData[index][
-                                                                                    "image"]
-                                                                                .isEmpty
-                                                                        ? AssetImage("assets/images/no_image.png")
-                                                                            as ImageProvider
-                                                                        : MemoryImage(
-                                                                            base64Decode(
-                                                                              removeInvalidCharacters(controller.vehicleData[index]["image"]),
-                                                                            ),
+                                                          ),
+                                                          Expanded(
+                                                            child: Container(
+                                                              width: 60,
+                                                              height: 60,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                image:
+                                                                    DecorationImage(
+                                                                  fit: BoxFit
+                                                                      .contain,
+                                                                  image: controller.vehicleData[index]["image"] ==
+                                                                              null ||
+                                                                          controller
+                                                                              .vehicleData[index][
+                                                                                  "image"]
+                                                                              .isEmpty
+                                                                      ? AssetImage(
+                                                                              "assets/images/no_image.png")
+                                                                          as ImageProvider
+                                                                      : MemoryImage(
+                                                                          base64Decode(
+                                                                            removeInvalidCharacters(controller.vehicleData[index]["image"]),
                                                                           ),
-                                                                  ),
+                                                                        ),
                                                                 ),
                                                               ),
                                                             ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    )
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(height: 10),
+                                                      Row(
+                                                        children: [
+                                                          Expanded(
+                                                            child:
+                                                                CustomElevatedButton(
+                                                              btnHeight: 40,
+                                                              fontSize: 12,
+                                                              btnColor: AppColor
+                                                                  .primaryColor,
+                                                              text: "Subscribe",
+                                                              onPressed: () {
+                                                                FocusNode()
+                                                                    .unfocus();
 
-                                                    //  ListTile(
-                                                    //   title: Row(
-                                                    //     mainAxisAlignment:
-                                                    //         MainAxisAlignment.start,
-                                                    //     children: [
-                                                    //       CustomTitle(
-                                                    //         text: controller
-                                                    //                 .vehicleData[index]
-                                                    //             ["vehicle_brand_name"],
-                                                    //         maxlines: 1,
-                                                    //       ),
-                                                    //     ],
-                                                    //   ),
-                                                    //   subtitle: CustomParagraph(
-                                                    //       minFontSize: 10,
-                                                    //       text:
-                                                    //           'Plate number: ${controller.vehicleData[index]["vehicle_plate_no"]}',
-                                                    //       maxlines: 1),
-                                                    //   leading: Container(
-                                                    //     width: 50,
-                                                    //     height: 50,
-                                                    //     decoration: BoxDecoration(
-                                                    //       shape: BoxShape.circle,
-                                                    //       image: DecorationImage(
-                                                    //         fit: BoxFit.contain,
-                                                    //         image: controller.vehicleData[
-                                                    //                             index]
-                                                    //                         ["image"] ==
-                                                    //                     null ||
-                                                    //                 controller
-                                                    //                     .vehicleData[
-                                                    //                         index]
-                                                    //                         ["image"]
-                                                    //                     .isEmpty
-                                                    //             ? AssetImage(
-                                                    //                     "assets/images/no_image.png")
-                                                    //                 as ImageProvider
-                                                    //             : MemoryImage(
-                                                    //                 base64Decode(
-                                                    //                   removeInvalidCharacters(
-                                                    //                       controller.vehicleData[
-                                                    //                               index]
-                                                    //                           [
-                                                    //                           "image"]),
-                                                    //                 ),
-                                                    //               ),
-                                                    //       ),
-                                                    //     ),
-                                                    //   ),
-                                                    //   trailing: Container(
-                                                    //     decoration: const BoxDecoration(
-                                                    //       shape: BoxShape.circle,
-                                                    //       color: Color(0xFFF9D9D9),
-                                                    //     ),
-                                                    //     padding:
-                                                    //         const EdgeInsets.all(5.0),
-                                                    //     child: const Icon(
-                                                    //       Icons.delete,
-                                                    //       color: Color(0xFFD34949),
-                                                    //       size: 15.0,
-                                                    //     ),
-                                                    //   ),
-                                                    //   onTap: () {
-                                                    //     controller.onDeleteVehicle(
-                                                    //         controller
-                                                    //                 .vehicleData[index]
-                                                    //             ["vehicle_plate_no"]);
-                                                    //   },
-                                                    // ),
+                                                                Get.to(
+                                                                  ScannerScreen(
+                                                                    onchanged:
+                                                                        (ScannedData
+                                                                            args) {
+                                                                      String
+                                                                          result =
+                                                                          args.scannedHash;
 
-                                                    ),
+                                                                      if (result
+                                                                          .isEmpty) {
+                                                                        CustomDialog()
+                                                                            .errorDialog(
+                                                                          context,
+                                                                          "Invalid QR Code",
+                                                                          "The scanned QR code is invalid. Please try again.",
+                                                                          () {
+                                                                            Get.back();
+                                                                          },
+                                                                        );
+                                                                        return;
+                                                                      } else {
+                                                                        controller.subscrbeVh(
+                                                                            result,
+                                                                            controller.vehicleData[index]["vehicle_plate_no"].toString(),
+                                                                            controller.vehicleData[index]["vehicle_brand_id"].toString());
+                                                                      }
+                                                                    },
+                                                                  ),
+                                                                );
+                                                              },
+                                                            ),
+                                                          ),
+                                                          SizedBox(width: 10),
+                                                          Expanded(
+                                                            child:
+                                                                CustomElevatedButton(
+                                                              text:
+                                                                  "Subscription",
+                                                              btnColor:
+                                                                  Colors.white,
+                                                              textColor: AppColor
+                                                                  .primaryColor,
+                                                              fontSize: 12,
+                                                              btnHeight: 40,
+                                                              onPressed:
+                                                                  () async {
+                                                                await controller
+                                                                    .getVhSubscriptionDetails(
+                                                                        index);
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
                                                 Padding(
                                                   padding:
                                                       const EdgeInsets.only(

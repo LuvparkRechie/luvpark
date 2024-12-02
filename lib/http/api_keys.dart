@@ -247,4 +247,7 @@ class ApiKeys {
   static const gApiSubscribedList = '/ords/$parkSpaceApi/zone/subscriptions';
   //booking added
   static const gApiIssueTicket = '/ords/$parkSpaceApi/pm/issueTicket';
+  //subscription_details per vehicle
+  static const gApiGetSubscriptionDetails =
+      '/ords/$parkSpaceApi/zone/subscription';
 }

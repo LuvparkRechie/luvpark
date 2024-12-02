@@ -11,6 +11,7 @@ import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/my_vehicles/utils/add_vehicle.dart';
+import 'package:luvpark/my_vehicles/utils/sub_details.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../custom_widgets/variables.dart';
@@ -43,6 +44,9 @@ class MyVehiclesController extends GetxController {
   RxList vehicleData = <Map<String, dynamic>>[].obs;
   RxList vehicleDdData = <Map<String, dynamic>>[].obs;
   RxList vehicleBrandData = <Map<String, dynamic>>[].obs;
+
+  RxList subDetailsData = [].obs;
+  RxBool isLoadingsubDetails = true.obs;
 
   RxString hintTextLabel = "Plate No".obs;
   final Map<String, RegExp> _filter = {
@@ -368,11 +372,9 @@ class MyVehiclesController extends GetxController {
       "vehicle_plate_no": plateNo,
       "vehicle_brand_id": brandId,
     };
-
     final returnPost =
         await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
             .postBody();
-
     if (returnPost == "No Internet") {
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -395,6 +397,56 @@ class MyVehiclesController extends GetxController {
           Get.context!, "Success", returnPost["msg"], "Okay", () {
         Get.back();
       });
+    }
+  }
+
+  Future<void> getVhSubscriptionDetails(int index) async {
+    String vehiclePlateNo = vehicleData[index]["vehicle_plate_no"];
+
+    CustomDialog().loadingDialog(Get.context!);
+    subDetailsData.value = [];
+
+    try {
+      final objData = await HttpRequest(
+        api:
+            "${ApiKeys.gApiGetSubscriptionDetails}?vehicle_plate_no=$vehiclePlateNo",
+      ).get();
+      Get.back();
+      if (objData == "No Internet") {
+        isLoadingsubDetails.value = false;
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+
+      if (objData == null) {
+        isLoadingsubDetails.value = false;
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      } else {
+        subDetailsData.value = objData['items'];
+        Get.bottomSheet(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(7),
+            ),
+          ),
+          backgroundColor: Colors.white,
+          SubscriptionDetails(
+            data: subDetailsData,
+          ),
+        );
+      }
+    } catch (e) {
+      isLoadingsubDetails.value = false;
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+    } finally {
+      isLoadingsubDetails.value = false;
     }
   }
 }

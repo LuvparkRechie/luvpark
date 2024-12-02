@@ -13,10 +13,12 @@ class CustomButton extends StatelessWidget {
   final Color? textColor;
   final double? borderRadius;
   final double? btnHeight;
+  final double fontSize;
   const CustomButton(
       {super.key,
       required this.text,
       required this.onPressed,
+      this.fontSize = 14,
       this.btnColor,
       this.bordercolor,
       this.textColor,
@@ -44,6 +46,7 @@ class CustomButton extends StatelessWidget {
             child: loading == null
                 ? CustomParagraph(
                     text: text,
+                    fontSize: fontSize,
                     textAlign: TextAlign.center,
                     color: textColor ?? Colors.white,
                     fontWeight: FontWeight.w500,
@@ -60,6 +63,7 @@ class CustomButton extends StatelessWidget {
                       )
                     : CustomParagraph(
                         text: text,
+                        fontSize: fontSize,
                         maxlines: 1,
                         textAlign: TextAlign.center,
                         color: textColor ?? Colors.white,
@@ -162,6 +166,71 @@ class CustomDialogButton extends StatelessWidget {
           fontWeight: FontWeight.w500,
           maxlines: 1,
         ),
+      ),
+    );
+  }
+}
+
+class CustomElevatedButton extends StatelessWidget {
+  final String text;
+  final VoidCallback? onPressed;
+  final Color? btnColor;
+  final bool loading;
+  final bool disabled;
+  final Color? textColor;
+  final double borderRadius;
+  final double fontSize;
+  final double? btnHeight;
+  final Color? borderColor;
+
+  const CustomElevatedButton({
+    Key? key,
+    required this.text,
+    this.onPressed,
+    this.btnColor,
+    this.textColor,
+    this.loading = false,
+    this.disabled = false,
+    this.borderRadius = 7.0,
+    this.fontSize = 14.0,
+    this.btnHeight,
+    this.borderColor,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: btnHeight ?? 50.0,
+      width: double.infinity,
+      child: ElevatedButton(
+        onPressed: (loading || disabled) ? null : onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: disabled ? Colors.grey : btnColor ?? Colors.blue,
+          foregroundColor: textColor ?? Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(borderRadius),
+            side: BorderSide(
+              color: borderColor ?? Colors.transparent,
+              width: 1.5,
+            ),
+          ),
+        ),
+        child: loading
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : Text(
+                text,
+                style: TextStyle(
+                  fontSize: fontSize,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
       ),
     );
   }
