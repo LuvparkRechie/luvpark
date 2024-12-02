@@ -142,116 +142,111 @@ class HttpRequest {
   const HttpRequest({required this.api, this.parameters});
 
   Future<dynamic> get() async {
-    bool hasInternet = await Variables.checkInternet();
-    if (hasInternet) {
-      try {
-        var response = await http.get(
-          Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
-          headers: {"Content-Type": 'application/json; charset=utf-8'},
-        ).timeout(
-          Duration(seconds: 5),
-        );
-
-        if (response.statusCode == 200) {
-          return jsonDecode(
-              utf8.decode(response.bodyBytes, allowMalformed: true));
-        } else {
-          return null;
-        }
-      } catch (e) {
-        return "No Internet";
+    try {
+      var response = await http.get(
+        Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
+        headers: {"Content-Type": 'application/json; charset=utf-8'},
+      ).timeout(
+        Duration(seconds: 10),
+      );
+      if (response.statusCode == 200) {
+        return jsonDecode(
+            utf8.decode(response.bodyBytes, allowMalformed: true));
+      } else {
+        return null;
       }
-    } else {
-      return "No Internet"; // Return error message if there's no internet
+    } catch (e) {
+      return "No Internet";
     }
   }
 
   Future<dynamic> post() async {
-    bool hasInternet = await Variables.checkInternet();
-    if (hasInternet) {
-      try {
-        var response = await http.post(
-          Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
-          headers: {"Content-Type": 'application/json; charset=utf-8'},
-          body: json.encode(parameters),
-        );
-        if (response.statusCode == 200) {
-          return response.headers;
-        } else {
-          return null;
-        }
-      } catch (e) {
-        return "No Internet";
+    try {
+      var response = await http
+          .post(
+            Uri.parse(
+                Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
+            headers: {"Content-Type": 'application/json; charset=utf-8'},
+            body: json.encode(parameters),
+          )
+          .timeout(
+            Duration(seconds: 10),
+          );
+
+      if (response.statusCode == 200) {
+        return response.headers;
+      } else {
+        return null;
       }
-    } else {
-      return "No Internet"; // Return error message if there's no internet
+    } catch (e) {
+      return "No Internet";
     }
   }
 
   Future<dynamic> postBody() async {
-    bool hasInternet = await Variables.checkInternet();
-    if (hasInternet) {
-      try {
-        var response = await http.post(
-          Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
-          headers: {"Content-Type": 'application/json; charset=utf-8'},
-          body: json.encode(parameters),
-        );
-        print("response ${response.statusCode}");
-        if (response.statusCode == 200) {
-          return json.decode(response.body);
-        } else {
-          return null;
-        }
-      } catch (e) {
-        return "No Internet";
+    try {
+      var response = await http
+          .post(
+            Uri.parse(
+                Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
+            headers: {"Content-Type": 'application/json; charset=utf-8'},
+            body: json.encode(parameters),
+          )
+          .timeout(
+            Duration(seconds: 10),
+          );
+
+      if (response.statusCode == 200) {
+        return json.decode(response.body);
+      } else {
+        return null;
       }
-    } else {
-      return "No Internet"; // Return error message if there's no internet
+    } catch (e) {
+      return "No Internet";
     }
   }
 
   Future<dynamic> put() async {
-    bool hasInternet = await Variables.checkInternet();
-    if (hasInternet) {
-      try {
-        var response = await http.put(
-          Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
-          headers: {"Content-Type": "application/json"},
-          body: json.encode(parameters),
-        );
-        if (response.statusCode == 200) {
-          return response.headers;
-        } else {
-          return null;
-        }
-      } catch (e) {
-        return "No Internet";
+    try {
+      var response = await http
+          .put(
+            Uri.parse(
+                Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
+            headers: {"Content-Type": "application/json"},
+            body: json.encode(parameters),
+          )
+          .timeout(
+            Duration(seconds: 10),
+          );
+      if (response.statusCode == 200) {
+        return response.headers;
+      } else {
+        return null;
       }
-    } else {
-      return "No Internet"; // Return error message if there's no internet
+    } catch (e) {
+      return "No Internet";
     }
   }
 
   Future<dynamic> deleteData() async {
-    bool hasInternet = await Variables.checkInternet();
-    if (hasInternet) {
-      try {
-        var response = await http.delete(
-          Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
-          headers: {"Content-Type": 'application/json; charset=utf-8'},
-          body: json.encode(parameters),
-        );
-        if (response.statusCode == 200) {
-          return "Success";
-        } else {
-          return null;
-        }
-      } catch (e) {
-        return "No Internet";
+    try {
+      var response = await http
+          .delete(
+            Uri.parse(
+                Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
+            headers: {"Content-Type": 'application/json; charset=utf-8'},
+            body: json.encode(parameters),
+          )
+          .timeout(
+            Duration(seconds: 10),
+          );
+      if (response.statusCode == 200) {
+        return "Success";
+      } else {
+        return null;
       }
-    } else {
-      return "No Internet"; // Return error message if there's no internet
+    } catch (e) {
+      return "No Internet";
     }
   }
 
@@ -262,6 +257,8 @@ class HttpRequest {
         var response = await http.get(
           Uri.https("luvpark.ph", "/terms-of-use"),
           headers: {"Content-Type": 'application/json; charset=utf-8'},
+        ).timeout(
+          Duration(seconds: 10),
         );
         if (response.statusCode == 200) {
           return "Success";
@@ -272,7 +269,7 @@ class HttpRequest {
         return "No Internet";
       }
     } else {
-      return "No Internet"; // Return error message if there's no internet
+      return "No Internet";
     }
   }
 }

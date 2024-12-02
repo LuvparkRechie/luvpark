@@ -90,7 +90,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             filled: widget.isFilled ?? widget.isFilled,
             fillColor: widget.filledColor,
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(
                 color: AppColor.borderColor,
               ),
@@ -103,16 +103,16 @@ class _CustomTextFieldState extends State<CustomTextField> {
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderRadius: BorderRadius.all(Radius.circular(7)),
                 borderSide: BorderSide(color: Color(0xFF0078FF))),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(
                 color: AppColor.borderColor,
               ),
             ),
             errorBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.all(Radius.circular(12)),
+                borderRadius: BorderRadius.all(Radius.circular(7)),
                 borderSide: BorderSide(color: Color(0xFFDF0000))),
             suffixIcon: widget.suffixIcon != null
                 ? InkWell(
@@ -121,9 +121,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     },
                     child: Icon(
                       widget.suffixIcon!,
-                      color: widget.isFilled != null && widget.isFilled!
-                          ? AppColor.primaryColor
-                          : null,
+                      // color: widget.isFilled != null && widget.isFilled!
+                      //     ? AppColor.primaryColor
+                      //     : null,
+                      color: AppColor.primaryColor,
                     ),
                   )
                 : null,
@@ -154,7 +155,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
             widget.onChange!(value);
           },
           onTap: () {
-            widget.onTap!();
+            if (widget.onTap != null) {
+              widget.onTap!();
+            }
           },
           validator: widget.validator,
         ));
@@ -223,22 +226,22 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.all(Radius.circular(7)),
             borderSide: BorderSide(
               color: AppColor.borderColor,
             ),
           ),
           focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(color: Color(0xFF0078FF))),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.all(Radius.circular(12)),
+            borderRadius: BorderRadius.all(Radius.circular(7)),
             borderSide: BorderSide(
               color: AppColor.borderColor,
             ),
           ),
           errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.all(Radius.circular(12)),
+              borderRadius: BorderRadius.all(Radius.circular(7)),
               borderSide: BorderSide(color: Color(0xFFDF0000))),
           suffixIcon: widget.suffixIcon != null
               ? InkWell(

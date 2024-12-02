@@ -162,7 +162,6 @@ class _FilterMapState extends State<FilterMap> {
 
     //overnight
     List itemText = items.where((d) {
-      // print("$d == ${widget.data[0]["ovp"]}");
       return d["value"].toString().trim() ==
           widget.data[0]["ovp"].toString().trim();
     }).toList();
@@ -448,7 +447,6 @@ class _FilterMapState extends State<FilterMap> {
                                         divisions: 1998,
                                         label: labelDistance,
                                         onChanged: (value) {
-                                          // print("value  $value");
                                           onPickDistance(value);
 
                                           filterParam = filterParam.map((e) {
@@ -569,8 +567,6 @@ class _FilterMapState extends State<FilterMap> {
                                           child: CustomButton(
                                             text: "Apply",
                                             onPressed: () {
-                                              print(
-                                                  "filter param $filterParam");
                                               Get.back();
                                               widget.cb(filterParam);
                                             },

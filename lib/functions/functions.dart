@@ -273,44 +273,35 @@ class Functions {
   // }
   static Future<void> searchPlaces(
       BuildContext context, String query, Function callback) async {
-    bool hasNet = await Variables.checkInternet();
-    if (hasNet) {
-      try {
-        final places = gmp.GoogleMapsPlaces(
-            apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
-        gmp.PlacesSearchResponse response = await places.searchByText(query);
+    try {
+      final places = gmp.GoogleMapsPlaces(
+          apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
+      gmp.PlacesSearchResponse response = await places.searchByText(query);
 
-        if (response.isOkay) {
-          if (response.results.isNotEmpty) {
-            callback([
-              response.results[0].geometry!.location.lat,
-              response.results[0].geometry!.location.lng,
-            ]);
-          } else {
-            callback([]);
-            CustomDialog()
-                .errorDialog(context, "luvpark", "No parking areas found.", () {
-              Get.back();
-            });
-          }
+      if (response.isOkay) {
+        if (response.results.isNotEmpty) {
+          callback([
+            response.results[0].geometry!.location.lat,
+            response.results[0].geometry!.location.lng,
+          ]);
         } else {
           callback([]);
-          CustomDialog().errorDialog(
-              context, "Error", "Failed to retrieve data. Please try again.",
-              () {
+          CustomDialog()
+              .errorDialog(context, "luvpark", "No parking areas found.", () {
             Get.back();
           });
         }
-      } catch (e) {
+      } else {
         callback([]);
-
-        CustomDialog().errorDialog(context, "Error", "$e", () {
+        CustomDialog().errorDialog(
+            context, "Error", "Failed to retrieve data. Please try again.", () {
           Get.back();
         });
       }
-    } else {
+    } catch (e) {
       callback([]);
-      CustomDialog().internetErrorDialog(context, () {
+
+      CustomDialog().errorDialog(context, "Error", "$e", () {
         Get.back();
       });
     }

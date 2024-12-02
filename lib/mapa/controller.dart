@@ -1299,12 +1299,22 @@ class DashboardMapController extends GetxController
       });
       return;
     }
-
+    // print("balanceData $balanceData");
+    // if (double.parse(balanceData[0]["amount_bal"].toString()) <= 0) {
+    //   Get.back();
+    //   CustomDialog().infoDialog(
+    //     "Attention",
+    //     "You cannot make a booking as your balance is insufficient.",
+    //     () {
+    //       Get.back();
+    //     },
+    //   );
+    //   return;
+    // }
     if (double.parse(balanceData[0]["amount_bal"].toString()) <
         double.parse(balanceData[0]["min_wallet_bal"].toString())) {
       Get.back();
-      CustomDialog().errorDialog(
-        Get.context!,
+      CustomDialog().infoDialog(
         "Attention",
         "Your balance is below the required minimum for this feature. "
             "Please ensure a minimum balance of ${balanceData[0]["min_wallet_bal"]} tokens to access the requested service.",
@@ -1317,7 +1327,6 @@ class DashboardMapController extends GetxController
       String api =
           "${ApiKeys.gApiSubscribedList}?park_area_id=${markerData[0]["park_area_id"]}";
       final response = await HttpRequest(api: api).get();
-      print("response subscrubed list $response");
       if (response == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -1340,7 +1349,6 @@ class DashboardMapController extends GetxController
       } else {
         Variables.subsVhList.value = items;
       }
-
       Functions.computeDistanceResorChckIN(Get.context!,
           LatLng(markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
           (success) {

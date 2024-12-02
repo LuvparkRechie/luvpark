@@ -222,6 +222,49 @@ class CustomDialog {
     ));
   }
 
+  void securityDialog(
+    String title,
+    String paragraph,
+    VoidCallback onTapConfirm, {
+    Color? btnOkBackgroundColor,
+    Color? btnOkTextColor,
+  }) {
+    Get.dialog(dialogBody(
+      Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(height: 10),
+          CustomTitle(
+            text: title,
+            color: Color(0xFF0D0E0E),
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+            maxlines: 1,
+          ),
+          const SizedBox(height: 15),
+          // Paragraph
+          CustomParagraph(
+            text: paragraph,
+            color: Color(0xFF666666),
+            textAlign: TextAlign.left,
+          ),
+          // Single Button
+          Container(height: 25),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              TextButton(
+                onPressed: onTapConfirm,
+                child: Text("Ok"),
+              ),
+            ],
+          ),
+        ],
+      ),
+    ));
+  }
+
   void successDialog(
     BuildContext context,
     String title,

@@ -21,7 +21,7 @@ class BookingController extends GetxController
     with GetSingleTickerProviderStateMixin {
   BookingController();
   final parameters = Get.arguments;
-  final GlobalKey<FormState> formKeyBook = GlobalKey<FormState>();
+
   TextEditingController timeInParam = TextEditingController();
   TextEditingController plateNo = TextEditingController();
   TextEditingController noHours = TextEditingController(text: "1");
@@ -85,6 +85,7 @@ class BookingController extends GetxController
   RxString usedRewards = "0".obs;
   RxString tokenRewards = "0".obs;
   RxDouble displayRewards = 0.0.obs;
+  RxBool isUseRewards = false.obs;
   List dataLastBooking = [];
 
   @override
@@ -105,9 +106,61 @@ class BookingController extends GetxController
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
 
-    getDropdownVehicles();
+    getNotice();
     _startInactivityTimer();
     _updateMaskFormatter("");
+  }
+
+  Future<void> getNotice() async {
+    isShowNotice.value = true;
+    String subApi = "${ApiKeys.gApiLuvParkGetNotice}?msg_code=PREBOOKMSG";
+
+    HttpRequest(api: subApi).get().then((retDataNotice) async {
+      if (retDataNotice == "No Internet") {
+        isLoadingPage.value = false;
+        isInternetConn.value = false;
+        noticeData.value = [];
+        isShowNotice.value = false;
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+      if (retDataNotice == null) {
+        isInternetConn.value = true;
+        isLoadingPage.value = true;
+        noticeData.value = [];
+        isShowNotice.value = false;
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      }
+      if (retDataNotice["items"].length > 0) {
+        isInternetConn.value = true;
+        isLoadingPage.value = true;
+        noticeData.value = retDataNotice["items"];
+        Timer(Duration(milliseconds: 500), () {
+          CustomDialog().bookingNotice(
+              noticeData[0]["msg_title"], noticeData[0]["msg"], () {
+            Get.back();
+            Get.back();
+          }, () {
+            isShowNotice.value = false;
+            Get.back();
+            getDropdownVehicles();
+          });
+        });
+      } else {
+        isInternetConn.value = true;
+        isLoadingPage.value = false;
+        noticeData.value = [];
+        isShowNotice.value = false;
+        CustomDialog().errorDialog(Get.context!, "luvpark", "No data found",
+            () {
+          Get.back();
+        });
+      }
+    });
   }
 
   //GET drodown vehicles per area
@@ -140,6 +193,7 @@ class BookingController extends GetxController
 
       if (returnData["items"].length > 0) {
         dynamic items = returnData["items"];
+
         ddVehiclesData.value = items.map((item) {
           return {
             "text": item["vehicle_type_desc"],
@@ -150,6 +204,7 @@ class BookingController extends GetxController
             "vehicle_type": item["vehicle_type_desc"],
           };
         }).toList();
+
         getMyVehicle();
       } else {
         getMyVehicle();
@@ -200,44 +255,57 @@ class BookingController extends GetxController
         for (var row in myVehicles["items"]) {
           List dataVBrand = await Functions.getBranding(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
+          List fData = ddVehiclesData.where((obj) {
+            return obj["value"] == row["vehicle_type_id"];
+          }).toList();
 
           myVehiclesData.add({
             "vehicle_type_id": row["vehicle_type_id"],
             "vehicle_brand_id": row["vehicle_brand_id"],
             "vehicle_brand_name": dataVBrand[0]["vehicle_brand_name"],
             "vehicle_plate_no": row["vehicle_plate_no"],
-            "image": dataVBrand[0]["imageb64"]
+            "image": dataVBrand[0]["imageb64"],
+            "vehicle_type": fData[0]["vehicle_type"],
           });
         }
+
         dataLastBooking = await Authentication().getLastBooking();
 
         if (dataLastBooking.isNotEmpty) {
-          List dataHabibi = await habibi(dataLastBooking[0]["vehicle_plate_no"],
+          List dataHabibi = await filterSubscriotion(
+              dataLastBooking[0]["vehicle_plate_no"],
               dataLastBooking[0]["vehicle_type_id"]);
 
           if (dataHabibi.isNotEmpty) {
             checkIfSubscribed(dataHabibi);
           } else {
+            CustomDialog().loadingDialog(Get.context!);
+
             List flb = filterLastBooking(
                 dataLastBooking[0]["vehicle_type_id"].toString());
 
-            selectedVh.value = dataLastBooking.map((e) {
-              e["base_hours"] = flb[0]["base_hours"];
-              e["succeeding_rate"] = flb[0]["succeeding_rate"];
-              e["base_rate"] = flb[0]["base_rate"];
-              return e;
-            }).toList();
-            CustomDialog().loadingDialog(Get.context!);
-            krowkrow();
+            if (flb.isEmpty) {
+              Get.back();
+              selectedVh.clear();
+            } else {
+              selectedVh.value = dataLastBooking.map((e) {
+                e["base_hours"] = flb[0]["base_hours"];
+                e["succeeding_rate"] = flb[0]["succeeding_rate"];
+                e["base_rate"] = flb[0]["base_rate"];
+                return e;
+              }).toList();
+              krowkrow();
+            }
           }
         } else {
           List vhDatas = [myVehiclesData[0]];
-          List dataHabibi = await habibi(
+          List dataHabibi = await filterSubscriotion(
               vhDatas[0]["vehicle_plate_no"], vhDatas[0]["vehicle_type_id"]);
 
           if (dataHabibi.isNotEmpty) {
             checkIfSubscribed(dataHabibi);
           } else {
+            CustomDialog().loadingDialog(Get.context!);
             dynamic recData = ddVehiclesData;
             Map<int, Map<String, dynamic>> recDataMap = {
               for (var item in recData) item['value']: item
@@ -254,13 +322,14 @@ class BookingController extends GetxController
             }
 
             selectedVh.value = vhDatas;
-            CustomDialog().loadingDialog(Get.context!);
+
             krowkrow();
           }
         }
       } else {
         dataLastBooking = await Authentication().getLastBooking();
         if (dataLastBooking.isNotEmpty) {
+          CustomDialog().loadingDialog(Get.context!);
           List flb = filterLastBooking(
               dataLastBooking[0]["vehicle_type_id"].toString());
           selectedVh.value = dataLastBooking.map((e) {
@@ -269,61 +338,15 @@ class BookingController extends GetxController
             e["base_rate"] = flb[0]["base_rate"];
             return e;
           }).toList();
-          CustomDialog().loadingDialog(Get.context!);
+
           krowkrow();
         }
       }
-      getNotice();
-    });
-  }
+      isInternetConn.value = true;
+      isLoadingPage.value = false;
 
-  Future<void> getNotice() async {
-    isShowNotice.value = true;
-    String subApi = "${ApiKeys.gApiLuvParkGetNotice}?msg_code=PREBOOKMSG";
-
-    HttpRequest(api: subApi).get().then((retDataNotice) async {
-      if (retDataNotice == "No Internet") {
-        isLoadingPage.value = false;
-        isInternetConn.value = false;
-        noticeData.value = [];
-        isShowNotice.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (retDataNotice == null) {
-        isInternetConn.value = true;
-        isLoadingPage.value = true;
-        noticeData.value = [];
-        isShowNotice.value = false;
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      }
-      if (retDataNotice["items"].length > 0) {
-        isInternetConn.value = true;
-        isLoadingPage.value = false;
-        noticeData.value = retDataNotice["items"];
-        Timer(Duration(milliseconds: 500), () {
-          CustomDialog().bookingNotice(
-              noticeData[0]["msg_title"], noticeData[0]["msg"], () {
-            Get.back();
-            Get.back();
-          }, () {
-            isShowNotice.value = false;
-            Get.back();
-          });
-        });
-      } else {
-        isInternetConn.value = true;
-        isLoadingPage.value = false;
-        noticeData.value = [];
-        isShowNotice.value = false;
-        CustomDialog().errorDialog(Get.context!, "luvpark", "No data found",
-            () {
-          Get.back();
-        });
+      if (selectedVh.isEmpty) {
+        vehicleSelection(1);
       }
     });
   }
@@ -344,7 +367,7 @@ class BookingController extends GetxController
     if (Get.isBottomSheetOpen!) {
       Get.back();
     }
-    CustomDialog().errorDialog(Get.context!, "Screen Idle",
+    CustomDialog().infoDialog("Screen Idle",
         "No Gestures were detected in the last minute. Reloading the page.",
         () {
       Get.back();
@@ -370,7 +393,8 @@ class BookingController extends GetxController
     }
 
     if (dataLastBooking.isNotEmpty) {
-      List dataHabibi = await habibi(dataLastBooking[0]["vehicle_plate_no"],
+      List dataHabibi = await filterSubscriotion(
+          dataLastBooking[0]["vehicle_plate_no"],
           dataLastBooking[0]["vehicle_type_id"]);
 
       if (dataHabibi.isNotEmpty) {
@@ -452,6 +476,9 @@ class BookingController extends GetxController
           timeComputation();
           routeToComputation();
           isExtendchecked.value = false;
+          if (selectedNumber.value == 0) {
+            Get.back();
+          }
         }, () {
           Get.back();
           selectedNumber -= deductTime;
@@ -497,40 +524,6 @@ class BookingController extends GetxController
     update();
   }
 
-  void displaySelVh() {
-    Get.to(
-      transition: Transition.rightToLeftWithFade,
-      curve: Curves.easeInOut,
-      MyVhList((data) async {
-        CustomDialog().loadingDialog(Get.context!);
-        List objData = data;
-
-        List dataHabibi = await habibi(
-            objData[0]["vehicle_plate_no"], objData[0]["vehicle_type_id"]);
-
-        if (dataHabibi.isNotEmpty) {
-          Get.back();
-          checkIfSubscribed(dataHabibi);
-        } else {
-          List filterData = ddVehiclesData.where((obj) {
-            return obj["value"] == data[0]["vehicle_type_id"];
-          }).toList();
-
-          if (filterData.isEmpty) {
-            selectedVh.value = objData;
-          } else {
-            objData = objData.map((e) {
-              e["vehicle_type"] = filterData[0]["text"];
-              return e;
-            }).toList();
-            selectedVh.value = objData;
-          }
-          krowkrow();
-        }
-      }),
-    );
-  }
-
   void krowkrow() {
     isSubscribed.value = false;
 
@@ -539,10 +532,11 @@ class BookingController extends GetxController
       plateNo.text = selectedVh[0]["vehicle_plate_no"];
       dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
       noHours.text = selectedNumber.value.toString();
-      Get.back();
+
       timeComputation();
       routeToComputation();
       onFieldChanged();
+      Get.back();
     });
   }
 
@@ -638,11 +632,12 @@ class BookingController extends GetxController
   }
 
   //Reservation Submit
-  void submitReservation(params) async {
+  void submitReservation(params, bool allowChkin) async {
     CustomDialog().loadingDialog(Get.context!);
     List bookingParams = [params];
 
     int userId = await Authentication().getUserId();
+
     isSubmitBooking.value = true;
     final position = await Functions.getCurrentPosition();
     LatLng current = LatLng(position[0]["lat"], position[0]["long"]);
@@ -688,6 +683,7 @@ class BookingController extends GetxController
       "auto_extend": isExtendchecked.value ? "Y" : "N"
     };
     Get.back();
+
     CustomDialog().confirmationDialog(
         Get.context!,
         "Confirm Booking",
@@ -720,7 +716,7 @@ class BookingController extends GetxController
         }
 
         if (objData["success"] == "Y") {
-          issueTicket(objData, params, areaEtaTime, bookingParams);
+          issueTicket(objData, params, areaEtaTime, bookingParams, allowChkin);
           return;
         }
         if (objData["success"] == "Q") {
@@ -783,7 +779,8 @@ class BookingController extends GetxController
     });
   }
 
-  Future<void> issueTicket(pobjData, params, areaEtaTime, bookingParams) async {
+  Future<void> issueTicket(
+      pobjData, params, areaEtaTime, bookingParams, bool allowChkin) async {
     int? userId = await Authentication().getUserId();
     final userData = await Authentication().getUserData2();
 
@@ -857,7 +854,7 @@ class BookingController extends GetxController
         };
 
         Authentication().setLastBooking(jsonEncode(selectedVh));
-        if (parameters["canCheckIn"]) {
+        if (allowChkin) {
           checkIn(returnData["ticket_id"], userId, paramArgs);
           return;
         } else {
@@ -911,7 +908,9 @@ class BookingController extends GetxController
       if (returnData["success"] == 'Y') {
         CustomDialog().successDialog(
             Get.context!, "Check-In", "Successfully checked-in", "Okay", () {
+          inactivityTimer?.cancel();
           Get.back();
+          Get.offAllNamed(Routes.parking, arguments: "B");
         });
       } else {
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
@@ -1000,7 +999,7 @@ class BookingController extends GetxController
     }
   }
 
-  Future<List> habibi(String plNo, int id) async {
+  Future<List> filterSubscriotion(String plNo, int id) async {
     //check if subscribed
     List data = Variables.subsVhList.where((obj) {
       return obj["vehicle_type_id"] == id && obj["vehicle_plate_no"] == plNo;
@@ -1024,15 +1023,16 @@ class BookingController extends GetxController
         'vehicle_brand_name': data[0]["vehicle_brand_name"],
         'vehicle_plate_no': data[0]["vehicle_plate_no"],
         'base_hours': roundedHours,
-        'succeeding_rate': data[0]["subscription_rate"],
+        'succeeding_rate': "0",
         'base_rate': data[0]["subscription_rate"],
+        'vehicle_type': data[0]["vehicle_type"],
       }
     ];
     selectedNumber.value = selectedVh[0]["base_hours"];
     plateNo.text = selectedVh[0]["vehicle_plate_no"];
     dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
     noHours.text = roundedHours.toString();
-    totalAmount.value = selectedVh[0]["succeeding_rate"].toString();
+    totalAmount.value = selectedVh[0]["base_rate"].toString();
     tokenRewards.value = totalAmount.value;
 
     startDate.text = now.toString().split(" ")[0].toString();
@@ -1066,6 +1066,59 @@ class BookingController extends GetxController
     //afasfd
 
     onFieldChanged();
+  }
+
+  void onToggleRewards(bool isUse) {
+    isUseRewards.value = isUse;
+  }
+
+  void vehicleSelection(int index) {
+    Get.bottomSheet(
+      VehicleTypes(
+          pageIndex: index,
+          cb: (data) async {
+            FocusManager.instance.primaryFocus!.unfocus();
+            CustomDialog().loadingDialog(Get.context!);
+            await Future.delayed(Duration(milliseconds: 500), () async {
+              List objData = data;
+
+              List dataHabibi = await filterSubscriotion(
+                  objData[0]["vehicle_plate_no"],
+                  objData[0]["vehicle_type_id"]);
+
+              if (dataHabibi.isNotEmpty) {
+                Get.back();
+                checkIfSubscribed(dataHabibi);
+              } else {
+                List filterData = ddVehiclesData.where((obj) {
+                  return obj["value"] == data[0]["vehicle_type_id"];
+                }).toList();
+
+                if (filterData.isEmpty) {
+                  selectedVh.value = objData;
+                } else {
+                  objData = objData.map((e) {
+                    e["vehicle_type"] = filterData[0]["text"];
+                    return e;
+                  }).toList();
+                  selectedVh.value = objData;
+                }
+
+                krowkrow();
+              }
+            });
+          }),
+      ignoreSafeArea: true,
+      isScrollControlled: false,
+      isDismissible: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(15.0),
+          topRight: Radius.circular(15.0),
+        ),
+      ),
+      backgroundColor: Colors.white,
+    );
   }
 
   @override

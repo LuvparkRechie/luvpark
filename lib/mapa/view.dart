@@ -71,7 +71,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 }
                 CustomDialog().confirmationDialog(
                     context,
-                    "Close Page",
+                    "Close Application",
                     "Are you sure you want to close application?",
                     "No",
                     "Yes", () {
@@ -340,8 +340,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                         ),
                       //Show details
                       Visibility(
-                          visible: controller.isHidePanel.value,
-                          child: const DraggableDetailsSheet()),
+                        visible: controller.isHidePanel.value,
+                        child: const DraggableDetailsSheet(),
+                      ),
                     ],
                   ),
           ),
@@ -571,7 +572,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                     "amen": controller.amenities
                                   }
                                 ];
-                                // print("filter param $filterParam");
+
                                 return FilterMap(
                                     data: filterParam,
                                     cb: (data) {

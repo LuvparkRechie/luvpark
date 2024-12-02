@@ -368,11 +368,11 @@ class MyVehiclesController extends GetxController {
       "vehicle_plate_no": plateNo,
       "vehicle_brand_id": brandId,
     };
-    print("param $param");
+
     final returnPost =
         await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
             .postBody();
-    print("returnPost $returnPost");
+
     if (returnPost == "No Internet") {
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {

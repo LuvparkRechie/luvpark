@@ -40,7 +40,7 @@ class WalletSendController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    print("sulod inataya nimo mae");
+
     refreshUserData();
     padData.value = dataList;
   }
