@@ -1,13 +1,11 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/routes/routes.dart';
-import 'package:root_checker_plus/root_checker_plus.dart';
+import 'package:luvpark/security/app_security.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/variables.dart';
@@ -41,93 +39,13 @@ class SplashController extends GetxController
   }
 
   Future<void> initializeApp() async {
-    await checkDeviceSecurity();
-    // await determineInitialRoute();
-  }
-
-  Future<void> checkDeviceSecurity() async {
-    if (Platform.isAndroid) {
-      await androidRootChecker();
-      await developerMode();
-    } else if (Platform.isIOS) {
-      await iosJailbreak();
-    }
-    if (rootedCheck || devMode || jailbreak) {
-      if (rootedCheck && jailbreak && devMode) {
-        message = 'rooted, jailbroken, and in developer mode';
-      } else if (rootedCheck && jailbreak) {
-        message = 'rooted and jailbroken';
-      } else if (rootedCheck && devMode) {
-        message = 'rooted and in developer mode';
-      } else if (jailbreak && devMode) {
-        message = 'jailbroken and in developer mode';
-      } else if (rootedCheck) {
-        message = 'rooted';
-      } else if (jailbreak) {
-        message = 'jailbroken';
-      } else if (devMode) {
-        message = 'in developer mode';
-      }
-      showExitWarning(message);
-    } else {
+    List appSecurity = await AppSecurity.checkDeviceSecurity();
+    bool isAppSecured = appSecurity[0]["is_secured"];
+    if (isAppSecured) {
       await determineInitialRoute();
+    } else {
+      Variables.showSecurityPopUp(appSecurity[0]["msg"]);
     }
-  }
-
-  Future<void> androidRootChecker() async {
-    try {
-      rootedCheck = (await RootCheckerPlus.isRootChecker())!;
-    } on PlatformException {
-      rootedCheck = false;
-    }
-  }
-
-  Future<void> developerMode() async {
-    try {
-      devMode = (await RootCheckerPlus.isDeveloperMode())!;
-    } on PlatformException {
-      devMode = false;
-    }
-  }
-
-  Future<void> iosJailbreak() async {
-    try {
-      jailbreak = (await RootCheckerPlus.isJailbreak())!;
-    } on PlatformException {
-      jailbreak = false;
-    }
-  }
-
-  void showExitWarning(msg) {
-    CustomDialog().securityDialog(
-        "Security Warning",
-        'Your device is $msg. '
-            'For security reasons, the app will now close.', () {
-      if (Platform.isAndroid || Platform.isIOS) {
-        SystemNavigator.pop();
-      } else {
-        exit(0);
-      }
-    });
-    // showDialog(
-    //   context: Get.context!,
-    //   barrierDismissible: false,
-    //   builder: (context) => AlertDialog(
-    //     title: Text('Security Warning'),
-    //     content: Text(
-    //       'Your device is rooted, jailbroken, or in developer mode. '
-    //       'For security reasons, the app will now close.',
-    //     ),
-    //     actions: [
-    //       TextButton(
-    //         onPressed: () {
-    //
-    //         },
-    //         child: Text('OK'),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 
   Future<void> determineInitialRoute() async {
@@ -161,6 +79,7 @@ class SplashController extends GetxController
             isNetConn.value = true;
 
             HttpRequest(api: apiParam).get().then((returnBrandData) async {
+              print("returnBrandData $returnBrandData");
               if (returnBrandData == "No Internet") {
                 isNetConn.value = false;
                 CustomDialog().internetErrorDialog(Get.context!, () {

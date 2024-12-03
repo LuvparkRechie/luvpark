@@ -8,6 +8,7 @@ import 'dart:ui' as ui;
 import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -20,6 +21,8 @@ import 'package:text_to_speech/text_to_speech.dart';
 import '../functions/functions.dart';
 
 class Variables {
+  static Timer? inactiveTmr;
+  static Timer? bgProcess;
   static BuildContext? ctxt;
   static late Size screenSize;
   static void init(BuildContext context) {
@@ -653,5 +656,35 @@ class Variables {
     } on SocketException catch (_) {
       return false;
     }
+  }
+
+  static showSecurityPopUp(String msg) {
+    ScaffoldMessenger.of(Get.context!).showSnackBar(
+      SnackBar(
+        margin: EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: MediaQuery.of(Get.context!).size.width * 0.27,
+        ),
+        elevation: 5.0,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(7.0),
+        ),
+        content: Wrap(
+          children: [
+            Center(
+              child: Text(
+                'Your device is $msg. '
+                'For security reasons, the app will now close.',
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+    Future.delayed(Duration(seconds: 2), () {
+      FlutterExitApp.exitApp(iosForceExit: true);
+    });
   }
 }
