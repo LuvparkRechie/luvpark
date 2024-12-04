@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
@@ -79,9 +80,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 }, () {
                   Get.back();
                   Future.delayed(Duration(milliseconds: 500), () {
-                    if (Platform.isAndroid) {
-                      SystemNavigator.pop();
-                    }
+                    FlutterExitApp.exitApp(iosForceExit: true);
                   });
                 });
               }

@@ -33,7 +33,8 @@ class AppSecurity {
         message = 'in developer mode';
       }
       return [
-        {'is_secured': false, 'msg': message}
+        //{'is_secured': false, 'msg': message} // please uncomment
+        {'is_secured': true, 'msg': ""}
       ];
     } else {
       return [

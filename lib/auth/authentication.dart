@@ -167,4 +167,17 @@ class Authentication {
 
     return isLogout;
   }
+
+  //SEt biometric  status
+  Future<void> setBiometricStatus(bool status) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('enable_biometric', status);
+  }
+
+  Future<bool?> getBiometricStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? isLogout = prefs.getBool("enable_biometric");
+
+    return isLogout;
+  }
 }

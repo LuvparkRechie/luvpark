@@ -123,7 +123,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                               : decor1(),
                                       child: Center(
                                         child: CustomParagraph(
-                                          text: "Reservations",
+                                          text: "Bookings",
                                           fontWeight: FontWeight.w500,
                                           fontSize: 14,
                                           color:

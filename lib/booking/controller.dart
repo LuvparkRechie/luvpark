@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/booking/utils/success_dialog.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/functions/functions.dart';
@@ -14,7 +15,6 @@ import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import 'utils/success_dialog.dart';
 import 'view.dart';
 
 class BookingController extends GetxController
@@ -220,8 +220,9 @@ class BookingController extends GetxController
 
     String api =
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
-
+    print("api $api");
     HttpRequest(api: api).get().then((myVehicles) async {
+      print("myVehicles $myVehicles");
       if (myVehicles == "No Internet") {
         isInternetConn.value = false;
         isLoadingPage.value = false;
@@ -496,6 +497,7 @@ class BookingController extends GetxController
   }
 
   void onTapChanged(bool isIncrement) {
+    if (isSubscribed.value) return;
     int inatay = selectedVh.isEmpty ? 1 : selectedVh[0]["base_hours"];
     if (isIncrement) {
       if (selectedNumber.value == endNumber.value) return;
@@ -679,8 +681,11 @@ class BookingController extends GetxController
       "vehicle_type_id": params["vehicle_type_id"].toString(),
       "vehicle_plate_no": params["vehicle_plate_no"],
       "park_area_id": params["park_area_id"].toString(),
-      "points_used": double.parse(usedRewards.toString()),
-      "auto_extend": isExtendchecked.value ? "Y" : "N"
+      "points_used": double.parse(usedRewards.value.toString()),
+      'zv_subscription_dtl_id': selectedVh[0]["subscription_dtl_id"] ??
+          selectedVh[0]["subscription_dtl_id"],
+      "auto_extend": isExtendchecked.value ? "Y" : "N",
+      "version": 2
     };
     Get.back();
 
@@ -699,6 +704,7 @@ class BookingController extends GetxController
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
+        print("objData post booking $objData");
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
           Get.back();
@@ -713,11 +719,51 @@ class BookingController extends GetxController
           CustomDialog().serverErrorDialog(Get.context!, () {
             Get.back();
           });
-        }
-
-        if (objData["success"] == "Y") {
-          issueTicket(objData, params, areaEtaTime, bookingParams, allowChkin);
           return;
+        }
+        if (objData["success"] == "Y") {
+          dynamic paramArgs = {
+            'parkArea': parameters["areaData"]["park_area_name"],
+            'startDate': Variables.formatDate(
+                bookingParams[0]["dt_in"].toString().split(" ")[0]),
+            'endDate': Variables.formatDate(
+                bookingParams[0]["dt_out"].toString().split(" ")[0]),
+            'startTime':
+                bookingParams[0]["dt_in"].toString().split(" ")[1].toString(),
+            'endTime':
+                bookingParams[0]["dt_out"].toString().split(" ")[1].toString(),
+            'plateNo': bookingParams[0]["vehicle_plate_no"].toString(),
+            'hours': bookingParams[0]["no_hours"].toString(),
+            'amount': totalAmount.value.toString(),
+            'refno': objData["lp_ref_no"].toString(),
+            'lat':
+                double.parse(parameters["areaData"]['pa_latitude'].toString()),
+            'long':
+                double.parse(parameters["areaData"]['pa_longitude'].toString()),
+            'canReserved': false,
+            'isReserved': false,
+            'isShowRate': true,
+            'address': parameters["areaData"]["address"],
+            'area_data': parameters["areaData"],
+            'isAutoExtend': false,
+            'isBooking': true,
+            'status': "B",
+            'paramsCalc': bookingParams[0]
+          };
+
+          Authentication().setLastBooking(jsonEncode(selectedVh));
+          if (allowChkin) {
+            checkIn(objData["ticket_id"], userId, paramArgs);
+            return;
+          } else {
+            Get.back();
+            isSubmitBooking.value = false;
+            inactivityTimer?.cancel();
+
+            Get.offAll(BookingDialog(data: [paramArgs]));
+            Get.back();
+            return;
+          }
         }
         if (objData["success"] == "Q") {
           Get.back();
@@ -779,103 +825,6 @@ class BookingController extends GetxController
     });
   }
 
-  Future<void> issueTicket(
-      pobjData, params, areaEtaTime, bookingParams, bool allowChkin) async {
-    int? userId = await Authentication().getUserId();
-    final userData = await Authentication().getUserData2();
-
-    dynamic param = {
-      "ticket_category": "AP",
-      "amount": totalAmount.value.toString(),
-      "points_used": double.parse(usedRewards.toString()),
-      "no_hours": selectedNumber.value.toString(),
-      "luvpay_id": userId,
-      "lp_ref_no": pobjData["lp_ref_no"].toString(),
-      "vehicle_type_id": params["vehicle_type_id"].toString(),
-      "vehicle_plate_no": params["vehicle_plate_no"],
-      "park_area_id": params["park_area_id"].toString(),
-      "eta_in_mins": areaEtaTime,
-      "dt_in": params["dt_in"].toString(),
-      "dt_out": params["dt_out"].toString(),
-      "is_auto_extend": isExtendchecked.value ? "Y" : "N",
-      'base_rate': selectedVh[0]["base_rate"],
-      "base_hours": selectedVh[0]["base_hours"],
-      "succeeding_rate": selectedVh[0]["succeeding_rate"],
-      'disc_rate': '0',
-      "mobile_no": userData["mobile_no"],
-      'payment_hk': pobjData["payment_hk"]
-    };
-    HttpRequest(api: ApiKeys.gApiIssueTicket, parameters: param)
-        .postBody()
-        .then((returnData) async {
-      if (returnData == "No Internet") {
-        isSubmitBooking.value = false;
-        Get.back();
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (returnData == null) {
-        Get.back();
-        isSubmitBooking.value = false;
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      }
-      if (returnData["success"] == "Y") {
-        dynamic paramArgs = {
-          'parkArea': parameters["areaData"]["park_area_name"],
-          'startDate': Variables.formatDate(
-              bookingParams[0]["dt_in"].toString().split(" ")[0]),
-          'endDate': Variables.formatDate(
-              bookingParams[0]["dt_out"].toString().split(" ")[0]),
-          'startTime':
-              bookingParams[0]["dt_in"].toString().split(" ")[1].toString(),
-          'endTime':
-              bookingParams[0]["dt_out"].toString().split(" ")[1].toString(),
-          'plateNo': bookingParams[0]["vehicle_plate_no"].toString(),
-          'hours': bookingParams[0]["no_hours"].toString(),
-          'amount': totalAmount.value.toString(),
-          'refno': returnData["ticket_ref_no"].toString(),
-          'lat': double.parse(parameters["areaData"]['pa_latitude'].toString()),
-          'long':
-              double.parse(parameters["areaData"]['pa_longitude'].toString()),
-          'canReserved': false,
-          'isReserved': false,
-          'isShowRate': true,
-          'reservationId': returnData["ticket_id"],
-          'address': parameters["areaData"]["address"],
-          'area_data': parameters["areaData"],
-          'isAutoExtend': false,
-          'isBooking': true,
-          'status': "B",
-          'paramsCalc': bookingParams[0]
-        };
-
-        Authentication().setLastBooking(jsonEncode(selectedVh));
-        if (allowChkin) {
-          checkIn(returnData["ticket_id"], userId, paramArgs);
-          return;
-        } else {
-          Get.back();
-          isSubmitBooking.value = false;
-          inactivityTimer?.cancel();
-
-          Get.back();
-          Get.offAll(BookingDialog(data: [paramArgs]));
-          return;
-        }
-      } else {
-        Get.back();
-        CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
-            () {
-          Get.back();
-        });
-      }
-    });
-  }
-
   //Self checkin
   Future<void> checkIn(ticketId, lpId, args) async {
     dynamic chkInParam = {
@@ -904,6 +853,7 @@ class BookingController extends GetxController
         return;
       }
       isSubmitBooking.value = false;
+      inactivityTimer?.cancel();
       Get.back();
       if (returnData["success"] == 'Y') {
         CustomDialog().successDialog(
@@ -942,7 +892,6 @@ class BookingController extends GetxController
     }
 
     isLoadingPage.value = true;
-
     usedRewards.value = parsedData.toString();
 
     final int currentTokenRewards = int.parse(tokenRewards.value.toString());
@@ -963,8 +912,6 @@ class BookingController extends GetxController
 
     // Replace multiple spaces with a single space
     String formattedText = inputText.replaceAll(RegExp(r'\s+'), ' ');
-
-    // Update error message if input is not valid
     if (formattedText != inputText) {
       txtController.text = formattedText;
 
@@ -972,21 +919,28 @@ class BookingController extends GetxController
         TextPosition(offset: formattedText.length),
       );
     }
-
-    return ''; // Return an empty string if valid
+    return '';
   }
 
   void confirmBooking() {
-    Get.bottomSheet(
-      ConfirmBooking(),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(15.0),
-          topRight: Radius.circular(15.0),
+    if (double.parse(parameters["userData"][0]["amount_bal"].toString()) >=
+        double.parse(totalAmount.value.toString())) {
+      Get.bottomSheet(
+        ConfirmBooking(),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(15.0),
+            topRight: Radius.circular(15.0),
+          ),
         ),
-      ),
-      backgroundColor: Colors.white,
-    );
+        backgroundColor: Colors.white,
+      );
+    } else {
+      CustomDialog().infoDialog(
+          "Insuficient Funds", "Insuficient funds please top-up", () {
+        Get.back();
+      });
+    }
   }
 
   void onFieldChanged() {
@@ -1000,7 +954,6 @@ class BookingController extends GetxController
   }
 
   Future<List> filterSubscriotion(String plNo, int id) async {
-    //check if subscribed
     List data = Variables.subsVhList.where((obj) {
       return obj["vehicle_type_id"] == id && obj["vehicle_plate_no"] == plNo;
     }).toList();
@@ -1026,6 +979,7 @@ class BookingController extends GetxController
         'succeeding_rate': "0",
         'base_rate': data[0]["subscription_rate"],
         'vehicle_type': data[0]["vehicle_type"],
+        'subscription_dtl_id': data[0]["zv_subscription_dtl_id"]
       }
     ];
     selectedNumber.value = selectedVh[0]["base_hours"];
@@ -1040,14 +994,6 @@ class BookingController extends GetxController
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
 
-    // endTime.value = DateFormat('h:mm a')
-    //     .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-    //     .toString();
-    // paramEndTime.value = DateFormat('HH:mm')
-    //     .format(parsedTime.add(Duration(hours: selectedNumber.value)))
-    //     .toString();
-
-    //afdsafa
     DateTime sTime = DateFormat('yyyy-MM-dd HH:mm')
         .parse("${startDate.text} ${timeInParam.text}");
 
@@ -1063,13 +1009,31 @@ class BookingController extends GetxController
     endTime.value = DateFormat('h:mm a').format(cTime).toString();
     paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
 
-    //afasfd
-
     onFieldChanged();
   }
 
-  void onToggleRewards(bool isUse) {
+  void onToggleRewards(bool isUse) async {
     isUseRewards.value = isUse;
+
+    if (!isUse) {
+      usedRewards.value = "0";
+      return;
+    }
+    CustomDialog().loadingDialog(Get.context!);
+
+    double rewards = double.parse(displayRewards.value.toString());
+    double paidAmt = double.parse(totalAmount.value.toString());
+    double totalRewardsDeducted = 0.0;
+
+    if (paidAmt < rewards) {
+      totalRewardsDeducted = rewards - paidAmt;
+      usedRewards.value = (rewards - totalRewardsDeducted).toString();
+    } else if (paidAmt == rewards || paidAmt > rewards) {
+      usedRewards.value = rewards.toString();
+    }
+    await Future.delayed(Duration(milliseconds: 500));
+    Get.back();
+    print("usedRewards $usedRewards");
   }
 
   void vehicleSelection(int index) {
@@ -1082,13 +1046,13 @@ class BookingController extends GetxController
             await Future.delayed(Duration(milliseconds: 500), () async {
               List objData = data;
 
-              List dataHabibi = await filterSubscriotion(
+              List filterSub = await filterSubscriotion(
                   objData[0]["vehicle_plate_no"],
                   objData[0]["vehicle_type_id"]);
-
-              if (dataHabibi.isNotEmpty) {
+              print("filterSub $filterSub");
+              if (filterSub.isNotEmpty) {
                 Get.back();
-                checkIfSubscribed(dataHabibi);
+                checkIfSubscribed(filterSub);
               } else {
                 List filterData = ddVehiclesData.where((obj) {
                   return obj["value"] == data[0]["vehicle_type_id"];

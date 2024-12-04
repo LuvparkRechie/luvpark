@@ -776,7 +776,8 @@ class BookingPage extends GetView<BookingController> {
                                     children: [
                                       Container(height: 20),
                                       Visibility(
-                                        visible: ct.displayRewards.value > 0,
+                                        visible: ct.displayRewards.value > 0 &&
+                                            controller.selectedVh.isNotEmpty,
                                         child: Column(
                                           children: [
                                             Padding(
@@ -975,87 +976,6 @@ class BookingPage extends GetView<BookingController> {
                 )),
           ),
         ),
-      ),
-    );
-  }
-
-  Container rewardDialog() {
-    return Container(
-      padding: EdgeInsets.fromLTRB(15, 30, 15, 10),
-      height: MediaQuery.of(Get.context!).size.height * .50,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(15))),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          InkWell(
-            onTap: () {
-              controller.rewardsCon.clear();
-              Get.back();
-            },
-            child: Container(
-                padding: const EdgeInsets.all(10),
-                clipBehavior: Clip.antiAlias,
-                decoration: ShapeDecoration(
-                  color: Color(0xFF0078FF),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(43),
-                  ),
-                  shadows: [
-                    BoxShadow(
-                      color: Color(0x0C000000),
-                      blurRadius: 15,
-                      offset: Offset(0, 5),
-                      spreadRadius: 0,
-                    )
-                  ],
-                ),
-                child: Icon(
-                  LucideIcons.arrowLeft,
-                  color: Colors.white,
-                  size: 16,
-                )),
-          ),
-          Container(
-            height: 20,
-          ),
-          CustomTitle(
-            text: "Reward points",
-            fontSize: 20,
-          ),
-          CustomTextField(
-            labelText: "Amount",
-            controller: controller.rewardsCon,
-            keyboardType: TextInputType.number,
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            onChange: (value) {
-              if (int.parse(value.toString()) >=
-                  int.parse(controller.totalAmount.value)) {
-                FocusManager.instance.primaryFocus!.unfocus();
-                Future.delayed(Duration(milliseconds: 500), () {
-                  CustomDialog().infoDialog("Amount Exceed", "Invalid amount",
-                      () {
-                    Get.back();
-                    controller.rewardsCon.text =
-                        value.substring(0, value.length - 1);
-                  });
-                });
-              }
-            },
-          ),
-          Container(height: 10),
-          CustomParagraph(
-            text:
-                "Reward points should not be greater than the total bill for parking",
-            maxlines: 2,
-            fontSize: 10,
-          ),
-          Container(height: 50),
-          CustomButton(
-            text: "Proceed",
-            onPressed: () {},
-          )
-        ],
       ),
     );
   }

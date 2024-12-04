@@ -11,7 +11,6 @@ import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
-import 'package:luvpark/my_vehicles/utils/sub_details.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/custom_text.dart';
@@ -274,7 +273,8 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                         controller.subscrbeVh(
                                                                             result,
                                                                             controller.vehicleData[index]["vehicle_plate_no"].toString(),
-                                                                            controller.vehicleData[index]["vehicle_brand_id"].toString());
+                                                                            controller.vehicleData[index]["vehicle_brand_id"].toString(),
+                                                                            controller.vehicleData[index]["vehicle_type_id"].toString());
                                                                       }
                                                                     },
                                                                   ),

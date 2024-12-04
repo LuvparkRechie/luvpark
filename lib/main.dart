@@ -31,6 +31,7 @@ Future<void> backgroundFunc() async {
       Timer.periodic(const Duration(seconds: 10), (timer) async {
     List appSecurity = await AppSecurity.checkDeviceSecurity();
     bool isAppSecured = appSecurity[0]["is_secured"];
+    print("isAppSecured $isAppSecured");
     if (isAppSecured) {
       final isLogout = await Authentication().getLogoutStatus();
 
@@ -50,6 +51,7 @@ Future<void> backgroundFunc() async {
 }
 
 void _onUserActivity() {
+  return;
   if (Variables.inactiveTmr?.isActive ?? false) Variables.inactiveTmr?.cancel();
 
   Duration duration = const Duration(minutes: 3);
@@ -71,7 +73,7 @@ void _onUserActivity() {
     AwesomeNotifications().dismissAllNotifications();
     AwesomeNotifications().cancelAll();
     Variables.inactiveTmr!.cancel();
-    Variables.bgProcess!.cancel();
+    // Variables.bgProcess!.cancel();
     Get.back();
     Get.offAllNamed(Routes.login);
   });

@@ -363,7 +363,8 @@ class MyVehiclesController extends GetxController {
     });
   }
 
-  void subscrbeVh(String scQr, String plateNo, String brandId) async {
+  void subscrbeVh(
+      String scQr, String plateNo, String brandId, String vhTypeId) async {
     CustomDialog().loadingDialog(Get.context!);
     int? lpId = await Authentication().getUserId();
     dynamic param = {
@@ -371,7 +372,10 @@ class MyVehiclesController extends GetxController {
       "luvpay_id": lpId,
       "vehicle_plate_no": plateNo,
       "vehicle_brand_id": brandId,
+      "vehicle_type_id": vhTypeId,
     };
+
+    print("param $param");
     final returnPost =
         await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
             .postBody();
