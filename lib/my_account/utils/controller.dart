@@ -90,8 +90,14 @@ class UpdateProfileController extends GetxController {
           {"text": datas["region_name"], "value": datas["region_id"]},
         );
       }
+      // for (dynamic item in Variables.civilStatusData) {
+      //   civilData.add({"text": item["status"], "value": item["value"]});
+      // }
       for (dynamic item in Variables.civilStatusData) {
-        civilData.add({"text": item["status"], "value": item["value"]});
+        civilData.add({
+          "text": toProperCase(item["status"]),
+          "value": item["value"],
+        });
       }
       getSuffixes();
     });
@@ -102,6 +108,15 @@ class UpdateProfileController extends GetxController {
     super.onClose();
     pageController.dispose();
     focusNode.dispose();
+  }
+
+  String toProperCase(String text) {
+    return text
+        .split(' ')
+        .map((word) => word.isNotEmpty
+            ? word[0].toUpperCase() + word.substring(1).toLowerCase()
+            : '')
+        .join(' ');
   }
 
   Future<void> getUserDataFields() async {

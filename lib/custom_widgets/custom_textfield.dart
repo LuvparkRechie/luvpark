@@ -402,7 +402,7 @@ DropdownButtonFormField<String> customDropdown({
       return DropdownMenuItem(
           value: item['value'].toString(),
           child: AutoSizeText(
-            item['text'].toString().toUpperCase(),
+            item['text'].toString(),
             style: paragraphStyle(
                 color: Colors.black, fontWeight: FontWeight.w500),
             overflow: TextOverflow.ellipsis,

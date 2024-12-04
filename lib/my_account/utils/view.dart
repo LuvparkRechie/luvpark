@@ -220,6 +220,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(30),
+                  SimpleNameFormatter(), // Add your custom formatter here
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -239,6 +240,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 controller: controller.middleName,
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(30),
+                  SimpleNameFormatter(),
                 ],
                 textCapitalization: TextCapitalization.words,
                 onChange: (inputText) {
@@ -278,6 +280,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(30),
+                  SimpleNameFormatter(),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -513,13 +516,10 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 labelText: 'Zip Code',
                 controller: controller.zipCode,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^[a-zA-Z0-9]*$')),
+                  NumericInputFormatter(), // Custom formatter
                   LengthLimitingTextInputFormatter(4),
                 ],
-                keyboardType: Platform.isAndroid
-                    ? TextInputType.number
-                    : const TextInputType.numberWithOptions(
-                        signed: true, decimal: false),
+                keyboardType: TextInputType.number,
                 onChange: (value) {
                   controller.zipCode.selection = TextSelection.fromPosition(
                       TextPosition(offset: controller.zipCode.text.length));
@@ -609,6 +609,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
                               }
+                              if (value.length < 4) {
+                                return 'Minimum length is 4 characters.';
+                              }
+                              if (value.length > 30) {
+                                return 'Maximum length is 30 characters.';
+                              }
 
                               return null;
                             },
@@ -674,7 +680,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
                               }
-
+                              if (value.length < 4) {
+                                return 'Minimum length is 4 characters.';
+                              }
+                              if (value.length > 30) {
+                                return 'Maximum length is 30 characters.';
+                              }
                               return null;
                             },
                           ),
@@ -739,7 +750,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
                               }
-
+                              if (value.length < 4) {
+                                return 'Minimum length is 4 characters.';
+                              }
+                              if (value.length > 30) {
+                                return 'Maximum length is 30 characters.';
+                              }
                               return null;
                             },
                           ),
@@ -818,57 +834,51 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       ],
     );
   }
+}
 
-  String validateText(String inputText, TextEditingController txtController) {
-    // Check if the first character is a space or special character
-    if (inputText.isNotEmpty && !RegExp(r'^[a-zA-Z0-9]').hasMatch(inputText)) {
-      return 'Text must not start with a space or special character';
+class NumericInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Allow only numbers
+    if (RegExp(r'^\d*$').hasMatch(newValue.text)) {
+      return newValue;
     }
-
-    // Replace multiple spaces with a single space
-    String formattedText = inputText.replaceAll(RegExp(r'\s+'), ' ');
-
-    // Update error message if input is not valid
-    if (formattedText != inputText) {
-      txtController.text = formattedText;
-
-      txtController.selection = TextSelection.fromPosition(
-        TextPosition(offset: formattedText.length),
-      );
-    }
-
-    return ''; // Return an empty string if valid
+    // Ignore changes if the input is invalid
+    return oldValue;
   }
 }
 
-// class SimpleNameFormatter extends TextInputFormatter {
-//   @override
-//   TextEditingValue formatEditUpdate(
-//       TextEditingValue oldValue, TextEditingValue newValue) {
-//     // Updated regex to disallow specific sequences
-//     final regex = RegExp(r'^(|[a-zA-Z][a-zA-Z.-]*( [a-zA-Z.-]*)? ?)$');
+class SimpleNameFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    // Updated regex to disallow specific sequences
+    final regex = RegExp(r'^(|[a-zA-Z][a-zA-Z.-]*( [a-zA-Z.-]*)? ?)$');
 
-//     // Count spaces, periods, and hyphens in the new value
-//     int spaceCount = newValue.text.split(' ').length - 1;
-//     int periodCount = newValue.text.split('.').length - 1;
-//     int hyphenCount = newValue.text.split('-').length - 1;
+    // Count spaces, periods, and hyphens in the new value
+    int spaceCount = newValue.text.split(' ').length - 1;
+    int periodCount = newValue.text.split('.').length - 1;
+    int hyphenCount = newValue.text.split('-').length - 1;
 
-//     bool hasDisallowedCombination = newValue.text.contains('. -') ||
-//         newValue.text.contains('- .') ||
-//         newValue.text.contains(' .') ||
-//         newValue.text.contains('-.') ||
-//         newValue.text.contains('.-') ||
-//         newValue.text.contains('- ') ||
-//         newValue.text.contains(' -') ||
-//         newValue.text.contains('. ');
+    bool hasDisallowedCombination = newValue.text.contains('. -') ||
+        newValue.text.contains('- .') ||
+        newValue.text.contains(' .') ||
+        newValue.text.contains('-.') ||
+        newValue.text.contains('.-') ||
+        newValue.text.contains('- ') ||
+        newValue.text.contains(' -') ||
+        newValue.text.contains('. ');
 
-//     if (regex.hasMatch(newValue.text) &&
-//         spaceCount <= 1 &&
-//         periodCount <= 1 &&
-//         hyphenCount <= 1 &&
-//         !hasDisallowedCombination) {
-//       return newValue;
-//     }
-//     return oldValue;
-//   }
-// }
+    // Check for 30-character limit
+    if (newValue.text.length <= 30 &&
+        regex.hasMatch(newValue.text) &&
+        spaceCount <= 1 &&
+        periodCount <= 1 &&
+        hyphenCount <= 1 &&
+        !hasDisallowedCombination) {
+      return newValue;
+    }
+    return oldValue;
+  }
+}
