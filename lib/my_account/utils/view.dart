@@ -519,7 +519,10 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   NumericInputFormatter(), // Custom formatter
                   LengthLimitingTextInputFormatter(4),
                 ],
-                keyboardType: TextInputType.number,
+                keyboardType: Platform.isAndroid
+                    ? TextInputType.number
+                    : const TextInputType.numberWithOptions(
+                        signed: true, decimal: false),
                 onChange: (value) {
                   controller.zipCode.selection = TextSelection.fromPosition(
                       TextPosition(offset: controller.zipCode.text.length));

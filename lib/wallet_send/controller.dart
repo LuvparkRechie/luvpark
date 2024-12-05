@@ -1,13 +1,16 @@
 import 'dart:async';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../custom_widgets/alert_dialog.dart';
+import '../custom_widgets/scanner.dart';
 
 class WalletSendController extends GetxController {
   WalletSendController();
@@ -18,7 +21,7 @@ class WalletSendController extends GetxController {
   final GlobalKey contentKey = GlobalKey();
   RxBool isLpAccount = false.obs;
   RxBool isLoading = true.obs;
-
+  PermissionStatus _cameraStatus = PermissionStatus.denied;
   RxBool isNetConn = true.obs;
   RxList userData = [].obs;
 
@@ -40,7 +43,7 @@ class WalletSendController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
+    _checkCameraPermission();
     refreshUserData();
     padData.value = dataList;
   }
@@ -51,6 +54,58 @@ class WalletSendController extends GetxController {
       formKeySend.currentState!.reset();
     }
     super.onClose();
+  }
+
+  Future<void> _checkCameraPermission() async {
+    PermissionStatus status = await Permission.camera.status;
+    _cameraStatus = status;
+  }
+
+  Future<void> requestCameraPermission() async {
+    PermissionStatus status = await Permission.camera.request();
+
+    _cameraStatus = status;
+
+    if (status.isGranted) {
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+        SnackBar(content: Text('Camera permission granted')),
+      );
+      Get.to(ScannerScreen(
+        onchanged: (ScannedData args) {
+          String scannedMobileNumber = args.scannedHash;
+          String formattedNumber =
+              scannedMobileNumber.replaceAll(RegExp(r'\D'), '');
+
+          if (formattedNumber.length >= 12) {
+            formattedNumber = formattedNumber.substring(2);
+          }
+
+          if (formattedNumber.isEmpty ||
+              formattedNumber.length != 10 ||
+              formattedNumber[0] == '0') {
+            recipient.text = "";
+            CustomDialog().errorDialog(
+              Get.context!,
+              "Invalid QR Code",
+              "The scanned QR code is invalid. Please try again.",
+              () {
+                Get.back();
+              },
+            );
+          } else {
+            recipient.text = formattedNumber;
+            onTextChange();
+          }
+        },
+      ));
+    } else if (status.isDenied) {
+      // Permission denied
+      ScaffoldMessenger.of(Get.context!).showSnackBar(
+        SnackBar(content: Text('Camera permission denied')),
+      );
+    } else if (status.isPermanentlyDenied) {
+      AppSettings.openAppSettings();
+    }
   }
 
 // //naa

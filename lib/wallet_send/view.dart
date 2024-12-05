@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
@@ -12,10 +11,8 @@ import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:luvpark/wallet_send/index.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 import '../custom_widgets/app_color.dart';
-import '../custom_widgets/scanner.dart';
 import '../custom_widgets/variables.dart';
 
 class WalletSend extends GetView<WalletSendController> {
@@ -163,48 +160,9 @@ class WalletSend extends GetView<WalletSendController> {
                                   },
                                   suffixIcon: Icons.qr_code,
                                   onIconTap: () async {
-                                    FocusNode().unfocus();
-
-                                    // Check the current permission status
-                                    final status =
-                                        await Permission.camera.status;
-
-                                    if (status == PermissionStatus.denied) {
-                                      final newStatus =
-                                          await Permission.camera.request();
-
-                                      if (newStatus ==
-                                          PermissionStatus.granted) {
-                                      } else if (newStatus ==
-                                          PermissionStatus.permanentlyDenied) {
-                                        // Camera permission permanently denied
-                                        CustomDialog().confirmationDialog(
-                                            context,
-                                            "Camera Permission Denied",
-                                            "It looks like you denied the camera permission. You can enable camera access in your device's settings.",
-                                            "Cancel",
-                                            "Enable", () {
-                                          Get.back();
-                                        }, () {
-                                          Get.back();
-                                          AppSettings.openAppSettings();
-                                        });
-                                      }
-                                    } else if (status ==
-                                        PermissionStatus.permanentlyDenied) {
-                                      // Handle case when permission is permanently denied
-                                      CustomDialog().confirmationDialog(
-                                          context,
-                                          "Camera Permission Denied",
-                                          "It looks like you denied the camera permission. You can enable camera access in your device's settings.",
-                                          "Cancel",
-                                          "Enable", () {
-                                        Get.back();
-                                      }, () {
-                                        Get.back();
-                                        AppSettings.openAppSettings();
-                                      });
-                                    } else {}
+                                    FocusManager.instance.primaryFocus!
+                                        .unfocus();
+                                    controller.requestCameraPermission();
                                   },
                                 ),
                                 CustomTextField(
