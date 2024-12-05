@@ -182,6 +182,10 @@ class CustomElevatedButton extends StatelessWidget {
   final double fontSize;
   final double? btnHeight;
   final Color? borderColor;
+  final IconData? icon;
+  final double iconSize;
+  final Color? iconColor;
+  final double spacing;
 
   const CustomElevatedButton({
     Key? key,
@@ -195,6 +199,10 @@ class CustomElevatedButton extends StatelessWidget {
     this.fontSize = 14.0,
     this.btnHeight,
     this.borderColor,
+    this.icon,
+    this.iconSize = 20.0,
+    this.iconColor,
+    this.spacing = 8.0,
   }) : super(key: key);
 
   @override
@@ -224,12 +232,26 @@ class CustomElevatedButton extends StatelessWidget {
                   strokeWidth: 2,
                 ),
               )
-            : Text(
-                text,
-                style: TextStyle(
-                  fontSize: fontSize,
-                  fontWeight: FontWeight.w500,
-                ),
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (icon != null) ...[
+                    Icon(
+                      icon,
+                      size: iconSize,
+                      color: iconColor ?? textColor ?? Colors.white,
+                    ),
+                    SizedBox(width: spacing),
+                  ],
+                  Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
       ),
     );

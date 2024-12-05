@@ -23,6 +23,13 @@ class MyVehicles extends GetView<MyVehiclesController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          controller.getVehicleDropDown();
+        },
+        child: Icon(Icons.add),
+      ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
         toolbarHeight: 0,
@@ -48,67 +55,59 @@ class MyVehicles extends GetView<MyVehiclesController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(height: 10),
-                        InkWell(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(10),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: Color(0xFF0078FF),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(43),
+                        Stack(
+                          children: [
+                            Row(
+                              children: [
+                                // Back Button (start)
+                                InkWell(
+                                  onTap: () {
+                                    Get.back();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    clipBehavior: Clip.antiAlias,
+                                    decoration: ShapeDecoration(
+                                      color: Color(0xFF0078FF),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(43),
+                                      ),
+                                      shadows: [
+                                        BoxShadow(
+                                          color: Color(0x0C000000),
+                                          blurRadius: 15,
+                                          offset: Offset(0, 5),
+                                          spreadRadius: 0,
+                                        ),
+                                      ],
+                                    ),
+                                    child: Icon(
+                                      LucideIcons.arrowLeft,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
                                 ),
-                                shadows: [
-                                  BoxShadow(
-                                    color: Color(0x0C000000),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 5),
-                                    spreadRadius: 0,
-                                  )
-                                ],
+                              ],
+                            ),
+
+                            // Positioned My Vehicles Title (centered)
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 0,
+                              bottom: 0,
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: CustomTitle(
+                                  text: "My Vehicles",
+                                  fontSize: 16,
+                                ),
                               ),
-                              child: Icon(
-                                LucideIcons.arrowLeft,
-                                color: Colors.white,
-                                size: 16,
-                              )),
+                            ),
+                          ],
                         ),
                         Container(height: 20),
-                        Text(
-                          "My Vehicles",
-                          style: GoogleFonts.openSans(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.headerColor,
-                          ),
-                        ),
-                        Container(height: 20),
-                        InkWell(
-                          onTap: () {
-                            controller.getVehicleDropDown();
-                          },
-                          child: Row(
-                            children: [
-                              Container(
-                                padding: EdgeInsets.all(6),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color(0xFF8bd0ce),
-                                ),
-                                child: Icon(LucideIcons.plus),
-                              ),
-                              Container(width: 10),
-                              CustomParagraph(
-                                text: "Add vehicle",
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.headerColor,
-                              )
-                            ],
-                          ),
-                        ),
-                        Container(height: 30),
                         Expanded(
                           child: RefreshIndicator(
                             onRefresh: controller.onRefresh,
@@ -136,196 +135,349 @@ class MyVehicles extends GetView<MyVehiclesController> {
 
                                           return Padding(
                                             padding: const EdgeInsets.only(
-                                                bottom: 5),
-                                            child: Stack(
-                                              fit: StackFit.loose,
-                                              alignment: Alignment.topRight,
-                                              children: [
-                                                Container(
-                                                  padding: EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 15),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8.0),
-                                                    border: Border.all(
-                                                      color:
-                                                          Colors.grey.shade300,
-                                                      width: 1.0,
+                                                bottom: 15),
+                                            child: Container(
+                                              padding: EdgeInsets.symmetric(
+                                                  horizontal: 15, vertical: 10),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(8.0),
+                                                border: Border.all(
+                                                  color: Colors.grey.shade300,
+                                                  width: 1.0,
+                                                ),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.1),
+                                                    spreadRadius: 1,
+                                                    blurRadius: 6,
+                                                    offset: Offset(0, 3),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.center,
+                                                children: [
+                                                  // Vehicle details
+                                                  Expanded(
+                                                    flex: 3,
+                                                    child: Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        CustomParagraph(
+                                                          text: controller
+                                                              .vehicleData[
+                                                                  index][
+                                                                  "vehicle_plate_no"]
+                                                              .toString()
+                                                              .toUpperCase(),
+                                                          color: AppColor
+                                                              .headerColor,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          fontSize: 14,
+                                                        ),
+                                                        SizedBox(height: 5),
+                                                        CustomParagraph(
+                                                          maxlines: 1,
+                                                          text: controller
+                                                              .vehicleData[
+                                                                  index][
+                                                                  "vehicle_brand_name"]
+                                                              .toString()
+                                                              .toUpperCase(),
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontSize: 12,
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
-                                                  child: Column(
-                                                    children: [
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: Column(
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                CustomParagraph(
-                                                                  text: controller
-                                                                      .vehicleData[
-                                                                          index]
-                                                                          [
-                                                                          "vehicle_brand_name"]
-                                                                      .toString()
-                                                                      .toUpperCase(),
-                                                                  color: AppColor
-                                                                      .headerColor,
-                                                                  fontSize: 12,
-                                                                ),
-                                                                Container(
-                                                                    height: 5),
-                                                                CustomParagraph(
-                                                                  maxlines: 1,
-                                                                  text: controller
-                                                                      .vehicleData[
-                                                                          index]
-                                                                          [
-                                                                          "vehicle_plate_no"]
-                                                                      .toString()
-                                                                      .toUpperCase(),
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontSize: 16,
-                                                                ),
-                                                                Container(
-                                                                    height: 5),
-                                                                Container(
-                                                                    height: 10),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: Container(
-                                                              width: 60,
-                                                              height: 60,
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                image:
-                                                                    DecorationImage(
-                                                                  fit: BoxFit
-                                                                      .contain,
-                                                                  image: controller.vehicleData[index]["image"] ==
-                                                                              null ||
-                                                                          controller
-                                                                              .vehicleData[index][
-                                                                                  "image"]
-                                                                              .isEmpty
-                                                                      ? AssetImage(
-                                                                              "assets/images/no_image.png")
-                                                                          as ImageProvider
-                                                                      : MemoryImage(
-                                                                          base64Decode(
-                                                                            removeInvalidCharacters(controller.vehicleData[index]["image"]),
-                                                                          ),
-                                                                        ),
+                                                  // Vehicle image
+                                                  Container(
+                                                    width: 60,
+                                                    height: 40,
+                                                    margin:
+                                                        EdgeInsets.symmetric(
+                                                            horizontal: 10),
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        fit: BoxFit.contain,
+                                                        image: controller.vehicleData[
+                                                                            index]
+                                                                        [
+                                                                        "image"] ==
+                                                                    null ||
+                                                                controller
+                                                                    .vehicleData[
+                                                                        index][
+                                                                        "image"]
+                                                                    .isEmpty
+                                                            ? AssetImage(
+                                                                    "assets/images/no_image.png")
+                                                                as ImageProvider
+                                                            : MemoryImage(
+                                                                base64Decode(
+                                                                  removeInvalidCharacters(
+                                                                    controller.vehicleData[
+                                                                            index]
+                                                                        [
+                                                                        "image"],
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                        ],
                                                       ),
-                                                      SizedBox(height: 10),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                CustomElevatedButton(
-                                                              btnHeight: 40,
-                                                              fontSize: 12,
-                                                              btnColor: AppColor
-                                                                  .primaryColor,
-                                                              text: "Subscribe",
-                                                              onPressed: () {
-                                                                FocusNode()
-                                                                    .unfocus();
-
-                                                                Get.to(
-                                                                  ScannerScreen(
-                                                                    onchanged:
-                                                                        (ScannedData
-                                                                            args) {
-                                                                      String
-                                                                          result =
-                                                                          args.scannedHash;
-
-                                                                      if (result
-                                                                          .isEmpty) {
-                                                                        CustomDialog()
-                                                                            .errorDialog(
-                                                                          context,
-                                                                          "Invalid QR Code",
-                                                                          "The scanned QR code is invalid. Please try again.",
-                                                                          () {
-                                                                            Get.back();
-                                                                          },
-                                                                        );
-                                                                        return;
-                                                                      } else {
-                                                                        controller.subscrbeVh(
-                                                                            result,
-                                                                            controller.vehicleData[index]["vehicle_plate_no"].toString(),
-                                                                            controller.vehicleData[index]["vehicle_brand_id"].toString(),
-                                                                            controller.vehicleData[index]["vehicle_type_id"].toString());
-                                                                      }
-                                                                    },
-                                                                  ),
-                                                                );
-                                                              },
-                                                            ),
-                                                          ),
-                                                          SizedBox(width: 10),
-                                                          Expanded(
-                                                            child:
-                                                                CustomElevatedButton(
-                                                              text:
-                                                                  "Subscription",
-                                                              btnColor:
-                                                                  Colors.white,
-                                                              textColor: AppColor
-                                                                  .primaryColor,
-                                                              fontSize: 12,
-                                                              btnHeight: 40,
-                                                              onPressed:
-                                                                  () async {
-                                                                await controller
-                                                                    .getVhSubscriptionDetails(
-                                                                        index);
-                                                              },
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          top: 5, right: 5),
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      controller.onDeleteVehicle(
-                                                          controller.vehicleData[
-                                                                  index][
-                                                              "vehicle_plate_no"]);
-                                                    },
-                                                    child: Icon(
-                                                      Iconsax.trash,
-                                                      color: Colors.red,
-                                                      size: 20,
                                                     ),
                                                   ),
-                                                )
-                                              ],
+                                                  // More options button
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      Get.bottomSheet(
+                                                        Container(
+                                                          padding:
+                                                              EdgeInsets.all(
+                                                                  16),
+                                                          child: Column(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              SizedBox(
+                                                                  height: 10),
+                                                              Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceEvenly,
+                                                                children: [
+                                                                  // Subscribe Button
+                                                                  Flexible(
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        FocusNode()
+                                                                            .unfocus();
+                                                                        Get.to(
+                                                                          ScannerScreen(
+                                                                            onchanged:
+                                                                                (ScannedData args) {
+                                                                              String result = args.scannedHash;
+
+                                                                              if (result.isEmpty) {
+                                                                                CustomDialog().errorDialog(
+                                                                                  Get.context!,
+                                                                                  "Invalid QR Code",
+                                                                                  "The scanned QR code is invalid. Please try again.",
+                                                                                  () {
+                                                                                    Get.back();
+                                                                                  },
+                                                                                );
+                                                                                return;
+                                                                              } else {
+                                                                                controller.subscrbeVh(
+                                                                                  result,
+                                                                                  controller.vehicleData[index]["vehicle_plate_no"].toString(),
+                                                                                  controller.vehicleData[index]["vehicle_brand_id"].toString(),
+                                                                                );
+                                                                              }
+                                                                            },
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        width: double
+                                                                            .infinity,
+                                                                        height:
+                                                                            100,
+                                                                        margin: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                8),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          border:
+                                                                              Border.all(color: Colors.black12),
+                                                                          color:
+                                                                              Colors.white,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.black.withOpacity(0.15),
+                                                                              blurRadius: 8,
+                                                                              spreadRadius: 2,
+                                                                              offset: Offset(0, 4),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            Image.asset(
+                                                                              "assets/images/subscribe.png",
+                                                                              fit: BoxFit.cover,
+                                                                              color: AppColor.primaryColor,
+                                                                              height: 36,
+                                                                              width: 36,
+                                                                            ),
+                                                                            SizedBox(height: 8),
+                                                                            CustomParagraph(
+                                                                              textAlign: TextAlign.center,
+                                                                              text: "Subscribe Vehicle",
+                                                                              color: Colors.black,
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  // Subscription List Button
+                                                                  Flexible(
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () async {
+                                                                        await controller
+                                                                            .getVhSubscriptionDetails(index);
+                                                                      },
+                                                                      child:
+                                                                          Container(
+                                                                        width: double
+                                                                            .infinity,
+                                                                        height:
+                                                                            100,
+                                                                        margin: EdgeInsets.symmetric(
+                                                                            horizontal:
+                                                                                8),
+                                                                        decoration:
+                                                                            BoxDecoration(
+                                                                          border:
+                                                                              Border.all(color: Colors.black12),
+                                                                          color:
+                                                                              Colors.white,
+                                                                          borderRadius:
+                                                                              BorderRadius.circular(8),
+                                                                          boxShadow: [
+                                                                            BoxShadow(
+                                                                              color: Colors.black.withOpacity(0.15),
+                                                                              blurRadius: 8,
+                                                                              spreadRadius: 2,
+                                                                              offset: Offset(0, 4),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                        child:
+                                                                            Column(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                          children: [
+                                                                            Image.asset(
+                                                                              "assets/images/subscription_details.png",
+                                                                              fit: BoxFit.cover,
+                                                                              color: AppColor.primaryColor,
+                                                                              height: 36,
+                                                                              width: 36,
+                                                                            ),
+                                                                            SizedBox(height: 8),
+                                                                            CustomParagraph(
+                                                                              textAlign: TextAlign.center,
+                                                                              text: "Subscription List",
+                                                                              color: Colors.black,
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.normal,
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                              SizedBox(
+                                                                  height: 16),
+                                                              // Delete Button
+                                                              Padding(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        5.0),
+                                                                child:
+                                                                    CustomElevatedButton(
+                                                                  text:
+                                                                      "Delete",
+                                                                  btnHeight: 40,
+                                                                  icon: Iconsax
+                                                                      .trash,
+                                                                  textColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  btnColor:
+                                                                      Colors
+                                                                          .red,
+                                                                  onPressed:
+                                                                      () {
+                                                                    controller
+                                                                        .onDeleteVehicle(
+                                                                      controller
+                                                                              .vehicleData[index]
+                                                                          [
+                                                                          "vehicle_plate_no"],
+                                                                    );
+                                                                    Get.back();
+                                                                  },
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .vertical(
+                                                            top:
+                                                                Radius.circular(
+                                                                    7),
+                                                          ),
+                                                        ),
+                                                        backgroundColor:
+                                                            Colors.white,
+                                                      );
+                                                    },
+                                                    child: CircleAvatar(
+                                                      radius: 15,
+                                                      backgroundColor: AppColor
+                                                          .primaryColor
+                                                          .withOpacity(.1),
+                                                      child: Transform.rotate(
+                                                        angle: 3.14159 / 2,
+                                                        child: Icon(
+                                                          Icons
+                                                              .more_vert_outlined,
+                                                          color: AppColor
+                                                              .primaryColor,
+                                                          size: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           );
                                         },
