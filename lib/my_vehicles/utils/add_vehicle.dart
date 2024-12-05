@@ -6,6 +6,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/my_vehicles/controller.dart';
+import 'package:luvpark/my_vehicles/utils/singlespaceformatter.dart';
 
 import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_textfield.dart';
@@ -37,7 +38,6 @@ class AddVehicles extends GetView<MyVehiclesController> {
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Obx(
                   () => Form(
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
                     key: controller.formVehicleReg,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -117,19 +117,27 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           ),
                         ),
                         CustomTextField(
+                          isReadOnly: controller.ddVhType == null ||
+                              controller.ddVhBrand.value == null,
                           labelText: controller.hintTextLabel.value.isEmpty
                               ? "Plate No"
                               : controller.hintTextLabel.value,
                           inputFormatters: [
+                            LengthLimitingTextInputFormatter(15),
+                            SingleSpaceTextInputFormatter(),
                             if (controller.maskFormatter.value != null)
-                              controller.maskFormatter.value!
+                              controller.maskFormatter.value!,
                           ],
+                          filledColor: Colors.grey.shade200,
+                          isFilled: controller.ddVhType == null ||
+                              controller.ddVhBrand.value == null,
                           controller: controller.plateNo,
                           onChange: (value) {
                             if (controller.maskFormatter.value == null) {
                               String trimmedValue = value
                                   .toUpperCase()
                                   .replaceFirst(RegExp(r'[^a-zA-Z0-9. ]'), '');
+
                               validateText(value, controller.plateNo);
                               if (trimmedValue.isNotEmpty) {
                                 controller.plateNo.value = TextEditingValue(
@@ -161,8 +169,10 @@ class AddVehicles extends GetView<MyVehiclesController> {
                             if (value.length > 15) {
                               return "Plate no. should not exceed 15 characters";
                             }
-                            if (value.startsWith('-') || value.endsWith('-')) {
-                              return "Plate no. should not start or end with a dash";
+                            if (value.startsWith('-') ||
+                                value.endsWith('-') ||
+                                value.startsWith(" ")) {
+                              return "Plate no. should not start or end with a dash and spaces";
                             }
                             if ((value.endsWith(' ') ||
                                 value.endsWith('-') ||
@@ -366,14 +376,24 @@ class AddVehicles extends GetView<MyVehiclesController> {
                         if (MediaQuery.of(context).viewInsets.bottom == 0)
                           Obx(
                             () => CustomButton(
+                              btnColor: controller.ddVhType == null ||
+                                      controller.ddVhBrand.value == null ||
+                                      controller.plateNo.text.isEmpty
+                                  ? AppColor.primaryColor.withOpacity(.7)
+                                  : AppColor.primaryColor,
                               loading: controller.isBtnLoading.value,
                               text: "Submit",
-                              onPressed: () {
-                                if (controller.formVehicleReg.currentState!
-                                    .validate()) {
-                                  controller.onSubmitVehicle();
-                                }
-                              },
+                              onPressed: controller.ddVhType == null ||
+                                      controller.ddVhBrand.value == null ||
+                                      controller.plateNo.text.isEmpty
+                                  ? () {}
+                                  : () {
+                                      if (controller
+                                          .formVehicleReg.currentState!
+                                          .validate()) {
+                                        controller.onSubmitVehicle();
+                                      }
+                                    },
                             ),
                           ),
                         Container(

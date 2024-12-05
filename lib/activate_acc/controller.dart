@@ -246,8 +246,8 @@ class ActivateAccountController extends GetxController {
 
         CustomDialog().successDialog(
           Get.context!,
-          "Success",
-          "Congratulations! Your account has been activated!",
+          "Congratulations!",
+          "Your account has been activated.\nContinue to log in",
           "Okay",
           () {
             Get.offAllNamed(Routes.login);
