@@ -194,8 +194,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep1,
-          autovalidateMode: AutovalidateMode
-              .onUserInteraction, // Validate on user interaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -216,7 +214,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     );
                   }
                   // Manually trigger validation when text is changed
-                  controller.formKeyStep1.currentState?.validate();
+                  // controller.formKeyStep1.currentState?.validate();
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(30),
@@ -246,7 +244,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 onChange: (inputText) {
                   // Manually trigger validation when text is changed
 
-                  controller.formKeyStep1.currentState?.validate();
+                  // controller.formKeyStep1.currentState?.validate();
                 },
                 validator: (value) {
                   if (value != null &&
@@ -276,7 +274,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     );
                   }
                   // Manually trigger validation when text is changed
-                  controller.formKeyStep1.currentState?.validate();
+                  // controller.formKeyStep1.currentState?.validate();
                 },
                 inputFormatters: [
                   LengthLimitingTextInputFormatter(30),
@@ -298,6 +296,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 labelText: "Email",
                 title: "Email",
                 controller: controller.email,
+                keyboardType: TextInputType.emailAddress,
                 onChange: (value) {
                   String trimmedValue = value.replaceFirst(RegExp(r'^\s+'), '');
                   if (trimmedValue.isNotEmpty) {
@@ -310,7 +309,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     );
                   }
                   // Manually trigger validation when text is changed
-                  controller.formKeyStep1.currentState?.validate();
+                  // controller.formKeyStep1.currentState?.validate();
                 },
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -424,8 +423,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep2,
-          autovalidateMode:
-              AutovalidateMode.disabled, // Validate on user interaction
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -440,7 +437,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     controller.selectedRegion.value = newValue.toString();
                     controller.getProvinceData(newValue);
                     // Manually trigger validation when the dropdown is changed
-                    controller.formKeyStep2.currentState?.validate();
+                    // controller.formKeyStep2.currentState?.validate();
                   },
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -467,7 +464,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     controller.selectedProvince.value = data.toString();
                     controller.getCityData(data);
                     // Manually trigger validation when the dropdown is changed
-                    controller.formKeyStep2.currentState?.validate();
+                    // controller.formKeyStep2.currentState?.validate();
                   },
                 ),
               ),
@@ -488,7 +485,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     controller.selectedCity.value = data.toString();
                     controller.getBrgyData(data);
                     // Manually trigger validation when the dropdown is changed
-                    controller.formKeyStep2.currentState?.validate();
+                    // controller.formKeyStep2.currentState?.validate();
                   },
                 ),
               ),
@@ -508,7 +505,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   onChanged: (data) {
                     controller.selectedBrgy.value = data.toString();
                     // Manually trigger validation when the dropdown is changed
-                    controller.formKeyStep2.currentState?.validate();
+                    // controller.formKeyStep2.currentState?.validate();
                   },
                 ),
               ),
@@ -554,7 +551,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
       child: SingleChildScrollView(
         child: Form(
           key: controller.formKeyStep3,
-          autovalidateMode: AutovalidateMode.disabled,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -598,6 +594,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           CustomTextField(
                             labelText: "Answer",
                             textCapitalization: TextCapitalization.characters,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(30),
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z\s]')),
+                            ],
+                            keyboardType: TextInputType.name,
                             controller: controller.answer1,
                             isReadOnly: controller.seq1.value == 0,
                             isObscure: controller.obscureTextAnswer1.value,
@@ -668,6 +670,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           Container(height: 10),
                           CustomTextField(
                             labelText: "Answer",
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(30),
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z\s]')),
+                            ],
+                            keyboardType: TextInputType.name,
                             textCapitalization: TextCapitalization.characters,
                             isReadOnly: controller.seq2.value == 0,
                             controller: controller.answer2,
@@ -738,6 +746,12 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           Container(height: 10),
                           CustomTextField(
                             labelText: "Answer",
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(30),
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'[a-zA-Z\s]')),
+                            ],
+                            keyboardType: TextInputType.name,
                             textCapitalization: TextCapitalization.characters,
                             controller: controller.answer3,
                             isReadOnly: controller.seq3.value == 0,

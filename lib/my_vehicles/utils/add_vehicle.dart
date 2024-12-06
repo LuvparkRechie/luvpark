@@ -139,11 +139,15 @@ class AddVehicles extends GetView<MyVehiclesController> {
                                   .replaceFirst(RegExp(r'[^a-zA-Z0-9. ]'), '');
 
                               validateText(value, controller.plateNo);
+
+                              TextSelection currentSelection =
+                                  controller.plateNo.selection;
+
                               if (trimmedValue.isNotEmpty) {
                                 controller.plateNo.value = TextEditingValue(
                                   text:
                                       Variables.capitalizeAllWord(trimmedValue),
-                                  selection: controller.plateNo.selection,
+                                  selection: currentSelection,
                                 );
                               } else {
                                 controller.plateNo.value = TextEditingValue(
@@ -159,6 +163,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
                               String text = capitalizeWords(value);
                               controller.plateNo.value = TextEditingValue(
                                 text: text,
+                                selection: controller.plateNo.selection,
                               );
                             }
                           },
