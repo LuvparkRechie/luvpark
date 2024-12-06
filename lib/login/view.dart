@@ -29,6 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final LoginScreenController controller = Get.put(LoginScreenController());
 
   @override
+  void initState() {
+    super.initState();
+    if (Variables.inactiveTmr != null) {
+      Variables.inactiveTmr!.cancel();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
@@ -220,6 +228,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                 visible: controller.isToggle.value,
                                 child: Column(
                                   children: [
+                                    Row(
+                                      children: [
+                                        Expanded(child: Divider()),
+                                        Container(width: 10),
+                                        CustomParagraph(text: "Or"),
+                                        Container(width: 10),
+                                        Expanded(child: Divider())
+                                      ],
+                                    ),
                                     IconButton(
                                       splashColor: Colors.red,
                                       highlightColor: Colors.green,

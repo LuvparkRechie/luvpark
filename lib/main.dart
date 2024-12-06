@@ -53,7 +53,7 @@ Future<void> backgroundFunc() async {
 void _onUserActivity() {
   if (Variables.inactiveTmr?.isActive ?? false) Variables.inactiveTmr?.cancel();
 
-  Duration duration = const Duration(minutes: 13);
+  Duration duration = const Duration(minutes: 3);
   Variables.inactiveTmr = Timer(duration, () async {
     FocusManager.instance.primaryFocus!.unfocus();
     CustomDialog().loadingDialog(Get.context!);
