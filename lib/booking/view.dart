@@ -458,20 +458,19 @@ class BookingPage extends GetView<BookingController> {
                                                                     Container(
                                                                         height:
                                                                             4),
-                                                                    CustomParagraph(
-                                                                      text:
-                                                                          "${controller.startTime.value} - ${controller.endTime.value}",
-                                                                      letterSpacing:
-                                                                          -0.41,
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w500,
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
+                                                                    Obx(() =>
+                                                                        CustomParagraph(
+                                                                          text:
+                                                                              "${ct.startTime.value} - ${ct.endTime.value}",
+                                                                          letterSpacing:
+                                                                              -0.41,
+                                                                          textAlign:
+                                                                              TextAlign.center,
+                                                                          fontWeight:
+                                                                              FontWeight.w500,
+                                                                          fontSize:
+                                                                              12,
+                                                                        )),
                                                                   ],
                                                                 ),
                                                               ),

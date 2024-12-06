@@ -614,8 +614,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
                               }
-                              if (value.length < 4) {
-                                return 'Minimum length is 4 characters.';
+                              if (value.length < 3) {
+                                return 'Minimum length is 3 characters.';
                               }
                               if (value.length > 30) {
                                 return 'Maximum length is 30 characters.';
@@ -691,8 +691,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
                               }
-                              if (value.length < 4) {
-                                return 'Minimum length is 4 characters.';
+                              if (value.length < 3) {
+                                return 'Minimum length is 3 characters.';
                               }
                               if (value.length > 30) {
                                 return 'Maximum length is 30 characters.';
@@ -767,8 +767,8 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                               if (value == null || value.isEmpty) {
                                 return 'Field is required.';
                               }
-                              if (value.length < 4) {
-                                return 'Minimum length is 4 characters.';
+                              if (value.length < 3) {
+                                return 'Minimum length is 3 characters.';
                               }
                               if (value.length > 30) {
                                 return 'Maximum length is 30 characters.';

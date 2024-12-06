@@ -21,7 +21,7 @@ class WalletSendController extends GetxController {
   final GlobalKey contentKey = GlobalKey();
   RxBool isLpAccount = false.obs;
   RxBool isLoading = true.obs;
-  PermissionStatus _cameraStatus = PermissionStatus.denied;
+  PermissionStatus cameraStatus = PermissionStatus.denied;
   RxBool isNetConn = true.obs;
   RxList userData = [].obs;
 
@@ -58,13 +58,13 @@ class WalletSendController extends GetxController {
 
   Future<void> _checkCameraPermission() async {
     PermissionStatus status = await Permission.camera.status;
-    _cameraStatus = status;
+    cameraStatus = status;
   }
 
   Future<void> requestCameraPermission() async {
     PermissionStatus status = await Permission.camera.request();
 
-    _cameraStatus = status;
+    cameraStatus = status;
 
     if (status.isGranted) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(

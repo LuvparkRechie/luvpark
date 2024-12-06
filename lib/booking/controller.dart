@@ -76,9 +76,10 @@ class BookingController extends GetxController
   //Booking param
   RxBool isSubmitBooking = false.obs;
 
+  Timer? timeUpdateTimer;
   Timer? inactivityTimer;
   Timer? debounce;
-  final int timeoutDuration = 180; //3 mins
+  final int timeoutDuration = 120; //2 mins
   RxInt endNumber = 0.obs;
 
   //Rewards param
@@ -105,10 +106,25 @@ class BookingController extends GetxController
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
-
+    startTimeUpdateTimer();
     getNotice();
     _startInactivityTimer();
     _updateMaskFormatter("");
+  }
+
+  void startTimeUpdateTimer() {
+    timeUpdateTimer = Timer.periodic(Duration(seconds: 10), (timer) {
+      updateTimes();
+    });
+    updateTimes();
+  }
+
+  void updateTimes() async {
+    DateTime now = await Functions.getTimeNow();
+    startTime.value = DateFormat('h:mm a').format(now);
+    endTime.value = DateFormat('h:mm a')
+        .format(now.add(Duration(hours: selectedNumber.value)));
+    print("Updated Times: Start - ${startTime.value}, End - ${endTime.value}");
   }
 
   Future<void> getNotice() async {
@@ -1091,5 +1107,6 @@ class BookingController extends GetxController
     bookKey.currentState?.reset();
     inactivityTimer?.cancel();
     debounce?.cancel();
+    timeUpdateTimer?.cancel();
   }
 }
