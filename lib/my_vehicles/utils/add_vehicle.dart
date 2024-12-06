@@ -119,70 +119,30 @@ class AddVehicles extends GetView<MyVehiclesController> {
                         CustomTextField(
                           isReadOnly: controller.ddVhType == null ||
                               controller.ddVhBrand.value == null,
-                          labelText: controller.hintTextLabel.value.isEmpty
-                              ? "Plate No"
-                              : controller.hintTextLabel.value,
+                          labelText: "Plate No",
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(15),
-                            SingleSpaceTextInputFormatter(),
-                            if (controller.maskFormatter.value != null)
-                              controller.maskFormatter.value!,
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r"[a-zA-Z0-9]+|\s ")),
                           ],
                           filledColor: Colors.grey.shade200,
                           isFilled: controller.ddVhType == null ||
                               controller.ddVhBrand.value == null,
                           controller: controller.plateNo,
                           onChange: (value) {
-                            if (controller.maskFormatter.value == null) {
-                              String trimmedValue = value
-                                  .toUpperCase()
-                                  .replaceFirst(RegExp(r'[^a-zA-Z0-9. ]'), '');
-
-                              validateText(value, controller.plateNo);
-
-                              TextSelection currentSelection =
-                                  controller.plateNo.selection;
-
-                              if (trimmedValue.isNotEmpty) {
-                                controller.plateNo.value = TextEditingValue(
-                                  text:
-                                      Variables.capitalizeAllWord(trimmedValue),
-                                  selection: currentSelection,
-                                );
-                              } else {
-                                controller.plateNo.value = TextEditingValue(
-                                  text: "",
-                                  selection: TextSelection.collapsed(offset: 0),
-                                );
-                              }
-                            } else {
-                              String capitalizeWords(String input) {
-                                return input.toUpperCase();
-                              }
-
-                              String text = capitalizeWords(value);
-                              controller.plateNo.value = TextEditingValue(
-                                text: text,
-                                selection: controller.plateNo.selection,
-                              );
-                            }
+                            final selection = controller.plateNo.selection;
+                            controller.plateNo.text = value.toUpperCase();
+                            controller.plateNo.selection = selection;
                           },
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return "Plate no. is required";
                             }
-                            if (value.length > 15) {
-                              return "Plate no. should not exceed 15 characters";
-                            }
-                            if (value.startsWith('-') ||
-                                value.endsWith('-') ||
-                                value.startsWith(" ")) {
-                              return "Plate no. should not start or end with a dash and spaces";
-                            }
                             if ((value.endsWith(' ') ||
                                 value.endsWith('-') ||
+                                value.startsWith(" ") ||
                                 value.endsWith('.'))) {
-                              return "Plate no. should not contain space, hyphen, or period";
+                              return "Invalid Plate no. format";
                             }
 
                             return null;
@@ -381,24 +341,14 @@ class AddVehicles extends GetView<MyVehiclesController> {
                         if (MediaQuery.of(context).viewInsets.bottom == 0)
                           Obx(
                             () => CustomButton(
-                              btnColor: controller.ddVhType == null ||
-                                      controller.ddVhBrand.value == null ||
-                                      controller.plateNo.text.isEmpty
-                                  ? AppColor.primaryColor.withOpacity(.7)
-                                  : AppColor.primaryColor,
                               loading: controller.isBtnLoading.value,
                               text: "Submit",
-                              onPressed: controller.ddVhType == null ||
-                                      controller.ddVhBrand.value == null ||
-                                      controller.plateNo.text.isEmpty
-                                  ? () {}
-                                  : () {
-                                      if (controller
-                                          .formVehicleReg.currentState!
-                                          .validate()) {
-                                        controller.onSubmitVehicle();
-                                      }
-                                    },
+                              onPressed: () {
+                                if (controller.formVehicleReg.currentState!
+                                    .validate()) {
+                                  controller.onSubmitVehicle();
+                                }
+                              },
                             ),
                           ),
                         Container(
