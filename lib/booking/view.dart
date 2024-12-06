@@ -958,6 +958,7 @@ class ConfirmBooking extends GetView<BookingController> {
 
   @override
   Widget build(BuildContext context) {
+    final BookingController ct = Get.find();
     bool isNewDay = false;
 
     var dateIn = DateTime.parse(
@@ -1042,11 +1043,10 @@ class ConfirmBooking extends GetView<BookingController> {
                 color: Colors.blue,
               ),
               Container(width: 10),
-              CustomParagraph(
-                text:
-                    "${controller.startTime.value} → ${controller.endTime.value}",
-                fontWeight: FontWeight.w500,
-              ),
+              Obx(() => CustomParagraph(
+                    text: "${ct.startTime.value} → ${ct.endTime.value}",
+                    fontWeight: FontWeight.w500,
+                  )),
             ],
           ),
           Container(height: 30),
