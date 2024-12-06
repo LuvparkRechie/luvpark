@@ -77,9 +77,7 @@ class BookingController extends GetxController
   RxBool isSubmitBooking = false.obs;
 
   Timer? timeUpdateTimer;
-  Timer? inactivityTimer;
   Timer? debounce;
-  final int timeoutDuration = 120; //2 mins
   RxInt endNumber = 0.obs;
 
   //Rewards param
@@ -108,7 +106,6 @@ class BookingController extends GetxController
     noHours.text = selectedNumber.value.toString();
     startTimeUpdateTimer();
     getNotice();
-    _startInactivityTimer();
     _updateMaskFormatter("");
   }
 
@@ -370,28 +367,6 @@ class BookingController extends GetxController
 
   ///end
 
-  void _startInactivityTimer() {
-    inactivityTimer?.cancel();
-    inactivityTimer =
-        Timer(Duration(seconds: timeoutDuration), _handleInactivity);
-  }
-
-  void _handleInactivity() {
-    inactivityTimer?.cancel();
-    if (isShowNotice.value) {
-      Get.back();
-    }
-    if (Get.isBottomSheetOpen!) {
-      Get.back();
-    }
-    CustomDialog().infoDialog("Screen Idle",
-        "No Gestures were detected in the last minute. Reloading the page.",
-        () {
-      Get.back();
-      _reloadPage();
-    });
-  }
-
   void _reloadPage() async {
     DateTime now = await Functions.getTimeNow();
 
@@ -422,10 +397,6 @@ class BookingController extends GetxController
     } else {
       inatay();
     }
-  }
-
-  void onUserInteraction() {
-    _startInactivityTimer();
   }
 
   void _updateMaskFormatter(mask) {
@@ -774,7 +745,6 @@ class BookingController extends GetxController
           } else {
             Get.back();
             isSubmitBooking.value = false;
-            inactivityTimer?.cancel();
 
             Get.offAll(BookingDialog(data: [paramArgs]));
             Get.back();
@@ -869,12 +839,11 @@ class BookingController extends GetxController
         return;
       }
       isSubmitBooking.value = false;
-      inactivityTimer?.cancel();
+
       Get.back();
       if (returnData["success"] == 'Y') {
         CustomDialog().successDialog(
             Get.context!, "Check-In", "Successfully checked-in", "Okay", () {
-          inactivityTimer?.cancel();
           Get.back();
           Get.offAllNamed(Routes.parking, arguments: "B");
         });
@@ -1105,7 +1074,7 @@ class BookingController extends GetxController
   void onClose() {
     super.onClose();
     bookKey.currentState?.reset();
-    inactivityTimer?.cancel();
+
     debounce?.cancel();
     timeUpdateTimer?.cancel();
   }
