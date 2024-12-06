@@ -222,10 +222,6 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                           MainAxisSize
                                                                               .min,
                                                                       children: [
-                                                                        SizedBox(
-                                                                          height:
-                                                                              10,
-                                                                        ),
                                                                         Padding(
                                                                           padding: const EdgeInsets
                                                                               .symmetric(
@@ -260,19 +256,11 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                                   ),
                                                                                 ],
                                                                               ),
-                                                                              GestureDetector(
-                                                                                onTap: () {
-                                                                                  controller.onDeleteVehicle(
-                                                                                    controller.vehicleData[index]["vehicle_plate_no"],
-                                                                                  );
-                                                                                  Get.back();
-                                                                                },
-                                                                                child: CustomParagraph(
-                                                                                  text: "Delete this vehicle",
-                                                                                  fontSize: 12,
-                                                                                  fontWeight: FontWeight.w700,
-                                                                                  color: Colors.red,
-                                                                                ),
+                                                                              CustomParagraph(
+                                                                                text: "Delete this vehicle",
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w700,
+                                                                                color: Colors.red,
                                                                               )
                                                                             ],
                                                                           ),
