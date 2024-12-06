@@ -6,11 +6,9 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/my_vehicles/controller.dart';
-import 'package:luvpark/my_vehicles/utils/singlespaceformatter.dart';
 
 import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_textfield.dart';
-import '../../custom_widgets/variables.dart';
 
 class AddVehicles extends GetView<MyVehiclesController> {
   const AddVehicles({super.key});
@@ -244,97 +242,6 @@ class AddVehicles extends GetView<MyVehiclesController> {
                             ),
                           ),
                         ),
-                        // Container(
-                        //   height: 10,
-                        // ),
-                        // const CustomTitle(text: "Original Receipt (OR)"),
-                        // Container(
-                        //   height: 10,
-                        // ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     controller.showBottomSheetCamera(true);
-                        //   },
-                        //   child: Container(
-                        //     decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(12),
-                        //       color: Colors.grey.shade200,
-                        //       border: Border.all(
-                        //         color: Colors.black.withOpacity(0.2),
-                        //         width: 1,
-                        //       ),
-                        //     ),
-                        //     child: controller.orImageBase64.isNotEmpty
-                        //         ? Image(
-                        //             fit: BoxFit.cover,
-                        //             image: MemoryImage(
-                        //               const Base64Decoder().convert(controller
-                        //                   .orImageBase64.value
-                        //                   .toString()),
-                        //             ))
-                        //         : Center(
-                        //             child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               CustomParagraph(text: "Tap to upload"),
-                        //               Container(width: 5),
-                        //               Icon(
-                        //                 Icons.photo_outlined,
-                        //                 color: Colors.grey,
-                        //               )
-                        //             ],
-                        //           )),
-                        //     height: 120,
-                        //     width: MediaQuery.of(context).size.width,
-                        //   ),
-                        // ),
-                        // Container(
-                        //   height: 30,
-                        // ),
-                        // Container(height: 10),
-                        // const CustomTitle(
-                        //     text: "Certificate of Registration (CR)"),
-                        // Container(
-                        //   height: 10,
-                        // ),
-                        // InkWell(
-                        //   onTap: () {
-                        //     controller.showBottomSheetCamera(false);
-                        //   },
-                        //   child: Container(
-                        //     decoration: BoxDecoration(
-                        //       borderRadius: BorderRadius.circular(12),
-                        //       color: Colors.grey.shade200,
-                        //       border: Border.all(
-                        //         color: Colors.black.withOpacity(0.2),
-                        //         width: 1,
-                        //       ),
-                        //     ),
-                        //     child: controller.crImageBase64.isNotEmpty
-                        //         ? Image(
-                        //             fit: BoxFit.cover,
-                        //             image: MemoryImage(
-                        //               const Base64Decoder().convert(controller
-                        //                   .crImageBase64.value
-                        //                   .toString()),
-                        //             ))
-                        //         : Center(
-                        //             child: Row(
-                        //             mainAxisAlignment: MainAxisAlignment.center,
-                        //             children: [
-                        //               CustomParagraph(text: "Tap to upload"),
-                        //               Container(width: 5),
-                        //               Icon(
-                        //                 Icons.photo_outlined,
-                        //                 color: Colors.grey,
-                        //               )
-                        //             ],
-                        //           )),
-                        //     height: 120,
-                        //     width: MediaQuery.of(context).size.width,
-                        //   ),
-                        // ),
-
                         Container(
                           height: 30,
                         ),
