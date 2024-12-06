@@ -1,9 +1,7 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/booking/utils/rateus.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
@@ -22,23 +20,23 @@ class BookingDialog extends StatefulWidget {
 class _BookingDialogState extends State<BookingDialog> {
   @override
   void initState() {
-    Future.delayed(
-      const Duration(milliseconds: 200),
-      () {
-        Get.dialog(PopScope(
-          canPop: false,
-          child: Dialog(
-            backgroundColor: Colors.transparent,
-            child: FadeIn(
-                duration: const Duration(seconds: 1),
-                child: RateUs(
-                  reservationId: widget.data[0]["reservationId"],
-                  callBack: () {},
-                )),
-          ),
-        ));
-      },
-    );
+    // Future.delayed(
+    //   const Duration(milliseconds: 200),
+    //   () {
+    //     Get.dialog(PopScope(
+    //       canPop: false,
+    //       child: Dialog(
+    //         backgroundColor: Colors.transparent,
+    //         child: FadeIn(
+    //             duration: const Duration(seconds: 1),
+    //             child: RateUs(
+    //               reservationId: widget.data[0]["reservationId"],
+    //               callBack: () {},
+    //             )),
+    //       ),
+    //     ));
+    //   },
+    // );
     super.initState();
   }
 

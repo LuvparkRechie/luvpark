@@ -405,12 +405,13 @@ class MyVehiclesController extends GetxController {
 
     CustomDialog().loadingDialog(Get.context!);
     subDetailsData.value = [];
-
+    print("vehiclePlateNo $vehiclePlateNo");
     try {
       final objData = await HttpRequest(
         api:
             "${ApiKeys.gApiGetSubscriptionDetails}?vehicle_plate_no=$vehiclePlateNo",
       ).get();
+      print("objData $objData");
       Get.back();
       if (objData == "No Internet") {
         isLoadingsubDetails.value = false;

@@ -21,6 +21,7 @@ class LoginScreenController extends GetxController {
   TextEditingController password = TextEditingController();
   bool isLogin = false;
   RxBool isInternetConnected = true.obs;
+  RxBool isToggle = false.obs;
 
   bool isTappedReg = false;
   var usersLogin = [];
@@ -175,11 +176,19 @@ class LoginScreenController extends GetxController {
     });
   }
 
+  checkIfEnabledBio() async {
+    bool? isEnabledBio = await Authentication().getBiometricStatus();
+    isToggle.value = isEnabledBio!;
+
+    isLoading.value = false;
+  }
+
   @override
   void onInit() {
+    print("sulod permi nyawa");
     mobileNumber = TextEditingController();
     password = TextEditingController();
-
+    checkIfEnabledBio();
     super.onInit();
   }
 

@@ -1041,7 +1041,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                               btnColor: Colors.grey.shade100,
                               textColor: AppColor.primaryColor,
                               bordercolor: AppColor.primaryColor,
-                              borderRadius: 25,
+                              // borderRadius: 25,
                               onPressed: () async {
                                 CustomDialog().loadingDialog(context);
                                 String mapUrl = "";
@@ -1070,7 +1070,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                           Container(width: 10),
                           Expanded(
                             child: CustomButton(
-                              borderRadius: 25,
+                              //  borderRadius: 25,
                               text: "Book now",
                               onPressed: () {
                                 controller.onClickBooking();

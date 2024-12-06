@@ -178,6 +178,10 @@ class Authentication {
     final prefs = await SharedPreferences.getInstance();
     bool? isLogout = prefs.getBool("enable_biometric");
 
-    return isLogout;
+    if (isLogout == null) {
+      return false;
+    } else {
+      return isLogout;
+    }
   }
 }

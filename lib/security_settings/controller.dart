@@ -215,7 +215,7 @@
 
 import 'dart:convert';
 
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
@@ -242,72 +242,81 @@ class SecuritySettingsController extends GetxController {
   RxBool canCheckBiometrics = false.obs;
   RxBool isBiometricSupported = false.obs;
   RxBool isLoading = false.obs;
-  // Add a RxBool to handle the toggle state
-  RxBool isBiometricEnabled = false.obs;
-
+  RxBool isToggle = false.obs;
+  bool isAuth = false;
   @override
   void onInit() {
     super.onInit();
     print("security");
-    // _checkBiometricAvailability();
+    _checkBiometricAvailability();
   }
 
 // Check if biometric authentication is available
   Future<void> _checkBiometricAvailability() async {
     canCheckBiometrics.value = await auth.canCheckBiometrics;
     isBiometricSupported.value = await auth.isDeviceSupported();
+
+    if (isBiometricSupported.value) {
+      checkIfEnabledBio();
+      return;
+    } else {
+      isLoading.value = false;
+    }
+  }
+
+  checkIfEnabledBio() async {
+    bool? isEnabledBio = await Authentication().getBiometricStatus();
+    isToggle.value = isEnabledBio!;
+
     isLoading.value = false;
   }
 
-  Future<void> authenticateWithBiometrics() async {
-    if (isBiometricEnabled.value) {
-      bool authenticated = false;
-      try {
-        isAuthenticating = true;
-        authorized = 'Authenticating';
-        authenticated = await auth.authenticate(
-            options: const AuthenticationOptions(
-              stickyAuth: true,
-              biometricOnly: true,
-            ),
-            localizedReason: 'Please authenticate to show account balance',
-            authMessages: const <AuthMessages>[
-              AndroidAuthMessages(
-                signInTitle: 'Oops! Biometric authentication required!',
-                cancelButton: 'No thanks',
-              ),
-              IOSAuthMessages(
-                cancelButton: 'No thanks',
-              ),
-            ]);
-        isAuthenticating = false;
-
-        authorized = 'Authenticating';
-      } on PlatformException catch (e) {
-        print(e);
-        isAuthenticating = false;
-        authorized = 'Error - ${e.message}';
-        return;
+  void authenticateWithBiometrics(bool enable) async {
+    isAuth = true;
+    final LocalAuthentication auth = LocalAuthentication();
+    // ignore: unused_local_variable
+    bool canCheckBiometrics = false;
+    try {
+      canCheckBiometrics = await auth.canCheckBiometrics;
+    } catch (e) {
+      debugPrint("$e");
+    }
+    bool authenticated = false;
+    try {
+      authenticated = await auth.authenticate(
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+        localizedReason: 'Please authenticate to quick',
+        authMessages: const <AuthMessages>[
+          AndroidAuthMessages(
+            signInTitle: 'Biometric authentication required!',
+            cancelButton: 'No thanks',
+          ),
+          IOSAuthMessages(
+            cancelButton: 'No thanks',
+          ),
+        ],
+      );
+    } catch (e) {
+      debugPrint("$e");
+    }
+    isAuth = authenticated ? true : false;
+    if (isAuth) {
+      if (enable) {
+        isToggle.value = true;
+        Authentication().setBiometricStatus(true);
+      } else {
+        isToggle.value = false;
+        Authentication().setBiometricStatus(false);
       }
-
-      final String message = authenticated ? 'Authorized' : 'Not Authorized';
-      authorized = message;
-      print("authorized $authorized");
-    } else {
-      Get.snackbar(
-          "Biometric Disabled", "Please enable biometric authentication.");
     }
   }
 
-  // Toggle method to switch biometric authentication on or off
+  // // Toggle method to switch biometric authentication on or off
   void toggleBiometricAuthentication(bool value) {
-    isBiometricEnabled.value = value;
-    // If biometrics are enabled, try authenticating
-    if (isBiometricEnabled.value) {
-      authenticateWithBiometrics();
-    } else {
-      authorized = 'Biometric Authentication Disabled';
-    }
+    authenticateWithBiometrics(value);
   }
 
   Future<void> cancelAuthentication() async {

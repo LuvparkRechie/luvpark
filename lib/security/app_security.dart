@@ -1,6 +1,10 @@
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:local_auth_android/local_auth_android.dart';
+import 'package:local_auth_darwin/local_auth_darwin.dart';
 import 'package:root_checker_plus/root_checker_plus.dart';
 
 class AppSecurity {
@@ -65,5 +69,33 @@ class AppSecurity {
     } on PlatformException {
       jailbreak = false;
     }
+  }
+
+  static Future<bool> authenticateBio() async {
+    final LocalAuthentication auth = LocalAuthentication();
+
+    bool authenticated = false;
+    try {
+      authenticated = await auth.authenticate(
+        options: const AuthenticationOptions(
+          stickyAuth: true,
+          biometricOnly: true,
+        ),
+        localizedReason: 'Please authenticate to quick',
+        authMessages: const <AuthMessages>[
+          AndroidAuthMessages(
+            signInTitle: 'Biometric authentication required!',
+            cancelButton: 'No thanks',
+          ),
+          IOSAuthMessages(
+            cancelButton: 'No thanks',
+          ),
+        ],
+      );
+    } catch (e) {
+      debugPrint("$e");
+    }
+    print("authenticated $authenticated");
+    return authenticated;
   }
 }

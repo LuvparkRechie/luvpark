@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -84,8 +85,8 @@ class Security extends GetView<SecuritySettingsController> {
                             ),
                             children: [
                               ListTile(
+                                contentPadding: EdgeInsets.zero,
                                 leading: Container(
-                                  padding: const EdgeInsets.all(13),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color:
@@ -116,51 +117,114 @@ class Security extends GetView<SecuritySettingsController> {
                                   Get.toNamed(Routes.changepassword);
                                 },
                               ),
-                              // Visibility(
-                              //   visible: controller.isBiometricSupported.value,
-                              //   child: Column(
-                              //     children: [
-                              //       Divider(color: Colors.grey.shade500),
-                              //       ListTile(
-                              //         leading: Container(
-                              //           padding: const EdgeInsets.all(13),
-                              //           decoration: BoxDecoration(
-                              //             shape: BoxShape.circle,
-                              //             color: AppColor.primaryColor
-                              //                 .withOpacity(0.1),
-                              //           ),
-                              //           child: Icon(
-                              //             LucideIcons.fingerprint,
-                              //             color: AppColor.primaryColor,
-                              //             size: 20,
-                              //           ),
-                              //         ),
-                              //         title: const CustomTitle(
-                              //           text: "Biometric Authentication",
-                              //           fontSize: 14,
-                              //           fontStyle: FontStyle.normal,
-                              //           fontWeight: FontWeight.w700,
-                              //           letterSpacing: -0.408,
-                              //         ),
-                              //         subtitle: const CustomParagraph(
-                              //           text:
-                              //               "Use your device's biometric for a quick and secure login. (Under maintenance)",
-                              //           letterSpacing: -0.408,
-                              //           fontSize: 12,
-                              //         ),
-                              //         trailing: Icon(
-                              //           Icons.toggle_on,
-                              //           color: AppColor.primaryColor,
-                              //           size: 25,
-                              //         ),
-                              //         onTap: () {
-                              //           controller.authenticateWithBiometrics();
-                              //         },
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
-                              // Divider(color: Colors.grey.shade500),
+                              Visibility(
+                                visible: controller.isBiometricSupported.value,
+                                child: Column(
+                                  children: [
+                                    Divider(color: Colors.grey.shade500),
+                                    ListTile(
+                                      contentPadding: EdgeInsets.zero,
+                                      leading: Container(
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: AppColor.primaryColor
+                                              .withOpacity(0.1),
+                                        ),
+                                        child: Icon(
+                                          LucideIcons.fingerprint,
+                                          color: AppColor.primaryColor,
+                                          size: 20,
+                                        ),
+                                      ),
+                                      title: const CustomTitle(
+                                        text: "Biometric Authentication",
+                                        fontSize: 14,
+                                        fontStyle: FontStyle.normal,
+                                        fontWeight: FontWeight.w700,
+                                        letterSpacing: -0.408,
+                                      ),
+                                      subtitle: const CustomParagraph(
+                                        text:
+                                            "Use your device's biometric for a quick and secure login.",
+                                        letterSpacing: -0.408,
+                                        fontSize: 12,
+                                      ),
+                                      trailing: GestureDetector(
+                                        onTap: () {
+                                          controller
+                                              .toggleBiometricAuthentication(
+                                                  !controller.isToggle.value);
+                                        },
+                                        child: Container(
+                                          width: 50,
+                                          height: 25,
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            gradient: LinearGradient(
+                                              colors: controller.isToggle.value
+                                                  ? [
+                                                      Colors.green,
+                                                      Colors.lightGreen
+                                                    ]
+                                                  : [Colors.grey, Colors.grey],
+                                            ),
+                                          ),
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              if (controller.isToggle.value)
+                                                Positioned(
+                                                  left: 10,
+                                                  child: Icon(
+                                                    LucideIcons.check,
+                                                    color: Colors.white,
+                                                    size: 12,
+                                                  ),
+                                                ),
+                                              if (!controller.isToggle.value)
+                                                Positioned(
+                                                  right: 10,
+                                                  child: Icon(
+                                                    Icons.clear,
+                                                    color: Colors.white,
+                                                    size: 12,
+                                                  ),
+                                                ),
+                                              AnimatedPositioned(
+                                                duration: Duration(
+                                                  milliseconds: 200,
+                                                ),
+                                                left: controller.isToggle.value
+                                                    ? 30
+                                                    : 5,
+                                                child: Container(
+                                                  width: 15,
+                                                  height: 15,
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.white,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            30),
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color: Colors.black26,
+                                                        blurRadius: 2.0,
+                                                        spreadRadius: 1.0,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Divider(color: Colors.grey.shade500),
                             ],
                           ),
                         ),
