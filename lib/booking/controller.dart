@@ -85,6 +85,7 @@ class BookingController extends GetxController
   RxString tokenRewards = "0".obs;
   RxDouble displayRewards = 0.0.obs;
   RxBool isUseRewards = false.obs;
+  RxBool isMaxLimit = false.obs;
   List dataLastBooking = [];
 
   @override
@@ -122,6 +123,8 @@ class BookingController extends GetxController
     // endTime.value = DateFormat('h:mm a')
     //     .format(now.add(Duration(hours: selectedNumber.value)));
     // print("Updated Times: Start - ${startTime.value}, End - ${endTime.value}");
+    print("isMaxLimit $isMaxLimit");
+    if (isMaxLimit.value) return;
     _reloadPage();
   }
 
@@ -476,10 +479,12 @@ class BookingController extends GetxController
           timeComputation();
           routeToComputation();
           isExtendchecked.value = false;
+          isMaxLimit.value = false;
           if (selectedNumber.value == 0) {
             Get.back();
           }
         }, () {
+          isMaxLimit.value = true;
           Get.back();
           selectedNumber -= deductTime;
           noHours.text = selectedNumber.value.toString();
@@ -491,6 +496,7 @@ class BookingController extends GetxController
           paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
         });
       }
+      isMaxLimit.value = false;
       update();
     }
   }
@@ -984,7 +990,7 @@ class BookingController extends GetxController
     noHours.text = roundedHours.toString();
     totalAmount.value = selectedVh[0]["base_rate"].toString();
     tokenRewards.value = totalAmount.value;
-
+    isMaxLimit.value = true;
     startDate.text = now.toString().split(" ")[0].toString();
     startTime.value = DateFormat('h:mm a').format(now).toString();
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);

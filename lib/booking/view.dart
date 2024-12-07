@@ -1384,6 +1384,7 @@ class _VehicleTypesState extends State<VehicleTypes>
                     }
                   }
                 }),
+            Container(height: 10),
           ],
         ),
       ),
@@ -1548,6 +1549,7 @@ class _VehicleTypesState extends State<VehicleTypes>
                   widget.cb(vhDatas);
                 }),
           ),
+          Container(height: 10),
         ],
       ),
     );
