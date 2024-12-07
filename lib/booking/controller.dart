@@ -117,11 +117,12 @@ class BookingController extends GetxController
   }
 
   void updateTimes() async {
-    DateTime now = await Functions.getTimeNow();
-    startTime.value = DateFormat('h:mm a').format(now);
-    endTime.value = DateFormat('h:mm a')
-        .format(now.add(Duration(hours: selectedNumber.value)));
-    print("Updated Times: Start - ${startTime.value}, End - ${endTime.value}");
+    // DateTime now = await Functions.getTimeNow();
+    // startTime.value = DateFormat('h:mm a').format(now);
+    // endTime.value = DateFormat('h:mm a')
+    //     .format(now.add(Duration(hours: selectedNumber.value)));
+    // print("Updated Times: Start - ${startTime.value}, End - ${endTime.value}");
+    _reloadPage();
   }
 
   Future<void> getNotice() async {
@@ -391,11 +392,22 @@ class BookingController extends GetxController
 
       if (dataHabibi.isNotEmpty) {
         checkIfSubscribed(dataHabibi);
+        return;
+      } else {
+        inatay();
+        return;
+      }
+    } else {
+      List dataHabibi = await filterSubscriotion(
+          selectedVh[0]["vehicle_plate_no"], selectedVh[0]["vehicle_type_id"]);
+
+      if (dataHabibi.isNotEmpty) {
+        checkIfSubscribed(dataHabibi);
+        return;
       } else {
         inatay();
       }
-    } else {
-      inatay();
+      return;
     }
   }
 
@@ -691,7 +703,6 @@ class BookingController extends GetxController
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
-        print("objData post booking $objData");
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
           Get.back();
