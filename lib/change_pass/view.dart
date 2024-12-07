@@ -25,7 +25,6 @@ class ChangePassword extends GetView<ChangePasswordController> {
       backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
         onTap: () {
-          controller.resetFields();
           Get.back();
         },
       ),

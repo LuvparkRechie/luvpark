@@ -60,6 +60,7 @@ class SubscriptionDetails extends StatelessWidget {
               Navigator.of(context).pop();
             },
           ),
+          Container(height: 10)
         ],
       ),
     );

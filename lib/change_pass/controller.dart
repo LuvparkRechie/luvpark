@@ -11,8 +11,7 @@ import '../http/api_keys.dart';
 import '../http/http_request.dart';
 import '../routes/routes.dart';
 
-class ChangePasswordController extends GetxController
-    with GetSingleTickerProviderStateMixin {
+class ChangePasswordController extends GetxController {
   ChangePasswordController();
 
   final GlobalKey<FormState> formKeyChangePass = GlobalKey<FormState>();
@@ -29,21 +28,28 @@ class ChangePasswordController extends GetxController
     oldPassword = TextEditingController();
     newPassword = TextEditingController();
     newConfirmPassword = TextEditingController();
-    resetFields();
+    // resetFields();
+    print("inahatayaya");
     super.onInit();
   }
 
-//Refresh kn ma click get.back -->
-  void resetFields() {
-    oldPassword.clear();
-    newPassword.clear();
-    newConfirmPassword.clear();
-    isShowOldPass.value = false;
-    isShowNewPass.value = false;
-    isShowNewPassConfirm.value = false;
-    passStrength.value = 0;
-    update();
+  @override
+  void onClose() {
+    super.onClose();
+    formKeyChangePass.currentState!.reset();
   }
+
+// //Refresh kn ma click get.back -->
+//   void resetFields() {
+//     oldPassword.clear();
+//     newPassword.clear();
+//     newConfirmPassword.clear();
+//     isShowOldPass.value = false;
+//     isShowNewPass.value = false;
+//     isShowNewPassConfirm.value = false;
+//     passStrength.value = 0;
+//     update();
+//   }
 
   void onToggleOldPass(bool isShow) {
     isShowOldPass.value = isShow;
@@ -151,11 +157,5 @@ class ChangePasswordController extends GetxController
         });
       }
     });
-  }
-
-  @override
-  void onClose() {
-    super.onClose();
-    formKeyChangePass.currentState!.reset();
   }
 }
