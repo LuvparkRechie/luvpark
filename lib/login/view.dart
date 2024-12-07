@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -268,7 +270,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                         }
                                       },
                                       icon: Icon(
-                                        LucideIcons.fingerprint,
+                                        Platform.isIOS
+                                            ? LucideIcons.scanFace
+                                            : LucideIcons.fingerprint,
                                         color: Colors.blue,
                                         size: 40,
                                       ),
@@ -276,8 +280,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                     Container(
                                       height: 20,
                                     ),
+                                    //login
                                     CustomParagraph(
-                                      text: "Login with biometric",
+                                      text: Platform.isIOS
+                                          ? "Login with Face ID"
+                                          : "Login with biometric",
                                       fontSize: 8,
                                       fontWeight: FontWeight.w400,
                                     )
@@ -322,7 +329,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     maxLines: 1,
                   ),
                 ),
-                Container(height: 15),
+                Container(height: 20),
               ],
             ),
           ),

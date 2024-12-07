@@ -28,7 +28,7 @@ class CustomTitle extends StatelessWidget {
     this.wordspacing = 2, // Set Normal to 4
     this.textAlign,
   });
-
+//customtext
   @override
   Widget build(BuildContext context) {
     return AutoSizeText(
