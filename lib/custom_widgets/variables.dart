@@ -610,7 +610,7 @@ class Variables {
       DateTime dateTime = format24Hour.parse(time.trim());
 
       // Convert to 12-hour format with AM/PM
-      DateFormat format12Hour = DateFormat('h a');
+      DateFormat format12Hour = DateFormat('h:mm a');
 
       return format12Hour.format(dateTime);
     } catch (e) {

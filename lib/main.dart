@@ -20,8 +20,8 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:upgrader/upgrader.dart';
 
 import 'custom_widgets/alert_dialog.dart';
+import 'mapa/controller.dart';
 import 'notification_controller.dart';
-import 'sqlite/reserve_notification_table.dart';
 
 @pragma('vm:entry-point')
 Future<void> backgroundFunc() async {
@@ -50,11 +50,18 @@ Future<void> backgroundFunc() async {
   });
 }
 
-void _onUserActivity() {
+void _onUserActivity() async {
+  bool? tmrStat = await Authentication().getTimerStatus();
+  if (!tmrStat!) {
+    Variables.inactiveTmr?.cancel();
+    return;
+  }
+
   if (Variables.inactiveTmr?.isActive ?? false) Variables.inactiveTmr?.cancel();
 
   Duration duration = const Duration(minutes: 3);
   Variables.inactiveTmr = Timer(duration, () async {
+    final mapController = Get.put(DashboardMapController());
     FocusManager.instance.primaryFocus!.unfocus();
     CustomDialog().loadingDialog(Get.context!);
     await Future.delayed(const Duration(seconds: 2));
@@ -64,7 +71,7 @@ void _onUserActivity() {
       e["is_login"] = "N";
       return e;
     }).toList();
-    await NotificationDatabase.instance.deleteAll();
+    // await NotificationDatabase.instance.deleteAll();
     await Authentication().setLogin(jsonEncode(userData[0]));
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("last_booking");
@@ -73,6 +80,7 @@ void _onUserActivity() {
     AwesomeNotifications().cancelAll();
     Variables.inactiveTmr!.cancel();
     // Variables.bgProcess!.cancel();
+    mapController.dragController.dispose();
     Get.back();
     Get.offAllNamed(Routes.splash);
   });

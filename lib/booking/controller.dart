@@ -87,6 +87,9 @@ class BookingController extends GetxController
   RxBool isUseRewards = false.obs;
   RxBool isMaxLimit = false.obs;
   List dataLastBooking = [];
+  RegExp regExp = RegExp(r'[^a-zA-Z0-9]');
+  //
+  bool isProcessing = false;
 
   @override
   void onInit() {
@@ -503,9 +506,10 @@ class BookingController extends GetxController
 
   void onTapChanged(bool isIncrement) {
     if (isSubscribed.value) return;
+    isProcessing = true;
     int inatay = selectedVh.isEmpty ? 1 : selectedVh[0]["base_hours"];
     if (isIncrement) {
-      if (selectedNumber.value == endNumber.value) return;
+      if (selectedNumber.value == endNumber.value || isMaxLimit.value) return;
       selectedNumber.value++;
       noHours.text = selectedNumber.value.toString();
       timeComputation();
@@ -515,6 +519,7 @@ class BookingController extends GetxController
       noHours.text = selectedNumber.value.toString();
       timeComputation();
     }
+
     if (selectedVh.isEmpty) return;
     if (debounce?.isActive ?? false) debounce?.cancel();
 
@@ -523,6 +528,7 @@ class BookingController extends GetxController
       CustomDialog().loadingDialog(Get.context!);
       Future.delayed(Duration(milliseconds: 500), () {
         routeToComputation();
+        isProcessing = false;
         Get.back();
       });
       update();
@@ -539,37 +545,13 @@ class BookingController extends GetxController
       plateNo.text = selectedVh[0]["vehicle_plate_no"];
       dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
       noHours.text = selectedNumber.value.toString();
-
+      print("krow krow ${plateNo.text}");
       timeComputation();
       routeToComputation();
       onFieldChanged();
       Get.back();
     });
   }
-
-  //dynamic on change vehicle changed selected vh data
-  void onChangedVtype(ddvalue) {
-    CustomDialog().loadingDialog(Get.context!);
-    dynamic selVh = ddVehiclesData.where((element) {
-      return element["value"] == int.parse(ddvalue!.toString());
-    }).toList()[0];
-
-    selectedVh.value = [
-      {
-        'vehicle_type_id': dropdownValue!.toString(),
-        'vehicle_brand_id': 0,
-        'vehicle_brand_name': selVh["text"],
-        'vehicle_plate_no': plateNo.text,
-        'base_hours': selVh["base_hours"],
-        'base_rate': selVh["base_rate"],
-        'succeeding_rate': selVh["succeeding_rate"],
-        'vehicle_type': selVh["text"]
-      }
-    ];
-
-    krowkrow();
-  }
-  //display
 
 //Compute booking payment
   Future<void> routeToComputation() async {
@@ -613,6 +595,7 @@ class BookingController extends GetxController
         "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${paramEndTime.value}";
     DateTime finalDateOut = DateTime.parse(dtOut);
     isExtendchecked.value = value;
+    if (endNumber.value == 0) return;
     if (finalDateOut.isAfter(cTime) || finalDateOut.isAtSameMomentAs(cTime)) {
       CustomDialog().infoDialog("Auto Extend",
           "Unfortunately, auto-extend is not available at this time. Please be aware that the parking area is about to close soon.",
@@ -925,6 +908,7 @@ class BookingController extends GetxController
   }
 
   void confirmBooking() {
+    if (isProcessing) return;
     if (double.parse(parameters["userData"][0]["amount_bal"].toString()) >=
         double.parse(totalAmount.value.toString())) {
       Get.bottomSheet(
@@ -957,7 +941,9 @@ class BookingController extends GetxController
 
   Future<List> filterSubscriotion(String plNo, int id) async {
     List data = Variables.subsVhList.where((obj) {
-      return obj["vehicle_type_id"] == id && obj["vehicle_plate_no"] == plNo;
+      return obj["vehicle_type_id"] == id &&
+          obj["vehicle_plate_no"].toString().replaceAll(regExp, "") ==
+              plNo.toString().replaceAll(regExp, "");
     }).toList();
     return data;
   }
@@ -969,6 +955,7 @@ class BookingController extends GetxController
 
     int diff = cTime.difference(now).inMinutes;
     double totalHours = diff / 60;
+
     int roundedHours = totalHours.round();
     isSubscribed.value = true;
     selectedVh.value = [
@@ -986,8 +973,9 @@ class BookingController extends GetxController
     ];
     selectedNumber.value = selectedVh[0]["base_hours"];
     plateNo.text = selectedVh[0]["vehicle_plate_no"];
+
     dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
-    noHours.text = roundedHours.toString();
+    noHours.text = selectedVh[0]["base_hours"].toString();
     totalAmount.value = selectedVh[0]["base_rate"].toString();
     tokenRewards.value = totalAmount.value;
     isMaxLimit.value = true;
@@ -996,21 +984,21 @@ class BookingController extends GetxController
     DateTime parsedTime = DateFormat('hh:mm a').parse(startTime.value);
     timeInParam.text = DateFormat('HH:mm').format(parsedTime);
 
-    DateTime sTime = DateFormat('yyyy-MM-dd HH:mm')
-        .parse("${startDate.text} ${timeInParam.text}");
+    // DateTime sTime = DateFormat('yyyy-MM-dd HH:mm')
+    //     .parse("${startDate.text} ${timeInParam.text}");
 
-    DateTime pTime = sTime.add(Duration(hours: selectedNumber.value));
+    // DateTime pTime = sTime.add(Duration(hours: selectedNumber.value));
 
-    int deductTime = pTime.difference(cTime).inHours > 0
-        ? pTime.difference(cTime).inHours
-        : 1;
+    // int deductTime = pTime.difference(cTime).inHours > 0
+    //     ? pTime.difference(cTime).inHours
+    //     : 1;
 
-    selectedNumber -= deductTime;
-    noHours.text = selectedNumber.value.toString();
+    // selectedNumber -= deductTime;
+    // noHours.text = selectedNumber.value.toString();
 
     endTime.value = DateFormat('h:mm a').format(cTime).toString();
     paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
-
+    print("noHours.text if subscribed ${noHours.text}");
     onFieldChanged();
   }
 
@@ -1051,7 +1039,6 @@ class BookingController extends GetxController
               List filterSub = await filterSubscriotion(
                   objData[0]["vehicle_plate_no"],
                   objData[0]["vehicle_type_id"]);
-              print("filterSub $filterSub");
               if (filterSub.isNotEmpty) {
                 Get.back();
                 checkIfSubscribed(filterSub);

@@ -10,6 +10,12 @@ class Authentication {
       EncryptedSharedPreferences();
   final LocalAuthentication auth = LocalAuthentication();
 
+  Future<void> clearStoredData() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    encryptedSharedPreferences.clear();
+    prefs.clear();
+  }
+
   Future<bool> checkBiometrics() async {
     late bool checkBiometrics;
     try {
@@ -183,5 +189,27 @@ class Authentication {
     } else {
       return isLogout;
     }
+  }
+
+  //SEt background process  status
+  Future<void> enableTimer(bool status) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('enable_timer', status);
+  }
+
+  Future<bool?> getTimerStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool? isEnabled = prefs.getBool("enable_timer");
+
+    if (isEnabled == null) {
+      return false;
+    } else {
+      return isEnabled;
+    }
+  }
+
+  Future<void> remove(String key) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove(key);
   }
 }

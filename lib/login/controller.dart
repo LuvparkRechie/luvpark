@@ -21,7 +21,6 @@ class LoginScreenController extends GetxController {
   TextEditingController password = TextEditingController();
   bool isLogin = false;
   RxBool isInternetConnected = true.obs;
-  RxBool isToggle = false.obs;
 
   bool isTappedReg = false;
   var usersLogin = [];
@@ -159,6 +158,7 @@ class LoginScreenController extends GetxController {
               Authentication().setPasswordBiometric(param["pwd"]);
               Authentication().setShowPopUpNearest(false);
               Authentication().setLogoutStatus(false);
+
               if (items["image_base64"] != null) {
                 Authentication()
                     .setProfilePic(jsonEncode(items["image_base64"]));
@@ -176,19 +176,29 @@ class LoginScreenController extends GetxController {
     });
   }
 
-  checkIfEnabledBio() async {
-    bool? isEnabledBio = await Authentication().getBiometricStatus();
-    isToggle.value = isEnabledBio!;
+  void switchAccount() {
+    CustomDialog().confirmationDialog(Get.context!, "Switch Account",
+        "Are you sure you want to switch Account?", "No", "Yes", () {
+      Get.back();
+    }, () async {
+      Get.back();
+      CustomDialog().loadingDialog(Get.context!);
+      await Authentication().enableTimer(false);
+      await Authentication().setBiometricStatus(false);
+      await Authentication().remove("userData");
 
-    isLoading.value = false;
+      await Future.delayed(Duration(seconds: 3), () {
+        Get.back();
+        Get.offAndToNamed(Routes.login);
+      });
+    });
   }
 
   @override
   void onInit() {
-    print("sulod permi nyawa");
     mobileNumber = TextEditingController();
     password = TextEditingController();
-    checkIfEnabledBio();
+
     super.onInit();
   }
 

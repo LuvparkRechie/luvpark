@@ -26,7 +26,7 @@ class SplashController extends GetxController
   @override
   void onInit() {
     _controller =
-        AnimationController(vsync: this, duration: const Duration(seconds: 2));
+        AnimationController(vsync: this, duration: const Duration(seconds: 5));
     animation = CurvedAnimation(
         parent: _controller, curve: Curves.fastEaseInToSlowEaseOut);
 
@@ -54,6 +54,7 @@ class SplashController extends GetxController
 
     if (data != null) {
       Functions.getAccountStatus(data["mobile_no"], (obj) async {
+        await Future.delayed(Duration(seconds: 4));
         final items = obj[0]["items"];
         if (!obj[0]["has_net"]) {
           isNetConn.value = false;
@@ -79,7 +80,6 @@ class SplashController extends GetxController
             isNetConn.value = true;
 
             HttpRequest(api: apiParam).get().then((returnBrandData) async {
-              print("returnBrandData $returnBrandData");
               if (returnBrandData == "No Internet") {
                 isNetConn.value = false;
                 CustomDialog().internetErrorDialog(Get.context!, () {

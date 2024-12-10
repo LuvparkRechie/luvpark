@@ -73,7 +73,7 @@ class CustomParagraph extends StatelessWidget {
     this.height,
     this.fontWeight = FontWeight.w400,
     this.fontStyle = FontStyle.normal,
-    this.letterSpacing = 0.0,
+    this.letterSpacing = 0,
     this.maxlines,
     this.wordspacing = 4,
     this.textAlign,

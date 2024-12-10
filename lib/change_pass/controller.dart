@@ -146,8 +146,9 @@ class ChangePasswordController extends GetxController {
           }).toList();
 
           await Authentication().setLogin(jsonEncode(userData[0]));
+          await Authentication().setBiometricStatus(false);
           Get.back();
-          Get.offAllNamed(Routes.login);
+          Get.offAllNamed(Routes.splash);
         });
       } else {
         Get.back();

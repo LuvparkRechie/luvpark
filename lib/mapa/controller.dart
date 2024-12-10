@@ -163,6 +163,7 @@ class DashboardMapController extends GetxController
     });
     WidgetsBinding.instance.addObserver(this);
     _checkLocationService();
+    getBgTmrStatus();
   }
 
   @override
@@ -177,6 +178,10 @@ class DashboardMapController extends GetxController
     dragController.dispose();
     dragController.reset();
     WidgetsBinding.instance.removeObserver(this);
+  }
+
+  void getBgTmrStatus() async {
+    await Authentication().enableTimer(true);
   }
 
   Future<void> _checkLocationService() async {
@@ -314,10 +319,9 @@ class DashboardMapController extends GetxController
   void getNearest(LatLng coordinates) async {
     String params =
         "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-
+    print("params $params");
     try {
       var returnData = await HttpRequest(api: params).get();
-
       Get.back();
 
       if (returnData == "No Internet") {

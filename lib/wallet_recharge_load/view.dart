@@ -114,7 +114,7 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                 if (MediaQuery.of(context).viewInsets.bottom ==
                     0) //hide custombutton
                   Obx(() => CustomButton(
-                        text: "Pay Now",
+                        text: "Continue",
                         btnColor: !controller.isActiveBtn.value
                             ? AppColor.primaryColor.withOpacity(.7)
                             : AppColor.primaryColor,

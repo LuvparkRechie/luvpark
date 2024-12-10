@@ -5,10 +5,6 @@
 const String luvApi = "lpw";
 const String parkSpaceApi = "ps";
 
-// production api
-// https://app.luvpark.ph/ords/lpw/
-// https://app.luvpark.ph/ords/ps/
-
 class ApiKeys {
   //Prod Path
   static const gApiURL = 'app.luvpark.ph';

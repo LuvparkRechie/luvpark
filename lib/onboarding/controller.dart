@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:luvpark/auth/authentication.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/variables.dart';
@@ -43,12 +44,17 @@ class OnboardingController extends GetxController {
   void onInit() {
     super.onInit();
     pageController = PageController();
+    clearStoredData();
   }
 
   @override
   void onClose() {
     super.onClose();
     pageController.dispose();
+  }
+
+  void clearStoredData() {
+    Authentication().clearStoredData();
   }
 
   Future<void> getVehicleBrands(bool isLogin) async {

@@ -180,7 +180,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                         },
                                         child: Container(
                                           padding: const EdgeInsets.fromLTRB(
-                                              10, 15, 10, 15),
+                                              0, 15, 0, 15),
                                           decoration: BoxDecoration(
                                             border: Border(
                                                 bottom: BorderSide(
@@ -305,7 +305,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                       ),
                                                     ],
                                                   ),
-                                                  Container(width: 10),
+                                                  Container(width: 5),
                                                   Expanded(
                                                     child: _openTime(
                                                       Container(
@@ -319,7 +319,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                       " ${Variables.timeFormatter2(ct.searchedZone[index]["opened_time"].toString())} - ${Variables.timeFormatter2(ct.searchedZone[index]["closed_time"]).toString()}",
                                                     ),
                                                   ),
-                                                  Container(width: 10),
+                                                  Container(width: 5),
                                                   Row(
                                                     mainAxisAlignment:
                                                         MainAxisAlignment.end,
@@ -336,7 +336,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                       Container(width: 10),
                                                       CustomParagraph(
                                                         text:
-                                                            '${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString())} ${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
+                                                            '${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString())} ${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"}',
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         maxlines: 1,

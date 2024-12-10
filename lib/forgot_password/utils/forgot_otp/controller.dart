@@ -153,7 +153,7 @@ class ForgotPassOtpController extends GetxController {
         } else {
           if (retvalue["success"] == "Y") {
             Get.back();
-
+            Authentication().setPasswordBiometric(paramArgs[0]["new_pass"]);
             Get.toNamed(Routes.forgotPassSuccess);
           } else {
             Get.back();

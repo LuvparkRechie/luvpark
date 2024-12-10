@@ -178,11 +178,12 @@ class WalletRechargeLoadController extends GetxController
 
     // Encrypt
     final encrypted = await Variables.encryptData(secretKey, nonce, plainText);
-
+    print("encrypted $encrypted");
     final concatenatedArray = Variables.concatBuffers(nonce, encrypted);
     final output = Variables.arrayBufferToBase64(concatenatedArray);
 
     hash.value = Uri.encodeComponent(output);
+    print("hash.value ${hash.value}");
 
     Get.to(
       () => WebviewPage(

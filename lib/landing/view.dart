@@ -38,7 +38,7 @@ class LandingScreen extends GetView<LandingController> {
                   children: [
                     const Center(
                       child: CustomTitle(
-                        text: "Get started with\nLuvPark Parking",
+                        text: "Get started with\nluvpark Parking",
                         fontSize: 30,
                         fontWeight: FontWeight.w500,
                         wordspacing: 5,

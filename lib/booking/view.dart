@@ -298,7 +298,7 @@ class BookingPage extends GetView<BookingController> {
                                                       children: [
                                                         CustomParagraph(
                                                           text:
-                                                              "${ct.selectedVh[0]["vehicle_plate_no"]}",
+                                                              "${ct.plateNo.text}",
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.w700,
@@ -541,12 +541,15 @@ class BookingPage extends GetView<BookingController> {
                                                           ),
                                                           Container(width: 10),
                                                           GestureDetector(
-                                                            onTap: () {
-                                                              controller.toggleExtendChecked(
-                                                                  !controller
-                                                                      .isExtendchecked
-                                                                      .value);
-                                                            },
+                                                            onTap: controller
+                                                                    .isSubscribed
+                                                                    .value
+                                                                ? () {}
+                                                                : () {
+                                                                    controller.toggleExtendChecked(!controller
+                                                                        .isExtendchecked
+                                                                        .value);
+                                                                  },
                                                             child: Container(
                                                               width: 60,
                                                               height: 30,
@@ -971,7 +974,7 @@ class ConfirmBooking extends GetView<BookingController> {
     );
 
     String dtOut = DateFormat('E, dd MMM yyyy').format(dateOut);
-    String dtIn = DateFormat('E, dd MMM yyyy').format(dateOut);
+    String dtIn = DateFormat('E, dd MMM yyyy').format(dateIn);
 
     if (dateIn.day.toString() == dateOut.day.toString()) {
       isNewDay = false;
@@ -1050,7 +1053,7 @@ class ConfirmBooking extends GetView<BookingController> {
             ],
           ),
           Container(height: 30),
-          CustomTitle(
+          CustomParagraph(
             text: toCurrencyString(controller.totalAmount.value).toString(),
             fontSize: 20,
             color: AppColor.headerColor,
@@ -1073,14 +1076,17 @@ class ConfirmBooking extends GetView<BookingController> {
 
             String finalDateOut =
                 "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${controller.paramEndTime.value}";
+            RegExp regExp = RegExp(r'[^a-zA-Z0-9]');
+            String plateNo = controller.selectedVh[0]["vehicle_plate_no"]
+                .toString()
+                .replaceAll(regExp, '');
 
             void bongGo(bool canChkIn) {
               Map<String, dynamic> parameters = {
                 "client_id": controller.parameters["areaData"]["client_id"],
                 "park_area_id": controller.parameters["areaData"]
                     ["park_area_id"],
-                "vehicle_plate_no": controller.selectedVh[0]
-                    ["vehicle_plate_no"],
+                "vehicle_plate_no": plateNo,
                 "vehicle_type_id":
                     controller.selectedVh[0]["vehicle_type_id"].toString(),
                 "dt_in": dateIn.toString().toString().split(".")[0],
@@ -1092,6 +1098,7 @@ class ConfirmBooking extends GetView<BookingController> {
                 "disc_rate": 0,
                 "tran_type": "R",
               };
+
               controller.submitReservation(parameters, canChkIn);
             }
 
@@ -1235,6 +1242,11 @@ class _VehicleTypesState extends State<VehicleTypes>
                       title: "Plate Number",
                       labelText: "Your plate number here",
                       suffixIcon: Icons.list,
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(15),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r"[a-zA-Z0-9]+|\s ")),
+                      ],
                       onIconTap: () {
                         FocusNode().unfocus();
                         setState(() {
@@ -1248,27 +1260,27 @@ class _VehicleTypesState extends State<VehicleTypes>
                         });
                       },
                       onChange: (value) {
-                        String capitalizeWords(String input) {
-                          return input.toUpperCase();
-                        }
+                        // String capitalizeWords(String input) {
+                        //   return input.toUpperCase();
+                        // }
 
-                        String text = capitalizeWords(value);
-                        plNo.value = TextEditingValue(
-                          text: text,
-                        );
+                        // String text = capitalizeWords(value);
+                        // plNo.value = TextEditingValue(
+                        //   text: text,
+                        // );
+                        final selection = plNo.selection;
+                        plNo.text = value.toUpperCase();
+                        plNo.selection = selection;
                       },
                       validator: (value) {
                         if (value == null || value.isEmpty) {
-                          return "Plate Number is required";
-                        }
-
-                        if (value.startsWith('-') || value.endsWith('-')) {
-                          return "Plate Number should not start or end with a dash";
+                          return "Plate no. is required";
                         }
                         if ((value.endsWith(' ') ||
                             value.endsWith('-') ||
+                            value.startsWith(" ") ||
                             value.endsWith('.'))) {
-                          return "Middle name cannot end with a space, hyphen, or period";
+                          return "Invalid Plate no. format";
                         }
 
                         return null;
@@ -1446,6 +1458,7 @@ class _VehicleTypesState extends State<VehicleTypes>
                     text: "No registered vehicle found",
                   )
                 : SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(vertical: 10),
                     child: Container(
                       width: double.infinity,
                       decoration: BoxDecoration(
@@ -1525,29 +1538,32 @@ class _VehicleTypesState extends State<VehicleTypes>
           ),
           Visibility(
             visible: ct.myVehiclesData.isNotEmpty,
-            child: CustomButton(
-                text: "Confirm",
-                onPressed: () {
-                  List vhDatas = [ct.myVehiclesData[myVhSelected]];
-                  dynamic recData = ct.ddVehiclesData;
+            child: Padding(
+              padding: const EdgeInsets.only(top: 5.0),
+              child: CustomButton(
+                  text: "Confirm",
+                  onPressed: () {
+                    List vhDatas = [ct.myVehiclesData[myVhSelected]];
+                    dynamic recData = ct.ddVehiclesData;
 
-                  Map<int, Map<String, dynamic>> recDataMap = {
-                    for (var item in recData) item['value']: item
-                  };
-                  // Merge base_hours and succeeding_rate into vhDatas
-                  for (var vh in vhDatas) {
-                    int typeId = vh['vehicle_type_id'];
-                    if (recDataMap.containsKey(typeId)) {
-                      var rec = recDataMap[typeId];
-                      vh['base_hours'] = rec?['base_hours'];
-                      vh['base_rate'] = rec?['base_rate'];
-                      vh['succeeding_rate'] = rec?['succeeding_rate'];
-                      vh['vehicle_type'] = rec?['vehicle_type'];
+                    Map<int, Map<String, dynamic>> recDataMap = {
+                      for (var item in recData) item['value']: item
+                    };
+                    // Merge base_hours and succeeding_rate into vhDatas
+                    for (var vh in vhDatas) {
+                      int typeId = vh['vehicle_type_id'];
+                      if (recDataMap.containsKey(typeId)) {
+                        var rec = recDataMap[typeId];
+                        vh['base_hours'] = rec?['base_hours'];
+                        vh['base_rate'] = rec?['base_rate'];
+                        vh['succeeding_rate'] = rec?['succeeding_rate'];
+                        vh['vehicle_type'] = rec?['vehicle_type'];
+                      }
                     }
-                  }
-                  Get.back();
-                  widget.cb(vhDatas);
-                }),
+                    Get.back();
+                    widget.cb(vhDatas);
+                  }),
+            ),
           ),
           Container(height: 10),
         ],
