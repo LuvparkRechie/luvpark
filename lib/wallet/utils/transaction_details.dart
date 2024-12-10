@@ -28,6 +28,9 @@ class TransactionDetails extends StatelessWidget {
     } else {
       img = "wallet_payparking";
     }
+
+    // String fromValue =
+    //     data[index]["category"] == "SENDER" ? data[index]["mobile_no"] : "";
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Column(
@@ -81,11 +84,15 @@ class TransactionDetails extends StatelessWidget {
                     Container(
                       height: 20,
                     ),
-                    rowWidget("Date",
+                    rowWidget("Date & Time",
                         Variables.formatDateLocal(data[index]["tran_date"])),
                     Container(
                       height: 5,
                     ),
+                    // if (fromValue.isNotEmpty) ...[
+                    //   rowWidget("From", fromValue),
+                    //   Container(height: 5),
+                    // ],
                     rowWidget("Amount",
                         toCurrencyString(data[index]["amount"].toString())),
                     Container(

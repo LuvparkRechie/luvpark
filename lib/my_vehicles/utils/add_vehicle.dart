@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -9,6 +11,7 @@ import 'package:luvpark/my_vehicles/controller.dart';
 
 import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_textfield.dart';
+import 'preview_image.dart';
 
 class AddVehicles extends GetView<MyVehiclesController> {
   const AddVehicles({super.key});
@@ -160,22 +163,45 @@ class AddVehicles extends GetView<MyVehiclesController> {
                               EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           child: ListTile(
                             onTap: () {
-                              controller.showBottomSheetCamera(true);
+                              if (controller.orImageBase64.isNotEmpty) {
+                                Get.to(() => ImageViewer(
+                                    base64Image:
+                                        controller.orImageBase64.value));
+                              } else {
+                                controller.showBottomSheetCamera(true);
+                              }
                             },
                             contentPadding: EdgeInsets.zero,
-                            leading: Container(
-                              padding: EdgeInsets.all(7),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.photo_outlined,
-                                color: Colors.grey,
-                              ),
-                            ),
+                            leading: controller.orImageBase64.isNotEmpty
+                                ? Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey.shade300,
+                                      image: DecorationImage(
+                                        filterQuality: FilterQuality.high,
+                                        fit: BoxFit.cover,
+                                        image: MemoryImage(
+                                          base64Decode(
+                                            controller.orImageBase64.value,
+                                          ),
+                                        ) as ImageProvider,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 50,
+                                    width: 50,
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey.shade300),
+                                    child: Icon(
+                                      Icons.photo_outlined,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                             title: CustomTitle(
                               text: controller.orImageBase64.isEmpty
                                   ? "No receipt"
@@ -188,9 +214,14 @@ class AddVehicles extends GetView<MyVehiclesController> {
                               maxlines: 1,
                               minFontSize: 12,
                             ),
-                            trailing: Icon(
-                              LucideIcons.chevronRight,
-                              size: 20,
+                            trailing: InkWell(
+                              onTap: () {
+                                controller.showBottomSheetCamera(true);
+                              },
+                              child: Icon(
+                                Icons.add_a_photo_rounded,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),
@@ -208,24 +239,47 @@ class AddVehicles extends GetView<MyVehiclesController> {
                               EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                           child: ListTile(
                             onTap: () {
-                              controller.showBottomSheetCamera(false);
+                              if (controller.crImageBase64.isNotEmpty) {
+                                Get.to(() => ImageViewer(
+                                    base64Image:
+                                        controller.crImageBase64.value));
+                              } else {
+                                controller.showBottomSheetCamera(false);
+                              }
                             },
                             contentPadding: EdgeInsets.zero,
-                            leading: Container(
-                              padding: EdgeInsets.all(7),
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: Colors.grey.shade500,
-                                ),
-                              ),
-                              child: Icon(
-                                Icons.photo_outlined,
-                                color: Colors.grey,
-                              ),
-                            ),
+                            leading: controller.crImageBase64.isNotEmpty
+                                ? Container(
+                                    height: 50,
+                                    width: 50,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.grey.shade300,
+                                      image: DecorationImage(
+                                        filterQuality: FilterQuality.high,
+                                        fit: BoxFit.cover,
+                                        image: MemoryImage(
+                                          base64Decode(
+                                            controller.crImageBase64.value,
+                                          ),
+                                        ) as ImageProvider,
+                                      ),
+                                    ),
+                                  )
+                                : Container(
+                                    height: 50,
+                                    width: 50,
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey.shade300),
+                                    child: Icon(
+                                      Icons.photo_outlined,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
                             title: CustomTitle(
-                              text: controller.crImageBase64.isEmpty
+                              text: controller.crImageBase64.value.isEmpty
                                   ? "No certificate"
                                   : "cr.png",
                               color: Color(0xFF131122),
@@ -236,9 +290,14 @@ class AddVehicles extends GetView<MyVehiclesController> {
                               maxlines: 1,
                               minFontSize: 12,
                             ),
-                            trailing: Icon(
-                              LucideIcons.chevronRight,
-                              size: 20,
+                            trailing: InkWell(
+                              onTap: () {
+                                controller.showBottomSheetCamera(false);
+                              },
+                              child: Icon(
+                                Icons.add_a_photo_rounded,
+                                size: 20,
+                              ),
                             ),
                           ),
                         ),

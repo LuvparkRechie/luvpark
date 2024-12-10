@@ -1275,17 +1275,17 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
   String _getSvgForAmenities(String amenText) {
     switch (amenText) {
       case 'ASPHALT FLOOR':
-        return 'assets/map_filter/inactive/asphalt_inactive.svg';
+        return 'assets/map_filter/active/asphalt_active.svg';
       case 'CONCRETE FLOOR':
-        return 'assets/map_filter/inactive/concrete_inactive.svg';
+        return 'assets/map_filter/active/concrete_active.svg';
       case 'COVERED / SHADED':
-        return 'assets/map_filter/inactive/covered_inactive.svg';
+        return 'assets/map_filter/active/covered_active.svg';
       case 'COMPACTED GRAVEL':
-        return 'assets/map_filter/inactive/gravel_inactive.svg';
+        return 'assets/map_filter/active/gravel_active.svg';
       case 'WITH CCTV':
-        return 'assets/map_filter/inactive/cctv_inactive.svg';
+        return 'assets/map_filter/active/cctv_active.svg';
       case 'WITH SECURITY':
-        return 'assets/map_filter/inactive/security_inactive.svg';
+        return 'assets/map_filter/active/security_active.svg';
       default:
         return 'assets/area_details/dimension.svg';
     }

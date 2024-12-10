@@ -186,7 +186,8 @@ class QrWalletController extends GetxController
     );
     Uint8List pngBytes = bytes.buffer.asUint8List();
 
-    final imgFile = File('$directory/screenshot.png');
+    final imgFile = File(
+        '$directory/${currentPage.value == 0 ? "payment" : "receive"}_qr.png');
     imgFile.writeAsBytes(pngBytes);
     Get.back();
     await Share.shareFiles([imgFile.path]);
