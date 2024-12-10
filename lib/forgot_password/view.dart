@@ -65,6 +65,7 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
                     ),
                     CustomMobileNumber(
                       labelText: "10 digit mobile number",
+                      hintText: "10 digit mobile number",
                       controller: controller.mobileNumber,
                       inputFormatters: [Variables.maskFormatter],
                       onChange: (value) {

@@ -188,6 +188,7 @@ class CustomElevatedButton extends StatelessWidget {
   final double iconSize;
   final Color? iconColor;
   final double spacing;
+  final double? btnwidth;
 
   const CustomElevatedButton({
     Key? key,
@@ -205,13 +206,14 @@ class CustomElevatedButton extends StatelessWidget {
     this.iconSize = 20.0,
     this.iconColor,
     this.spacing = 8.0,
+    this.btnwidth,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: btnHeight ?? 50.0,
-      width: double.infinity,
+      width: btnwidth,
       child: ElevatedButton(
         onPressed: (loading || disabled) ? null : onPressed,
         style: ElevatedButton.styleFrom(
@@ -221,7 +223,7 @@ class CustomElevatedButton extends StatelessWidget {
             borderRadius: BorderRadius.circular(borderRadius),
             side: BorderSide(
               color: borderColor ?? Colors.transparent,
-              width: 1.5,
+              width: 1,
             ),
           ),
         ),
@@ -246,12 +248,11 @@ class CustomElevatedButton extends StatelessWidget {
                     ),
                     SizedBox(width: spacing),
                   ],
-                  Text(
-                    text,
-                    style: TextStyle(
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  CustomParagraph(
+                    text: text,
+                    fontSize: fontSize,
+                    color: textColor,
+                    fontWeight: FontWeight.w500,
                   ),
                 ],
               ),

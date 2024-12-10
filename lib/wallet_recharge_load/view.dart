@@ -83,6 +83,7 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                     ),
                     CustomMobileNumber(
                       labelText: "Recipient Number",
+                      hintText: "Recipient Number",
                       controller: controller.mobNum,
                       inputFormatters: [Variables.maskFormatter],
                       onChange: (value) {

@@ -33,11 +33,13 @@ class CustomTextField extends StatefulWidget {
   final TextCapitalization textCapitalization;
   final FormFieldValidator<String>? validator;
   final String? errorText;
+  final String? hintText;
 
   const CustomTextField(
       {super.key,
       this.title,
       this.labelText,
+      this.hintText,
       required this.controller,
       this.fontweight,
       this.fontsize = 14,
@@ -137,7 +139,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   )
                 : null,
             labelText: widget.title ?? widget.labelText,
-            hintText: widget.labelText,
+            hintText: widget.hintText,
             hintStyle: paragraphStyle(
               color: AppColor.hintColor,
               fontWeight: FontWeight.w400,
@@ -165,7 +167,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
 }
 
 class CustomMobileNumber extends StatefulWidget {
-  final String labelText;
+  final String? labelText;
+  final String? hintText;
   final bool? isReadOnly;
   final Widget? prefix;
   final IconData? suffixIcon;
@@ -181,8 +184,9 @@ class CustomMobileNumber extends StatefulWidget {
 
   const CustomMobileNumber({
     super.key,
-    required this.labelText,
+    this.labelText,
     required this.controller,
+    required this.hintText,
     this.onChange,
     this.prefixIcon,
     this.isReadOnly = false,
@@ -281,7 +285,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               ],
             ),
           ),
-          hintText: widget.labelText,
+          hintText: widget.hintText,
           hintStyle: paragraphStyle(
             color: AppColor.hintColor,
             fontWeight: FontWeight.w400,
@@ -300,7 +304,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         },
         validator: widget.validator ??
             (value) {
-              if (widget.labelText == "10 digit mobile number") {
+              if (widget.hintText == "10 digit mobile number") {
                 if (value!.isEmpty) {
                   return 'Field is required';
                 }

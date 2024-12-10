@@ -31,9 +31,9 @@ class RegistrationPage extends GetView<RegistrationController> {
             elevation: 0,
             toolbarHeight: 0,
             systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: AppColor.primaryColor,
-              statusBarBrightness: Brightness.light,
-              statusBarIconBrightness: Brightness.light,
+              statusBarColor: AppColor.bodyColor,
+              statusBarBrightness: Brightness.dark,
+              statusBarIconBrightness: Brightness.dark,
             ),
           ),
           body: Container(
@@ -41,10 +41,8 @@ class RegistrationPage extends GetView<RegistrationController> {
             child: Container(
               height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                      topRight: Radius.circular(30),
-                      topLeft: Radius.circular(30))),
+                color: Colors.white,
+              ),
               child: ScrollConfiguration(
                 behavior: ScrollBehavior().copyWith(overscroll: false),
                 child: StretchingOverscrollIndicator(
@@ -52,55 +50,68 @@ class RegistrationPage extends GetView<RegistrationController> {
                   child: SingleChildScrollView(
                     child: GetBuilder<RegistrationController>(builder: (ctxt) {
                       return Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 20),
+                        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
                         child: Form(
                           key: controller.formKeyRegister,
                           child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(height: 20),
+                              Container(height: 40),
                               Image(
                                 image: AssetImage(
                                     "assets/images/onboardluvpark.png"),
-                                width: 100,
+                                width: 120,
                                 fit: BoxFit.contain,
                               ),
-                              Image(
-                                image: const AssetImage(
-                                    "assets/images/onboard5.png"),
-                                width: MediaQuery.of(context).size.width * .55,
-                                fit: BoxFit.contain,
-                                filterQuality: FilterQuality.high,
-                              ),
+                              const SizedBox(height: 30),
                               CustomTitle(
                                 text: "Create account",
                                 color: Colors.black,
                                 maxlines: 1,
-                                fontSize: 20,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w700,
                                 textAlign: TextAlign.center,
                                 letterSpacing: -.1,
                               ),
                               Container(height: 10),
                               const CustomParagraph(
-                                textAlign: TextAlign.center,
+                                textAlign: TextAlign.start,
                                 text:
-                                    "Create an account to connect, explore,\n and enjoy all we offer.",
+                                    "Sign up to book, connect, and take advantage of exclusive promos!",
+                                fontSize: 13,
                               ),
                               const VerticalHeight(height: 30),
+                              Row(
+                                children: [
+                                  CustomParagraph(
+                                    text: "Mobile Number",
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
                               CustomMobileNumber(
-                                labelText: "10 digit mobile number",
+                                hintText: "10 digit mobile number",
                                 controller: controller.mobileNumber,
                                 inputFormatters: [Variables.maskFormatter],
                                 onChange: (value) {
                                   controller.onMobileChanged(value);
                                 },
                               ),
-                              const VerticalHeight(height: 5),
+                              Row(
+                                children: [
+                                  CustomParagraph(
+                                    text: "Password",
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                ],
+                              ),
                               Obx(
                                 () => CustomTextField(
-                                  title: "Password",
-                                  labelText: "Enter your password",
+                                  hintText: "Enter Password",
                                   controller: controller.password,
                                   isObscure: controller.isShowPass.value,
                                   suffixIcon: controller.isShowPass.value
@@ -155,7 +166,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                       children: [
                                         const CustomTitle(
                                           text: "Password Strength",
-                                          fontSize: 16,
+                                          fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           letterSpacing: -.1,
                                           wordspacing: 2,
@@ -210,7 +221,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                                     .getColorForPasswordStrength(
                                                         controller.passStrength
                                                             .value),
-                                                size: 18,
+                                                size: 15,
                                               ),
                                               Container(
                                                 width: 6,
@@ -228,11 +239,13 @@ class RegistrationPage extends GetView<RegistrationController> {
                                             ],
                                           ),
                                         Container(
-                                          height: 10,
+                                          height: 5,
                                         ),
                                         const CustomParagraph(
                                           text:
                                               "The password should have a minimum of 8 characters, including at least one uppercase letter and a number.",
+                                          textAlign: TextAlign.justify,
+                                          fontSize: 12,
                                         ),
                                       ],
                                     ),
@@ -241,8 +254,11 @@ class RegistrationPage extends GetView<RegistrationController> {
                               ),
                               const SizedBox(height: 10.0),
                               if (MediaQuery.of(context).viewInsets.bottom == 0)
-                                CustomButton(
-                                  text: "Submit",
+                                CustomElevatedButton(
+                                  text: "Create Account",
+                                  btnwidth: double.infinity,
+                                  btnColor: AppColor.primaryColor,
+                                  textColor: Colors.white,
                                   loading: controller.isLoading.value,
                                   onPressed: () {
                                     FocusScope.of(context)
@@ -342,8 +358,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                         ),
                                       ],
                                     ),
-                                    overflow: TextOverflow
-                                        .ellipsis, // Ensures that if the text is too long, it will be truncated with an ellipsis
+                                    overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                   ),
                                 ),

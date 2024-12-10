@@ -209,6 +209,8 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                 ),
                                                               ),
                                                             ),
+                                                            SizedBox(
+                                                                height: 10),
                                                             GestureDetector(
                                                               onTap: () {
                                                                 Get.bottomSheet(
@@ -457,6 +459,9 @@ class MyVehicles extends GetView<MyVehiclesController> {
                                                                 FontWeight.w500,
                                                             fontSize: 12,
                                                           ),
+                                                        ),
+                                                        SizedBox(
+                                                          height: 10,
                                                         ),
                                                       ],
                                                     ),

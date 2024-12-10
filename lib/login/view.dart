@@ -48,22 +48,24 @@ class _LoginScreenState extends State<LoginScreen> {
           elevation: 0,
           toolbarHeight: 0,
           systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: AppColor.primaryColor,
-            statusBarBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.light,
+            statusBarColor: AppColor.bodyColor,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.dark,
           ),
         ),
         body: Container(
           width: double.infinity,
-          color: AppColor.primaryColor,
+          color: AppColor.bodyColor,
           child: Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height,
             decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                    topRight: Radius.circular(30),
-                    topLeft: Radius.circular(30))),
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                topRight: Radius.circular(30),
+                topLeft: Radius.circular(30),
+              ),
+            ),
             padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
             child: Column(
               children: [
@@ -75,52 +77,64 @@ class _LoginScreenState extends State<LoginScreen> {
                           const ScrollBehavior().copyWith(overscroll: false),
                       child: SingleChildScrollView(
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(height: 20),
+                            const SizedBox(height: 40),
                             const Image(
                               image: AssetImage(
                                   "assets/images/onboardluvpark.png"),
-                              width: 100,
+                              width: 120,
                               fit: BoxFit.contain,
                             ),
-                            Image(
-                              image: const AssetImage(
-                                  "assets/images/onboardlogin.png"),
-                              width:
-                                  MediaQuery.of(Get.context!).size.width * .55,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.high,
-                            ),
+                            const SizedBox(height: 30),
                             const CustomTitle(
-                              text: "Login",
+                              text: "Welcome to luvpark",
                               color: Colors.black,
                               maxlines: 1,
-                              fontSize: 20,
+                              fontSize: 18,
                               fontWeight: FontWeight.w700,
                               textAlign: TextAlign.center,
                               letterSpacing: -.1,
                             ),
-                            Container(height: 10),
-                            const Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20),
-                              child: CustomParagraph(
-                                textAlign: TextAlign.center,
-                                text: "Enter your mobile number to log in",
-                                fontWeight: FontWeight.w500,
-                              ),
+                            const SizedBox(height: 10),
+                            CustomParagraph(
+                              textAlign: TextAlign.start,
+                              text:
+                                  "Enter your mobile number and password to log in",
+                              fontWeight: FontWeight.w400,
+                              fontSize: 13,
                             ),
-                            VerticalHeight(height: 10),
+                            const VerticalHeight(height: 25),
+                            Row(
+                              children: [
+                                CustomParagraph(
+                                  text: "Mobile Number",
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
                             CustomMobileNumber(
-                              labelText: "10 digit mobile number",
+                              hintText: "10 digit mobile number",
                               controller: controller.mobileNumber,
                               inputFormatters: [Variables.maskFormatter],
                               keyboardType: TextInputType.number,
                             ),
+                            const VerticalHeight(height: 10),
+                            Row(
+                              children: [
+                                CustomParagraph(
+                                  text: "Password",
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black,
+                                ),
+                              ],
+                            ),
                             Obx(
                               () => CustomTextField(
-                                title: "Password",
-                                labelText: "Enter your password",
+                                hintText: "Enter your password",
                                 controller: controller.password,
                                 isObscure: !controller.isShowPass.value,
                                 suffixIcon: !controller.isShowPass.value
@@ -132,164 +146,119 @@ class _LoginScreenState extends State<LoginScreen> {
                                 },
                               ),
                             ),
-                            Container(height: 10),
+                            const SizedBox(height: 10),
                             Align(
-                                alignment: Alignment.centerRight,
-                                child: Text.rich(
-                                  TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: 'Forgot Password',
-                                        style: paragraphStyle(
-                                          color: AppColor.primaryColor,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                        recognizer: TapGestureRecognizer()
-                                          ..onTap = controller.isLoading.value
-                                              ? () {}
-                                              : () async {
-                                                  Get.toNamed(
-                                                      Routes.forgotPass);
-                                                },
-                                      ),
-                                    ],
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                )),
-                            const SizedBox(
-                              height: 20,
-                            ),
-                            if (MediaQuery.of(context).viewInsets.bottom == 0)
-                              Obx(
-                                () => CustomButton(
-                                  loading: controller.isLoading.value,
-                                  text: "Log in",
-                                  onPressed: () {
-                                    controller.counter++;
-                                    FocusScope.of(context)
-                                        .requestFocus(FocusNode());
-                                    if (controller.isLoading.value) return;
-                                    controller.toggleLoading(
-                                        !controller.isLoading.value);
-
-                                    if (controller.mobileNumber.text.isEmpty) {
-                                      controller.toggleLoading(
-                                          !controller.isLoading.value);
-                                      CustomDialog().snackbarDialog(
-                                          context,
-                                          "Mobile number is empty",
-                                          Colors.red,
-                                          () {});
-                                      return;
-                                    } else if (controller
-                                            .mobileNumber.text.length !=
-                                        12) {
-                                      controller.toggleLoading(
-                                          !controller.isLoading.value);
-                                      CustomDialog().snackbarDialog(
-                                          context,
-                                          "Incorrect mobile number",
-                                          Colors.red,
-                                          () {});
-                                      return;
-                                    }
-                                    if (controller.password.text.isEmpty) {
-                                      controller.toggleLoading(
-                                          !controller.isLoading.value);
-                                      CustomDialog().snackbarDialog(
-                                          context,
-                                          "Password is empty",
-                                          Colors.red,
-                                          () {});
-                                      return;
-                                    }
-                                    Map<String, dynamic> postParam = {
-                                      "mobile_no":
-                                          "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
-                                      "pwd": controller.password.text,
-                                    };
-
-                                    controller.postLogin(context, postParam,
-                                        (data) {
-                                      controller.toggleLoading(
-                                          !controller.isLoading.value);
-
-                                      if (data[0]["items"].isNotEmpty) {
-                                        Get.offAndToNamed(Routes.map);
-                                      }
-                                    });
-                                  },
-                                ),
-                              ),
-                            Container(
-                              height: 30,
-                            ),
-                            Obx(
-                              () => Visibility(
-                                visible: controller.isToggle.value,
-                                child: Column(
+                              alignment: Alignment.centerRight,
+                              child: Text.rich(
+                                TextSpan(
                                   children: [
-                                    Row(
-                                      children: [
-                                        Expanded(child: Divider()),
-                                        Container(width: 10),
-                                        CustomParagraph(text: "Or"),
-                                        Container(width: 10),
-                                        Expanded(child: Divider())
-                                      ],
-                                    ),
-                                    IconButton(
-                                      splashColor: Colors.red,
-                                      highlightColor: Colors.green,
-                                      onPressed: () async {
-                                        String? mpass = await Authentication()
-                                            .getPasswordBiometric();
-                                        final mmobile = await Authentication()
-                                            .getUserData2();
-
-                                        bool isGG =
-                                            await AppSecurity.authenticateBio();
-
-                                        if (isGG) {
-                                          CustomDialog().loadingDialog(context);
-                                          Map<String, dynamic> postParam = {
-                                            "mobile_no":
-                                                "${mmobile["mobile_no"]}",
-                                            "pwd": mpass,
-                                          };
-
-                                          controller.postLogin(
-                                              context, postParam, (data) {
-                                            Get.back();
-
-                                            if (data[0]["items"].isNotEmpty) {
-                                              Get.offAndToNamed(Routes.map);
-                                            }
-                                          });
-                                        }
-                                      },
-                                      icon: Icon(
-                                        Platform.isIOS
-                                            ? LucideIcons.scanFace
-                                            : LucideIcons.fingerprint,
-                                        color: Colors.blue,
-                                        size: 40,
+                                    TextSpan(
+                                      text: 'Forgot Password',
+                                      style: paragraphStyle(
+                                        color: AppColor.primaryColor,
+                                        fontWeight: FontWeight.w600,
                                       ),
+                                      recognizer: TapGestureRecognizer()
+                                        ..onTap = controller.isLoading.value
+                                            ? () {}
+                                            : () async {
+                                                Get.toNamed(Routes.forgotPass);
+                                              },
                                     ),
-                                    Container(
-                                      height: 20,
-                                    ),
-                                    //login
-                                    CustomParagraph(
-                                      text: Platform.isIOS
-                                          ? "Login with Face ID"
-                                          : "Login with biometric",
-                                      fontSize: 8,
-                                      fontWeight: FontWeight.w400,
-                                    )
                                   ],
                                 ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                            const SizedBox(height: 20),
+                            Obx(
+                              () => Column(
+                                children: [
+                                  CustomElevatedButton(
+                                    btnwidth: double.infinity,
+                                    loading: controller.isLoading.value,
+                                    text: "Log in with Mobile Number",
+                                    iconColor: Colors.white,
+                                    textColor: Colors.white,
+                                    icon: Icons.phone_android_rounded,
+                                    btnColor: AppColor.primaryColor,
+                                    fontSize: 13,
+                                    onPressed: () {
+                                      controller.counter++;
+                                      FocusScope.of(context)
+                                          .requestFocus(FocusNode());
+                                      if (controller.isLoading.value) return;
+                                      controller.toggleLoading(
+                                          !controller.isLoading.value);
+
+                                      if (controller
+                                          .mobileNumber.text.isEmpty) {
+                                        controller.toggleLoading(
+                                            !controller.isLoading.value);
+                                        CustomDialog().snackbarDialog(
+                                            context,
+                                            "Mobile number is empty",
+                                            Colors.red,
+                                            () {});
+                                        return;
+                                      } else if (controller
+                                              .mobileNumber.text.length !=
+                                          12) {
+                                        controller.toggleLoading(
+                                            !controller.isLoading.value);
+                                        CustomDialog().snackbarDialog(
+                                            context,
+                                            "Incorrect mobile number",
+                                            Colors.red,
+                                            () {});
+                                        return;
+                                      }
+                                      if (controller.password.text.isEmpty) {
+                                        controller.toggleLoading(
+                                            !controller.isLoading.value);
+                                        CustomDialog().snackbarDialog(
+                                            context,
+                                            "Password is empty",
+                                            Colors.red,
+                                            () {});
+                                        return;
+                                      }
+                                      Map<String, dynamic> postParam = {
+                                        "mobile_no":
+                                            "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
+                                        "pwd": controller.password.text,
+                                      };
+
+                                      controller.postLogin(context, postParam,
+                                          (data) {
+                                        controller.toggleLoading(
+                                            !controller.isLoading.value);
+
+                                        if (data[0]["items"].isNotEmpty) {
+                                          Get.offAndToNamed(Routes.map);
+                                        }
+                                      });
+                                    },
+                                  ),
+                                  const SizedBox(height: 10),
+                                  CustomElevatedButton(
+                                    btnwidth: double.infinity,
+                                    loading: controller.isLoading.value,
+                                    text: "Create Account",
+                                    // textColor: const Color(0xFF424242)
+                                    //     .withOpacity(0.8),
+                                    textColor: Colors.black,
+                                    // borderColor: const Color(0xFF424242)
+                                    //.withOpacity(0.5),
+                                    borderColor: AppColor.borderColor,
+                                    btnColor: AppColor.bodyColor,
+                                    fontSize: 13,
+                                    onPressed: () {
+                                      Get.offAndToNamed(Routes.landing);
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
                           ],
@@ -298,38 +267,52 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                 ),
-                Container(height: 20),
-                Center(
-                  child: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(
-                          text: "New to luvpark? ",
-                          style: paragraphStyle(
-                              color: AppColor.paragraphColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        TextSpan(
-                          text: 'Create Account',
-                          style: paragraphStyle(
-                            color: AppColor.primaryColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = controller.isLoading.value
-                                ? () {}
-                                : () async {
-                                    Get.offAndToNamed(Routes.landing);
-                                  },
-                        ),
-                      ],
+                // Biometric Button at the Bottom
+                Obx(
+                  () => Visibility(
+                    visible: controller.isToggle.value,
+                    child: Padding(
+                      padding: const EdgeInsets.only(bottom: 20),
+                      child: CustomElevatedButton(
+                        btnColor: AppColor.primaryColor,
+                        btnHeight: 40,
+                        fontSize: 13,
+                        textColor: Colors.white,
+                        loading: controller.isLoading.value,
+                        text: Platform.isIOS
+                            ? "Log in with Face ID"
+                            : "Log in with biometric",
+                        borderRadius: 40,
+                        icon: Platform.isIOS
+                            ? LucideIcons.scanFace
+                            : LucideIcons.fingerprint,
+                        onPressed: () async {
+                          String? mpass =
+                              await Authentication().getPasswordBiometric();
+                          final mmobile = await Authentication().getUserData2();
+
+                          bool isGG = await AppSecurity.authenticateBio();
+
+                          if (isGG) {
+                            CustomDialog().loadingDialog(context);
+                            Map<String, dynamic> postParam = {
+                              "mobile_no": "${mmobile["mobile_no"]}",
+                              "pwd": mpass,
+                            };
+
+                            controller.postLogin(context, postParam, (data) {
+                              Get.back();
+
+                              if (data[0]["items"].isNotEmpty) {
+                                Get.offAndToNamed(Routes.map);
+                              }
+                            });
+                          }
+                        },
+                      ),
                     ),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
                   ),
                 ),
-                Container(height: 20),
               ],
             ),
           ),
@@ -338,293 +321,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-// class LoginScreen extends GetView<LoginScreenController> {
-//   const LoginScreen({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return PopScope(
-//       canPop: false,
-//       child: Scaffold(
-//         appBar: AppBar(
-//           leading: null,
-//           elevation: 0,
-//           toolbarHeight: 0,
-//           systemOverlayStyle: SystemUiOverlayStyle(
-//             statusBarColor: AppColor.primaryColor,
-//             statusBarBrightness: Brightness.light,
-//             statusBarIconBrightness: Brightness.light,
-//           ),
-//         ),
-//         body: Container(
-//           width: double.infinity,
-//           color: AppColor.primaryColor,
-//           child: Container(
-//             width: double.infinity,
-//             height: MediaQuery.of(context).size.height,
-//             decoration: const BoxDecoration(
-//                 color: Colors.white,
-//                 borderRadius: BorderRadius.only(
-//                     topRight: Radius.circular(30),
-//                     topLeft: Radius.circular(30))),
-//             padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-//             child: Column(
-//               children: [
-//                 Expanded(
-//                   child: StretchingOverscrollIndicator(
-//                     axisDirection: AxisDirection.down,
-//                     child: ScrollConfiguration(
-//                       behavior:
-//                           const ScrollBehavior().copyWith(overscroll: false),
-//                       child: SingleChildScrollView(
-//                         child: Column(
-//                           crossAxisAlignment: CrossAxisAlignment.center,
-//                           children: [
-//                             Container(height: 20),
-//                             const Image(
-//                               image: AssetImage(
-//                                   "assets/images/onboardluvpark.png"),
-//                               width: 100,
-//                               fit: BoxFit.contain,
-//                             ),
-//                             Image(
-//                               image: const AssetImage(
-//                                   "assets/images/onboardlogin.png"),
-//                               width:
-//                                   MediaQuery.of(Get.context!).size.width * .55,
-//                               fit: BoxFit.contain,
-//                               filterQuality: FilterQuality.high,
-//                             ),
-//                             const CustomTitle(
-//                               text: "Login",
-//                               color: Colors.black,
-//                               maxlines: 1,
-//                               fontSize: 20,
-//                               fontWeight: FontWeight.w700,
-//                               textAlign: TextAlign.center,
-//                               letterSpacing: -.1,
-//                             ),
-//                             Container(height: 10),
-//                             const Padding(
-//                               padding: EdgeInsets.symmetric(horizontal: 20),
-//                               child: CustomParagraph(
-//                                 textAlign: TextAlign.center,
-//                                 text: "Enter your mobile number to log in",
-//                                 fontWeight: FontWeight.w500,
-//                               ),
-//                             ),
-//                             VerticalHeight(height: 10),
-//                             CustomMobileNumber(
-//                               labelText: "10 digit mobile number",
-//                               controller: controller.mobileNumber,
-//                               inputFormatters: [Variables.maskFormatter],
-//                               keyboardType: TextInputType.number,
-//                             ),
-//                             Obx(
-//                               () => CustomTextField(
-//                                 title: "Password",
-//                                 labelText: "Enter your password",
-//                                 controller: controller.password,
-//                                 isObscure: !controller.isShowPass.value,
-//                                 suffixIcon: !controller.isShowPass.value
-//                                     ? Icons.visibility_off
-//                                     : Icons.visibility,
-//                                 onIconTap: () {
-//                                   controller.visibilityChanged(
-//                                       !controller.isShowPass.value);
-//                                 },
-//                               ),
-//                             ),
-//                             Container(height: 10),
-//                             Align(
-//                                 alignment: Alignment.centerRight,
-//                                 child: Text.rich(
-//                                   TextSpan(
-//                                     children: [
-//                                       TextSpan(
-//                                         text: 'Forgot Password',
-//                                         style: paragraphStyle(
-//                                           color: AppColor.primaryColor,
-//                                           fontWeight: FontWeight.w500,
-//                                         ),
-//                                         recognizer: TapGestureRecognizer()
-//                                           ..onTap = controller.isLoading.value
-//                                               ? () {}
-//                                               : () async {
-//                                                   Get.toNamed(
-//                                                       Routes.forgotPass);
-//                                                 },
-//                                       ),
-//                                     ],
-//                                   ),
-//                                   overflow: TextOverflow.ellipsis,
-//                                   maxLines: 1,
-//                                 )),
-//                             const SizedBox(
-//                               height: 20,
-//                             ),
-//                             if (MediaQuery.of(context).viewInsets.bottom == 0)
-//                               Obx(
-//                                 () => CustomButton(
-//                                   loading: controller.isLoading.value,
-//                                   text: "Log in",
-//                                   onPressed: () {
-//                                     controller.counter++;
-//                                     FocusScope.of(context)
-//                                         .requestFocus(FocusNode());
-//                                     if (controller.isLoading.value) return;
-//                                     controller.toggleLoading(
-//                                         !controller.isLoading.value);
-
-//                                     if (controller.mobileNumber.text.isEmpty) {
-//                                       controller.toggleLoading(
-//                                           !controller.isLoading.value);
-//                                       CustomDialog().snackbarDialog(
-//                                           context,
-//                                           "Mobile number is empty",
-//                                           Colors.red,
-//                                           () {});
-//                                       return;
-//                                     } else if (controller
-//                                             .mobileNumber.text.length !=
-//                                         12) {
-//                                       controller.toggleLoading(
-//                                           !controller.isLoading.value);
-//                                       CustomDialog().snackbarDialog(
-//                                           context,
-//                                           "Incorrect mobile number",
-//                                           Colors.red,
-//                                           () {});
-//                                       return;
-//                                     }
-//                                     if (controller.password.text.isEmpty) {
-//                                       controller.toggleLoading(
-//                                           !controller.isLoading.value);
-//                                       CustomDialog().snackbarDialog(
-//                                           context,
-//                                           "Password is empty",
-//                                           Colors.red,
-//                                           () {});
-//                                       return;
-//                                     }
-//                                     Map<String, dynamic> postParam = {
-//                                       "mobile_no":
-//                                           "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
-//                                       "pwd": controller.password.text,
-//                                     };
-
-//                                     controller.postLogin(context, postParam,
-//                                         (data) {
-//                                       controller.toggleLoading(
-//                                           !controller.isLoading.value);
-
-//                                       if (data[0]["items"].isNotEmpty) {
-//                                         Get.offAndToNamed(Routes.map);
-//                                       }
-//                                     });
-//                                   },
-//                                 ),
-//                               ),
-//                             Container(
-//                               height: 30,
-//                             ),
-//                             Obx(
-//                               () => Visibility(
-//                                 visible: controller.isToggle.value,
-//                                 child: Column(
-//                                   children: [
-//                                     IconButton(
-//                                       splashColor: Colors.red,
-//                                       highlightColor: Colors.green,
-//                                       onPressed: () async {
-//                                         String? mpass = await Authentication()
-//                                             .getPasswordBiometric();
-//                                         final mmobile = await Authentication()
-//                                             .getUserData2();
-
-//                                         bool isGG =
-//                                             await AppSecurity.authenticateBio();
-
-//                                         if (isGG) {
-//                                           CustomDialog().loadingDialog(context);
-//                                           Map<String, dynamic> postParam = {
-//                                             "mobile_no":
-//                                                 "${mmobile["mobile_no"]}",
-//                                             "pwd": mpass,
-//                                           };
-
-//                                           controller.postLogin(
-//                                               context, postParam, (data) {
-//                                             Get.back();
-
-//                                             if (data[0]["items"].isNotEmpty) {
-//                                               Get.offAndToNamed(Routes.map);
-//                                             }
-//                                           });
-//                                         }
-//                                       },
-//                                       icon: Icon(
-//                                         LucideIcons.fingerprint,
-//                                         color: Colors.blue,
-//                                         size: 40,
-//                                       ),
-//                                     ),
-//                                     Container(
-//                                       height: 20,
-//                                     ),
-//                                     CustomParagraph(
-//                                       text: "Login with biometric",
-//                                       fontSize: 8,
-//                                       fontWeight: FontWeight.w400,
-//                                     )
-//                                   ],
-//                                 ),
-//                               ),
-//                             ),
-//                           ],
-//                         ),
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 Container(height: 20),
-//                 Center(
-//                   child: Text.rich(
-//                     TextSpan(
-//                       children: [
-//                         TextSpan(
-//                           text: "New to luvpark? ",
-//                           style: paragraphStyle(
-//                               color: AppColor.paragraphColor,
-//                               fontSize: 14,
-//                               fontWeight: FontWeight.w500),
-//                         ),
-//                         TextSpan(
-//                           text: 'Create Account',
-//                           style: paragraphStyle(
-//                             color: AppColor.primaryColor,
-//                             fontWeight: FontWeight.w500,
-//                           ),
-//                           recognizer: TapGestureRecognizer()
-//                             ..onTap = controller.isLoading.value
-//                                 ? () {}
-//                                 : () async {
-//                                     Get.offAndToNamed(Routes.landing);
-//                                   },
-//                         ),
-//                       ],
-//                     ),
-//                     overflow: TextOverflow.ellipsis,
-//                     maxLines: 1,
-//                   ),
-//                 ),
-//                 Container(height: 15),
-//               ],
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }

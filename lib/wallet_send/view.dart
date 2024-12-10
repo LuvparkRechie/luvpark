@@ -138,6 +138,7 @@ class WalletSend extends GetView<WalletSendController> {
                                       : const TextInputType.numberWithOptions(
                                           signed: true, decimal: false),
                                   labelText: "Mobile Number",
+                                  hintText: "Mobile Number",
                                   validator: (value) {
                                     if (value!.isEmpty) {
                                       return 'Field is required';
