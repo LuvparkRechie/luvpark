@@ -33,7 +33,6 @@ class _TransactionHistoryState extends State<TransactionHistory> {
 
   DateTime _fromDate = DateTime.now().subtract(Duration(days: 15));
   DateTime _toDate = DateTime.now();
-  final DateTime _yesterday = DateTime.now().subtract(Duration(days: 1));
 
   List filterLogs = [];
   @override
@@ -128,15 +127,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
         filterfromDate.text = _fromDate.toString().split(" ")[0];
         filtertoDate.text = _toDate.toString().split(" ")[0];
       });
-    } else {
-      setState(() {
-        _fromDate = _yesterday;
-        _toDate = _yesterday;
-        filterfromDate.text = _fromDate.toString().split(" ")[0];
-        filtertoDate.text = _toDate.toString().split(" ")[0];
-      });
+      getFilteredLogs();
     }
-    getFilteredLogs();
   }
 
   @override

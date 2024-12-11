@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
@@ -13,6 +14,16 @@ class SplashScreen extends GetView<SplashController> {
     Get.put(LoginScreenController());
     return Scaffold(
         backgroundColor: AppColor.primaryColor,
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          backgroundColor: AppColor.primaryColor,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+          ),
+        ),
         body: Obx(
           () => !controller.isNetConn.value
               ? NoInternetConnected(
