@@ -371,7 +371,7 @@ class BookingReceipt extends GetView<BookingReceiptController> {
         children: [
           Expanded(
             child: QrImageView(
-              data: controller.parameters["refno"],
+              data: controller.parameters["qr_code"],
               version: QrVersions.auto,
               gapless: false,
             ),
