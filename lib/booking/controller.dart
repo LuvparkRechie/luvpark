@@ -623,6 +623,7 @@ class BookingController extends GetxController
 
   //Reservation Submit
   void submitReservation(params, bool allowChkin) async {
+    DateTime now = await Functions.getTimeNow();
     CustomDialog().loadingDialog(Get.context!);
     List bookingParams = [params];
 
@@ -676,11 +677,12 @@ class BookingController extends GetxController
       "version": 2
     };
     Get.back();
-
+    DateTime eet = now.add(Duration(minutes: areaEtaTime));
+    var ddd = Variables.timeFormatter("${eet.hour}:${eet.minute}");
     CustomDialog().confirmationDialog(
         Get.context!,
         "Confirm Booking",
-        "Please ensure that you arrive at the destination by $areaEtaTime mins, or your advance booking will be forfeited.",
+        "Please ensure that you arrive at the destination by $ddd, or your advance booking will be forfeited.",
         "Cancel",
         "Proceed", () {
       isSubmitBooking.value = false;
