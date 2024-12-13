@@ -1,16 +1,16 @@
-// const String luvApi = "luv";
-// const String parkSpaceApi = "parkspace";
-
-//PROD
-const String luvApi = "lpw";
-const String parkSpaceApi = "ps";
-
 class ApiKeys {
-  //Prod Path
-  static const gApiURL = 'app.luvpark.ph';
-  //Testing Path
-  // static const gApiURL =
-  //     'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
+  static const bool isProduction = false;
+  static const String luvApi = isProduction ? "lpw" : "luv";
+  static const String parkSpaceApi = isProduction ? "ps" : "parkspace";
+
+  static const String gApiURL = isProduction
+      ? 'app.luvpark.ph'
+      : 'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
+
+  // static String getFullUrl(String endpoint) {
+  //   return '$gApiURL$endpoint';
+  // }
+
   //get Payment key
   static const gApiSubFolderPayments = '/ords/$luvApi/ps/qr/';
   //Get luv ReferenceNo
@@ -246,4 +246,10 @@ class ApiKeys {
   //subscription_details per vehicle
   static const gApiGetSubscriptionDetails =
       '/ords/$parkSpaceApi/zone/subscription';
+  //ticket_id | QR Code for bookings
+  static const gApiGetParkingQR =
+      '/ords/$parkSpaceApi/pbm-dt/advanced-parking/qr';
+  //branch_id |Test QR Code for bookings
+  static const gApiGetTestParkingQR =
+      '/ords/$parkSpaceApi/pbm/advanced-parking/test_qr';
 }
