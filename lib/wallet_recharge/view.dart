@@ -108,13 +108,19 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                             return null;
                           },
                         ),
+                        CustomParagraph(
+                            maxlines: 2,
+                            fontWeight: FontWeight.w500,
+                            textAlign: TextAlign.center,
+                            fontSize: 12,
+                            text: "The minimum load amount is 20 tokens."),
                         const SizedBox(
-                          height: 20,
+                          height: 50,
                         ),
                         const CustomParagraph(
-                          maxlines: 2,
                           text:
                               'Enter a desired amount or choose from any denominations below.',
+                          maxlines: 2,
                           fontWeight: FontWeight.w500,
                           textAlign: TextAlign.center,
                           fontSize: 12,
@@ -181,9 +187,7 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(7),
               border: Border.all(color: Colors.grey.shade200, width: 1),
-              color: data["is_active"]
-                  ? AppColor.primaryColor
-                  : Colors.white, // Background color changes based on selection
+              color: data["is_active"] ? AppColor.primaryColor : Colors.white,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
