@@ -1001,6 +1001,11 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> goingBackToTheCornerWhenIFirstSawYou() async {
+    bool isOpenPa = await isOpenArea();
+    if (!isOpenPa) {
+      isOpen.value = isOpenPa;
+      return;
+    }
     final vehicleTypesList = markerData[0]['vehicle_types_list'] as String;
 
     List inataya = _parseVehicleTypes(vehicleTypesList).map((e) {
@@ -1206,7 +1211,31 @@ class DashboardMapController extends GetxController
     return parsedTypes;
   }
 
+  Future<bool> isOpenArea() async {
+    DateTime timeNow = await Functions.getTimeNow();
+    Map<String, dynamic> jsonData = markerData[0];
+    Map<String, String> jsonDatas = {};
+    Iterable<String> keys = jsonData.keys;
+    String today = DateFormat('EEEE').format(timeNow).toLowerCase();
+
+    for (var key in keys) {
+      if (key.toLowerCase() == today.toLowerCase()) {
+        jsonDatas[key] = jsonData[key];
+      }
+    }
+    String value = jsonData[today].toString();
+    return value.toLowerCase() == "y" ? true : false;
+  }
+
   void onClickBooking() async {
+    bool isOpenPa = await isOpenArea();
+    if (!isOpenPa) {
+      CustomDialog().infoDialog("Booking", "This area is currently close.", () {
+        Get.back();
+      });
+
+      return;
+    }
     CustomDialog().loadingDialog(Get.context!);
     DateTime now = await Functions.getTimeNow();
 

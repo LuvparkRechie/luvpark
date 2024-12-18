@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +13,7 @@ import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
+import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:qr_flutter/qr_flutter.dart';
@@ -387,12 +389,14 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                       _buildIconButton(Icons.share_outlined, () async {
                         CustomDialog().loadingDialog(Get.context!);
                         File? imgFile;
-
+                        String randomNumber =
+                            await Random().nextInt(100000).toString();
+                        String fname = "booking$randomNumber.png";
                         final directory =
                             (await getApplicationDocumentsDirectory()).path;
                         Uint8List bytes = await ScreenshotController()
                             .captureFromWidget(printScreen());
-                        imgFile = File('$directory/screenshot.png');
+                        imgFile = File('$directory/$fname');
                         imgFile.writeAsBytes(bytes);
 
                         Get.back();
@@ -413,13 +417,16 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                     children: [
                       _buildIconButton(Icons.download, () async {
                         CustomDialog().loadingDialog(Get.context!);
+                        String randomNumber =
+                            Random().nextInt(100000).toString();
+                        String fname = 'booking$randomNumber.png';
                         ScreenshotController()
                             .captureFromWidget(printScreen(),
-                                delay: const Duration(seconds: 3))
+                                delay: const Duration(seconds: 1))
                             .then((image) async {
                           final dir = await getApplicationDocumentsDirectory();
                           final imagePath =
-                              await File('${dir.path}/captured.png').create();
+                              await File('${dir.path}/$fname').create();
                           await imagePath.writeAsBytes(image);
                           Get.back();
 
@@ -596,30 +603,12 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
                           child: QrImageView(
-                            data: controller.parameters["refno"],
+                            data: controller.parameters["qr_code"],
                             version: QrVersions.auto,
                             gapless: false,
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 15),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CustomParagraph(
-                          text: controller.parameters["refno"],
-                          fontWeight: FontWeight.w700,
-                          maxlines: 1,
-                          textAlign: TextAlign.center,
-                          minFontSize: 10,
-                        ),
-                        CustomParagraph(
-                          text: "Reference No.",
-                          fontSize: 12,
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
                     ),
                     const SizedBox(height: 10),
                     LineCutter(),

@@ -92,6 +92,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
       context: context,
       firstDate: DateTime(2000),
       lastDate: DateTime.now(),
+      initialEntryMode: DatePickerEntryMode.calendarOnly,
       initialDateRange: DateTimeRange(start: _fromDate, end: _toDate),
       builder: (context, child) {
         return Theme(
