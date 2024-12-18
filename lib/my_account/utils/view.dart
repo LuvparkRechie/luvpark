@@ -436,6 +436,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   onChanged: (String? newValue) {
                     controller.selectedRegion.value = newValue.toString();
                     controller.getProvinceData(newValue);
+                    controller.zipCode.clear();
                     // Manually trigger validation when the dropdown is changed
                     // controller.formKeyStep2.currentState?.validate();
                   },
@@ -463,6 +464,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                   onChanged: (data) {
                     controller.selectedProvince.value = data.toString();
                     controller.getCityData(data);
+
                     // Manually trigger validation when the dropdown is changed
                     // controller.formKeyStep2.currentState?.validate();
                   },
@@ -510,6 +512,15 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 ),
               ),
               CustomTextField(
+                filledColor: Colors.grey.shade200,
+                isReadOnly: controller.selectedBrgy.value == null ||
+                    controller.selectedRegion.value == null ||
+                    controller.selectedProvince.value == null ||
+                    controller.selectedCity.value == null,
+                isFilled: controller.selectedBrgy.value == null ||
+                    controller.selectedRegion.value == null ||
+                    controller.selectedProvince.value == null ||
+                    controller.selectedCity.value == null,
                 labelText: 'Zip Code',
                 controller: controller.zipCode,
                 inputFormatters: [

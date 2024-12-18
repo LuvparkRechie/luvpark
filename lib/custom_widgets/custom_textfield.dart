@@ -138,6 +138,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     child: widget.prefixIcon,
                   )
                 : null,
+            labelText: widget.labelText,
             hintText: widget.title ?? widget.labelText,
             hintStyle: paragraphStyle(
               color: AppColor.hintColor,

@@ -214,10 +214,10 @@ class WalletSend extends GetView<WalletSendController> {
                               CustomTextField(
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(
-                                    60,
+                                    30,
                                   ),
                                 ],
-                                maxLength: 60,
+                                maxLength: 30,
                                 labelText: "Note",
                                 controller: controller.message,
                               ),

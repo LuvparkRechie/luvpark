@@ -138,6 +138,49 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                                 myPads(controller.padData[j], j)
                             ],
                           ),
+                        SizedBox(height: 10),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            CustomParagraph(
+                              text: "1 token = 1 peso",
+                              fontWeight: FontWeight.w500,
+                              fontSize: 12,
+                              color: AppColor.primaryColor,
+                            ),
+                            SizedBox(
+                              width: 5,
+                            ),
+                            InkWell(
+                              onTap: () {
+                                showModalBottomSheet(
+                                  context: context,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                        top: Radius.circular(20)),
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  builder: (BuildContext context) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: CustomParagraph(
+                                        fontWeight: FontWeight.w300,
+                                        fontSize: 10,
+                                        text:
+                                            "Payment may entail an additional fee for other payment options.",
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                              child: Icon(
+                                Icons.info_outline_rounded,
+                                color: AppColor.primaryColor,
+                                size: 20,
+                              ),
+                            ),
+                          ],
+                        ),
                         Container(
                           height: MediaQuery.of(context).size.height / 15,
                         ),
