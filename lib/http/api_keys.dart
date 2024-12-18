@@ -252,4 +252,6 @@ class ApiKeys {
   //branch_id |Test QR Code for bookings
   static const gApiGetTestParkingQR =
       '/ords/$parkSpaceApi/pbm/advanced-parking/test_qr';
+  //Get app Version
+  static const gApiAppVersion = "/ords/luv/main/version";
 }

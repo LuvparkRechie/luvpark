@@ -36,8 +36,7 @@ class DashboardMapController extends GetxController
 
   final TextEditingController searchCon = TextEditingController();
   PanelController panelController = PanelController();
-  DraggableScrollableController dragController =
-      DraggableScrollableController();
+
   late TabController tabController;
   late AnimationController animationController;
 
@@ -149,7 +148,7 @@ class DashboardMapController extends GetxController
     fabHeight.value = panelHeightOpen.value + 30;
 
     panelController = PanelController();
-    dragController = DraggableScrollableController();
+
     tabController = TabController(length: 2, vsync: this);
     focusNode.addListener(() {
       if (!focusNode.hasFocus && searchCon.text.isEmpty) {
@@ -175,8 +174,7 @@ class DashboardMapController extends GetxController
     debouncePanel?.cancel();
     focusNode.dispose();
     tabController.dispose();
-    dragController.dispose();
-    dragController.reset();
+
     WidgetsBinding.instance.removeObserver(this);
   }
 
@@ -1303,18 +1301,7 @@ class DashboardMapController extends GetxController
       });
       return;
     }
-    // print("balanceData $balanceData");
-    // if (double.parse(balanceData[0]["amount_bal"].toString()) <= 0) {
-    //   Get.back();
-    //   CustomDialog().infoDialog(
-    //     "Attention",
-    //     "You cannot make a booking as your balance is insufficient.",
-    //     () {
-    //       Get.back();
-    //     },
-    //   );
-    //   return;
-    // }
+
     if (double.parse(balanceData[0]["amount_bal"].toString()) <
         double.parse(balanceData[0]["min_wallet_bal"].toString())) {
       Get.back();
@@ -1353,6 +1340,7 @@ class DashboardMapController extends GetxController
       } else {
         Variables.subsVhList.value = items;
       }
+
       Functions.computeDistanceResorChckIN(Get.context!,
           LatLng(markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
           (success) {

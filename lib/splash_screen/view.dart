@@ -13,7 +13,6 @@ class SplashScreen extends GetView<SplashController> {
   Widget build(BuildContext context) {
     Get.put(LoginScreenController());
     return Scaffold(
-        backgroundColor: AppColor.primaryColor,
         appBar: AppBar(
           toolbarHeight: 0,
           elevation: 0,
@@ -27,7 +26,7 @@ class SplashScreen extends GetView<SplashController> {
         body: Obx(
           () => !controller.isNetConn.value
               ? NoInternetConnected(
-                  onTap: controller.determineInitialRoute,
+                  onTap: controller.initializeApp,
                 )
               : ScaleTransition(
                   scale: controller.animation,

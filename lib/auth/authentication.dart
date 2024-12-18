@@ -126,20 +126,6 @@ class Authentication {
     }
   }
 
-  //SET SHOW POPUP NEAEST
-  Future<void> setShowPopUpNearest(bool isShow) async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('isShowPopUp', isShow);
-  }
-
-  Future<bool> getPopUpNearest() async {
-    final prefs = await SharedPreferences.getInstance();
-
-    bool? isShow = prefs.getBool("isShowPopUp");
-
-    return isShow!;
-  }
-
   //SET LAST BOOKING AREA_ID
   Future<void> setLastBooking(data) async {
     final prefs = await SharedPreferences.getInstance();
@@ -205,6 +191,22 @@ class Authentication {
       return false;
     } else {
       return isEnabled;
+    }
+  }
+
+  Future<void> setAppVersion(int appVers) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setInt('app_version', appVers);
+  }
+
+  Future<int> getAppVersion() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? appVers = prefs.getInt("app_version");
+
+    if (appVers == null) {
+      return 0;
+    } else {
+      return appVers;
     }
   }
 

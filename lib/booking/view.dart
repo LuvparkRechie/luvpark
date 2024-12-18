@@ -14,6 +14,8 @@ import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
+import '../custom_widgets/variables.dart';
+
 class BookingPage extends GetView<BookingController> {
   const BookingPage({Key? key}) : super(key: key);
 
@@ -24,7 +26,7 @@ class BookingPage extends GetView<BookingController> {
       () => MediaQuery(
         data: MediaQuery.of(context).copyWith(textScaler: TextScaler.linear(1)),
         child: PopScope(
-          canPop: !controller.isLoadingPage.value,
+          //  canPop: !controller.isLoadingPage.value,
           child: Scaffold(
               appBar: AppBar(
                 toolbarHeight: 0,
@@ -433,7 +435,7 @@ class BookingPage extends GetView<BookingController> {
                                                                     color: AppColor
                                                                         .primaryColor,
                                                                     text:
-                                                                        "${controller.selectedNumber.value} ${int.parse(controller.selectedNumber.value.toString()) > 1 ? "Hours" : "Hour"}",
+                                                                        "${controller.numberOfhours.value} ${int.parse(controller.numberOfhours.value.toString()) > 1 ? "Hours" : "Hour"}",
                                                                     fontSize:
                                                                         16,
                                                                     fontWeight:
@@ -1076,6 +1078,7 @@ class ConfirmBooking extends GetView<BookingController> {
 
             String finalDateOut =
                 "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${controller.paramEndTime.value}";
+            print("finalDateOut $finalDateOut");
             RegExp regExp = RegExp(r'[^a-zA-Z0-9]');
             String plateNo = controller.selectedVh[0]["vehicle_plate_no"]
                 .toString()
@@ -1098,7 +1101,6 @@ class ConfirmBooking extends GetView<BookingController> {
                 "disc_rate": 0,
                 "tran_type": "R",
               };
-
               controller.submitReservation(parameters, canChkIn);
             }
 
@@ -1387,7 +1389,8 @@ class _VehicleTypesState extends State<VehicleTypes>
                           "base_hours": vhDatas[0]["base_hours"],
                           "base_rate": vhDatas[0]["base_rate"],
                           "succeeding_rate": vhDatas[0]["succeeding_rate"],
-                          "vehicle_type": vhDatas[0]["vehicle_type"]
+                          "vehicle_type": vhDatas[0]["vehicle_type"],
+                          "isAllowSubscription": false,
                         }
                       ];
 
@@ -1550,6 +1553,13 @@ class _VehicleTypesState extends State<VehicleTypes>
                       for (var item in recData) item['value']: item
                     };
                     // Merge base_hours and succeeding_rate into vhDatas
+                    List data = Variables.subsVhList.where((obj) {
+                      return obj["vehicle_type_id"] ==
+                              vhDatas[0]["vehicle_type_id"] &&
+                          obj["vehicle_plate_no"].toString() ==
+                              vhDatas[0]["vehicle_plate_no"];
+                    }).toList();
+
                     for (var vh in vhDatas) {
                       int typeId = vh['vehicle_type_id'];
                       if (recDataMap.containsKey(typeId)) {
@@ -1558,8 +1568,11 @@ class _VehicleTypesState extends State<VehicleTypes>
                         vh['base_rate'] = rec?['base_rate'];
                         vh['succeeding_rate'] = rec?['succeeding_rate'];
                         vh['vehicle_type'] = rec?['vehicle_type'];
+                        vh['isAllowSubscription'] =
+                            data.isNotEmpty ? true : false;
                       }
                     }
+
                     Get.back();
                     widget.cb(vhDatas);
                   }),

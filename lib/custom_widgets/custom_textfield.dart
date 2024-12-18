@@ -287,12 +287,6 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
             color: AppColor.hintColor,
             fontWeight: FontWeight.w400,
           ),
-          labelStyle: paragraphStyle(
-              fontWeight: FontWeight.w400, color: AppColor.hintColor),
-          floatingLabelStyle: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 15,
-          ),
         ),
         style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
         onTap: widget.isEnabled ? widget.onTap : null,

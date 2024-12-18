@@ -14,7 +14,6 @@ import 'package:luvpark/my_vehicles/utils/add_vehicle.dart';
 import 'package:luvpark/my_vehicles/utils/sub_details.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import '../custom_widgets/variables.dart';
 import '../sqlite/vehicle_brands_table.dart';
 
 enum AppState {
@@ -61,7 +60,7 @@ class MyVehiclesController extends GetxController {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateMaskFormatter("");
-      getMyVehicle();
+      getVhBrands();
     });
   }
 
@@ -73,29 +72,42 @@ class MyVehiclesController extends GetxController {
   }
 
   Future<void> onRefresh() async {
+    isLoadingPage.value = true;
     getMyVehicle();
   }
 
-  void getMyVehicle() async {
-    List data = await VehicleBrandsTable.instance.readAllVHBrands();
-    if (data.isNotEmpty) {
-      for (dynamic dataRow in data) {
-        Variables.gVBrand.add(dataRow);
-      }
-    }
+  Future<void> getVhBrands() async {
+    isLoadingPage.value = true;
+    isNetConn.value = true;
+    CustomDialog().loadingDialog(Get.context!);
+    final vhData = await Functions.getVhBrands();
+    print("vhData $vhData");
 
+    if (vhData["response"] == "No Internet") {
+      isLoadingPage.value = false;
+      isNetConn.value = false;
+      return;
+    }
+    if (vhData["response"] == null || vhData["data"].isEmpty) {
+      isLoadingPage.value = true;
+      isNetConn.value = false;
+      return;
+    }
+    if (vhData["response"] == "Success") {
+      getMyVehicle();
+    }
+  }
+
+  void getMyVehicle() async {
     final userId = await Authentication().getUserId();
     String api =
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=";
 
     HttpRequest(api: api).get().then((myVehicles) async {
-      print("myvehicles: $myVehicles");
       if (myVehicles == "No Internet") {
         isLoadingPage.value = false;
         isNetConn.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
+
         return;
       }
 

@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 
+import '../auth/authentication.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
 import '../routes/routes.dart';
@@ -39,9 +40,14 @@ class ActivateAccountController extends GetxController {
     pinController = TextEditingController();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      getTmrStat();
       getOtpRequest();
     });
     super.onInit();
+  }
+
+  void getTmrStat() async {
+    await Authentication().enableTimer(false);
   }
 
   void getOtpRequest() {

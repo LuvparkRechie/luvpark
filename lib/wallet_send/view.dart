@@ -108,9 +108,9 @@ class WalletSend extends GetView<WalletSendController> {
                                               ? "No internet"
                                               : controller.userData.isEmpty
                                                   ? ""
-                                                  : toCurrencyString(
-                                                      controller.userData[0]
-                                                          ["amount_bal"]),
+                                                  : toCurrencyString(controller
+                                                      .userData[0]["amount_bal"]
+                                                      .toString()),
                                           color: Colors.white,
                                           fontWeight: FontWeight.w700,
                                           textAlign: TextAlign.right,
@@ -124,172 +124,176 @@ class WalletSend extends GetView<WalletSendController> {
                           height: 20,
                         ),
                         Form(
-                            key: controller.formKeySend,
-                            child: Column(
-                              children: [
-                                CustomMobileNumber(
-                                  onChange: (text) {
-                                    controller.onTextChange();
-                                  },
-                                  controller: controller.recipient,
-                                  inputFormatters: [Variables.maskFormatter],
-                                  keyboardType: Platform.isAndroid
-                                      ? TextInputType.number
-                                      : const TextInputType.numberWithOptions(
-                                          signed: true, decimal: false),
-                                  labelText: "Mobile Number",
-                                  hintText: "Mobile Number",
-                                  validator: (value) {
-                                    if (value!.isEmpty) {
-                                      return 'Field is required';
-                                    }
-                                    if (value
-                                            .toString()
-                                            .replaceAll(" ", "")
-                                            .length <
-                                        10) {
-                                      return 'Invalid mobile number';
-                                    }
-                                    if (value
-                                            .toString()
-                                            .replaceAll(" ", "")[0] ==
-                                        '0') {
-                                      return 'Invalid mobile number';
-                                    }
+                          key: controller.formKeySend,
+                          child: Column(
+                            children: [
+                              CustomMobileNumber(
+                                onChange: (text) {
+                                  controller.onTextChange();
+                                },
+                                controller: controller.recipient,
+                                inputFormatters: [Variables.maskFormatter],
+                                keyboardType: Platform.isAndroid
+                                    ? TextInputType.number
+                                    : const TextInputType.numberWithOptions(
+                                        signed: true, decimal: false),
+                                labelText: "Mobile Number",
+                                hintText: "Mobile Number",
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return 'Field is required';
+                                  }
+                                  if (value
+                                          .toString()
+                                          .replaceAll(" ", "")
+                                          .length <
+                                      10) {
+                                    return 'Invalid mobile number';
+                                  }
+                                  if (value.toString().replaceAll(" ", "")[0] ==
+                                      '0') {
+                                    return 'Invalid mobile number';
+                                  }
 
-                                    return null;
-                                  },
-                                  suffixIcon: Icons.qr_code,
-                                  onIconTap: () async {
-                                    FocusManager.instance.primaryFocus!
-                                        .unfocus();
-                                    controller.requestCameraPermission();
-                                  },
-                                ),
-                                CustomTextField(
-                                  labelText: "Amount",
-                                  controller: controller.tokenAmount,
-                                  inputFormatters: <TextInputFormatter>[
-                                    FilteringTextInputFormatter.digitsOnly,
-                                    FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d*\.?\d*$')),
-                                  ],
-                                  keyboardType: Platform.isAndroid
-                                      ? TextInputType.number
-                                      : const TextInputType.numberWithOptions(
-                                          signed: true, decimal: false),
-                                  onChange: (text) {
-                                    controller.pads(int.parse(text.toString()));
-                                    controller.onTextChange();
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return "Amount is required";
-                                    }
+                                  return null;
+                                },
+                                suffixIcon: Icons.qr_code,
+                                onIconTap: () async {
+                                  FocusManager.instance.primaryFocus!.unfocus();
+                                  controller.requestCameraPermission();
+                                },
+                              ),
+                              CustomTextField(
+                                labelText: "Amount",
+                                controller: controller.tokenAmount,
+                                inputFormatters: <TextInputFormatter>[
+                                  FilteringTextInputFormatter.digitsOnly,
+                                  FilteringTextInputFormatter.allow(
+                                      RegExp(r'^\d*\.?\d*$')),
+                                ],
+                                keyboardType: Platform.isAndroid
+                                    ? TextInputType.number
+                                    : const TextInputType.numberWithOptions(
+                                        signed: true, decimal: false),
+                                onChange: (text) {
+                                  controller.pads(int.parse(text.toString()));
+                                  controller.onTextChange();
+                                },
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return "Amount is required";
+                                  }
 
-                                    double parsedValue;
-                                    try {
-                                      parsedValue = double.parse(value);
-                                    } catch (e) {
-                                      return "Invalid amount";
-                                    }
+                                  double parsedValue;
+                                  try {
+                                    parsedValue = double.parse(value);
+                                  } catch (e) {
+                                    return "Invalid amount";
+                                  }
 
-                                    double availableBalance;
-                                    try {
-                                      availableBalance = double.parse(controller
-                                          .userData[0]["amount_bal"]
-                                          .toString());
-                                    } catch (e) {
-                                      return "Error retrieving balance";
-                                    }
-                                    if (parsedValue < 10) {
-                                      return "Amount must not be less than 10";
-                                    }
-                                    if (parsedValue > availableBalance) {
-                                      return "You don't have enough balance to proceed";
-                                    }
+                                  double availableBalance;
+                                  try {
+                                    availableBalance = double.parse(controller
+                                            .userData.isEmpty
+                                        ? "0.0"
+                                        : controller.userData[0]["amount_bal"]
+                                            .toString());
+                                  } catch (e) {
+                                    return "Error retrieving balance";
+                                  }
+                                  if (parsedValue < 10) {
+                                    return "Amount must not be less than 10";
+                                  }
+                                  if (parsedValue > availableBalance) {
+                                    return "You don't have enough balance to proceed";
+                                  }
 
-                                    return null;
-                                  },
-                                ),
-                                CustomTextField(
-                                  inputFormatters: [
-                                    LengthLimitingTextInputFormatter(
-                                      60,
-                                    ),
-                                  ],
-                                  maxLength: 60,
-                                  labelText: "Note",
-                                  controller: controller.message,
-                                ),
-                                for (int i = 0;
-                                    i < controller.padData.length;
-                                    i += 3)
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      for (int j = i;
-                                          j < i + 3 &&
-                                              j < controller.padData.length;
-                                          j++)
-                                        myPads(controller.padData[j], j)
-                                    ],
+                                  return null;
+                                },
+                              ),
+                              CustomTextField(
+                                inputFormatters: [
+                                  LengthLimitingTextInputFormatter(
+                                    60,
                                   ),
-                                SizedBox(
-                                  height: 30,
+                                ],
+                                maxLength: 60,
+                                labelText: "Note",
+                                controller: controller.message,
+                              ),
+                              for (int i = 0;
+                                  i < controller.padData.length;
+                                  i += 3)
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: [
+                                    for (int j = i;
+                                        j < i + 3 &&
+                                            j < controller.padData.length;
+                                        j++)
+                                      myPads(controller.padData[j], j)
+                                  ],
                                 ),
-                                if (MediaQuery.of(context).viewInsets.bottom ==
-                                    0) //hide button
-                                  CustomButton(
-                                      text: "Continue",
-                                      btnColor: AppColor.primaryColor,
-                                      onPressed: () async {
-                                        if (controller.formKeySend.currentState!
-                                            .validate()) {
-                                          final item = await Authentication()
-                                              .getUserLogin();
+                              SizedBox(
+                                height: 30,
+                              ),
+                              if (MediaQuery.of(context).viewInsets.bottom ==
+                                  0) //hide button
+                                CustomButton(
+                                  text: "Continue",
+                                  btnColor: AppColor.primaryColor,
+                                  onPressed: () async {
+                                    if (controller.formKeySend.currentState!
+                                        .validate()) {
+                                      final item =
+                                          await Authentication().getUserLogin();
 
-                                          if (item["mobile_no"].toString() ==
-                                              "63${controller.recipient.text.replaceAll(" ", "")}") {
-                                            CustomDialog().snackbarDialog(
-                                                context,
-                                                "Please use another number.",
-                                                Colors.red,
-                                                () {});
-                                            return;
-                                          }
-                                          if (double.parse(controller
-                                                  .userData[0]["amount_bal"]
-                                                  .toString()) <
-                                              double.parse(controller
-                                                  .tokenAmount.text
-                                                  .toString()
-                                                  .removeAllWhitespace)) {
-                                            CustomDialog().snackbarDialog(
-                                              context,
-                                              "Insufficient balance.",
-                                              Colors.red,
-                                              () {},
-                                            );
-                                            return;
-                                          }
+                                      if (item["mobile_no"].toString() ==
+                                          "63${controller.recipient.text.replaceAll(" ", "")}") {
+                                        CustomDialog().snackbarDialog(
+                                            context,
+                                            "Please use another number.",
+                                            Colors.red,
+                                            () {});
+                                        return;
+                                      }
+                                      if (double.parse(
+                                              controller.userData.isEmpty
+                                                  ? "0.0"
+                                                  : controller.userData[0]
+                                                          ["amount_bal"]
+                                                      .toString()) <
+                                          double.parse(controller
+                                              .tokenAmount.text
+                                              .toString()
+                                              .removeAllWhitespace)) {
+                                        CustomDialog().snackbarDialog(
+                                          context,
+                                          "Insufficient balance.",
+                                          Colors.red,
+                                          () {},
+                                        );
+                                        return;
+                                      }
 
-                                          CustomDialog().confirmationDialog(
-                                              context,
-                                              "Confirmation",
-                                              "Are you sure you want to proceed?",
-                                              "Back",
-                                              "Yes", () {
-                                            Get.back();
-                                          }, () {
-                                            Get.back();
-                                            controller.getVerifiedAcc();
-                                          });
-                                        }
-                                      })
-                              ],
-                            )),
+                                      CustomDialog().confirmationDialog(
+                                          context,
+                                          "Confirmation",
+                                          "Are you sure you want to proceed?",
+                                          "Back",
+                                          "Yes", () {
+                                        Get.back();
+                                      }, () {
+                                        Get.back();
+                                        controller.getVerifiedAcc();
+                                      });
+                                    }
+                                  },
+                                )
+                            ],
+                          ),
+                        ),
                       ],
                     ),
             ),
@@ -300,8 +304,10 @@ class WalletSend extends GetView<WalletSendController> {
   }
 
   Widget myPads(data, int index) {
-    double walletBalance =
-        double.parse(controller.userData[0]["amount_bal"].toString());
+    double walletBalance = double.parse((controller.userData.isEmpty
+            ? 0.0
+            : controller.userData[0]["amount_bal"] ?? 0)
+        .toString());
 
     return Expanded(
       child: Padding(
@@ -329,7 +335,7 @@ class WalletSend extends GetView<WalletSendController> {
                 CustomParagraph(
                   maxlines: 1,
                   minFontSize: 8,
-                  text: "${data["value"]}",
+                  text: "${data["value"].toString()}",
                   fontWeight: FontWeight.w700,
                   color: walletBalance >= data["value"]
                       ? (data["is_active"] ? Colors.white : Colors.black)

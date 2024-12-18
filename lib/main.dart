@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
@@ -9,7 +8,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
-import 'package:luvpark/routes/pages.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:luvpark/security/app_security.dart';
 // ignore: depend_on_referenced_packages
@@ -17,11 +15,10 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
-import 'package:upgrader/upgrader.dart';
 
 import 'custom_widgets/alert_dialog.dart';
-import 'mapa/controller.dart';
 import 'notification_controller.dart';
+import 'routes/pages.dart';
 
 @pragma('vm:entry-point')
 Future<void> backgroundFunc() async {
@@ -51,6 +48,7 @@ Future<void> backgroundFunc() async {
 }
 
 void _onUserActivity() async {
+  return;
   bool? tmrStat = await Authentication().getTimerStatus();
   if (!tmrStat!) {
     Variables.inactiveTmr?.cancel();
@@ -61,7 +59,6 @@ void _onUserActivity() async {
 
   Duration duration = const Duration(minutes: 3);
   Variables.inactiveTmr = Timer(duration, () async {
-    final mapController = Get.put(DashboardMapController());
     FocusManager.instance.primaryFocus!.unfocus();
     CustomDialog().loadingDialog(Get.context!);
     await Future.delayed(const Duration(seconds: 2));
@@ -80,7 +77,7 @@ void _onUserActivity() async {
     AwesomeNotifications().cancelAll();
     Variables.inactiveTmr!.cancel();
     // Variables.bgProcess!.cancel();
-    mapController.dragController.dispose();
+
     Get.back();
     Get.offAllNamed(Routes.splash);
   });
@@ -105,26 +102,7 @@ void main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]).then((_) {
-    runApp(
-      UpgradeAlert(
-        showReleaseNotes: false,
-        dialogStyle: Platform.isIOS
-            ? UpgradeDialogStyle.cupertino
-            : UpgradeDialogStyle.material,
-        child: Listener(
-            onPointerDown: (_) => _onUserActivity(),
-            onPointerMove: (_) => _onUserActivity(),
-            onPointerCancel: (_) => _onUserActivity(),
-            onPointerHover: (_) => _onUserActivity(),
-            onPointerUp: (d) {
-              _onUserActivity();
-            },
-            onPointerSignal: (d) {
-              _onUserActivity();
-            },
-            child: const MyApp()),
-      ),
-    );
+    runApp(const MyApp());
   });
 }
 
@@ -144,15 +122,27 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'MyApp',
-      theme: ThemeData(
-        useMaterial3: false,
+    return Listener(
+      onPointerDown: (_) => _onUserActivity(),
+      onPointerMove: (_) => _onUserActivity(),
+      onPointerCancel: (_) => _onUserActivity(),
+      onPointerHover: (_) => _onUserActivity(),
+      onPointerUp: (d) {
+        _onUserActivity();
+      },
+      onPointerSignal: (d) {
+        _onUserActivity();
+      },
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'MyApp',
+        theme: ThemeData(
+          useMaterial3: false,
+        ),
+        navigatorObservers: [GetObserver()],
+        initialRoute: Routes.splash,
+        getPages: AppPages.pages,
       ),
-      navigatorObservers: [GetObserver()],
-      initialRoute: Routes.splash,
-      getPages: AppPages.pages,
     );
   }
 }

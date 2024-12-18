@@ -1,9 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:dart_ping/dart_ping.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:geocoding/geocoding.dart';
@@ -27,6 +25,7 @@ import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../notification_controller.dart';
+import '../sqlite/vehicle_brands_model.dart';
 
 class Functions {
   static GeolocatorPlatform geolocatorPlatform = GeolocatorPlatform.instance;
@@ -595,11 +594,14 @@ class Functions {
   }
 
   static Future<List> getBranding(int typeId, int brandId) async {
-    List data = Variables.gVBrand.where((objData) {
+    List data = await VehicleBrandsTable.instance.readAllVHBrands();
+    print("data  getBranding $data");
+    List fData = [];
+    fData = data.where((objData) {
       return objData["vehicle_type_id"] == typeId &&
           objData["vehicle_brand_id"] == brandId;
     }).toList();
-    return data;
+    return fData;
   }
 
 //sort json data by key
@@ -673,27 +675,77 @@ class Functions {
     }
   }
 
-  static Future<void> checkInternet(Function(bool hasInternet) callBack) async {
-    try {
-      final result = await InternetAddress.lookup('google.com');
-      if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-        final ping = Ping('google.com', count: 1);
+  static Future<dynamic> getVhBrands() async {
+    String apiParam = ApiKeys.gApiLuvParkGetVehicleBrand;
 
-        ping.stream.listen((event) {
-          if (event.summary == null) {
-          } else {
-            if (event.summary!.received > 0) {
-              callBack(true);
-            } else {
-              callBack(false);
-            }
-          }
-        });
-      } else {
-        callBack(false);
+    final response = await HttpRequest(api: apiParam).get();
+
+    if (response == "No Internet") {
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response, "data": []};
+    }
+    if (response == null) {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response, "data": []};
+    }
+    if (response["items"].isEmpty) {
+      CustomDialog().infoDialog("lvupark",
+          "No data found for vehicle brands. Please contact support.", () {
+        Get.back();
+      });
+      return {"response": "No data", "data": []};
+    } else {
+      VehicleBrandsTable.instance.deleteAll();
+      for (var dataRow in response["items"]) {
+        var vbData = {
+          VHBrandsDataFields.vhTypeId:
+              int.parse(dataRow["vehicle_type_id"].toString()),
+          VHBrandsDataFields.vhBrandId:
+              int.parse(dataRow["vehicle_brand_id"].toString()),
+          VHBrandsDataFields.vhBrandName:
+              dataRow["vehicle_brand_name"].toString(),
+          VHBrandsDataFields.image: dataRow["imageb64"] == null
+              ? ""
+              : dataRow["imageb64"].toString().replaceAll("\n", ""),
+        };
+        await VehicleBrandsTable.instance.insertUpdate(vbData);
       }
-    } on SocketException catch (_) {
-      callBack(false);
+
+      return {"response": "Success", "data": response["items"]};
+    }
+  }
+
+  //Get AppVersion from database
+  static Future<dynamic> getAppVersion() async {
+    String apiParam = ApiKeys.gApiAppVersion;
+
+    final response = await HttpRequest(api: apiParam).get();
+
+    if (response == "No Internet") {
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response, "data": []};
+    }
+    if (response == null) {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response, "data": []};
+    }
+    if (response["items"].isEmpty) {
+      CustomDialog().infoDialog(
+          "lvupark", "No data found for app version. Please contact support.",
+          () {
+        Get.back();
+      });
+      return {"response": "No data", "data": []};
+    } else {
+      return {"response": "Success", "data": response["items"][0]};
     }
   }
 }

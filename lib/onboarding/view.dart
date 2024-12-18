@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/onboarding/controller.dart';
+
+import '../routes/routes.dart';
 
 class MyOnboardingPage extends StatelessWidget {
   const MyOnboardingPage({Key? key}) : super(key: key);
@@ -93,8 +96,11 @@ class MyOnboardingPage extends StatelessWidget {
                       ),
                       CustomButton(
                         text: "Log in",
-                        onPressed: () {
-                          controller.getVehicleBrands(true);
+                        onPressed: () async {
+                          CustomDialog().loadingDialog(context);
+                          await Future.delayed(Duration(seconds: 1));
+                          Get.back();
+                          Get.offAndToNamed(Routes.login);
                         },
                       ),
                       Container(height: 10),
@@ -103,8 +109,11 @@ class MyOnboardingPage extends StatelessWidget {
                         btnColor: Colors.white,
                         textColor: AppColor.primaryColor,
                         text: "Create Account",
-                        onPressed: () {
-                          controller.getVehicleBrands(false);
+                        onPressed: () async {
+                          CustomDialog().loadingDialog(context);
+                          await Future.delayed(Duration(seconds: 1));
+                          Get.back();
+                          Get.offAndToNamed(Routes.landing);
                         },
                       ),
                     ],

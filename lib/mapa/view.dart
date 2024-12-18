@@ -718,8 +718,29 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
   }
 }
 
-class DraggableDetailsSheet extends GetView<DashboardMapController> {
+class DraggableDetailsSheet extends StatefulWidget {
   const DraggableDetailsSheet({super.key});
+
+  @override
+  State<DraggableDetailsSheet> createState() => _DraggableDetailsSheetState();
+}
+
+class _DraggableDetailsSheetState extends State<DraggableDetailsSheet> {
+  final controller = Get.put(DashboardMapController());
+  DraggableScrollableController dragController =
+      DraggableScrollableController();
+
+  @override
+  void initState() {
+    super.initState();
+    dragController = DraggableScrollableController();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    dragController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -739,7 +760,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
         initialChildSize: adjustedInitialChildSize,
         minChildSize: minChildSize,
         maxChildSize: 0.8,
-        controller: controller.dragController,
+        controller: dragController,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
               decoration: const BoxDecoration(
@@ -1072,7 +1093,7 @@ class DraggableDetailsSheet extends GetView<DashboardMapController> {
                             child: CustomButton(
                               //  borderRadius: 25,
                               text: "Book now",
-                              onPressed: () {
+                              onPressed: () async {
                                 controller.onClickBooking();
                               },
                             ),

@@ -48,9 +48,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   checkIfEnabledBio() async {
     final usd = await Authentication().getUserData2();
-    print("usd $usd");
+
     bool? isEnabledBio = await Authentication().getBiometricStatus();
-    print("isEnabledBio $isEnabledBio");
+
     isEnabledBioLogin = isEnabledBio!;
 
     if (usd == null) {
@@ -58,20 +58,24 @@ class _LoginScreenState extends State<LoginScreen> {
     } else {
       userData.add(usd);
     }
-    isLoadingPage = false;
+
     if (isEnabledBioLogin && userData.isNotEmpty) {
       setState(() {
         screen = BiometricLoginScreen();
+        isLoadingPage = false;
       });
+
       return;
     } else if (userData.isNotEmpty && !isEnabledBioLogin) {
       setState(() {
         screen = UsePasswordScreen();
+        isLoadingPage = false;
       });
       return;
     } else {
       setState(() {
         screen = DefaultLoginScreen();
+        isLoadingPage = false;
       });
       return;
     }
@@ -321,7 +325,7 @@ class DefaultLoginScreen extends StatelessWidget {
                     color: Colors.black,
                   ),
                   CustomTextField(
-                    hintText: "Enter your password",
+                    labelText: "Enter your password",
                     controller: controller.password,
                     isObscure: !controller.isShowPass.value,
                     suffixIcon: !controller.isShowPass.value
@@ -502,110 +506,127 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
 
     return Container(
       color: AppColor.bodyColor,
-      child: Padding(
-        padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(height: MediaQuery.of(context).size.height * .15),
-              Image(
-                image: const AssetImage("assets/images/onboardlogin.png"),
-                width: MediaQuery.of(Get.context!).size.width * .55,
-                fit: BoxFit.contain,
-                filterQuality: FilterQuality.high,
-              ),
-              Text(
-                "Hi, ${userData[0]["first_name"].toString().isEmpty ? Variables.greeting() : userData[0]["first_name"].toString()}",
-                style: GoogleFonts.openSans(
-                  fontSize: 25,
-                  fontWeight: FontWeight.w700,
-                  color: AppColor.headerColor,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 10),
-              CustomParagraph(text: "Use your password to continue login"),
-              Container(height: 25),
-              Obx(
-                () => CustomTextField(
-                  controller: myPassword,
-                  title: "Enter your password",
-                  isObscure: !controller.isShowPass.value,
-                  suffixIcon: !controller.isShowPass.value
-                      ? Icons.visibility_off
-                      : Icons.visibility,
-                  onIconTap: () {
-                    controller.visibilityChanged(!controller.isShowPass.value);
-                  },
-                ),
-              ),
-              const SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerRight,
-                child: Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: 'Forgot Password',
-                        style: paragraphStyle(
-                          color: AppColor.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () async {
-                            Get.toNamed(Routes.forgotPass);
-                          },
+      width: MediaQuery.of(context).size.width,
+      height: MediaQuery.of(context).size.height,
+      child: userData.isEmpty
+          ? Container()
+          : Padding(
+              padding: EdgeInsets.fromLTRB(15, 10, 15, 5),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(height: MediaQuery.of(context).size.height * .10),
+                    Image(
+                      image: const AssetImage("assets/images/onboardlogin.png"),
+                      width: MediaQuery.of(Get.context!).size.width * .55,
+                      fit: BoxFit.contain,
+                      filterQuality: FilterQuality.high,
+                    ),
+                    Text(
+                      "${userData[0]["first_name"] == null || userData[0]["first_name"].toString().isEmpty ? "+${userData[0]["mobile_no"]}" : "Hi, ${userData[0]["first_name"].toString()}"}",
+                      style: GoogleFonts.openSans(
+                        fontSize: 25,
+                        fontWeight: FontWeight.w700,
+                        color: AppColor.headerColor,
                       ),
-                    ],
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    CustomParagraph(
+                        text: "Use your password to continue login"),
+                    Container(height: 40),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: CustomParagraph(
+                        text: "Password",
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                    ),
+                    Obx(
+                      () => CustomTextField(
+                        controller: myPassword,
+                        title: "Enter your password",
+                        isObscure: !controller.isShowPass.value,
+                        suffixIcon: !controller.isShowPass.value
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                        onIconTap: () {
+                          controller
+                              .visibilityChanged(!controller.isShowPass.value);
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Forgot Password',
+                              style: paragraphStyle(
+                                color: AppColor.primaryColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              recognizer: TapGestureRecognizer()
+                                ..onTap = () async {
+                                  Get.toNamed(Routes.forgotPass);
+                                },
+                            ),
+                          ],
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 20,
+                    ),
+                    CustomButton(
+                        text: "Login",
+                        onPressed: () async {
+                          if (myPassword.text.isEmpty) {
+                            CustomDialog().snackbarDialog(
+                                context,
+                                "Password must not be empty",
+                                Colors.red,
+                                () {});
+                            return;
+                          }
+                          final mmobile = await Authentication().getUserData2();
+
+                          CustomDialog().loadingDialog(context);
+                          Map<String, dynamic> postParam = {
+                            "mobile_no": "${mmobile["mobile_no"]}",
+                            "pwd": myPassword.text,
+                          };
+
+                          controller.postLogin(context, postParam, (data) {
+                            Get.back();
+
+                            if (data[0]["items"].isNotEmpty) {
+                              Get.offAndToNamed(Routes.map);
+                            }
+                          });
+                        }),
+                    Container(height: 20),
+                    Visibility(
+                      visible: widget.appbar == null,
+                      child: CustomButton(
+                        text: "Switch Account",
+                        btnColor: Colors.white,
+                        bordercolor: AppColor.borderColor,
+                        textColor: Colors.black,
+                        onPressed: controller.switchAccount,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(
-                height: 20,
-              ),
-              CustomButton(
-                  text: "Login",
-                  onPressed: () async {
-                    if (myPassword.text.isEmpty) {
-                      CustomDialog().snackbarDialog(
-                          context, "Mobile number is empty", Colors.red, () {});
-                      return;
-                    }
-                    final mmobile = await Authentication().getUserData2();
-
-                    CustomDialog().loadingDialog(context);
-                    Map<String, dynamic> postParam = {
-                      "mobile_no": "${mmobile["mobile_no"]}",
-                      "pwd": myPassword.text,
-                    };
-
-                    print("param $postParam");
-                    controller.postLogin(context, postParam, (data) {
-                      Get.back();
-
-                      if (data[0]["items"].isNotEmpty) {
-                        Get.offAndToNamed(Routes.map);
-                      }
-                    });
-                  }),
-              Container(height: 20),
-              Visibility(
-                visible: widget.appbar == null,
-                child: CustomButton(
-                  text: "Switch Account",
-                  btnColor: Colors.white,
-                  bordercolor: AppColor.borderColor,
-                  textColor: Colors.black,
-                  onPressed: controller.switchAccount,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

@@ -224,17 +224,39 @@ class WalletSendController extends GetxController {
     final userId = await Authentication().getUserId();
     String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$userId";
 
-    HttpRequest(api: subApi).get().then((returnBalance) async {
-      isLoading.value = false;
-      if (returnBalance == "No Internet") {
-        isNetConn.value = false;
+    HttpRequest(
+      api: subApi,
+    ).get().then((returnBalance) async {
+      print("sulod sa refreshdata $returnBalance");
 
+      if (returnBalance == "No Internet") {
+        isLoading.value = false;
+        isNetConn.value = false;
         return;
       }
+      if (returnBalance == null) {
+        isLoading.value = false;
+        isNetConn.value = false;
+        return;
+      }
+      isLoading.value = false;
       isNetConn.value = true;
       if (returnBalance["items"].isNotEmpty) {
         userData.value = returnBalance["items"];
       }
     });
+    // HttpRequest(api: subApi).get().then((returnBalance) async {
+    //   print("return balance ${returnBalance["items"]}");
+    //   isLoading.value = false;
+    //   if (returnBalance == "No Internet") {
+    //     isNetConn.value = false;
+
+    //     return;
+    //   }
+    //   isNetConn.value = true;
+    //   if (returnBalance["items"].isNotEmpty) {
+    //     userData.value = returnBalance["items"];
+    //   }
+    // });
   }
 }

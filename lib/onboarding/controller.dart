@@ -2,14 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 
-import '../custom_widgets/alert_dialog.dart';
-import '../custom_widgets/variables.dart';
-import '../http/api_keys.dart';
-import '../http/http_request.dart';
-import '../routes/routes.dart';
-import '../sqlite/vehicle_brands_model.dart';
-import '../sqlite/vehicle_brands_table.dart';
-
 class OnboardingController extends GetxController {
   RxInt currentPage = 0.obs;
   PageController pageController = PageController();
@@ -55,49 +47,5 @@ class OnboardingController extends GetxController {
 
   void clearStoredData() {
     Authentication().clearStoredData();
-  }
-
-  Future<void> getVehicleBrands(bool isLogin) async {
-    String apiParam = ApiKeys.gApiLuvParkGetVehicleBrand;
-    CustomDialog().loadingDialog(Get.context!);
-
-    HttpRequest(api: apiParam).get().then((returnBrandData) async {
-      if (returnBrandData == "No Internet") {
-        Get.back();
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (returnBrandData == null) {
-        Get.back();
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      } else {
-        Get.back();
-        Variables.gVBrand.value = returnBrandData["items"];
-        VehicleBrandsTable.instance.deleteAll();
-        for (var dataRow in returnBrandData["items"]) {
-          var vbData = {
-            VHBrandsDataFields.vhTypeId:
-                int.parse(dataRow["vehicle_type_id"].toString()),
-            VHBrandsDataFields.vhBrandId:
-                int.parse(dataRow["vehicle_brand_id"].toString()),
-            VHBrandsDataFields.vhBrandName:
-                dataRow["vehicle_brand_name"].toString(),
-            VHBrandsDataFields.image: dataRow["imageb64"] == null
-                ? ""
-                : dataRow["imageb64"].toString().replaceAll("\n", ""),
-          };
-          await VehicleBrandsTable.instance.insertUpdate(vbData);
-        }
-        if (isLogin) {
-          Get.offAndToNamed(Routes.login);
-        } else {
-          Get.offAndToNamed(Routes.landing);
-        }
-      }
-    });
   }
 }

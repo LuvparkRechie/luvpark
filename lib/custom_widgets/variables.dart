@@ -36,7 +36,6 @@ class Variables {
   static String notifTable = 'notification_table';
   static String shareLocTable = 'share_location_table';
   static String lastBooking = 'booking_table';
-  static RxList gVBrand = [].obs;
   static RxList subsVhList = [].obs; //Subscribed Vehicle List
   //static void Timer? backgroundTimer
   static final emailRegex = RegExp(

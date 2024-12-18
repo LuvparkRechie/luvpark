@@ -175,4 +175,24 @@ class HttpRequest {
       }
     }
   }
+
+  Future<dynamic> pingInternet() async {
+    try {
+      final response = await http
+          .get(
+            Uri.https("www.google.com", "/"),
+          )
+          .timeout(
+            const Duration(seconds: 10),
+          );
+
+      if (response.statusCode == 200) {
+        return "Success";
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return "No Internet";
+    }
+  }
 }

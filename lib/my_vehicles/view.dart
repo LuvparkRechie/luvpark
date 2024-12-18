@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
@@ -45,7 +43,7 @@ class MyVehicles extends GetView<MyVehiclesController> {
             ? const PageLoader()
             : !controller.isNetConn.value
                 ? NoInternetConnected(
-                    onTap: controller.onRefresh,
+                    onTap: controller.getVhBrands,
                   )
                 : Padding(
                     padding:

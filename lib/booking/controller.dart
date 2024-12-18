@@ -51,7 +51,7 @@ class BookingController extends GetxController
     'A': RegExp(r'[A-Za-z0-9]'),
     '#': RegExp(r'[A-Za-z0-9]')
   };
-  int numberOfhours = 1;
+  RxInt numberOfhours = 1.obs;
   RxList selectedVh = [].obs;
   RxList vehicleTypeData = [].obs;
   RxBool isExpandedPansion = false.obs;
@@ -108,9 +108,8 @@ class BookingController extends GetxController
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
-    startTimeUpdateTimer();
+
     getNotice();
-    _updateMaskFormatter("");
   }
 
   void startTimeUpdateTimer() {
@@ -121,12 +120,6 @@ class BookingController extends GetxController
   }
 
   void updateTimes() async {
-    // DateTime now = await Functions.getTimeNow();
-    // startTime.value = DateFormat('h:mm a').format(now);
-    // endTime.value = DateFormat('h:mm a')
-    //     .format(now.add(Duration(hours: selectedNumber.value)));
-    // print("Updated Times: Start - ${startTime.value}, End - ${endTime.value}");
-    print("isMaxLimit $isMaxLimit");
     if (isMaxLimit.value) return;
     _reloadPage();
   }
@@ -211,6 +204,8 @@ class BookingController extends GetxController
 
       ddVehiclesData.value = [];
 
+      print("if retdata ${returnData["items"]}");
+
       if (returnData["items"].length > 0) {
         dynamic items = returnData["items"];
 
@@ -226,8 +221,10 @@ class BookingController extends GetxController
         }).toList();
 
         getMyVehicle();
+        return;
       } else {
         getMyVehicle();
+        return;
       }
     });
   }
@@ -240,16 +237,14 @@ class BookingController extends GetxController
 
     String api =
         "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
-    print("api $api");
+
     HttpRequest(api: api).get().then((myVehicles) async {
-      print("myVehicles $myVehicles");
       if (myVehicles == "No Internet") {
         isInternetConn.value = false;
         isLoadingPage.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
         });
-
         return;
       }
       if (myVehicles == null) {
@@ -260,7 +255,6 @@ class BookingController extends GetxController
         });
         return;
       }
-
       myVehiclesData.value = [];
       isInternetConn.value = true;
       isLoadingPage.value = true;
@@ -276,6 +270,7 @@ class BookingController extends GetxController
         for (var row in myVehicles["items"]) {
           List dataVBrand = await Functions.getBranding(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
+
           List fData = ddVehiclesData.where((obj) {
             return obj["value"] == row["vehicle_type_id"];
           }).toList();
@@ -296,7 +291,7 @@ class BookingController extends GetxController
           List dataHabibi = await filterSubscriotion(
               dataLastBooking[0]["vehicle_plate_no"],
               dataLastBooking[0]["vehicle_type_id"]);
-
+          print("dataHabibi $dataHabibi");
           if (dataHabibi.isNotEmpty) {
             checkIfSubscribed(dataHabibi);
           } else {
@@ -313,6 +308,8 @@ class BookingController extends GetxController
                 e["base_hours"] = flb[0]["base_hours"];
                 e["succeeding_rate"] = flb[0]["succeeding_rate"];
                 e["base_rate"] = flb[0]["base_rate"];
+                e["isAllowSubscription"] = false;
+
                 return e;
               }).toList();
               krowkrow();
@@ -339,6 +336,7 @@ class BookingController extends GetxController
                 vh['base_rate'] = rec?['base_rate'];
                 vh['succeeding_rate'] = rec?['succeeding_rate'];
                 vh['vehicle_type'] = rec?['vehicle_type'];
+                vh['isAllowSubscription'] = false;
               }
             }
 
@@ -357,6 +355,7 @@ class BookingController extends GetxController
             e["base_hours"] = flb[0]["base_hours"];
             e["succeeding_rate"] = flb[0]["succeeding_rate"];
             e["base_rate"] = flb[0]["base_rate"];
+            e["isAllowSubscription"] = false;
             return e;
           }).toList();
 
@@ -366,9 +365,12 @@ class BookingController extends GetxController
       isInternetConn.value = true;
       isLoadingPage.value = false;
 
-      if (selectedVh.isEmpty) {
-        vehicleSelection(1);
-      }
+      await Future.delayed(Duration(seconds: 1), () {
+        if (selectedVh.isEmpty) {
+          startTimeUpdateTimer();
+          vehicleSelection(1);
+        }
+      });
     });
   }
 
@@ -389,6 +391,7 @@ class BookingController extends GetxController
       paramEndTime.value = DateFormat('HH:mm')
           .format(parsedTime.add(Duration(hours: selectedNumber.value)))
           .toString();
+      onFieldChanged();
     }
 
     if (dataLastBooking.isNotEmpty) {
@@ -397,8 +400,13 @@ class BookingController extends GetxController
           dataLastBooking[0]["vehicle_type_id"]);
 
       if (dataHabibi.isNotEmpty) {
-        checkIfSubscribed(dataHabibi);
-        return;
+        if (selectedVh[0]["isAllowSubscription"]) {
+          checkIfSubscribed(dataHabibi);
+          return;
+        } else {
+          inatay();
+          return;
+        }
       } else {
         inatay();
         return;
@@ -407,7 +415,7 @@ class BookingController extends GetxController
       List dataHabibi = await filterSubscriotion(
           selectedVh[0]["vehicle_plate_no"], selectedVh[0]["vehicle_type_id"]);
 
-      if (dataHabibi.isNotEmpty) {
+      if (selectedVh[0]["isAllowSubscription"]) {
         checkIfSubscribed(dataHabibi);
         return;
       } else {
@@ -493,6 +501,7 @@ class BookingController extends GetxController
           noHours.text = selectedNumber.value.toString();
           if (selectedNumber.value == 0) {
             selectedNumber.value = 1;
+            numberOfhours.value = selectedNumber.value;
             noHours.text = selectedNumber.value.toString();
           }
           endTime.value = DateFormat('h:mm a').format(cTime).toString();
@@ -501,22 +510,30 @@ class BookingController extends GetxController
       }
       isMaxLimit.value = false;
       update();
+    } else {
+      isMaxLimit.value = false;
     }
   }
 
+//working
   void onTapChanged(bool isIncrement) {
-    if (isSubscribed.value) return;
-    isProcessing = true;
+    if (isSubscribed.value || selectedVh[0]["isAllowSubscription"]) return;
+
     int inatay = selectedVh.isEmpty ? 1 : selectedVh[0]["base_hours"];
     if (isIncrement) {
       if (selectedNumber.value == endNumber.value || isMaxLimit.value) return;
+
       selectedNumber.value++;
+      numberOfhours.value = selectedNumber.value;
       noHours.text = selectedNumber.value.toString();
+      isProcessing = true;
       timeComputation();
     } else {
       if (selectedNumber.value == inatay) return;
       selectedNumber--;
+      numberOfhours.value = selectedNumber.value;
       noHours.text = selectedNumber.value.toString();
+      isProcessing = true;
       timeComputation();
     }
 
@@ -539,18 +556,21 @@ class BookingController extends GetxController
 
   void krowkrow() {
     isSubscribed.value = false;
+    selectedVh.value = selectedVh.map((element) {
+      element['isAllowSubscription'] = false;
+      element["image"] = "";
+      return element;
+    }).toList();
+    selectedNumber.value = selectedVh[0]["base_hours"];
+    numberOfhours.value = selectedNumber.value;
+    plateNo.text = selectedVh[0]["vehicle_plate_no"];
+    dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
+    noHours.text = selectedNumber.value.toString();
 
-    Future.delayed(Duration(seconds: 2), () async {
-      selectedNumber.value = selectedVh[0]["base_hours"];
-      plateNo.text = selectedVh[0]["vehicle_plate_no"];
-      dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
-      noHours.text = selectedNumber.value.toString();
-      print("krow krow ${plateNo.text}");
-      timeComputation();
-      routeToComputation();
-      onFieldChanged();
-      Get.back();
-    });
+    Get.back();
+    timeComputation();
+    routeToComputation();
+    onFieldChanged();
   }
 
 //Compute booking payment
@@ -611,6 +631,8 @@ class BookingController extends GetxController
         Get.back();
         noHours.text = "${endNumber.value}";
         selectedNumber.value = endNumber.value;
+
+        numberOfhours.value = selectedNumber.value;
         isExtendchecked.value = false;
       });
     }
@@ -674,7 +696,11 @@ class BookingController extends GetxController
       'zv_subscription_dtl_id': selectedVh[0]["subscription_dtl_id"] ??
           selectedVh[0]["subscription_dtl_id"],
       "auto_extend": isExtendchecked.value ? "Y" : "N",
-      "version": 2
+      "version": 2,
+      'base_rate': params["base_rate"],
+      "base_hours": params["base_hours"],
+      "succeeding_rate": params["succeeding_rate"],
+      "disc_rate": 0,
     };
     Get.back();
     DateTime eet = now.add(Duration(minutes: areaEtaTime));
@@ -694,6 +720,7 @@ class BookingController extends GetxController
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
+        print(" $objData");
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
           Get.back();
@@ -910,7 +937,20 @@ class BookingController extends GetxController
   }
 
   void confirmBooking() {
+    print("isProcessing $isProcessing");
     if (isProcessing) return;
+    if (selectedVh[0]["isAllowSubscription"]) {
+      if (double.parse(selectedVh[0]["sub_min_balance"].toString()) >
+          double.parse(parameters["userData"][0]["amount_bal"].toString())) {
+        CustomDialog().infoDialog("",
+            "Sorry. You must have atleast ${selectedVh[0]["sub_min_balance"]} minimum balance to use this subscription. Regular rate will prevail.",
+            () {
+          Get.back();
+          compareMinBal();
+        });
+        return;
+      }
+    }
     if (double.parse(parameters["userData"][0]["amount_bal"].toString()) >=
         double.parse(totalAmount.value.toString())) {
       Get.bottomSheet(
@@ -939,6 +979,8 @@ class BookingController extends GetxController
     } else {
       isDisabledBtn.value = false;
     }
+
+    isProcessing = false;
   }
 
   Future<List> filterSubscriotion(String plNo, int id) async {
@@ -956,9 +998,12 @@ class BookingController extends GetxController
         "${now.toString().split(" ")[0]} ${parameters["areaData"]["closed_time"].toString().trim()}");
 
     int diff = cTime.difference(now).inMinutes;
+    int graceMin = int.parse(data[0]["grace_mins_after_dt_out"].toString());
     double totalHours = diff / 60;
+    int roundedMin = int.parse(totalHours.toString().split(".")[1]).round();
 
-    int roundedHours = totalHours.round();
+    int roundedHours =
+        roundedMin > graceMin ? totalHours.round() + 1 : totalHours.round();
     isSubscribed.value = true;
     selectedVh.value = [
       {
@@ -966,14 +1011,17 @@ class BookingController extends GetxController
         'vehicle_brand_id': data[0]["vehicle_brand_id"],
         'vehicle_brand_name': data[0]["vehicle_brand_name"],
         'vehicle_plate_no': data[0]["vehicle_plate_no"],
-        'base_hours': roundedHours,
+        'base_hours': totalHours.hours.inHours,
         'succeeding_rate': "0",
         'base_rate': data[0]["subscription_rate"],
         'vehicle_type': data[0]["vehicle_type"],
-        'subscription_dtl_id': data[0]["zv_subscription_dtl_id"]
+        'subscription_dtl_id': data[0]["zv_subscription_dtl_id"],
+        'sub_min_balance': data[0]["min_balance"],
+        'isAllowSubscription': true,
       }
     ];
     selectedNumber.value = selectedVh[0]["base_hours"];
+    numberOfhours.value = roundedHours;
     plateNo.text = selectedVh[0]["vehicle_plate_no"];
 
     dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
@@ -1000,8 +1048,27 @@ class BookingController extends GetxController
 
     endTime.value = DateFormat('h:mm a').format(cTime).toString();
     paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
-    print("noHours.text if subscribed ${noHours.text}");
+
     onFieldChanged();
+  }
+
+  /// if subscribed min bal is > or < wallet bal
+  compareMinBal() {
+    List filterData = ddVehiclesData.where((obj) {
+      return obj["value"] == selectedVh[0]["vehicle_type_id"];
+    }).toList();
+
+    selectedVh.value = selectedVh.map((e) {
+      e["base_hours"] = filterData[0]["base_hours"];
+      e["base_rate"] = filterData[0]["base_rate"];
+      e["succeeding_rate"] = filterData[0]["succeeding_rate"];
+      e['isAllowSubscription'] = false;
+      return e;
+    }).toList();
+    isSubscribed.value = false;
+    isMaxLimit.value = false;
+    CustomDialog().loadingDialog(Get.context!);
+    krowkrow();
   }
 
   void onToggleRewards(bool isUse) async {
@@ -1025,43 +1092,41 @@ class BookingController extends GetxController
     }
     await Future.delayed(Duration(milliseconds: 500));
     Get.back();
-    print("usedRewards $usedRewards");
   }
 
-  void vehicleSelection(int index) {
+  void vehicleSelection(int index) async {
     Get.bottomSheet(
       VehicleTypes(
           pageIndex: index,
           cb: (data) async {
             FocusManager.instance.primaryFocus!.unfocus();
             CustomDialog().loadingDialog(Get.context!);
-            await Future.delayed(Duration(milliseconds: 500), () async {
-              List objData = data;
 
-              List filterSub = await filterSubscriotion(
-                  objData[0]["vehicle_plate_no"],
-                  objData[0]["vehicle_type_id"]);
-              if (filterSub.isNotEmpty) {
-                Get.back();
-                checkIfSubscribed(filterSub);
+            List objData = data;
+
+            List filterSub = await filterSubscriotion(
+                objData[0]["vehicle_plate_no"], objData[0]["vehicle_type_id"]);
+
+            if (filterSub.isNotEmpty) {
+              Get.back();
+              checkIfSubscribed(filterSub);
+              return;
+            } else {
+              List filterData = ddVehiclesData.where((obj) {
+                return obj["value"] == data[0]["vehicle_type_id"];
+              }).toList();
+
+              if (filterData.isEmpty) {
+                selectedVh.value = objData;
               } else {
-                List filterData = ddVehiclesData.where((obj) {
-                  return obj["value"] == data[0]["vehicle_type_id"];
+                objData = objData.map((e) {
+                  e["vehicle_type"] = filterData[0]["text"];
+                  return e;
                 }).toList();
-
-                if (filterData.isEmpty) {
-                  selectedVh.value = objData;
-                } else {
-                  objData = objData.map((e) {
-                    e["vehicle_type"] = filterData[0]["text"];
-                    return e;
-                  }).toList();
-                  selectedVh.value = objData;
-                }
-
-                krowkrow();
+                selectedVh.value = objData;
               }
-            });
+              krowkrow();
+            }
           }),
       ignoreSafeArea: true,
       isScrollControlled: false,

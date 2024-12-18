@@ -239,7 +239,7 @@ class Profile extends GetView<ProfileScreenController> {
                                       AwesomeNotifications()
                                           .dismissAllNotifications();
                                       AwesomeNotifications().cancelAll();
-                                      mapController.dragController.dispose();
+
                                       Get.back();
                                       Get.offAllNamed(Routes.login);
                                     });
