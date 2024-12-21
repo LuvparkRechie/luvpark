@@ -55,6 +55,12 @@ class ChangePassword extends GetView<ChangePasswordController> {
                               "Your new password must be different from previous used passwords.",
                         ),
                         const VerticalHeight(height: 30),
+                        CustomParagraph(
+                          text: "Old Password",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         CustomTextField(
                           title: "Old Password",
                           labelText: "Enter your old password",
@@ -77,8 +83,14 @@ class ChangePassword extends GetView<ChangePasswordController> {
                             return null;
                           },
                         ),
+                        SizedBox(height: 10),
+                        CustomParagraph(
+                          text: "New Password",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         CustomTextField(
-                          title: "New Password",
                           labelText: "Create your new password",
                           controller: controller.newPassword,
                           isObscure: !controller.isShowNewPass.value,
@@ -108,6 +120,13 @@ class ChangePassword extends GetView<ChangePasswordController> {
                             }
                             return null;
                           },
+                        ),
+                        SizedBox(height: 10),
+                        CustomParagraph(
+                          text: "Confirm Password",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
                         ),
                         CustomTextField(
                           title: "Confirm Password",

@@ -126,8 +126,16 @@ class WalletSend extends GetView<WalletSendController> {
                         Form(
                           key: controller.formKeySend,
                           child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              CustomParagraph(
+                                text: "Mobile Number",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
                               CustomMobileNumber(
+                                hintText: "Enter mobile number",
                                 onChange: (text) {
                                   controller.onTextChange();
                                 },
@@ -137,8 +145,8 @@ class WalletSend extends GetView<WalletSendController> {
                                     ? TextInputType.number
                                     : const TextInputType.numberWithOptions(
                                         signed: true, decimal: false),
-                                labelText: "Mobile Number",
-                                hintText: "Mobile Number",
+                                // labelText: "Mobile Number",
+
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return 'Field is required';
@@ -163,8 +171,17 @@ class WalletSend extends GetView<WalletSendController> {
                                   controller.requestCameraPermission();
                                 },
                               ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              CustomParagraph(
+                                text: "Amount",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
                               CustomTextField(
-                                labelText: "Amount",
+                                labelText: " Minimum amount of 10 tokens ",
                                 controller: controller.tokenAmount,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly,
@@ -211,6 +228,13 @@ class WalletSend extends GetView<WalletSendController> {
                                   return null;
                                 },
                               ),
+                              SizedBox(height: 10),
+                              CustomParagraph(
+                                text: "Note",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
                               CustomTextField(
                                 inputFormatters: [
                                   LengthLimitingTextInputFormatter(
@@ -218,7 +242,7 @@ class WalletSend extends GetView<WalletSendController> {
                                   ),
                                 ],
                                 maxLength: 30,
-                                labelText: "Note",
+                                labelText: "Optional",
                                 controller: controller.message,
                               ),
                               for (int i = 0;

@@ -81,10 +81,16 @@ class AddVehicles extends GetView<MyVehiclesController> {
                           ),
                         ),
                         Container(height: 20),
+                        CustomParagraph(
+                          text: "Vehicle type",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                           child: customDropdown(
-                            labelText: "Vehicle type",
+                            labelText: "Select Vehicle Type",
                             isDisabled: false,
                             items: controller.vehicleDdData,
                             selectedValue: controller.ddVhType,
@@ -99,10 +105,17 @@ class AddVehicles extends GetView<MyVehiclesController> {
                             },
                           ),
                         ),
+                        Container(height: 10),
+                        CustomParagraph(
+                          text: "Vehicle brand",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         Padding(
                           padding: const EdgeInsets.only(top: 10.0, bottom: 10),
                           child: customDropdown(
-                            labelText: "Vehicle brand",
+                            labelText: "Select Vehicle brand",
                             isDisabled: false,
                             items: controller.vehicleBrandData,
                             selectedValue: controller.ddVhBrand.value,
@@ -117,10 +130,17 @@ class AddVehicles extends GetView<MyVehiclesController> {
                             },
                           ),
                         ),
+                        Container(height: 10),
+                        CustomParagraph(
+                          text: "Plate No",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         CustomTextField(
                           isReadOnly: controller.ddVhType == null ||
                               controller.ddVhBrand.value == null,
-                          labelText: "Plate No",
+                          labelText: "Enter Plate No",
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(15),
                             FilteringTextInputFormatter.allow(

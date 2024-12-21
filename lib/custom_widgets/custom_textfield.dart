@@ -138,7 +138,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     child: widget.prefixIcon,
                   )
                 : null,
-            labelText: widget.labelText,
+            // labelText: widget.labelText,
             hintText: widget.title ?? widget.labelText,
             hintStyle: paragraphStyle(
               color: AppColor.hintColor,
@@ -376,7 +376,7 @@ DropdownButtonFormField<String> customDropdown({
           color: AppColor.borderColor,
         ),
       ),
-      labelText: labelText,
+      hintText: labelText,
       hintStyle: paragraphStyle(
         color: AppColor.hintColor,
         fontWeight: FontWeight.w400,

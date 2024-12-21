@@ -82,9 +82,15 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                           ),
                         ),
                         Container(height: 20),
+                        CustomParagraph(
+                          text: "Enter amount",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         CustomTextField(
                           controller: controller.tokenAmount,
-                          labelText: "Enter amount",
+                          labelText: "The minimum load amount is 20 tokens.",
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly,
                             FilteringTextInputFormatter.allow(
@@ -108,14 +114,17 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                             return null;
                           },
                         ),
-                        CustomParagraph(
-                            maxlines: 2,
-                            fontWeight: FontWeight.w500,
-                            textAlign: TextAlign.center,
-                            fontSize: 12,
-                            text: "The minimum load amount is 20 tokens."),
-                        const SizedBox(
-                          height: 50,
+                        // CustomParagraph(
+                        //     maxlines: 2,
+                        //     fontWeight: FontWeight.w500,
+                        //     textAlign: TextAlign.center,
+                        //     fontSize: 12,
+                        //     text: "The minimum load amount is 20 tokens."),
+                        // const SizedBox(
+                        //   height: 50,
+                        // ),
+                        SizedBox(
+                          height: 30,
                         ),
                         const CustomParagraph(
                           text:
