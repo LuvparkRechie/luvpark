@@ -60,7 +60,7 @@ class MyVehiclesController extends GetxController {
     super.onInit();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _updateMaskFormatter("");
-      getVhBrands();
+      onRefresh();
     });
   }
 
@@ -74,28 +74,6 @@ class MyVehiclesController extends GetxController {
   Future<void> onRefresh() async {
     isLoadingPage.value = true;
     getMyVehicle();
-  }
-
-  Future<void> getVhBrands() async {
-    isLoadingPage.value = true;
-    isNetConn.value = true;
-    CustomDialog().loadingDialog(Get.context!);
-    final vhData = await Functions.getVhBrands();
-    print("vhData $vhData");
-
-    if (vhData["response"] == "No Internet") {
-      isLoadingPage.value = false;
-      isNetConn.value = false;
-      return;
-    }
-    if (vhData["response"] == null || vhData["data"].isEmpty) {
-      isLoadingPage.value = true;
-      isNetConn.value = false;
-      return;
-    }
-    if (vhData["response"] == "Success") {
-      getMyVehicle();
-    }
   }
 
   void getMyVehicle() async {

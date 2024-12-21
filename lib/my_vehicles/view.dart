@@ -43,7 +43,7 @@ class MyVehicles extends GetView<MyVehiclesController> {
             ? const PageLoader()
             : !controller.isNetConn.value
                 ? NoInternetConnected(
-                    onTap: controller.getVhBrands,
+                    onTap: controller.onRefresh,
                   )
                 : Padding(
                     padding:
