@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 
 import 'custom_widgets/alert_dialog.dart';
+import 'http/api_keys.dart';
 import 'notification_controller.dart';
 import 'routes/pages.dart';
 
@@ -48,7 +49,6 @@ Future<void> backgroundFunc() async {
 }
 
 void _onUserActivity() async {
-  return;
   bool? tmrStat = await Authentication().getTimerStatus();
   if (!tmrStat!) {
     Variables.inactiveTmr?.cancel();
@@ -134,7 +134,7 @@ class _MyAppState extends State<MyApp> {
         _onUserActivity();
       },
       child: GetMaterialApp(
-        debugShowCheckedModeBanner: false,
+        debugShowCheckedModeBanner: !ApiKeys.isProduction,
         title: 'MyApp',
         theme: ThemeData(
           useMaterial3: false,
