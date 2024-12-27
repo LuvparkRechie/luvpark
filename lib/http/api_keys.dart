@@ -1,5 +1,5 @@
 class ApiKeys {
-  static const bool isProduction = false;
+  static const bool isProduction = true;
   static const String luvApi = isProduction ? "lpw" : "luv";
   static const String parkSpaceApi = isProduction ? "ps" : "parkspace";
 
@@ -254,4 +254,6 @@ class ApiKeys {
       '/ords/$parkSpaceApi/pbm/advanced-parking/test_qr';
   //Get app Version
   static const gApiAppVersion = "/ords/luv/main/version";
+  //obtain OTP
+  static const gApiObtainOTP = "/ords/luv/auth/obtainOTP";
 }

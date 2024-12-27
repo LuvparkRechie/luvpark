@@ -12,8 +12,24 @@ import 'package:luvpark/custom_widgets/vertical_height.dart';
 
 import '../custom_widgets/custom_text.dart';
 
-class ChangePassword extends GetView<ChangePasswordController> {
+class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
+
+  @override
+  State<ChangePassword> createState() => _ChangePasswordState();
+}
+
+class _ChangePasswordState extends State<ChangePassword> {
+  final controller = Get.put(ChangePasswordController());
+
+  @override
+  void initState() {
+    super.initState();
+    controller.oldPassword = TextEditingController();
+    controller.newPassword = TextEditingController();
+    controller.newConfirmPassword = TextEditingController();
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -63,7 +79,7 @@ class ChangePassword extends GetView<ChangePasswordController> {
                         ),
                         CustomTextField(
                           title: "Old Password",
-                          labelText: "Enter your old password",
+                          hintText: "Enter your old password",
                           controller: controller.oldPassword,
                           isObscure: !controller.isShowOldPass.value,
                           suffixIcon: !controller.isShowOldPass.value
@@ -91,7 +107,8 @@ class ChangePassword extends GetView<ChangePasswordController> {
                           color: Colors.black,
                         ),
                         CustomTextField(
-                          labelText: "Create your new password",
+                          title: "New Password",
+                          hintText: "Create your new password",
                           controller: controller.newPassword,
                           isObscure: !controller.isShowNewPass.value,
                           suffixIcon: !controller.isShowNewPass.value
@@ -118,6 +135,16 @@ class ChangePassword extends GetView<ChangePasswordController> {
                                 txtValue.trim().length > 32) {
                               return "Password must be between 8 and 32 characters";
                             }
+                            if (controller.passStrength.value == 1) {
+                              return "Very Weak Password";
+                            }
+                            if (controller.passStrength.value == 2) {
+                              return "Weak Password";
+                            }
+                            if (controller.passStrength.value == 3) {
+                              return "Medium Password";
+                            }
+
                             return null;
                           },
                         ),
@@ -130,7 +157,7 @@ class ChangePassword extends GetView<ChangePasswordController> {
                         ),
                         CustomTextField(
                           title: "Confirm Password",
-                          labelText: "Confirm your new password",
+                          hintText: "Confirm your new password",
                           controller: controller.newConfirmPassword,
                           isObscure: !controller.isShowNewPassConfirm.value,
                           suffixIcon: !controller.isShowNewPassConfirm.value

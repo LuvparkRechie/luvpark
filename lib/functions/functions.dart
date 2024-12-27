@@ -273,8 +273,9 @@ class Functions {
   static Future<void> searchPlaces(
       BuildContext context, String query, Function callback) async {
     try {
-      final places = gmp.GoogleMapsPlaces(
-          apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE');
+      final places = gmp.GoogleMapsPlaces(apiKey: Variables.mapApiKey
+          // apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'
+          );
       gmp.PlacesSearchResponse response = await places.searchByText(query);
 
       if (response.isOkay) {
@@ -351,9 +352,9 @@ class Functions {
     try {
       final String apiUrl =
           'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=${Variables.mapApiKey}';
-
+      print("apiUrl $apiUrl");
       final response = await http.get(Uri.parse(apiUrl));
-
+      print("response.statusCode ${response.statusCode}");
       // Check if response status is OK
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);
@@ -595,7 +596,7 @@ class Functions {
 
   static Future<List> getBranding(int typeId, int brandId) async {
     List data = await VehicleBrandsTable.instance.readAllVHBrands();
-    print("data  getBranding $data");
+
     List fData = [];
     fData = data.where((objData) {
       return objData["vehicle_type_id"] == typeId &&
@@ -746,6 +747,38 @@ class Functions {
       return {"response": "No data", "data": []};
     } else {
       return {"response": "Success", "data": response["items"][0]};
+    }
+  }
+
+  static Future<dynamic> getObtainOtp(number) async {
+    Map<String, dynamic> param = {"mobile_no": number};
+    print("param $param");
+    final response =
+        await HttpRequest(api: ApiKeys.gApiObtainOTP, parameters: param)
+            .postBody();
+    print("response getObtainOtp $response");
+    Get.back();
+    if (response == "No Internet") {
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response};
+    }
+    if (response == null) {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response};
+    }
+    if (response["success"] == "N") {
+      CustomDialog().infoDialog(
+          "lvupark", "No data found for app version. Please contact support.",
+          () {
+        Get.back();
+      });
+      return {"response": "No data"};
+    } else {
+      return {"response": "Success"};
     }
   }
 }

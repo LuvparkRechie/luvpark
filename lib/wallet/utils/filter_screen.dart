@@ -58,7 +58,7 @@ class WalletTransactionFilter extends GetView<WalletController> {
                 controller.selectDate(context, true);
               },
               isReadOnly: true,
-              labelText: "From",
+              hintText: "From",
               controller: controller.fromDate,
             ),
             CustomTitle(text: "End Date"),
@@ -71,7 +71,7 @@ class WalletTransactionFilter extends GetView<WalletController> {
                 controller.selectDate(context, false);
               },
               isReadOnly: true,
-              labelText: "To",
+              hintText: "To",
               controller: controller.toDate,
             ),
             Container(height: 20),

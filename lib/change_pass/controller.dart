@@ -137,7 +137,7 @@ class ChangePasswordController extends GetxController {
             () async {
           Get.back();
           CustomDialog().loadingDialog(Get.context!);
-          await Future.delayed(const Duration(seconds: 3));
+          await Future.delayed(const Duration(seconds: 1));
           final userLogin = await Authentication().getUserLogin();
           List userData = [userLogin];
           userData = userData.map((e) {
@@ -148,7 +148,7 @@ class ChangePasswordController extends GetxController {
           await Authentication().setLogin(jsonEncode(userData[0]));
           await Authentication().setBiometricStatus(false);
           Get.back();
-          Get.offAllNamed(Routes.splash);
+          Get.offAllNamed(Routes.login);
         });
       } else {
         Get.back();

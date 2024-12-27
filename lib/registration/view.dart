@@ -99,6 +99,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                   controller.onMobileChanged(value);
                                 },
                               ),
+                              Container(height: 10),
                               Row(
                                 children: [
                                   CustomParagraph(
@@ -252,7 +253,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 10.0),
+                              const SizedBox(height: 30.0),
                               if (MediaQuery.of(context).viewInsets.bottom == 0)
                                 CustomElevatedButton(
                                   text: "Create Account",

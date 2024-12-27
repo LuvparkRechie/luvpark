@@ -850,7 +850,7 @@ class DashboardMapController extends GetxController
     final response = await HttpRequest(
             api: "${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=$parkId")
         .get();
-
+    print("responsee $response");
     if (response == "No Internet") {
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -900,6 +900,7 @@ class DashboardMapController extends GetxController
     HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
         .get()
         .then((returnData) async {
+      print("returnData $returnData");
       Get.back();
       if (returnData == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -1344,8 +1345,9 @@ class DashboardMapController extends GetxController
       );
       return;
     } else {
+      int? userId = await Authentication().getUserId();
       String api =
-          "${ApiKeys.gApiSubscribedList}?park_area_id=${markerData[0]["park_area_id"]}";
+          "${ApiKeys.gApiSubscribedList}?park_area_id=${markerData[0]["park_area_id"]}&luvpay_id=$userId";
       final response = await HttpRequest(api: api).get();
       if (response == "No Internet") {
         Get.back();

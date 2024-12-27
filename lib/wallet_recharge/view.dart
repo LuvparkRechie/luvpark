@@ -90,7 +90,7 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
                         ),
                         CustomTextField(
                           controller: controller.tokenAmount,
-                          labelText: "The minimum load amount is 20 tokens.",
+                          hintText: "The minimum load amount is 20 tokens.",
                           inputFormatters: <TextInputFormatter>[
                             FilteringTextInputFormatter.digitsOnly,
                             FilteringTextInputFormatter.allow(

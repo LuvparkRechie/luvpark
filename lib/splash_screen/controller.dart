@@ -91,6 +91,10 @@ class SplashController extends GetxController
       return;
     } else {
       final vhData = await Functions.getVhBrands();
+      if (vhData["response"] == "No Internet") {
+        isNetConn.value = false;
+        return;
+      }
       if (vhData["response"] == "Success") {
         if (data != null) {
           Functions.getAccountStatus(data["mobile_no"], (obj) async {

@@ -140,7 +140,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
                         CustomTextField(
                           isReadOnly: controller.ddVhType == null ||
                               controller.ddVhBrand.value == null,
-                          labelText: "Enter Plate No",
+                          hintText: "Enter Plate No",
                           inputFormatters: [
                             LengthLimitingTextInputFormatter(15),
                             FilteringTextInputFormatter.allow(

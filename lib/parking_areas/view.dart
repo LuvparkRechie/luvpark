@@ -163,6 +163,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                 estimatedData[0]["time"];
                                             return e;
                                           }).toList();
+
                                           Get.back();
                                           if (estimatedData[0]["error"] ==
                                               "No Internet") {

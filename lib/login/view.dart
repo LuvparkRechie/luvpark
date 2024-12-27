@@ -325,7 +325,7 @@ class DefaultLoginScreen extends StatelessWidget {
                     color: Colors.black,
                   ),
                   CustomTextField(
-                    labelText: "Enter your password",
+                    hintText: "Enter your password",
                     controller: controller.password,
                     isObscure: !controller.isShowPass.value,
                     suffixIcon: !controller.isShowPass.value
@@ -523,15 +523,29 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
                       fit: BoxFit.contain,
                       filterQuality: FilterQuality.high,
                     ),
-                    Text(
-                      "${userData[0]["first_name"] == null || userData[0]["first_name"].toString().isEmpty ? "+${userData[0]["mobile_no"]}" : "Hi, ${userData[0]["first_name"].toString()}"}",
-                      style: GoogleFonts.openSans(
-                        fontSize: 25,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.headerColor,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
+                    LayoutBuilder(builder: (context, constraints) {
+                      if (userData[0]["first_name"] == null ||
+                          userData[0]["first_name"].toString().isEmpty) {
+                        return Text(
+                          "+${Variables.maskMobileNumber(userData[0]["mobile_no"])}",
+                          style: GoogleFonts.openSans(
+                            fontSize: 25,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.headerColor,
+                          ),
+                          textAlign: TextAlign.center,
+                        );
+                      }
+                      return Text(
+                        "Hi, ${userData[0]["first_name"].toString()}",
+                        style: GoogleFonts.openSans(
+                          fontSize: 25,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.headerColor,
+                        ),
+                        textAlign: TextAlign.center,
+                      );
+                    }),
                     const SizedBox(height: 10),
                     CustomParagraph(
                         text: "Use your password to continue login"),
@@ -548,7 +562,7 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
                     Obx(
                       () => CustomTextField(
                         controller: myPassword,
-                        title: "Enter your password",
+                        hintText: "Enter your password",
                         isObscure: !controller.isShowPass.value,
                         suffixIcon: !controller.isShowPass.value
                             ? Icons.visibility_off

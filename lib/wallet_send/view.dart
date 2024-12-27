@@ -145,8 +145,6 @@ class WalletSend extends GetView<WalletSendController> {
                                     ? TextInputType.number
                                     : const TextInputType.numberWithOptions(
                                         signed: true, decimal: false),
-                                // labelText: "Mobile Number",
-
                                 validator: (value) {
                                   if (value!.isEmpty) {
                                     return 'Field is required';
@@ -181,7 +179,7 @@ class WalletSend extends GetView<WalletSendController> {
                                 color: Colors.black,
                               ),
                               CustomTextField(
-                                labelText: " Minimum amount of 10 tokens ",
+                                hintText: " Minimum amount of 20 tokens ",
                                 controller: controller.tokenAmount,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly,
@@ -242,7 +240,7 @@ class WalletSend extends GetView<WalletSendController> {
                                   ),
                                 ],
                                 maxLength: 30,
-                                labelText: "Optional",
+                                hintText: "Optional",
                                 controller: controller.message,
                               ),
                               for (int i = 0;

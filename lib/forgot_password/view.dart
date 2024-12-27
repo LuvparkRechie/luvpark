@@ -63,8 +63,16 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
                     Container(
                       height: 50,
                     ),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: CustomParagraph(
+                        text: "Mobile Number",
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                    ),
                     CustomMobileNumber(
-                      labelText: "10 digit mobile number",
                       hintText: "10 digit mobile number",
                       controller: controller.mobileNumber,
                       inputFormatters: [Variables.maskFormatter],

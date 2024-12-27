@@ -338,6 +338,8 @@ Future<void> getParkingTrans(int ctr) async {
         };
 
         if (returnData == null) {
+          AwesomeNotifications().cancel(dataRow["ticket_id"]);
+          AwesomeNotifications().cancelSchedule(dataRow["ticket_id"]);
           NotificationController.parkingNotif(
             int.parse(dataRow["reservation_id"].toString()),
             0,

@@ -81,7 +81,7 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                   const VerticalHeight(height: 10),
                                   CustomTextField(
                                     title: "Answer",
-                                    labelText: "Enter your answer",
+                                    hintText: "Enter your answer",
                                     textCapitalization:
                                         TextCapitalization.characters,
                                     controller: controller.answer,
@@ -96,7 +96,7 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                       children: [
                                         CustomTextField(
                                           title: "Password",
-                                          labelText: "Enter your new password",
+                                          hintText: "Enter your new password",
                                           controller: controller.newPass,
                                           isObscure:
                                               !controller.isShowNewPass.value,

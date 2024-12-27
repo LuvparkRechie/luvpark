@@ -52,8 +52,14 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                           fontWeight: FontWeight.w400,
                         ),
                         const VerticalHeight(height: 20),
+                        CustomParagraph(
+                          text: "New password",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         CustomTextField(
-                          labelText: "New password",
+                          hintText: "New password",
                           controller: controller.newPass,
                           isObscure: !controller.isShowNewPass.value,
                           suffixIcon: !controller.isShowNewPass.value
@@ -77,12 +83,27 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                             if (txtValue.length < 8 || txtValue.length > 32) {
                               return "Password must be between 8 and 32 characters";
                             }
-
+                            if (controller.passStrength.value == 1) {
+                              return "Very Weak Password";
+                            }
+                            if (controller.passStrength.value == 2) {
+                              return "Weak Password";
+                            }
+                            if (controller.passStrength.value == 3) {
+                              return "Medium Password";
+                            }
                             return null;
                           },
                         ),
+                        Container(height: 10),
+                        CustomParagraph(
+                          text: "Confirm password",
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black,
+                        ),
                         CustomTextField(
-                          labelText: "Confirm password",
+                          hintText: "Confirm password",
                           controller: controller.confirmPass,
                           isObscure: !controller.isShowConfirmPass.value,
                           suffixIcon: !controller.isShowConfirmPass.value

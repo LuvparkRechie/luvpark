@@ -94,6 +94,7 @@ class QrWalletController extends GetxController
     HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}${userData["user_id"]}")
         .get()
         .then((paymentKey) {
+      print("paymentKey $paymentKey");
       if (paymentKey == "No Internet") {
         isInternetConn.value = false;
         isLoading.value = false;

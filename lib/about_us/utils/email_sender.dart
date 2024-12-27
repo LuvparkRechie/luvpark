@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
+
 import '../../custom_widgets/custom_text.dart';
 import '../controller.dart';
 
@@ -35,7 +36,7 @@ class EmailSender extends StatelessWidget {
                 filledColor: Colors.grey.shade200,
                 isReadOnly: true,
                 isFilled: true,
-                labelText: "Recipient",
+                hintText: "Recipient",
                 controller: emailController.recipientController,
               ),
               Obx(

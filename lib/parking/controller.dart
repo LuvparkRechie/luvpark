@@ -53,24 +53,23 @@ class ParkingController extends GetxController
 
   void onTimerRun() {
     _timer = Timer.periodic(Duration(seconds: 5), (t) async {
-      DateTime now = await Functions.getTimeNow();
       final id = await Authentication().getUserId();
       String api =
           "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
 
       final returnData = await HttpRequest(api: api).get();
       resData.value = [];
-      resData.value = [];
-      List itemData = returnData["items"];
-      if (itemData.isNotEmpty) {
-        itemData = itemData.where((element) {
-          DateTime timeNow = now;
-          DateTime timeOut = DateTime.parse(element["dt_out"].toString());
-          return timeNow.isBefore(timeOut);
-        }).toList();
-      }
-      resData.value = itemData;
 
+      List itemData = returnData["items"];
+      // print("api $api");
+      // print("itemData $itemData");
+      // if (itemData.isNotEmpty) {
+      //   itemData = itemData.where((element) {
+      //     DateTime timeNow = now;
+      //     DateTime timeOut = DateTime.parse(element["dt_out"].toString());
+      //     return timeNow.isBefore(timeOut);
+      //   }).toList();
+      // }
       resData.value = itemData;
     });
   }
@@ -89,7 +88,6 @@ class ParkingController extends GetxController
 
   //Get Reserve Data
   Future<void> getReserveData(String status) async {
-    DateTime now = await Functions.getTimeNow();
     final id = await Authentication().getUserId();
 
     String api =
@@ -97,6 +95,8 @@ class ParkingController extends GetxController
 
     try {
       final returnData = await HttpRequest(api: api).get();
+
+      print("returnData $returnData");
 
       tabLoading.value = false;
       if (returnData == "No Internet") {
@@ -118,6 +118,8 @@ class ParkingController extends GetxController
         resData.value = [];
         List itemData = returnData["items"];
         resData.value = itemData;
+        _timer?.cancel();
+        onTimerRun();
       }
     } finally {
       isLoading.value = false;
@@ -146,68 +148,104 @@ class ParkingController extends GetxController
       "no_hours": data["no_hours"].toString(),
       "tran_type": "E",
     };
-
-    String api = "${ApiKeys.gApiGetParkingQR}?ticket_id=${data["ticket_id"]}";
-
-    final response = await HttpRequest(api: api).get();
+    dynamic args = {
+      'ticketId': data["ticket_id"],
+      'spaceName': data["park_area_name"],
+      'parkArea': data["park_area_name"],
+      'startDate': data["dt_in"],
+      'endDate': data["dt_out"],
+      'closing_date': data["end_time"],
+      'startTime': dateInRelated.toString().split(" ")[1].toString(),
+      'endTime': dateOutRelated.toString().split(" ")[1].toString(),
+      'plateNo': data["vehicle_plate_no"],
+      'hours': data["no_hours"].toString(),
+      'amount': data["amount"].toString(),
+      'refno': data["ticket_ref_no"].toString(),
+      'lat': double.parse(data["latitude"].toString()),
+      'long': double.parse(data["longitude"].toString()),
+      'canReserved': true,
+      'isReserved': false,
+      'isShowRate': false,
+      'reservationId': data["reservation_id"],
+      'address': data["address"],
+      'isAutoExtend': data["is_auto_extend"],
+      'isBooking': false,
+      'paramsCalc': parameters,
+      'status': data["status"].toString() == "C" ? "R" : "A",
+      'can_cancel': data["status"].toString() == "U"
+          ? false
+          : int.parse(now.difference(resDate).inMinutes.toString()) <=
+              int.parse(data["cancel_minutes"].toString()),
+      'cancel_minute':
+          data["status"].toString() == "U" ? "" : data["cancel_minutes"],
+      'qr_code': data["ticket_ref_no"].toString(),
+      'onRefresh': () {
+        onRefresh();
+      }
+    };
     Get.back();
+    Get.toNamed(Routes.bookingReceipt, arguments: args);
+    // String api = "${ApiKeys.gApiGetParkingQR}?ticket_id=${data["ticket_id"]}";
 
-    if (response == "No Internet") {
-      CustomDialog().internetErrorDialog(Get.context!, () {
-        Get.back();
-      });
-      return;
-    }
+    // final response = await HttpRequest(api: api).get();
+    // Get.back();
 
-    if (response == null) {
-      CustomDialog().serverErrorDialog(Get.context!, () {
-        Get.back();
-      });
-      return;
-    }
-    if (response["items"].isEmpty) {
-      CustomDialog().infoDialog("No data", "No data found. Please try again.",
-          () {
-        Get.back();
-      });
-      return;
-    } else {
-      dynamic args = {
-        'ticketId': data["ticket_id"],
-        'spaceName': data["park_area_name"],
-        'parkArea': data["park_area_name"],
-        'startDate': data["dt_in"],
-        'endDate': data["dt_out"],
-        'closing_date': data["end_time"],
-        'startTime': dateInRelated.toString().split(" ")[1].toString(),
-        'endTime': dateOutRelated.toString().split(" ")[1].toString(),
-        'plateNo': data["vehicle_plate_no"],
-        'hours': data["no_hours"].toString(),
-        'amount': data["amount"].toString(),
-        'refno': data["ticket_ref_no"].toString().toString(),
-        'lat': double.parse(data["latitude"].toString()),
-        'long': double.parse(data["longitude"].toString()),
-        'canReserved': true,
-        'isReserved': false,
-        'isShowRate': false,
-        'reservationId': data["reservation_id"],
-        'address': data["address"],
-        'isAutoExtend': data["is_auto_extend"],
-        'isBooking': false,
-        'paramsCalc': parameters,
-        'status': data["status"].toString() == "C" ? "R" : "A",
-        'can_cancel': data["status"].toString() == "U"
-            ? false
-            : int.parse(now.difference(resDate).inMinutes.toString()) <=
-                int.parse(data["cancel_minutes"].toString()),
-        'cancel_minute':
-            data["status"].toString() == "U" ? "" : data["cancel_minutes"],
-        'qr_code': response["items"][0]["qr_code"],
-        'onRefresh': () {
-          onRefresh();
-        }
-      };
-      Get.toNamed(Routes.bookingReceipt, arguments: args);
-    }
+    // if (response == "No Internet") {
+    //   CustomDialog().internetErrorDialog(Get.context!, () {
+    //     Get.back();
+    //   });
+    //   return;
+    // }
+
+    // if (response == null) {
+    //   CustomDialog().serverErrorDialog(Get.context!, () {
+    //     Get.back();
+    //   });
+    //   return;
+    // }
+    // if (response["items"].isEmpty) {
+    //   CustomDialog().infoDialog("No data", "No data found. Please try again.",
+    //       () {
+    //     Get.back();
+    //   });
+    //   return;
+    // } else {
+    //   dynamic args = {
+    //     'ticketId': data["ticket_id"],
+    //     'spaceName': data["park_area_name"],
+    //     'parkArea': data["park_area_name"],
+    //     'startDate': data["dt_in"],
+    //     'endDate': data["dt_out"],
+    //     'closing_date': data["end_time"],
+    //     'startTime': dateInRelated.toString().split(" ")[1].toString(),
+    //     'endTime': dateOutRelated.toString().split(" ")[1].toString(),
+    //     'plateNo': data["vehicle_plate_no"],
+    //     'hours': data["no_hours"].toString(),
+    //     'amount': data["amount"].toString(),
+    //     'refno': data["ticket_ref_no"].toString().toString(),
+    //     'lat': double.parse(data["latitude"].toString()),
+    //     'long': double.parse(data["longitude"].toString()),
+    //     'canReserved': true,
+    //     'isReserved': false,
+    //     'isShowRate': false,
+    //     'reservationId': data["reservation_id"],
+    //     'address': data["address"],
+    //     'isAutoExtend': data["is_auto_extend"],
+    //     'isBooking': false,
+    //     'paramsCalc': parameters,
+    //     'status': data["status"].toString() == "C" ? "R" : "A",
+    //     'can_cancel': data["status"].toString() == "U"
+    //         ? false
+    //         : int.parse(now.difference(resDate).inMinutes.toString()) <=
+    //             int.parse(data["cancel_minutes"].toString()),
+    //     'cancel_minute':
+    //         data["status"].toString() == "U" ? "" : data["cancel_minutes"],
+    //     'qr_code': response["items"][0]["qr_code"],
+    //     'onRefresh': () {
+    //       onRefresh();
+    //     }
+    //   };
+    //   Get.toNamed(Routes.bookingReceipt, arguments: args);
+    // }
   }
 }

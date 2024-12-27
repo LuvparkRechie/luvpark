@@ -81,11 +81,11 @@ class BookingReceiptController extends GetxController
       if (progress.value >= 1) {
         _timer.cancel();
         progress.value = 1.0;
-        CustomDialog().loadingDialog(Get.context!);
-        Future.delayed(const Duration(seconds: 2), () {
-          Get.back();
-          Get.back();
-        });
+        // CustomDialog().loadingDialog(Get.context!);
+        // Future.delayed(const Duration(seconds: 2), () {
+        //   Get.back();
+        //   Get.back();
+        // });
       }
     });
   }
@@ -404,6 +404,7 @@ class BookingReceiptController extends GetxController
         "reservation_id": parameters["reservationId"],
         "no_hours": noHours.value
       };
+      print("param $param");
       HttpRequest(api: ApiKeys.gApiExtendParking, parameters: param)
           .postBody()
           .then((objData) async {

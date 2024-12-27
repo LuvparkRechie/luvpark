@@ -198,7 +198,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CustomTextField(
-                labelText: "First Name",
+                hintText: "First Name",
                 title: "First Name",
                 controller: controller.firstName,
                 onChange: (value) {
@@ -233,7 +233,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
               ),
               CustomTextField(
-                labelText: "Middle Name",
+                hintText: "Middle Name",
                 title: "Middle Name",
                 controller: controller.middleName,
                 inputFormatters: [
@@ -257,7 +257,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
               ),
               CustomTextField(
-                labelText: "Last Name",
+                hintText: "Last Name",
                 title: "Last Name",
                 controller: controller.lastName,
                 textCapitalization: TextCapitalization.words,
@@ -293,7 +293,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
               ),
               CustomTextField(
-                labelText: "Email",
+                hintText: "Email",
                 title: "Email",
                 controller: controller.email,
                 keyboardType: TextInputType.emailAddress,
@@ -324,7 +324,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 },
               ),
               CustomTextField(
-                labelText: "YYYY-MM-DD",
+                hintText: "YYYY-MM-DD",
                 title: "Birthday",
                 isReadOnly: true,
                 controller: controller.bday,
@@ -521,7 +521,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     controller.selectedRegion.value == null ||
                     controller.selectedProvince.value == null ||
                     controller.selectedCity.value == null,
-                labelText: 'Zip Code',
+                hintText: 'Zip Code',
                 controller: controller.zipCode,
                 inputFormatters: [
                   NumericInputFormatter(), // Custom formatter
@@ -603,7 +603,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           ),
                           Container(height: 10),
                           CustomTextField(
-                            labelText: "Answer",
+                            hintText: "Answer",
                             textCapitalization: TextCapitalization.characters,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(30),
@@ -680,7 +680,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           ),
                           Container(height: 10),
                           CustomTextField(
-                            labelText: "Answer",
+                            hintText: "Answer",
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(30),
                               FilteringTextInputFormatter.allow(
@@ -756,7 +756,7 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           ),
                           Container(height: 10),
                           CustomTextField(
-                            labelText: "Answer",
+                            hintText: "Answer",
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(30),
                               FilteringTextInputFormatter.allow(

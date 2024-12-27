@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
@@ -7,7 +8,10 @@ import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
+import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../sqlite/reserve_notification_table.dart';
 
 class LoginScreenController extends GetxController {
   LoginScreenController();
@@ -185,6 +189,10 @@ class LoginScreenController extends GetxController {
       await Authentication().enableTimer(false);
       await Authentication().setBiometricStatus(false);
       await Authentication().remove("userData");
+      await PaMessageDatabase.instance.deleteAll();
+      NotificationDatabase.instance.deleteAll();
+      AwesomeNotifications().cancelAllSchedules();
+      AwesomeNotifications().cancelAll();
 
       await Future.delayed(Duration(seconds: 3), () {
         Get.back();

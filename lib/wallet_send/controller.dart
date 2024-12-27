@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
+import 'package:mobile_number/mobile_number.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../custom_widgets/alert_dialog.dart';
@@ -24,6 +26,8 @@ class WalletSendController extends GetxController {
   PermissionStatus cameraStatus = PermissionStatus.denied;
   RxBool isNetConn = true.obs;
   RxList userData = [].obs;
+  String mobileNumber = '';
+  List<SimCard> simCard = <SimCard>[];
 
   RxInt denoInd = 0.obs;
 
@@ -44,8 +48,16 @@ class WalletSendController extends GetxController {
   void onInit() {
     super.onInit();
     _checkCameraPermission();
+    MobileNumber.listenPhonePermission((isPermissionGranted) {
+      if (isPermissionGranted) {
+        initMobileNumberState();
+      } else {}
+    });
+
     refreshUserData();
     padData.value = dataList;
+
+    initMobileNumberState();
   }
 
   @override
@@ -116,6 +128,9 @@ class WalletSendController extends GetxController {
 //naa
   Future<void> getVerifiedAcc() async {
     CustomDialog().loadingDialog(Get.context!);
+    final userData = await Authentication().getUserData2();
+
+    print("userData $userData");
 
     var params =
         "${ApiKeys.gApiSubFolderVerifyNumber}?mobile_no=63${recipient.text.toString().replaceAll(" ", "")}";
@@ -139,7 +154,21 @@ class WalletSendController extends GetxController {
 
       if (returnData["items"][0]["is_valid"] == "Y") {
         sendOtp();
-        return;
+        // if (mobileNumber.isNotEmpty) {
+        //   String myMobile = mobileNumber.toString().split("+")[1];
+
+        //   if (myMobile.toString() == userData["mobile_no"].toString()) {
+        //     final responseOb =
+        //         await Functions.getObtainOtp(userData["mobile_no"]);
+        //     print("responseOb $responseOb");
+        //   } else {
+        //     sendOtp();
+        //   }
+        // } else {
+        //   sendOtp();
+        // }
+
+        // return;
       } else {
         Get.back();
         CustomDialog().errorDialog(
@@ -148,6 +177,25 @@ class WalletSendController extends GetxController {
         });
       }
     });
+  }
+
+  // Platform messages are asynchronous, so we initialize in an async method.
+  Future<void> initMobileNumberState() async {
+    if (!await MobileNumber.hasPhonePermission) {
+      await MobileNumber.requestPhonePermission;
+      return;
+    }
+    // Platform messages may fail, so we use a try/catch PlatformException.
+    try {
+      mobileNumber = (await MobileNumber.mobileNumber)!;
+      simCard = (await MobileNumber.getSimCards)!;
+    } on PlatformException catch (e) {
+      debugPrint("Failed to get mobile number because of '${e.message}'");
+    }
+
+    // If the widget was removed from the tree while the asynchronous platform
+    // message was in flight, we want to discard the reply rather than calling
+    // setState to update our non-existent appearance.
   }
 
 //naa
@@ -227,8 +275,6 @@ class WalletSendController extends GetxController {
     HttpRequest(
       api: subApi,
     ).get().then((returnBalance) async {
-      print("sulod sa refreshdata $returnBalance");
-
       if (returnBalance == "No Internet") {
         isLoading.value = false;
         isNetConn.value = false;
@@ -245,18 +291,5 @@ class WalletSendController extends GetxController {
         userData.value = returnBalance["items"];
       }
     });
-    // HttpRequest(api: subApi).get().then((returnBalance) async {
-    //   print("return balance ${returnBalance["items"]}");
-    //   isLoading.value = false;
-    //   if (returnBalance == "No Internet") {
-    //     isNetConn.value = false;
-
-    //     return;
-    //   }
-    //   isNetConn.value = true;
-    //   if (returnBalance["items"].isNotEmpty) {
-    //     userData.value = returnBalance["items"];
-    //   }
-    // });
   }
 }
