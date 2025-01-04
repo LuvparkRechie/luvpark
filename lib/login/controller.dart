@@ -187,6 +187,7 @@ class LoginScreenController extends GetxController {
       Get.back();
       CustomDialog().loadingDialog(Get.context!);
       await Authentication().enableTimer(false);
+      await Authentication().setLogoutStatus(true);
       await Authentication().setBiometricStatus(false);
       await Authentication().remove("userData");
       await PaMessageDatabase.instance.deleteAll();

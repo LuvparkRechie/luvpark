@@ -21,6 +21,7 @@ class BookingReceiptController extends GetxController
   Rx<Duration?> timeLeft = Rx<Duration?>(null);
   RxBool isSubmit = false.obs;
   RxBool btnDisabled = false.obs;
+  RxBool isLoadScreen = true.obs;
 
   @override
   void onInit() {
@@ -34,6 +35,7 @@ class BookingReceiptController extends GetxController
   }
 
   void checkEta() {
+    isLoadScreen.value = false;
     _timerEta = Timer.periodic(const Duration(seconds: 5), (Timer timer) async {
       List ltlng = await Functions.getCurrentPosition();
       LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
@@ -81,12 +83,14 @@ class BookingReceiptController extends GetxController
       if (progress.value >= 1) {
         _timer.cancel();
         progress.value = 1.0;
+
         // CustomDialog().loadingDialog(Get.context!);
         // Future.delayed(const Duration(seconds: 2), () {
         //   Get.back();
         //   Get.back();
         // });
       }
+      isLoadScreen.value = false;
     });
   }
 

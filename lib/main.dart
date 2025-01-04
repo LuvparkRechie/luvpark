@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:dart_ping_ios/dart_ping_ios.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/routes/routes.dart';
-import 'package:luvpark/security/app_security.dart';
 // ignore: depend_on_referenced_packages
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -20,32 +20,27 @@ import 'custom_widgets/alert_dialog.dart';
 import 'http/api_keys.dart';
 import 'notification_controller.dart';
 import 'routes/pages.dart';
+import 'security/app_security.dart';
 
 @pragma('vm:entry-point')
 Future<void> backgroundFunc() async {
   int counter = 0;
 
-  Variables.bgProcess =
-      Timer.periodic(const Duration(seconds: 10), (timer) async {
-    List appSecurity = await AppSecurity.checkDeviceSecurity();
-    bool isAppSecured = appSecurity[0]["is_secured"];
+  List appSecurity = await AppSecurity.checkDeviceSecurity();
+  bool isAppSecured = appSecurity[0]["is_secured"];
+  if (isAppSecured) {
+    // final isLogout = await Authentication().getLogoutStatus();
+    // if (isLogout != null && !isLogout) {
 
-    if (isAppSecured) {
-      final isLogout = await Authentication().getLogoutStatus();
-
-      if (isLogout != null && !isLogout) {
-        var akongId = await Authentication().getUserId();
-
-        if (akongId == 0) return;
-        await getParkingTrans(counter);
-
-        await getMessNotif();
-      }
-    } else {
-      Variables.bgProcess!.cancel();
-      Variables.showSecurityPopUp(appSecurity[0]["msg"]);
-    }
-  });
+    // }
+    var akongId = await Authentication().getUserId();
+    if (akongId == 0) return;
+    await getParkingTrans(counter);
+    await getMessNotif();
+  } else {
+    Variables.bgProcess!.cancel();
+    Variables.showSecurityPopUp(appSecurity[0]["msg"]);
+  }
 }
 
 void _onUserActivity() async {
@@ -93,6 +88,7 @@ void main() async {
   if (status.isDenied) {
     await Permission.notification.request();
   }
+
   bool isAllowed = await AwesomeNotifications().isNotificationAllowed();
   if (!isAllowed) {
     AwesomeNotifications().requestPermissionToSendNotifications();
@@ -117,7 +113,14 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     NotificationController.startListeningNotificationEvents();
-    backgroundFunc();
+    AndroidAlarmManager.initialize();
+    initializedPotcha();
+  }
+
+  void initializedPotcha() async {
+    await AndroidAlarmManager.periodic(
+        const Duration(seconds: 5), 0, backgroundFunc,
+        startAt: DateTime.now());
   }
 
   @override

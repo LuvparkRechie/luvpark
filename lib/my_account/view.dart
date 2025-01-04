@@ -212,6 +212,8 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                                       text: "Civil Status",
                                                       color: Colors.black,
                                                       fontSize: 14,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                     ),
                                                     Container(height: 5),
                                                     CustomParagraph(
@@ -242,6 +244,8 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                                     const CustomParagraph(
                                                       text: "Gender",
                                                       color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.w600,
                                                       fontSize: 14,
                                                     ),
                                                     Container(height: 5),
@@ -265,6 +269,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Birthday",
                                             color: Colors.black,
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 14,
                                           ),
                                           Container(height: 5),
@@ -280,6 +285,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Address",
                                             color: Colors.black,
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 14,
                                           ),
                                           Container(height: 5),
@@ -294,6 +300,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Province",
                                             color: Colors.black,
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 14,
                                           ),
                                           Container(height: 5),
@@ -307,6 +314,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                           const CustomParagraph(
                                             text: "Zip Code",
                                             color: Colors.black,
+                                            fontWeight: FontWeight.w600,
                                             fontSize: 14,
                                           ),
                                           Container(height: 5),

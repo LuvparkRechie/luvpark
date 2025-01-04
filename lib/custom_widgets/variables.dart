@@ -16,7 +16,6 @@ import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pointycastle/export.dart' as crypto;
 import 'package:screenshot/screenshot.dart';
-import 'package:text_to_speech/text_to_speech.dart';
 
 import '../functions/functions.dart';
 
@@ -640,7 +639,7 @@ class Variables {
   }
 
   //TEXT TO SPEECH Variables
-  static TextToSpeech tts = TextToSpeech();
+  // static TextToSpeech tts = TextToSpeech();
   static String defaultLanguage = 'en-US';
 
   static double volume = 1; // Range: 0-1
@@ -686,7 +685,7 @@ class Variables {
         ),
         elevation: 5.0,
         behavior: SnackBarBehavior.floating,
-        duration: Duration(seconds: 2),
+        duration: Duration(seconds: 4),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(7.0),
         ),
@@ -702,7 +701,7 @@ class Variables {
         ),
       ),
     );
-    Future.delayed(Duration(seconds: 2), () {
+    Future.delayed(Duration(seconds: 4), () {
       FlutterExitApp.exitApp(iosForceExit: true);
     });
   }

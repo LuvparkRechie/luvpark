@@ -280,7 +280,8 @@ class MyVehiclesController extends GetxController {
     }, () {
       Get.back();
       CustomDialog().loadingDialog(Get.context!);
-      HttpRequest(api: ApiKeys.gApiLuvParkDeleteVehicle, parameters: params)
+
+      HttpRequest(api: ApiKeys.gApiLuvParkPostGetVehicleReg, parameters: params)
           .deleteData()
           .then((retDelete) {
         Get.back();
@@ -320,7 +321,8 @@ class MyVehiclesController extends GetxController {
         "vcr_image_base64": crImageBase64.value,
       };
 
-      HttpRequest(api: ApiKeys.gApiLuvParkAddVehicle, parameters: parameter)
+      HttpRequest(
+              api: ApiKeys.gApiLuvParkPostGetVehicleReg, parameters: parameter)
           .postBody()
           .then((returnPost) async {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -353,7 +355,7 @@ class MyVehiclesController extends GetxController {
     });
   }
 
-  void subscrbeVh(String scQr, String plateNo, String brandId) async {
+  Future<bool> subscrbeVh(String scQr, String plateNo, String brandId) async {
     CustomDialog().loadingDialog(Get.context!);
     int? lpId = await Authentication().getUserId();
     dynamic param = {
@@ -370,16 +372,19 @@ class MyVehiclesController extends GetxController {
       CustomDialog().internetErrorDialog(Get.context!, () {
         Get.back();
       });
+      return false;
     } else if (returnPost == null) {
       Get.back();
       CustomDialog().serverErrorDialog(Get.context!, () {
         Get.back();
       });
+      return false;
     } else if (returnPost["success"] == 'N') {
       Get.back();
       CustomDialog().errorDialog(Get.context!, "Error", returnPost["msg"], () {
         Get.back();
       });
+      return false;
     } else {
       Get.back();
       onRefresh();
@@ -387,6 +392,7 @@ class MyVehiclesController extends GetxController {
           Get.context!, "Success", returnPost["msg"], "Okay", () {
         Get.back();
       });
+      return true;
     }
   }
 
@@ -395,7 +401,7 @@ class MyVehiclesController extends GetxController {
 
     CustomDialog().loadingDialog(Get.context!);
     subDetailsData.value = [];
-    print("vehiclePlateNo $vehiclePlateNo");
+
     try {
       final objData = await HttpRequest(
         api:

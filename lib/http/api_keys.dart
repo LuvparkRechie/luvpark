@@ -1,5 +1,5 @@
 class ApiKeys {
-  static const bool isProduction = true;
+  static const bool isProduction = false;
   static const String luvApi = isProduction ? "lpw" : "luv";
   static const String parkSpaceApi = isProduction ? "ps" : "parkspace";
 
@@ -145,9 +145,10 @@ class ApiKeys {
       '/ords/$luvApi/auth/rpsf/';
 
   //Add vehicle
-  static const gApiLuvParkAddVehicle = '/ords/$luvApi/fav/addVehicle';
-  //Delete vehicle\
-  static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/fav/delVehicle';
+  // static const gApiLuvParkAddVehicle = '/ords/$luvApi/fav/addVehicle';
+
+  // //Delete vehicle\
+  // static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/fav/delVehicle';
 
   //Get Parkspace app notice
   static const gApiLuvParkGetNotice = '/ords/$parkSpaceApi/notify/pbm/';

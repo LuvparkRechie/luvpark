@@ -352,9 +352,9 @@ class Functions {
     try {
       final String apiUrl =
           'https://maps.googleapis.com/maps/api/directions/json?origin=${origin.latitude},${origin.longitude}&destination=${destination.latitude},${destination.longitude}&key=${Variables.mapApiKey}';
-      print("apiUrl $apiUrl");
+
       final response = await http.get(Uri.parse(apiUrl));
-      print("response.statusCode ${response.statusCode}");
+
       // Check if response status is OK
       if (response.statusCode == 200) {
         final Map<String, dynamic> data = json.decode(response.body);

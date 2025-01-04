@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/login/index.dart';
 
 import '../functions/functions.dart';
 import '../http/api_keys.dart';
@@ -91,5 +92,10 @@ class LockScreenController extends GetxController {
         }
       }
     });
+  }
+
+  void switchAccount() {
+    final logController = Get.put(LoginScreenController());
+    logController.switchAccount();
   }
 }

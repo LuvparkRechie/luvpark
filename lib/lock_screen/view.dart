@@ -5,7 +5,6 @@ import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:luvpark/lock_screen/controller.dart';
-import 'package:luvpark/routes/routes.dart';
 
 import '../custom_widgets/custom_button.dart';
 
@@ -53,9 +52,7 @@ class LockScreen extends GetView<LockScreenController> {
                               height: MediaQuery.of(context).size.height * .15),
                           CustomButton(
                             text: "Switch Account",
-                            onPressed: () {
-                              Get.offAndToNamed(Routes.login);
-                            },
+                            onPressed: controller.switchAccount,
                           )
                         ],
                       ),

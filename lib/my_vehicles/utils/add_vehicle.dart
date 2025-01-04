@@ -206,7 +206,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
                                           base64Decode(
                                             controller.orImageBase64.value,
                                           ),
-                                        ) as ImageProvider,
+                                        ),
                                       ),
                                     ),
                                   )
@@ -282,7 +282,7 @@ class AddVehicles extends GetView<MyVehiclesController> {
                                           base64Decode(
                                             controller.crImageBase64.value,
                                           ),
-                                        ) as ImageProvider,
+                                        ),
                                       ),
                                     ),
                                   )
