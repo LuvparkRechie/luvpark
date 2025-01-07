@@ -86,6 +86,7 @@ class BillersController extends GetxController {
   }
 
   Future<void> addFavorites(params) async {
+    print("paramss $params");
     int userId = await Authentication().getUserId();
     bool isButtonEnabled = true;
     CustomDialog().confirmationDialog(Get.context!, "Add to Favorites",
@@ -119,19 +120,12 @@ class BillersController extends GetxController {
           return {"response": returnPost, "data": []};
         }
         if (returnPost["success"] == 'Y') {
-          print("source ${params["source"]}");
           CustomDialog().successDialog(Get.context!, "Success",
               "Successfully added to favorites.", "Okay", () {
             if (params["source"] == "fav") {
-              for (int i = 0; i < 3; i++) {
-                Get.back();
-              }
-
+              Functions.popPage(3);
               getFavorites();
             } else {
-              Get.back();
-              Get.back();
-              Get.back();
               Get.back();
               getFavorites();
             }
@@ -139,8 +133,12 @@ class BillersController extends GetxController {
         } else {
           CustomDialog().errorDialog(Get.context!, "luvpark", returnPost["msg"],
               () {
-            Get.back();
-            Get.back();
+            if (params["source"] == "fav") {
+              Functions.popPage(2);
+            } else {
+              Get.back();
+              getFavorites();
+            }
           });
         }
       }).whenComplete(() {

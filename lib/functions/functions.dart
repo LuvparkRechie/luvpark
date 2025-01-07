@@ -814,15 +814,9 @@ class Functions {
     }
   }
 
-  static void popPage(int count) {
-    if (count == 0) {
+  static void popPage([int times = 1]) {
+    for (int i = 0; i < times; i++) {
       Get.back();
-      return;
-    } else {
-      for (int i = 0; i < count; i++) {
-        print("cint $i");
-        Get.back();
-      }
     }
   }
 }

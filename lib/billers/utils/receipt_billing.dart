@@ -59,10 +59,7 @@ class _TicketUIState extends State<TicketUI> {
     String randomNumber = Random().nextInt(100000).toString();
     String fname = 'luvpark$randomNumber.png';
     String billerAddress = params["biller_address"] ?? "";
-    Get.dialog(
-      const Center(child: CircularProgressIndicator()),
-      barrierDismissible: false,
-    );
+    CustomDialog().loadingDialog(Get.context!);
 
     ScreenshotController()
         .captureFromWidget(myTicket(billerAddress),

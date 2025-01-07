@@ -13,7 +13,6 @@ import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_textfield.dart';
 import '../../custom_widgets/no_internet.dart';
-import '../../my_account/utils/view.dart';
 import '../controller.dart';
 
 class PayBill extends StatefulWidget {
@@ -28,6 +27,10 @@ class _PayBillState extends State<PayBill> {
   final fav = Get.arguments;
   final args = Get.arguments;
 
+  final _accountNumberKey = GlobalKey<FormState>();
+  final _accountNameKey = GlobalKey<FormState>();
+  final _amountKey = GlobalKey<FormState>();
+  final _billNumberKey = GlobalKey<FormState>();
   @override
   void initState() {
     controller.clearFields();
@@ -38,25 +41,30 @@ class _PayBillState extends State<PayBill> {
 
   void _submitForm() {
     bool isFavSource = args["source"] == "fav";
-    List<String> requiredFields = isFavSource
-        ? [controller.billAccNo.text, controller.billerAccountName.text]
-        : [
-            controller.billAccNo.text,
-            controller.amount.text,
-            controller.billNo.text,
-            controller.billerAccountName.text
-          ];
+    final isAccountNumberValid = _accountNumberKey.currentState!.validate();
+    final isAccountNameValid = _accountNameKey.currentState!.validate();
+    final isAmountValid =
+        args["source"] != "fav" ? _amountKey.currentState!.validate() : true;
+    final isBillNumberValid = args["source"] != "fav"
+        ? _billNumberKey.currentState!.validate()
+        : true;
 
-    if (requiredFields.every((field) => field.isNotEmpty)) {
-      isFavSource ? controller.addFavorites(args) : controller.onPay(args);
+    if (isAccountNumberValid &&
+        isAccountNameValid &&
+        isAmountValid &&
+        isBillNumberValid) {
+      if (isFavSource) {
+        controller.addFavorites(args);
+      } else if (args["source"] == "pay" || args["source"] == "favorites") {
+        controller.onPay(args);
+      }
+      // isFavSource ? controller.addFavorites(args) : controller.onPay(args);
     } else {
       CustomDialog().errorDialog(
         Get.context!,
         "luvpark",
         "Please fill in all required fields.",
-        () {
-          Get.back();
-        },
+        () {},
       );
     }
   }
@@ -98,6 +106,7 @@ class _PayBillState extends State<PayBill> {
                     ),
                     Form(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
+                      key: _accountNumberKey,
                       child: CustomTextField(
                         controller: controller.billAccNo,
                         hintText: "Enter Account Number",
@@ -132,12 +141,14 @@ class _PayBillState extends State<PayBill> {
                     ),
                     Form(
                       autovalidateMode: AutovalidateMode.onUserInteraction,
+                      key: _accountNameKey,
                       child: CustomTextField(
                         controller: controller.billerAccountName,
                         hintText: "Enter Account Name",
                         inputFormatters: [
                           LengthLimitingTextInputFormatter(30),
-                          SimpleNameFormatter(),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'[A-Za-z\s]'))
                         ],
                         textCapitalization: TextCapitalization.characters,
                         keyboardType: TextInputType.name,
@@ -169,6 +180,7 @@ class _PayBillState extends State<PayBill> {
                           Form(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
+                            key: _amountKey,
                             child: CustomTextField(
                               inputFormatters: <TextInputFormatter>[
                                 LengthLimitingTextInputFormatter(15),
@@ -213,6 +225,7 @@ class _PayBillState extends State<PayBill> {
                           Form(
                             autovalidateMode:
                                 AutovalidateMode.onUserInteraction,
+                            key: _billNumberKey,
                             child: CustomTextField(
                               hintText: "Enter Bill Number",
                               controller: controller.billNo,
@@ -243,8 +256,12 @@ class _PayBillState extends State<PayBill> {
                     ),
                     if (MediaQuery.of(context).viewInsets.bottom == 0)
                       CustomButton(
-                          text: args["source"] == "fav" ? "Save" : "Pay",
-                          onPressed: _submitForm),
+                        text: args["source"] == "fav" ? "Save" : "Pay",
+                        // onPressed: () {
+                        // print("source:${args["source"]}");
+                        // },
+                        onPressed: _submitForm,
+                      ),
                   ],
                 ),
               ),
