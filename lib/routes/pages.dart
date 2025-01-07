@@ -12,6 +12,7 @@ import 'package:luvpark/wallet_qr/index.dart';
 import 'package:luvpark/wallet_recharge_load/index.dart';
 
 import '../activate_acc/index.dart';
+import '../billers/index.dart';
 import '../booking/index.dart';
 import '../booking/utils/booking_receipt/index.dart';
 import '../forgot_password/index.dart';
@@ -230,6 +231,11 @@ class AppPages {
       name: Routes.send2,
       page: () => WalletSend(),
       binding: WalletSendBinding(),
+    ),
+    GetPage(
+      name: Routes.billers,
+      page: () => Billers(),
+      binding: BillersBinding(),
     ),
   ];
 }

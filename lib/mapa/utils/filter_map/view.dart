@@ -654,7 +654,7 @@ class _FilterMapState extends State<FilterMap> {
         return isActive
             ? 'assets/map_filter/active/motor_active.svg'
             : 'assets/map_filter/inactive/motor_inactive.svg';
-      case 'Trikes and Cars':
+      case 'Cars':
         return isActive
             ? 'assets/map_filter/active/car_active.svg'
             : 'assets/map_filter/inactive/car_inactive.svg';

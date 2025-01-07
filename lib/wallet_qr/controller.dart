@@ -22,6 +22,7 @@ import 'package:share_plus/share_plus.dart';
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/custom_cutter.dart';
 import '../custom_widgets/custom_cutter_top_bottom.dart';
+import '../functions/functions.dart';
 import '../routes/routes.dart';
 
 class QrWalletController extends GetxController
@@ -94,7 +95,6 @@ class QrWalletController extends GetxController
     HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}${userData["user_id"]}")
         .get()
         .then((paymentKey) {
-      print("paymentKey $paymentKey");
       if (paymentKey == "No Internet") {
         isInternetConn.value = false;
         isLoading.value = false;
@@ -121,44 +121,26 @@ class QrWalletController extends GetxController
 
   Future<void> generateQr() async {
     CustomDialog().loadingDialog(Get.context!);
+    final response = await Functions.generateQr();
 
-    int userId = await Authentication().getUserId();
-    dynamic param = {"luvpay_id": userId};
-    HttpRequest(api: ApiKeys.gApiSubFolderPutChangeQR, parameters: param)
-        .put()
-        .then((objKey) {
-      if (objKey == "No Internet") {
-        isInternetConn.value = false;
-        isLoading.value = false;
-
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (objKey == null) {
-        isInternetConn.value = true;
-        isLoading.value = true;
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      } else {
-        isInternetConn.value = true;
-        isLoading.value = false;
-        if (objKey["success"] == 'Y') {
-          payKey.value = objKey["payment_hk"];
-          CustomDialog().successDialog(
-              Get.context!, "Success", "Qr successfully changed", "Done", () {
-            Get.back();
-            Get.back();
-          });
-        } else {
-          CustomDialog()
-              .errorDialog(Get.context!, "luvpark", objKey['msg'], () {});
-        }
-      }
-    });
+    print("response $response");
+    Get.back();
+    isLoading.value = false;
+    if (response["response"] == "No Internet") {
+      isInternetConn.value = false;
+      return;
+    }
+    if (response["response"] == "Success") {
+      isInternetConn.value = true;
+      payKey.value = response["data"];
+      CustomDialog().successDialog(
+          Get.context!, "Success", "Qr successfully changed", "Done", () {
+        Get.back();
+      });
+      return;
+    } else {
+      isInternetConn.value = true;
+    }
   }
 
   Future<void> saveQr() async {

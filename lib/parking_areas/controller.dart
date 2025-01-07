@@ -47,7 +47,7 @@ class ParkingAreasController extends GetxController {
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/street/cmp_street.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/street/motor_pwd_street.png';
@@ -56,7 +56,7 @@ class ParkingAreasController extends GetxController {
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/private/cmp_private.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/private/motor_pwd_private.png';
@@ -65,7 +65,7 @@ class ParkingAreasController extends GetxController {
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/commercial/cmp_commercial.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/commercial/motor_pwd_commercial.png';
@@ -81,7 +81,7 @@ class ParkingAreasController extends GetxController {
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/street/car_motor_street.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/street/motor_street.png';
@@ -90,7 +90,7 @@ class ParkingAreasController extends GetxController {
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/private/car_motor_private.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/private/motor_private.png';
@@ -99,7 +99,7 @@ class ParkingAreasController extends GetxController {
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/commercial/car_motor_commercial.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/commercial/motor_commercial.png';
@@ -153,7 +153,7 @@ class ParkingAreasController extends GetxController {
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/blue/blue_cmp.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/blue/blue_mp.svg';
@@ -162,7 +162,7 @@ class ParkingAreasController extends GetxController {
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/orange/orange_cmp.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/orange/orange_mp.svg';
@@ -171,7 +171,7 @@ class ParkingAreasController extends GetxController {
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/green/green_cmp.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/green/green_mp.svg';
@@ -188,7 +188,7 @@ class ParkingAreasController extends GetxController {
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/blue/blue_cm.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/blue/blue_motor.svg';
@@ -197,7 +197,7 @@ class ParkingAreasController extends GetxController {
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/orange/orange_cm.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/orange/orange_motor.svg';
@@ -206,7 +206,7 @@ class ParkingAreasController extends GetxController {
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/green/green_cm.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/green/green_motor.svg';

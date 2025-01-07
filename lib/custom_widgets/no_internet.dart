@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
-import 'package:rive/rive.dart';
 
 class NoInternetConnected extends StatefulWidget {
   final Function? onTap;
@@ -18,20 +18,49 @@ class NoInternetConnected extends StatefulWidget {
   _NoInternetConnectedState createState() => _NoInternetConnectedState();
 }
 
-class _NoInternetConnectedState extends State<NoInternetConnected> {
-  late RiveAnimationController _controller;
+class _NoInternetConnectedState extends State<NoInternetConnected>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
     // Initialize the animation controller with the desired timeline
-    _controller = SimpleAnimation('Timeline 1');
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 1), // Rotation duration
+    );
   }
 
   @override
   void dispose() {
-    _controller.dispose(); // Dispose of the controller to avoid memory leaks
+    _controller.dispose();
     super.dispose();
+  }
+
+  void _onRefresh() {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.grey,
+        content: const Text(
+          'Loading please wait...',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+        ),
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 1),
+        margin: EdgeInsets.only(
+          bottom: MediaQuery.sizeOf(context).height * 0.89,
+          left: 10,
+          right: 10,
+        ),
+      ),
+    );
+
+    _controller.repeat();
+    Future.delayed(const Duration(seconds: 1), () {
+      _controller.stop();
+      widget.onTap!();
+    });
   }
 
   @override
@@ -44,21 +73,31 @@ class _NoInternetConnectedState extends State<NoInternetConnected> {
           Container(
             height: 20,
           ),
+          // Center(
+          //   child: SizedBox(
+          //     height: 300,
+          //     width: 300,
+          //     child: RiveAnimation.asset(
+          //       'assets/nointernet.riv',
+          //       controllers: [_controller],
+          //       onInit: (_) {
+          //         setState(() {});
+          //       },
+          //     ),
+          //   ),
+          // ),
+          // Center(
+          //   child: Icon(
+          //     LucideIcons.wifiOff,
+          //     color: AppColor.primaryColor.withOpacity(.7),
+          //     size: MediaQuery.of(context).size.width / 5,
+          //   ),
+          // ),
           Center(
-            child: SizedBox(
-              height: 300,
-              width: 300,
-              child: RiveAnimation.asset(
-                'assets/nointernet.riv',
-                controllers: [_controller],
-                onInit: (_) {
-                  setState(() {});
-                },
-              ),
-            ),
+            child: SvgPicture.asset("assets/images/no_net.svg"),
           ),
           Container(
-            height: widget.height == null ? 55 : widget.height! * .30,
+            height: widget.height == null ? 55 : widget.height! * .15,
           ),
           const CustomParagraph(
             text: "No Internet Connection",
@@ -79,11 +118,19 @@ class _NoInternetConnectedState extends State<NoInternetConnected> {
             height: 25,
           ),
           if (widget.onTap != null)
-            TextButton(
-                onPressed: () {
-                  widget.onTap!();
-                },
-                child: const CustomLinkLabel(text: "Reconnect")),
+            RotationTransition(
+              turns: _controller,
+              child: IconButton(
+                onPressed: _onRefresh,
+                icon: const Icon(Icons.refresh, size: 32),
+                color: Colors.grey,
+              ),
+            ),
+          // TextButton(
+          //     onPressed: () {
+          //       widget.onTap!();
+          //     },
+          //     child: const CustomLinkLabel(text: "Reconnect")),
         ],
       ),
     );

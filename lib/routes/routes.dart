@@ -44,4 +44,5 @@ class Routes {
   static const helpfeedback = "/help_feedback";
   static const lockScreen = "/lock_screen";
   static const send2 = "/send_screen_send";
+  static const billers = "/billers";
 }

@@ -535,7 +535,7 @@ class DashboardMapController extends GetxController
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/street/cmp_street.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/street/motor_pwd_street.png';
@@ -544,7 +544,7 @@ class DashboardMapController extends GetxController
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/private/cmp_private.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/private/motor_pwd_private.png';
@@ -553,7 +553,7 @@ class DashboardMapController extends GetxController
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/commercial/cmp_commercial.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/commercial/motor_pwd_commercial.png';
@@ -569,7 +569,7 @@ class DashboardMapController extends GetxController
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/street/car_motor_street.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/street/motor_street.png';
@@ -578,7 +578,7 @@ class DashboardMapController extends GetxController
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/private/car_motor_private.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/private/motor_private.png';
@@ -587,7 +587,7 @@ class DashboardMapController extends GetxController
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/dashboard_icon/commercial/car_motor_commercial.png';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/dashboard_icon/commercial/motor_commercial.png';
@@ -850,7 +850,7 @@ class DashboardMapController extends GetxController
     final response = await HttpRequest(
             api: "${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=$parkId")
         .get();
-    print("responsee $response");
+
     if (response == "No Internet") {
       Get.back();
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -900,7 +900,6 @@ class DashboardMapController extends GetxController
     HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
         .get()
         .then((returnData) async {
-      print("returnData $returnData");
       Get.back();
       if (returnData == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -934,7 +933,7 @@ class DashboardMapController extends GetxController
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/blue/blue_cmp.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/blue/blue_mp.svg';
@@ -943,7 +942,7 @@ class DashboardMapController extends GetxController
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/orange/orange_cmp.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/orange/orange_mp.svg';
@@ -952,7 +951,7 @@ class DashboardMapController extends GetxController
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/green/green_cmp.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/green/green_mp.svg';
@@ -969,7 +968,7 @@ class DashboardMapController extends GetxController
     switch (parkingTypeCode) {
       case "S":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/blue/blue_cm.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/blue/blue_motor.svg';
@@ -978,7 +977,7 @@ class DashboardMapController extends GetxController
         }
       case "P":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/orange/orange_cm.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/orange/orange_motor.svg';
@@ -987,7 +986,7 @@ class DashboardMapController extends GetxController
         }
       case "C":
         if (vehicleTypes.contains("Motorcycle") &&
-            vehicleTypes.contains("Trikes and Cars")) {
+            vehicleTypes.contains("Cars")) {
           return 'assets/details_logo/green/green_cm.svg';
         } else if (vehicleTypes.contains("Motorcycle")) {
           return 'assets/details_logo/green/green_motor.svg';
@@ -1012,7 +1011,7 @@ class DashboardMapController extends GetxController
     List inataya = _parseVehicleTypes(vehicleTypesList).map((e) {
       String eName;
 
-      if (e["name"].toString().toLowerCase().contains("trikes")) {
+      if (e["name"].toString().toLowerCase().contains("cars")) {
         e["vh_types"] = e["name"];
         eName = e["count"].toString().length > 1 ? "Cars" : "Car";
       } else if (e["name"].toString().toLowerCase().contains("motor")) {
@@ -1192,7 +1191,7 @@ class DashboardMapController extends GetxController
       if (lowerCaseName.contains("motorcycle")) {
         color = const Color(0xFF21B979);
         iconKey = "scooter";
-      } else if (lowerCaseName.contains("trikes")) {
+      } else if (lowerCaseName.contains("cars")) {
         color = const Color(0xFF21B979);
         iconKey = "car";
       } else {

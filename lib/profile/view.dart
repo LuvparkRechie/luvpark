@@ -181,6 +181,22 @@ class Profile extends GetView<ProfileScreenController> {
                                 const Divider(),
                                 ListTile(
                                   leading: Icon(
+                                    Iconsax.car,
+                                    color: AppColor.primaryColor,
+                                  ),
+                                  title: const CustomTitle(
+                                    text: "My Billers",
+                                    fontSize: 14,
+                                  ),
+                                  trailing: Icon(Icons.chevron_right_sharp,
+                                      color: AppColor.primaryColor),
+                                  onTap: () {
+                                    Get.toNamed(Routes.billers);
+                                  },
+                                ),
+                                const Divider(),
+                                ListTile(
+                                  leading: Icon(
                                     Iconsax.setting_2,
                                     color: AppColor.primaryColor,
                                   ),

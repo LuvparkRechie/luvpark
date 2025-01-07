@@ -781,4 +781,48 @@ class Functions {
       return {"response": "Success"};
     }
   }
+
+  static Future<dynamic> generateQr() async {
+    int userId = await Authentication().getUserId();
+    String apiParam = ApiKeys.gApiSubFolderPutChangeQR;
+    dynamic param = {"luvpay_id": userId};
+
+    final response = await HttpRequest(api: apiParam, parameters: param).put();
+
+    Get.back();
+    if (response == "No Internet") {
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response, "data": []};
+    }
+    if (response == null) {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return {"response": response, "data": []};
+    }
+    if (response["success"] == 'N') {
+      CustomDialog().infoDialog(
+          "lvupark", "No data found for app version. Please contact support.",
+          () {
+        Get.back();
+      });
+      return {"response": "No data", "data": response["items"][0]};
+    } else {
+      return {"response": "Success", "data": response["payment_hk"]};
+    }
+  }
+
+  static void popPage(int count) {
+    if (count == 0) {
+      Get.back();
+      return;
+    } else {
+      for (int i = 0; i < count; i++) {
+        print("cint $i");
+        Get.back();
+      }
+    }
+  }
 }

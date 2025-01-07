@@ -37,55 +37,81 @@ class ParkingAreas extends GetView<ParkingAreasController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(height: 20),
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: ShapeDecoration(
-                color: const Color(0xFFFBFBFB),
-                shape: RoundedRectangleBorder(
-                  side: const BorderSide(width: 1, color: Color(0x232563EB)),
-                  borderRadius: BorderRadius.circular(54),
+            // Container(
+            //   clipBehavior: Clip.antiAlias,
+            //   decoration: ShapeDecoration(
+            //     color: const Color(0xFFFBFBFB),
+            //     shape: RoundedRectangleBorder(
+            //       side: const BorderSide(width: 1, color: Color(0x232563EB)),
+            //       borderRadius: BorderRadius.circular(54),
+            //     ),
+            //   ),
+            //   child: Padding(
+            //     padding: const EdgeInsets.symmetric(
+            //       horizontal: 14,
+            //     ),
+            //     child: Row(
+            //       children: [
+            //         Container(
+            //           width: 24,
+            //           height: 24,
+            //           decoration: const BoxDecoration(
+            //             image: DecorationImage(
+            //               image: AssetImage("assets/dashboard_icon/search.png"),
+            //               fit: BoxFit.contain,
+            //             ),
+            //           ),
+            //         ),
+            //         Expanded(
+            //           child: TextField(
+            //             autofocus: false,
+            //             decoration: InputDecoration(
+            //               hintText: "Search parking zone/address",
+            //               border: InputBorder.none,
+            //               contentPadding: const EdgeInsets.only(left: 10),
+            //               hintStyle: paragraphStyle(
+            //                   color: AppColor.hintColor,
+            //                   fontWeight: FontWeight.w500),
+            //               labelStyle: paragraphStyle(
+            //                   fontWeight: FontWeight.w500,
+            //                   color: AppColor.hintColor),
+            //             ),
+            //             style: paragraphStyle(
+            //                 color: Colors.black, fontWeight: FontWeight.w500),
+            //             onChanged: (String value) async {
+            //               ct.onSearch(value);
+            //             },
+            //           ),
+            //         ),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+
+            SearchBar(
+              padding: MaterialStateProperty.all(
+                EdgeInsets.only(left: 15),
+              ),
+              elevation: MaterialStateProperty.all(.2),
+              side: MaterialStateProperty.all(
+                BorderSide(
+                  color: Color(0x232563EB),
+                  width: 1.0,
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage("assets/dashboard_icon/search.png"),
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: TextField(
-                        autofocus: false,
-                        decoration: InputDecoration(
-                          hintText: "Search parking zone/address",
-                          border: InputBorder.none,
-                          contentPadding: const EdgeInsets.only(left: 10),
-                          hintStyle: paragraphStyle(
-                              color: AppColor.hintColor,
-                              fontWeight: FontWeight.w500),
-                          labelStyle: paragraphStyle(
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.hintColor),
-                        ),
-                        style: paragraphStyle(
-                            color: Colors.black, fontWeight: FontWeight.w500),
-                        onChanged: (String value) async {
-                          ct.onSearch(value);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+              leading: Icon(
+                LucideIcons.search,
+                color: AppColor.primaryColor,
               ),
+              hintStyle: MaterialStateProperty.resolveWith<TextStyle?>(
+                  (Set<MaterialState> states) {
+                return paragraphStyle(
+                    fontWeight: FontWeight.w500, color: AppColor.hintColor);
+              }),
+              hintText: "Search parking zone/address",
+              onChanged: (value) {
+                ct.onSearch(value);
+              },
             ),
             Container(height: 20),
             const CustomParagraph(
