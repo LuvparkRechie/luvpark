@@ -64,7 +64,9 @@ class _PayBillState extends State<PayBill> {
         Get.context!,
         "luvpark",
         "Please fill in all required fields.",
-        () {},
+        () {
+          Get.back();
+        },
       );
     }
   }

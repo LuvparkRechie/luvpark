@@ -181,7 +181,7 @@ class Profile extends GetView<ProfileScreenController> {
                                 const Divider(),
                                 ListTile(
                                   leading: Icon(
-                                    Iconsax.car,
+                                    Iconsax.receipt,
                                     color: AppColor.primaryColor,
                                   ),
                                   title: const CustomTitle(

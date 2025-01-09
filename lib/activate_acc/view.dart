@@ -128,54 +128,57 @@ class ActivateAccount extends GetView<ActivateAccountController> {
                                     ],
                                   ),
                                   Container(height: 20),
-                                  Directionality(
-                                    // Specify direction if desired
-                                    textDirection: TextDirection.ltr,
-                                    child: Pinput(
-                                      length: 6,
-                                      controller: controller.pinController,
-                                      defaultPinTheme: getDefaultPinTheme(),
-                                      androidSmsAutofillMethod:
-                                          AndroidSmsAutofillMethod
-                                              .smsUserConsentApi,
-                                      hapticFeedbackType:
-                                          HapticFeedbackType.lightImpact,
-                                      onCompleted: (pin) {
-                                        if (pin.length == 6) {
-                                          controller.onInputChanged(pin);
-                                        }
-                                      },
-                                      onChanged: (value) {
-                                        if (value.isEmpty) {
-                                          controller.onInputChanged(value);
-                                        } else {
-                                          controller.onInputChanged(value);
-                                        }
-                                      },
-                                      cursor: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          Container(
-                                            margin: const EdgeInsets.only(
-                                                bottom: 9),
-                                            width: 22,
-                                            height: 1,
-                                            color: AppColor.primaryColor,
-                                          ),
-                                        ],
-                                      ),
-                                      focusedPinTheme:
-                                          getDefaultPinTheme().copyWith(
-                                        decoration: getDefaultPinTheme()
-                                            .decoration!
-                                            .copyWith(
-                                              borderRadius:
-                                                  BorderRadius.circular(5),
-                                              border: Border.all(
-                                                  color: AppColor.primaryColor,
-                                                  width: 2),
+                                  Center(
+                                    child: Directionality(
+                                      // Specify direction if desired
+                                      textDirection: TextDirection.ltr,
+                                      child: Pinput(
+                                        length: 6,
+                                        controller: controller.pinController,
+                                        defaultPinTheme: getDefaultPinTheme(),
+                                        androidSmsAutofillMethod:
+                                            AndroidSmsAutofillMethod
+                                                .smsUserConsentApi,
+                                        hapticFeedbackType:
+                                            HapticFeedbackType.lightImpact,
+                                        onCompleted: (pin) {
+                                          if (pin.length == 6) {
+                                            controller.onInputChanged(pin);
+                                          }
+                                        },
+                                        onChanged: (value) {
+                                          if (value.isEmpty) {
+                                            controller.onInputChanged(value);
+                                          } else {
+                                            controller.onInputChanged(value);
+                                          }
+                                        },
+                                        cursor: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 9),
+                                              width: 22,
+                                              height: 1,
+                                              color: AppColor.primaryColor,
                                             ),
+                                          ],
+                                        ),
+                                        focusedPinTheme:
+                                            getDefaultPinTheme().copyWith(
+                                          decoration: getDefaultPinTheme()
+                                              .decoration!
+                                              .copyWith(
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                border: Border.all(
+                                                    color:
+                                                        AppColor.primaryColor,
+                                                    width: 2),
+                                              ),
+                                        ),
                                       ),
                                     ),
                                   ),

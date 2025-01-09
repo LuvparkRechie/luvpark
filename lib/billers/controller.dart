@@ -29,6 +29,12 @@ class BillersController extends GetxController {
   RxBool isLoading = true.obs;
   var fav = <int, bool>{}.obs;
   RxList filteredBillers = [].obs;
+
+//for sorting
+  RxString selectedSortOption = "Biller Name".obs;
+  RxBool isAscending = true.obs;
+  var searchQuery = ''.obs;
+
   @override
   void onInit() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -46,7 +52,6 @@ class BillersController extends GetxController {
   }
 
   Future<void> loadFavoritesAndBillers() async {
-    // isNetConn.value = true;
     isLoading.value = true;
     await getFavorites();
     await getBillers();
@@ -85,8 +90,39 @@ class BillersController extends GetxController {
     }
   }
 
+  Future<void> sortFavorites() async {
+    if (selectedSortOption.value == selectedSortOption.value) {
+      isAscending.value = !isAscending.value;
+    }
+    if (selectedSortOption.value == 'Account Name') {
+      favBillers.sort((a, b) {
+        String nameA = a['account_name'] ?? '';
+        String nameB = b['account_name'] ?? '';
+        return isAscending.value
+            ? nameA.compareTo(nameB)
+            : nameB.compareTo(nameA);
+      });
+    } else if (selectedSortOption.value == "Biller Name") {
+      favBillers.sort((a, b) {
+        String nameA = a["biller_name"] ?? '';
+        String nameB = b["biller_name"] ?? '';
+        return isAscending.value
+            ? nameA.compareTo(nameB)
+            : nameB.compareTo(nameA);
+      });
+    } else if (selectedSortOption.value == "Biller Address") {
+      favBillers.sort((a, b) {
+        String addressA = a["biller_address"] ?? '';
+        String addressB = b["biller_address"] ?? '';
+        return isAscending.value
+            ? addressA.compareTo(addressB)
+            : addressB.compareTo(addressA);
+      });
+    }
+    update();
+  }
+
   Future<void> addFavorites(params) async {
-    print("paramss $params");
     int userId = await Authentication().getUserId();
     bool isButtonEnabled = true;
     CustomDialog().confirmationDialog(Get.context!, "Add to Favorites",
@@ -210,7 +246,6 @@ class BillersController extends GetxController {
                 "service_fee": args['service_fee'].toString(),
                 "original_amount": amount.text
               };
-              print("params $params");
               Get.to(TicketUI(), arguments: params);
             } else {
               CustomDialog()
