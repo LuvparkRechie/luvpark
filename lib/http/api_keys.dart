@@ -269,4 +269,6 @@ class ApiKeys {
   static const gApiGetBiller = '/ords/$luvApi/bs/billers/';
   //Pay Bills API - Post parameters:biller_id,amount,luvpay_id,payment_hk,bill_acct_no,bill_no
   static const gApiPostPayBills = '/ords/$luvApi/token/bill/pay';
+  static const gApiMerchantScan = '/ords/$luvApi/token/merchant/scan2pay';
+  static const gApiBillerList = '/ords/$luvApi/ms/merchants';
 }

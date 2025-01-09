@@ -4,34 +4,30 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
 // import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/app_color.dart';
+import 'package:luvpark/custom_widgets/custom_cutter.dart';
+import 'package:luvpark/custom_widgets/custom_cutter_top_bottom.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
-import 'package:luvpark/custom_widgets/scanner.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/main.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../custom_widgets/app_color.dart';
-import '../custom_widgets/custom_cutter.dart';
-import '../custom_widgets/custom_cutter_top_bottom.dart';
-import '../routes/routes.dart';
-
-class QrWalletController extends GetxController
+class paywithQRController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  QrWalletController();
+  paywithQRController();
+  final parameter = Get.arguments;
   final ScreenshotController screenshotController = ScreenshotController();
-  RxInt currentPage = 0.obs;
   RxString firstlastCapital = ''.obs;
   RxString fullName = "".obs;
   RxBool isAgree = false.obs;
@@ -41,36 +37,19 @@ class QrWalletController extends GetxController
   RxString mono = ''.obs;
   RxString payKey = "".obs;
 
-  RxInt denoInd = 0.obs;
-  PermissionStatus cameraStatus = PermissionStatus.denied;
-
-  late TabController tabController;
   late final TextEditingController imageSizeEditingController;
   // ignore: prefer_typing_uninitialized_variables
   RxString userImage = "".obs;
 
   @override
   void onClose() {
-    tabController.dispose();
-
     super.onClose();
   }
 
   @override
   void onInit() {
-    _checkCameraPermission();
-    tabController = TabController(vsync: this, length: 2);
-
     getQrData();
     super.onInit();
-  }
-
-  void onTabChanged(int index) async {
-    currentPage.value = index;
-    if (currentPage.value == 0) {
-      getQrData();
-    }
-    update();
   }
 
   Future<void> getQrData() async {
@@ -137,6 +116,8 @@ class QrWalletController extends GetxController
         isLoading.value = false;
 
         CustomDialog().internetErrorDialog(Get.context!, () {
+          isLoading.value = false;
+          Get.back();
           Get.back();
         });
         return;
@@ -192,8 +173,7 @@ class QrWalletController extends GetxController
     );
     Uint8List pngBytes = bytes.buffer.asUint8List();
 
-    final imgFile = File(
-        '$directory/${currentPage.value == 0 ? "payment" : "receive"}_qr.png');
+    final imgFile = File('$directory/payment_qr.png');
     imgFile.writeAsBytes(pngBytes);
     Get.back();
     await Share.shareFiles([imgFile.path]);
@@ -208,17 +188,52 @@ class QrWalletController extends GetxController
             children: [
               Container(
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8.0),
-                  color: AppColor.bodyColor,
-                ),
+                    borderRadius: BorderRadius.circular(8.0),
+                    color: AppColor.primaryColor),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    TopRowDecoration(color: Colors.grey.shade300),
-                    Image(
-                      height: 60,
-                      fit: BoxFit.cover,
-                      image: AssetImage("assets/images/login_logo.png"),
+                    SizedBox(
+                      height: 15,
+                    ),
+
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            SizedBox(width: 15),
+                            Image(
+                              height: 60,
+                              fit: BoxFit.cover,
+                              image:
+                                  AssetImage("assets/images/luvpark_logo.png"),
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomParagraph(
+                                  text: fullName.value,
+                                  textAlign: TextAlign.start,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.white,
+                                  fontSize: 14,
+                                ),
+                                const SizedBox(height: 5),
+                                CustomParagraph(
+                                  fontSize: 12,
+                                  text: mono.value,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.white,
+                                  textAlign: TextAlign.start,
+                                ),
+                              ],
+                            ),
+                          ],
+                        )
+                      ],
                     ),
                     LineCutter(),
                     const SizedBox(height: 10),
@@ -238,16 +253,21 @@ class QrWalletController extends GetxController
                         padding: const EdgeInsets.all(15.0),
                         child: Container(
                           height: MediaQuery.of(Get.context!).size.height / 4.5,
-                          child: PrettyQrView(
-                            decoration: const PrettyQrDecoration(
-                                image: PrettyQrDecorationImage(
-                                    image:
-                                        AssetImage("assets/images/logo.png"))),
-                            qrImage: QrImage(QrCode.fromData(
-                                data: currentPage.value == 1
-                                    ? mobNum.value
-                                    : payKey.value,
-                                errorCorrectLevel: QrErrorCorrectLevel.H)),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius:
+                                    BorderRadius.all(Radius.circular(15))),
+                            padding: EdgeInsets.all(15),
+                            child: PrettyQrView(
+                              decoration: const PrettyQrDecoration(
+                                  image: PrettyQrDecorationImage(
+                                      image: AssetImage(
+                                          "assets/images/logo.png"))),
+                              qrImage: QrImage(QrCode.fromData(
+                                  data: payKey.value,
+                                  errorCorrectLevel: QrErrorCorrectLevel.H)),
+                            ),
                           ),
                         ),
                       ),
@@ -255,17 +275,10 @@ class QrWalletController extends GetxController
                     Container(
                       height: 20,
                     ),
-                    Text(
-                      currentPage.value == 1
-                          ? "Scan QR Code to receive"
-                          : "QR Pay",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF787878),
-                      ),
+                    Container(
+                      height: 20,
                     ),
-                    BottomRowDecoration(color: Colors.grey.shade300)
+                    //BottomRowDecoration(color: Colors.grey.shade300)
                   ],
                 ),
               ),
@@ -273,107 +286,4 @@ class QrWalletController extends GetxController
           ),
         ),
       );
-
-  Future<void> _checkCameraPermission() async {
-    PermissionStatus status = await Permission.camera.status;
-    cameraStatus = status;
-  }
-
-  Future<void> getpaymentHK(items, mkey, mname) async {
-    // CustomDialog().loadingDialog(Get.context!);
-    final userID = await Authentication().getUserId();
-
-    HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}$userID")
-        .get()
-        .then((paymentKey) {
-      Get.back();
-
-      if (paymentKey == "No Internet") {
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (paymentKey == null) {
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      }
-      if (paymentKey["items"].isNotEmpty) {
-        Get.back();
-        Get.toNamed(Routes.merchantQR, arguments: {
-          "data": items,
-          'merchant_key': mkey,
-          "merchant_name": mname,
-          "payment_key": paymentKey["items"][0]["payment_hk"]
-        });
-      } else {
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      }
-    });
-  }
-
-  Future<void> requestCameraPermission() async {
-    PermissionStatus status = await Permission.camera.request();
-
-    cameraStatus = status;
-
-    if (status.isGranted) {
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(content: Text('Camera permission granted')),
-      );
-      Get.to(ScannerScreen(
-        onchanged: (ScannedData args) async {
-          CustomDialog().loadingDialog(Get.context!);
-          String merchant_key = args.scannedHash;
-          String api = "${ApiKeys.gApiMerchantScan}?merchant_key=$merchant_key";
-
-          final response = await HttpRequest(api: api).get();
-          String merchantname = response["items"][0]["merchant_name"];
-          if (response == "No Internet") {
-            Get.back();
-            CustomDialog().errorDialog(Get.context!, "Error",
-                "Please check your internet connection and try again.", () {
-              Get.back();
-            });
-
-            return;
-          }
-          if (response == null) {
-            Get.back();
-            CustomDialog().errorDialog(Get.context!, "Error",
-                "Error while connecting to server, Please try again.", () {
-              Get.back();
-            });
-
-            return;
-          }
-
-          if (response["items"].isNotEmpty) {
-            getpaymentHK(
-              response["items"],
-              merchant_key,
-              merchantname,
-            );
-          } else {
-            Get.back();
-            CustomDialog().errorDialog(Get.context!, "No Merchant Found",
-                "Merchant is not registered in our system. Please contact us for more information",
-                () {
-              Get.back();
-            });
-          }
-        },
-      ));
-    } else if (status.isDenied) {
-      // Permission denied
-      ScaffoldMessenger.of(Get.context!).showSnackBar(
-        SnackBar(content: Text('Camera permission denied')),
-      );
-    } else if (status.isPermanentlyDenied) {
-      AppSettings.openAppSettings();
-    }
-  }
 }

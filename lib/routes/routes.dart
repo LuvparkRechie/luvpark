@@ -45,4 +45,10 @@ class Routes {
   static const lockScreen = "/lock_screen";
   static const send2 = "/send_screen_send";
   static const billers = "/billers";
+  static const myQR = "/myQR";
+  static const merchantQR = "/merchantQR";
+  static const paywithQR = "/paywithQR";
+  static const merchantQRverify = "/merchantQRverify";
+  static const merchantReceipt = "/merchantReceipt";
+  static const walletbiller = "/walletbiller";
 }

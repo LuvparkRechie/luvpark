@@ -137,164 +137,226 @@ class WalletScreen extends GetView<WalletController> {
                   ),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 10, 23),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    InkWell(
-                      overlayColor:
-                          MaterialStatePropertyAll(Colors.transparent),
-                      onTap: () async {
-                        final item = await Authentication().getUserData2();
-                        String? fname = item["first_name"];
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          overlayColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          onTap: () async {
+                            final item = await Authentication().getUserData2();
+                            String? fname = item["first_name"];
 
-                        if (fname == null || fname.toString().isEmpty) {
-                          CustomDialog().infoDialog("Unverified Account",
-                              "Complete your account information to access the requested service.\nGo to profile and update your account.",
-                              () {
-                            Get.back();
-                          });
-                          return;
-                        }
-                        Get.toNamed(Routes.walletrecharge);
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 3.6,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 13),
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side:
-                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                            borderRadius: BorderRadius.circular(41),
+                            if (fname == null || fname.toString().isEmpty) {
+                              CustomDialog().infoDialog("Unverified Account",
+                                  "Complete your account information to access the requested service.\nGo to profile and update your account.",
+                                  () {
+                                Get.back();
+                              });
+                              return;
+                            }
+                            Get.toNamed(Routes.walletrecharge);
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 3.6,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 13),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1, color: Color(0xFFDFE7EF)),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0x0C000000),
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/wallet_wallet.svg',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                Container(
+                                  width: 10,
+                                ),
+                                CustomParagraph(
+                                  text: "Load",
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
+                            ),
                           ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x0C000000),
-                              blurRadius: 15,
-                              offset: Offset(0, 5),
-                              spreadRadius: 0,
-                            )
-                          ],
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/wallet_wallet.svg',
-                              height: 20,
-                              width: 20,
+                        Container(width: 5),
+                        InkWell(
+                          overlayColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          onTap: () {
+                            Get.toNamed(Routes.send2);
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 3.6,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 13),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1, color: Color(0xFFDFE7EF)),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0x0C000000),
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                  spreadRadius: 0,
+                                )
+                              ],
                             ),
-                            Container(
-                              width: 10,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/wallet_send.svg',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                Container(
+                                  width: 10,
+                                ),
+                                CustomParagraph(
+                                  text: "Send",
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
                             ),
-                            CustomParagraph(
-                              text: "Load",
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(width: 5),
-                    InkWell(
-                      overlayColor:
-                          MaterialStatePropertyAll(Colors.transparent),
-                      onTap: () {
-                        Get.toNamed(Routes.send2);
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 3.6,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 13),
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side:
-                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                            borderRadius: BorderRadius.circular(41),
                           ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x0C000000),
-                              blurRadius: 15,
-                              offset: Offset(0, 5),
-                              spreadRadius: 0,
-                            )
-                          ],
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/wallet_send.svg',
-                              height: 20,
-                              width: 20,
+                        Container(width: 5),
+                        InkWell(
+                          overlayColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          onTap: () {
+                            Get.toNamed(Routes.qrwallet);
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width / 3.2,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 13),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1, color: Color(0xFFDFE7EF)),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0x0C000000),
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                  spreadRadius: 0,
+                                )
+                              ],
                             ),
-                            Container(
-                              width: 10,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                SvgPicture.asset(
+                                  'assets/images/wallet_qr.svg',
+                                  height: 20,
+                                  width: 20,
+                                ),
+                                Container(
+                                  width: 5,
+                                ),
+                                CustomParagraph(
+                                  text: "QR Code",
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
                             ),
-                            CustomParagraph(
-                              text: "Send",
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    Container(width: 5),
-                    InkWell(
-                      overlayColor:
-                          MaterialStatePropertyAll(Colors.transparent),
-                      onTap: () {
-                        Get.toNamed(Routes.qrwallet);
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width / 3.2,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 13),
-                        decoration: ShapeDecoration(
-                          color: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            side:
-                                BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                            borderRadius: BorderRadius.circular(41),
                           ),
-                          shadows: [
-                            BoxShadow(
-                              color: Color(0x0C000000),
-                              blurRadius: 15,
-                              offset: Offset(0, 5),
-                              spreadRadius: 0,
-                            )
-                          ],
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SvgPicture.asset(
-                              'assets/images/wallet_qr.svg',
-                              height: 20,
-                              width: 20,
-                            ),
-                            Container(
-                              width: 5,
-                            ),
-                            CustomParagraph(
-                              text: "QR Code",
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ],
-                        ),
-                      ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        InkWell(
+                          overlayColor:
+                              WidgetStatePropertyAll(Colors.transparent),
+                          onTap: () async {
+                            Get.toNamed(Routes.walletbiller);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 21, vertical: 13),
+                            decoration: ShapeDecoration(
+                              color: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                side: BorderSide(
+                                    width: 1, color: Color(0xFFDFE7EF)),
+                                borderRadius: BorderRadius.circular(7),
+                              ),
+                              shadows: [
+                                BoxShadow(
+                                  color: Color(0x0C000000),
+                                  blurRadius: 15,
+                                  offset: Offset(0, 5),
+                                  spreadRadius: 0,
+                                )
+                              ],
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Image.asset(
+                                  "assets/images/bill.png",
+                                  width: 20,
+                                  height: 20,
+                                  color: AppColor.primaryColor,
+                                ),
+                                Container(
+                                  width: 10,
+                                ),
+                                CustomParagraph(
+                                  text: "Merchants",
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
@@ -385,16 +447,7 @@ class WalletScreen extends GetView<WalletController> {
                                       String trans = log["tran_desc"]
                                           .toString()
                                           .toLowerCase();
-                                      String img = "";
-                                      if (trans.contains("share")) {
-                                        img = "wallet_sharetoken";
-                                      } else if (trans.contains("received")) {
-                                        img = "wallet_receivetoken";
-                                      } else if (trans.contains("credit")) {
-                                        img = "wallet_receivetoken";
-                                      } else {
-                                        img = "wallet_payparking";
-                                      }
+
                                       return GestureDetector(
                                         onTap: () {
                                           Get.bottomSheet(TransactionDetails(
@@ -403,10 +456,6 @@ class WalletScreen extends GetView<WalletController> {
                                         },
                                         child: ListTile(
                                           contentPadding: EdgeInsets.zero,
-                                          leading: SvgPicture.asset(
-                                            fit: BoxFit.cover,
-                                            "assets/images/$img.svg",
-                                          ),
                                           title: CustomTitle(
                                             text: log["tran_desc"],
                                             fontSize: 15,

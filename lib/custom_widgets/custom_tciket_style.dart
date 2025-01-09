@@ -35,14 +35,14 @@ class TicketStyle extends StatelessWidget {
           ),
         ),
         Positioned(
-            left: -10,
+            left: -15,
             bottom: 0,
             child: CircleAvatar(
               radius: 12,
               backgroundColor: dtColor ?? AppColor.bodyColor,
             )),
         Positioned(
-            right: -10,
+            right: -15,
             bottom: 0,
             child: CircleAvatar(
               radius: 12,

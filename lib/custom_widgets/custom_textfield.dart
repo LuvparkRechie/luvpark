@@ -11,6 +11,7 @@ import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 
 class CustomTextField extends StatefulWidget {
+  final String? labelText;
   final bool? isReadOnly, isFilled;
   final Widget? prefix;
   final bool isObscure;
@@ -37,6 +38,7 @@ class CustomTextField extends StatefulWidget {
   const CustomTextField(
       {super.key,
       this.title,
+      this.labelText,
       this.hintText,
       required this.controller,
       this.fontweight,
@@ -141,6 +143,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
               color: AppColor.hintColor,
               fontWeight: FontWeight.w400,
             ),
+            floatingLabelStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+            ),
           ),
           style:
               paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
@@ -217,6 +223,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
             fontSize: 11,
           ),
           isDense: true,
+          labelText: widget.labelText,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           enabledBorder: OutlineInputBorder(
@@ -279,6 +286,12 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
           hintStyle: paragraphStyle(
             color: AppColor.hintColor,
             fontWeight: FontWeight.w400,
+          ),
+          labelStyle: paragraphStyle(
+              fontWeight: FontWeight.w400, color: AppColor.hintColor),
+          floatingLabelStyle: TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 15,
           ),
         ),
         style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
@@ -368,7 +381,7 @@ DropdownButtonFormField<String> customDropdown({
           color: AppColor.borderColor,
         ),
       ),
-      hintText: labelText,
+      labelText: labelText,
       hintStyle: paragraphStyle(
         color: AppColor.hintColor,
         fontWeight: FontWeight.w400,
