@@ -141,7 +141,7 @@ class Billers extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: () {
-                            Get.bottomSheet(isDismissible: false, CustomSort(
+                            Get.bottomSheet(isDismissible: true, CustomSort(
                               onSortSelected: (String sortOption) {
                                 controller.selectedSortOption.value =
                                     sortOption;
@@ -223,7 +223,7 @@ class Billers extends StatelessWidget {
                                                 children: [
                                                   Icon(
                                                       Icons
-                                                          .account_circle_outlined,
+                                                          .account_circle_rounded,
                                                       size: 18,
                                                       color: AppColor
                                                           .paragraphColor),
@@ -274,7 +274,7 @@ class Billers extends StatelessWidget {
                                           ),
                                           subtitle: Row(
                                             children: [
-                                              Icon(Iconsax.bill,
+                                              Icon(Icons.credit_card,
                                                   size: 18,
                                                   color:
                                                       AppColor.paragraphColor),
@@ -296,7 +296,7 @@ class Billers extends StatelessWidget {
                                                   children: [
                                                     Icon(
                                                         Icons
-                                                            .location_on_outlined,
+                                                            .location_on_rounded,
                                                         size: 18,
                                                         color: AppColor
                                                             .paragraphColor),
@@ -407,14 +407,25 @@ class _CustomSortState extends State<CustomSort> {
                     widget.onSortSelected(option['text']);
                   },
                   child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Row(
-                      children: [
-                        Icon(option['icon'],
-                            size: 25, color: AppColor.primaryColor),
-                        SizedBox(width: 10),
-                        CustomParagraph(text: option['text']),
-                      ],
+                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 15, horizontal: 10),
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(7)),
+                      child: Row(
+                        children: [
+                          Icon(option['icon'],
+                              size: 25, color: AppColor.primaryColor),
+                          SizedBox(width: 10),
+                          Expanded(
+                              child: CustomParagraph(text: option['text'])),
+                          Icon(
+                            Icons.chevron_right,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ),

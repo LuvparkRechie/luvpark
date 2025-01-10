@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -91,10 +92,25 @@ class _PayBillState extends State<PayBill> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    CustomTitle(
-                      text: args["biller_name"],
-                      color: AppColor.primaryColor,
-                      fontWeight: FontWeight.w600,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        CustomTitle(
+                          text: args["biller_name"],
+                          color: AppColor.primaryColor,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        Visibility(
+                          visible: args["source"] != "fav",
+                          child: CustomTitle(
+                            text: controller.userBalance.toString().isEmpty
+                                ? "Loading..."
+                                : toCurrencyString(
+                                    controller.userBalance.toString()),
+                            maxlines: 1,
+                          ),
+                        )
+                      ],
                     ),
                     Divider(
                       color: AppColor.linkLabel,
