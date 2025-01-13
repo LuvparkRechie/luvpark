@@ -179,7 +179,7 @@ class WalletSend extends GetView<WalletSendController> {
                                 color: Colors.black,
                               ),
                               CustomTextField(
-                                hintText: " Minimum amount of 20 tokens ",
+                                hintText: " Minimum amount of 10 tokens ",
                                 controller: controller.tokenAmount,
                                 inputFormatters: <TextInputFormatter>[
                                   FilteringTextInputFormatter.digitsOnly,

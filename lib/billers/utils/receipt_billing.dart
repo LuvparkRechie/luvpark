@@ -159,7 +159,7 @@ class _TicketUIState extends State<TicketUI> {
                     CustomDialog().loadingDialog(Get.context!);
                     File? imgFile;
 
-                    String fname = "booking$randomNumber.png";
+                    String fname = "luvpark$randomNumber.png";
                     final directory =
                         (await getApplicationDocumentsDirectory()).path;
                     Uint8List bytes = await ScreenshotController()
@@ -176,13 +176,15 @@ class _TicketUIState extends State<TicketUI> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
+                        color: AppColor.primaryColor,
                         LucideIcons.share2,
                         size: 20,
                       ),
                       Container(width: 10),
-                      Text(
-                        "Share",
-                        style: subtitleStyle(fontWeight: FontWeight.w600),
+                      CustomParagraph(
+                        color: AppColor.primaryColor,
+                        text: "Share",
+                        fontSize: 12,
                       )
                     ],
                   ),

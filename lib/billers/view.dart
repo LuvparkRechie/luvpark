@@ -26,6 +26,7 @@ class Billers extends StatelessWidget {
     final BillersController controller = Get.put(BillersController());
 
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
           title: "Billers",
@@ -62,7 +63,7 @@ class Billers extends StatelessWidget {
                           child: Container(
                             padding: EdgeInsets.all(20),
                             decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
+                              color: Colors.white,
                               borderRadius: BorderRadius.circular(10),
                               boxShadow: [
                                 BoxShadow(
@@ -100,7 +101,7 @@ class Billers extends StatelessWidget {
                         Container(
                           padding: EdgeInsets.all(10),
                           decoration: BoxDecoration(
-                            color: Colors.grey.shade50,
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(10),
                             boxShadow: [
                               BoxShadow(
@@ -171,20 +172,27 @@ class Billers extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SizedBox(height: 10),
                   Expanded(
                     child: controller.isLoading.value
                         ? const PageLoader()
                         : controller.favBillers.isEmpty
                             ? NoDataFound()
                             : Container(
-                                color: Colors.white,
+                                color: AppColor.bodyColor,
                                 child: ListView.separated(
                                   padding: EdgeInsets.fromLTRB(15, 20, 15, 5),
                                   physics: BouncingScrollPhysics(),
                                   itemCount: controller.favBillers.length,
                                   itemBuilder: (context, index) {
-                                    final color = Colors.grey.shade100;
+                                    String accountNo =
+                                        "${controller.favBillers[index]["account_no"]}";
+
+                                    String maskedAccountNo =
+                                        accountNo.length <= 3
+                                            ? accountNo
+                                            : accountNo.replaceAll(
+                                                RegExp(r'.(?=.{3})'), '*');
+
                                     return GestureDetector(
                                       onTap: () {
                                         CustomDialog().confirmationDialog(
@@ -225,13 +233,12 @@ class Billers extends StatelessWidget {
                                         });
                                       },
                                       child: Container(
-                                        margin:
-                                            EdgeInsets.symmetric(vertical: 10),
+                                        margin: EdgeInsets.only(bottom: 10),
                                         padding: EdgeInsets.all(15),
                                         decoration: BoxDecoration(
-                                          color: color,
+                                          color: Colors.white,
                                           borderRadius:
-                                              BorderRadius.circular(15),
+                                              BorderRadius.circular(8.0),
                                           boxShadow: [
                                             BoxShadow(
                                               color:
@@ -245,220 +252,89 @@ class Billers extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            CustomTitle(
-                                              text: controller.favBillers[index]
-                                                      ['account_name'] ??
-                                                  '',
-                                            ),
-                                            SizedBox(height: 10),
-                                            Row(
-                                              children: [
-                                                CustomParagraph(
-                                                    text: "Account Number: "),
-                                                Expanded(
-                                                  child: CustomParagraph(
-                                                    text:
-                                                        "${controller.favBillers[index]["account_no"]}",
-                                                    textAlign: TextAlign.end,
-                                                    maxlines: 1,
+                                            SingleChildScrollView(
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  CustomParagraph(
+                                                    fontSize: 14,
                                                     color: AppColor.headerColor,
-                                                    fontSize: 13,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            SizedBox(height: 5),
-                                            Row(
-                                              children: [
-                                                CustomParagraph(
-                                                    text: "Account Name: "),
-                                                Expanded(
-                                                  child: CustomParagraph(
+                                                    fontWeight: FontWeight.w800,
+                                                    minFontSize: 10,
                                                     text:
                                                         "${controller.favBillers[index]["biller_name"]}",
-                                                    textAlign: TextAlign.end,
-                                                    maxlines: 1,
-                                                    color: AppColor.headerColor,
-                                                    fontSize: 13,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    fontWeight: FontWeight.w600,
                                                   ),
-                                                ),
-                                              ],
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      controller.deleteFavoriteBiller(
+                                                          int.parse(controller
+                                                              .favBillers[index]
+                                                                  [
+                                                                  'user_biller_id']
+                                                              .toString()));
+                                                    },
+                                                    child: CircleAvatar(
+                                                      radius: 15,
+                                                      backgroundColor: Colors
+                                                          .red
+                                                          // ignore: deprecated_member_use
+                                                          .withOpacity(.1),
+                                                      child: Icon(
+                                                        LucideIcons.trash,
+                                                        color: Colors.red,
+                                                        size: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
-                                            Container(height: 15),
+                                            SizedBox(height: 5),
                                             Row(
                                               children: [
                                                 Icon(
                                                   LucideIcons.mapPin,
                                                   size: 15,
-                                                  color: AppColor.primaryColor,
+                                                  color: AppColor.subtitleColor,
                                                 ),
-                                                Container(width: 5),
                                                 Expanded(
                                                   child: CustomParagraph(
+                                                    fontSize: 10,
                                                     text:
                                                         "${controller.favBillers[index]["biller_address"]}",
-                                                    textAlign: TextAlign.start,
                                                     maxlines: 1,
-                                                    color: AppColor.headerColor,
-                                                    fontSize: 13,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    fontWeight: FontWeight.w600,
                                                   ),
                                                 )
                                               ],
-                                            )
+                                            ),
+                                            SizedBox(height: 5),
+                                            CustomParagraph(
+                                              fontSize: 12,
+                                              color: AppColor.headerColor,
+                                              fontWeight: FontWeight.w500,
+                                              text: controller.favBillers[index]
+                                                      ['account_name'] ??
+                                                  '',
+                                              maxlines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            SizedBox(height: 5),
+                                            CustomParagraph(
+                                              color: AppColor.linkLabel,
+                                              fontSize: 14,
+                                              text: maskedAccountNo,
+                                              textAlign: TextAlign.end,
+                                              maxlines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
                                           ],
                                         ),
                                       ),
                                     );
-
-                                    // Container(
-                                    //   padding: EdgeInsets.all(10),
-                                    //   decoration: BoxDecoration(
-                                    //       color: Colors.grey.shade100,
-                                    //       borderRadius:
-                                    //           BorderRadius.circular(5)),
-                                    //   child: ListTile(
-                                    //     contentPadding: EdgeInsets.zero,
-                                    //     onTap: () {
-                                    //       CustomDialog().confirmationDialog(
-                                    //           Get.context!,
-                                    //           controller.favBillers[index]
-                                    //                   ["biller_name"] ??
-                                    //               "",
-                                    //           "Do you want to pay bills?",
-                                    //           "Close",
-                                    //           "Pay Bill", () {
-                                    //         Get.back();
-                                    //       }, () {
-                                    //         Map<String, dynamic> fav = {
-                                    //           'biller_name':
-                                    //               controller.favBillers[index]
-                                    //                   ["biller_name"],
-                                    //           'biller_id':
-                                    //               controller.favBillers[index]
-                                    //                   ["biller_id"],
-                                    //           'account_no':
-                                    //               controller.favBillers[index]
-                                    //                   ["account_no"],
-                                    //           'biller_address':
-                                    //               controller.favBillers[index]
-                                    //                   ["biller_address"],
-                                    //           'service_fee':
-                                    //               controller.favBillers[index]
-                                    //                   ["service_fee"],
-                                    //           'account_name':
-                                    //               controller.favBillers[index]
-                                    //                   ["account_name"],
-                                    //           'user_biller_id':
-                                    //               controller.favBillers[index]
-                                    //                   ['user_biller_id'],
-                                    //           'source': 'favorites'
-                                    //         };
-                                    //         Get.back();
-                                    //         Get.to(PayBill(), arguments: fav);
-                                    //       });
-                                    //     },
-                                    //     title: Column(
-                                    //       crossAxisAlignment:
-                                    //           CrossAxisAlignment.start,
-                                    //       children: [
-                                    //
-                                    //         SizedBox(width: 5),
-                                    //         Row(
-                                    //           children: [
-                                    //             Icon(
-                                    //                 Icons
-                                    //                     .account_balance_wallet_outlined,
-                                    //                 size: 18,
-                                    //                 color: AppColor
-                                    //                     .paragraphColor),
-                                    //             SizedBox(width: 5),
-                                    //             Container(
-                                    //               padding: EdgeInsets.all(3),
-                                    //               decoration: BoxDecoration(
-                                    //                 borderRadius:
-                                    //                     BorderRadius.circular(
-                                    //                         5),
-                                    //                 color: Colors.grey.shade300,
-                                    //               ),
-                                    //               child: CustomParagraph(
-                                    //                 fontSize: 14,
-                                    //                 fontWeight: FontWeight.w800,
-                                    //                 color: AppColor.mainColor,
-                                    //                 text: controller
-                                    //                         .favBillers[index]
-                                    //                     ["account_no"],
-                                    //               ),
-                                    //             ),
-                                    //           ],
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //     subtitle: Row(
-                                    //       children: [
-                                    //         Icon(Icons.credit_card,
-                                    //             size: 18,
-                                    //             color: AppColor.paragraphColor),
-                                    //         SizedBox(width: 5),
-                                    //         CustomParagraph(
-                                    //           fontSize: 10,
-                                    //           text: controller.favBillers[index]
-                                    //                   ['biller_name'] ??
-                                    //               '',
-                                    //         ),
-                                    //         SizedBox(width: 10),
-                                    //         Visibility(
-                                    //           visible:
-                                    //               controller.favBillers[index]
-                                    //                       ["biller_address"] !=
-                                    //                   null,
-                                    //           child: Row(
-                                    //             children: [
-                                    //               Icon(
-                                    //                   Icons.location_on_rounded,
-                                    //                   size: 18,
-                                    //                   color: AppColor
-                                    //                       .paragraphColor),
-                                    //               SizedBox(width: 5),
-                                    //               CustomParagraph(
-                                    //                 fontSize: 10,
-                                    //                 text:
-                                    //                     "${controller.favBillers[index]["biller_address"]}",
-                                    //               ),
-                                    //             ],
-                                    //           ),
-                                    //         ),
-                                    //       ],
-                                    //     ),
-                                    //     trailing: GestureDetector(
-                                    //       onTap: () {
-                                    //         controller.deleteFavoriteBiller(
-                                    //             int.parse(controller
-                                    //                 .favBillers[index]
-                                    //                     ['user_biller_id']
-                                    //                 .toString()));
-                                    //       },
-                                    //       child: CircleAvatar(
-                                    //         radius: 15,
-                                    //         backgroundColor:
-                                    //             Colors.red.withOpacity(.1),
-                                    //         child: Icon(
-                                    //           LucideIcons.trash,
-                                    //           color: Colors.red,
-                                    //           size: 18,
-                                    //         ),
-                                    //       ),
-                                    //     ),
-                                    //   ),
-                                    // );
                                   },
                                   separatorBuilder: (context, index) =>
                                       SizedBox(height: 5),

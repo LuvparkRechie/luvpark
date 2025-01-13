@@ -57,19 +57,6 @@ class BillersController extends GetxController {
     isLoading.value = true;
     await getFavorites();
     await getBillers();
-    await getBalance();
-  }
-
-  Future<void> getBalance() async {
-    final item = await Authentication().getUserId();
-
-    String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$item";
-
-    HttpRequest(api: subApi).get().then((returnBalance) async {
-      if (returnBalance["items"].isNotEmpty) {
-        userBalance.value = returnBalance["items"][0]["amount_bal"];
-      }
-    });
   }
 
   Future<void> getBillers() async {

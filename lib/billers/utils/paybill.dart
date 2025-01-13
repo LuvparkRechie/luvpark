@@ -92,25 +92,17 @@ class _PayBillState extends State<PayBill> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        CustomTitle(
-                          text: args["biller_name"],
-                          color: AppColor.primaryColor,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        Visibility(
-                          visible: args["source"] != "fav",
-                          child: CustomTitle(
-                            text: controller.userBalance.toString().isEmpty
-                                ? "Loading..."
-                                : toCurrencyString(
-                                    controller.userBalance.toString()),
-                            maxlines: 1,
-                          ),
-                        )
-                      ],
+                    SizedBox(height: 20),
+                    CustomTitle(
+                      text: args["biller_name"],
+                      color: AppColor.primaryColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    CustomParagraph(
+                      text: args["biller_address"],
+                      fontSize: 10,
+                      maxlines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     Divider(
                       color: AppColor.linkLabel,
@@ -238,7 +230,7 @@ class _PayBillState extends State<PayBill> {
                             fontSize: 10,
                             fontWeight: FontWeight.w400,
                           ),
-                          SizedBox(height: 10),
+                          SizedBox(height: 15),
                           CustomParagraph(
                             text: "Bill Number",
                             fontSize: 13,
