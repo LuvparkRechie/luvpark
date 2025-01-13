@@ -251,7 +251,7 @@ class BiometricLoginScreen extends StatelessWidget {
               Container(height: MediaQuery.of(context).size.height * .20),
               CustomButton(
                 text: "Switch Account",
-                btnColor: Colors.white,
+                btnColor: AppColor.bodyColor,
                 bordercolor: AppColor.borderColor,
                 textColor: Colors.black,
                 onPressed: controller.switchAccount,
@@ -632,7 +632,7 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
                       visible: widget.appbar == null,
                       child: CustomButton(
                         text: "Switch Account",
-                        btnColor: Colors.white,
+                        btnColor: AppColor.bodyColor,
                         bordercolor: AppColor.borderColor,
                         textColor: Colors.black,
                         onPressed: controller.switchAccount,

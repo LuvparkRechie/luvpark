@@ -648,10 +648,6 @@ class BookingPage extends GetView<BookingController> {
                                             ),
                                             Container(height: 10),
                                             Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal: 15,
-                                                vertical: 15,
-                                              ),
                                               decoration: ShapeDecoration(
                                                 color: Colors.white,
                                                 shape: RoundedRectangleBorder(
@@ -670,41 +666,226 @@ class BookingPage extends GetView<BookingController> {
                                                   )
                                                 ],
                                               ),
-                                              child: Row(
+                                              child: Column(
                                                 children: [
-                                                  Expanded(
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(
+                                                        16, 14, 16, 0),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
                                                       children: [
-                                                        CustomParagraph(
-                                                          text:
-                                                              "${toCurrencyString(controller.parameters["userData"][0]["amount_bal"].toString()).toString()}",
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                        Container(
-                                                          height: 5,
-                                                        ),
-                                                        CustomParagraph(
-                                                          text:
-                                                              "Wallet balance",
-                                                          letterSpacing: -0.41,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 12,
+                                                        Image.asset(
+                                                            height: 30,
+                                                            "assets/images/logo.png"),
+                                                        SizedBox(width: 14),
+                                                        Expanded(
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              CustomParagraph(
+                                                                text:
+                                                                    "Wallet balance",
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                              CustomTitle(
+                                                                text:
+                                                                    "${toCurrencyString(controller.parameters["userData"][0]["amount_bal"].toString()).toString()}",
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ],
+                                                    ),
+                                                  ),
+                                                  Visibility(
+                                                    visible: ct.displayRewards
+                                                                .value ==
+                                                            0 &&
+                                                        controller.selectedVh
+                                                            .isNotEmpty,
+                                                    child: Container(
+                                                      height: 15,
+                                                    ),
+                                                  ),
+                                                  Visibility(
+                                                    visible: ct.displayRewards
+                                                                .value >
+                                                            0 &&
+                                                        controller.selectedVh
+                                                            .isNotEmpty,
+                                                    child: Divider(
+                                                      color: Colors.black12,
+                                                    ),
+                                                  ),
+                                                  Visibility(
+                                                    visible: ct.displayRewards
+                                                                .value >
+                                                            0 &&
+                                                        controller.selectedVh
+                                                            .isNotEmpty,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .fromLTRB(
+                                                          16, 0, 16, 14),
+                                                      child: Row(
+                                                        children: [
+                                                          Image.asset(
+                                                              height: 30,
+                                                              "assets/images/rewardicon.png"),
+                                                          SizedBox(width: 14),
+                                                          Expanded(
+                                                            child: Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                CustomParagraph(
+                                                                  text:
+                                                                      "Rewards",
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                                CustomTitle(
+                                                                  text: toCurrencyString(ct
+                                                                      .displayRewards
+                                                                      .toString()),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              controller.onToggleRewards(
+                                                                  !controller
+                                                                      .isUseRewards
+                                                                      .value);
+                                                            },
+                                                            child: Container(
+                                                              width: 60,
+                                                              height: 30,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            30),
+                                                                gradient:
+                                                                    LinearGradient(
+                                                                  colors: controller
+                                                                          .isUseRewards
+                                                                          .value
+                                                                      ? [
+                                                                          Colors
+                                                                              .green,
+                                                                          Colors
+                                                                              .lightGreen
+                                                                        ]
+                                                                      : [
+                                                                          Colors
+                                                                              .grey,
+                                                                          Colors
+                                                                              .grey
+                                                                        ],
+                                                                ),
+                                                              ),
+                                                              child: Stack(
+                                                                alignment:
+                                                                    Alignment
+                                                                        .center,
+                                                                children: [
+                                                                  if (controller
+                                                                      .isUseRewards
+                                                                      .value)
+                                                                    Positioned(
+                                                                      left: 10,
+                                                                      child:
+                                                                          Icon(
+                                                                        LucideIcons
+                                                                            .check,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                    ),
+                                                                  if (!controller
+                                                                      .isUseRewards
+                                                                      .value)
+                                                                    Positioned(
+                                                                      right: 10,
+                                                                      child:
+                                                                          Icon(
+                                                                        Icons
+                                                                            .clear,
+                                                                        color: Colors
+                                                                            .white,
+                                                                        size:
+                                                                            15,
+                                                                      ),
+                                                                    ),
+                                                                  AnimatedPositioned(
+                                                                    duration:
+                                                                        Duration(
+                                                                      milliseconds:
+                                                                          200,
+                                                                    ),
+                                                                    left: controller
+                                                                            .isUseRewards
+                                                                            .value
+                                                                        ? 30
+                                                                        : 5,
+                                                                    child:
+                                                                        Container(
+                                                                      width: 20,
+                                                                      height:
+                                                                          20,
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: Colors
+                                                                            .white,
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(30),
+                                                                        boxShadow: [
+                                                                          BoxShadow(
+                                                                            color:
+                                                                                Colors.black26,
+                                                                            blurRadius:
+                                                                                4.0,
+                                                                            spreadRadius:
+                                                                                2.0,
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                                 ],
                                               ),
                                             ),
-                                            Container(height: 10),
                                           ],
                                         ),
+                                      Container(height: 20),
                                     ],
                                   ),
                                 ),
@@ -722,151 +903,152 @@ class BookingPage extends GetView<BookingController> {
                                 child: Column(
                                   children: [
                                     Container(height: 20),
-                                    Visibility(
-                                      visible: ct.displayRewards.value > 0 &&
-                                          controller.selectedVh.isNotEmpty,
-                                      child: Column(
-                                        children: [
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                horizontal: 15),
-                                            child: Row(
-                                              children: [
-                                                Expanded(
-                                                  child: CustomParagraph(
-                                                    text: 'My Rewards',
-                                                    color: Colors.black,
-                                                    fontWeight: FontWeight.w500,
-                                                    fontSize: 16,
-                                                  ),
-                                                ),
-                                                Container(width: 15),
-                                                Row(
-                                                  children: [
-                                                    CustomTitle(
-                                                      text:
-                                                          "${toCurrencyString(ct.displayRewards.toString())}",
-                                                      color: Colors.black,
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                    ),
-                                                    Container(width: 10),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        controller
-                                                            .onToggleRewards(
-                                                                !controller
-                                                                    .isUseRewards
-                                                                    .value);
-                                                      },
-                                                      child: Container(
-                                                        width: 60,
-                                                        height: 30,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(30),
-                                                          gradient:
-                                                              LinearGradient(
-                                                            colors: controller
-                                                                    .isUseRewards
-                                                                    .value
-                                                                ? [
-                                                                    Colors
-                                                                        .green,
-                                                                    Colors
-                                                                        .lightGreen
-                                                                  ]
-                                                                : [
-                                                                    Colors.grey,
-                                                                    Colors.grey
-                                                                  ],
-                                                          ),
-                                                        ),
-                                                        child: Stack(
-                                                          alignment:
-                                                              Alignment.center,
-                                                          children: [
-                                                            if (controller
-                                                                .isUseRewards
-                                                                .value)
-                                                              Positioned(
-                                                                left: 10,
-                                                                child: Icon(
-                                                                  LucideIcons
-                                                                      .check,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size: 15,
-                                                                ),
-                                                              ),
-                                                            if (!controller
-                                                                .isUseRewards
-                                                                .value)
-                                                              Positioned(
-                                                                right: 10,
-                                                                child: Icon(
-                                                                  Icons.clear,
-                                                                  color: Colors
-                                                                      .white,
-                                                                  size: 15,
-                                                                ),
-                                                              ),
-                                                            AnimatedPositioned(
-                                                              duration:
-                                                                  Duration(
-                                                                milliseconds:
-                                                                    200,
-                                                              ),
-                                                              left: controller
-                                                                      .isUseRewards
-                                                                      .value
-                                                                  ? 30
-                                                                  : 5,
-                                                              child: Container(
-                                                                width: 20,
-                                                                height: 20,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              30),
-                                                                  boxShadow: [
-                                                                    BoxShadow(
-                                                                      color: Colors
-                                                                          .black26,
-                                                                      blurRadius:
-                                                                          4.0,
-                                                                      spreadRadius:
-                                                                          2.0,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                          Container(height: 10),
-                                          Divider(
-                                            thickness: 2,
-                                            color: Colors.grey.shade200,
-                                          ),
-                                          Container(height: 10),
-                                        ],
-                                      ),
-                                    ),
+                                    // Visibility(
+                                    //   visible: ct.displayRewards.value > 0 &&
+                                    //       controller.selectedVh.isNotEmpty,
+                                    //   child: Column(
+                                    //     children: [
+                                    //       Padding(
+                                    //         padding: EdgeInsets.symmetric(
+                                    //             horizontal: 15),
+                                    //         child: Row(
+                                    //           children: [
+                                    //             Expanded(
+                                    //               child: CustomParagraph(
+                                    //                 text: 'My Rewards',
+                                    //                 color: Colors.black,
+                                    //                 fontWeight: FontWeight.w500,
+                                    //                 fontSize: 16,
+                                    //               ),
+                                    //             ),
+                                    //             Container(width: 15),
+                                    //             Row(
+                                    //               children: [
+                                    //                 CustomTitle(
+                                    //                   text:
+                                    //                       "${toCurrencyString(ct.displayRewards.toString())}",
+                                    //                   color: Colors.black,
+                                    //                   fontSize: 16,
+                                    //                   fontWeight:
+                                    //                       FontWeight.w700,
+                                    //                 ),
+                                    //                 Container(width: 10),
+                                    //                 GestureDetector(
+                                    //                   onTap: () {
+                                    //                     controller
+                                    //                         .onToggleRewards(
+                                    //                             !controller
+                                    //                                 .isUseRewards
+                                    //                                 .value);
+                                    //                   },
+                                    //                   child: Container(
+                                    //                     width: 60,
+                                    //                     height: 30,
+                                    //                     decoration:
+                                    //                         BoxDecoration(
+                                    //                       borderRadius:
+                                    //                           BorderRadius
+                                    //                               .circular(30),
+                                    //                       gradient:
+                                    //                           LinearGradient(
+                                    //                         colors: controller
+                                    //                                 .isUseRewards
+                                    //                                 .value
+                                    //                             ? [
+                                    //                                 Colors
+                                    //                                     .green,
+                                    //                                 Colors
+                                    //                                     .lightGreen
+                                    //                               ]
+                                    //                             : [
+                                    //                                 Colors.grey,
+                                    //                                 Colors.grey
+                                    //                               ],
+                                    //                       ),
+                                    //                     ),
+                                    //                     child: Stack(
+                                    //                       alignment:
+                                    //                           Alignment.center,
+                                    //                       children: [
+                                    //                         if (controller
+                                    //                             .isUseRewards
+                                    //                             .value)
+                                    //                           Positioned(
+                                    //                             left: 10,
+                                    //                             child: Icon(
+                                    //                               LucideIcons
+                                    //                                   .check,
+                                    //                               color: Colors
+                                    //                                   .white,
+                                    //                               size: 15,
+                                    //                             ),
+                                    //                           ),
+                                    //                         if (!controller
+                                    //                             .isUseRewards
+                                    //                             .value)
+                                    //                           Positioned(
+                                    //                             right: 10,
+                                    //                             child: Icon(
+                                    //                               Icons.clear,
+                                    //                               color: Colors
+                                    //                                   .white,
+                                    //                               size: 15,
+                                    //                             ),
+                                    //                           ),
+                                    //                         AnimatedPositioned(
+                                    //                           duration:
+                                    //                               Duration(
+                                    //                             milliseconds:
+                                    //                                 200,
+                                    //                           ),
+                                    //                           left: controller
+                                    //                                   .isUseRewards
+                                    //                                   .value
+                                    //                               ? 30
+                                    //                               : 5,
+                                    //                           child: Container(
+                                    //                             width: 20,
+                                    //                             height: 20,
+                                    //                             decoration:
+                                    //                                 BoxDecoration(
+                                    //                               color: Colors
+                                    //                                   .white,
+                                    //                               borderRadius:
+                                    //                                   BorderRadius
+                                    //                                       .circular(
+                                    //                                           30),
+                                    //                               boxShadow: [
+                                    //                                 BoxShadow(
+                                    //                                   color: Colors
+                                    //                                       .black26,
+                                    //                                   blurRadius:
+                                    //                                       4.0,
+                                    //                                   spreadRadius:
+                                    //                                       2.0,
+                                    //                                 ),
+                                    //                               ],
+                                    //                             ),
+                                    //                           ),
+                                    //                         ),
+                                    //                       ],
+                                    //                     ),
+                                    //                   ),
+                                    //                 ),
+                                    //               ],
+                                    //             ),
+                                    //           ],
+                                    //         ),
+                                    //       ),
+                                    //       Container(height: 10),
+                                    //       Divider(
+                                    //         thickness: 2,
+                                    //         color: Colors.grey.shade200,
+                                    //       ),
+                                    //       Container(height: 10),
+                                    //     ],
+                                    //   ),
+                                    // ),
+
                                     Padding(
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 15),

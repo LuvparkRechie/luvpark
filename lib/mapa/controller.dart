@@ -1229,15 +1229,17 @@ class DashboardMapController extends GetxController
   }
 
   void onClickBooking() async {
+    CustomDialog().loadingDialog(Get.context!);
     bool isOpenPa = await isOpenArea();
     if (!isOpenPa) {
+      Get.back();
       CustomDialog().infoDialog("Booking", "This area is currently close.", () {
         Get.back();
       });
 
       return;
     }
-    CustomDialog().loadingDialog(Get.context!);
+
     DateTime now = await Functions.getTimeNow();
 
     if (markerData.isEmpty) {
