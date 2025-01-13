@@ -17,6 +17,7 @@ class MerchantBillerController extends GetxController
   RxBool isPayPage = false.obs;
   RxList merchantData = [].obs;
   RxList merchantParam = [].obs;
+  RxList filterData = [].obs;
   RxString pkey = "".obs;
   @override
   void onInit() {
@@ -96,10 +97,24 @@ class MerchantBillerController extends GetxController
         }
         //else success
         merchantData.value = response["items"];
+        filterData.value = merchantData;
         isLoadingPage.value = false;
         isNetConn.value = true;
       },
     );
+  }
+
+  void onSearch(String query) {
+    filterData.value = merchantData;
+    List pota = [];
+
+    pota = merchantData.where((obj) {
+      return obj["merchant_name"]
+          .toString()
+          .toLowerCase()
+          .contains(query.toLowerCase().toLowerCase());
+    }).toList();
+    filterData.value = pota;
   }
 
   void pageSwitcher() {
