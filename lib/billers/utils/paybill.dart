@@ -101,7 +101,7 @@ class _PayBillState extends State<PayBill> {
                     CustomParagraph(
                       text: args["biller_address"],
                       fontSize: 10,
-                      maxlines: 1,
+                      maxlines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Divider(
