@@ -90,7 +90,7 @@ class CustomParagraph extends StatelessWidget {
       group: AutoSizeGroup(),
       style: paragraphStyle(
         fontSize: fontSize,
-        color: color ?? Colors.grey[600], //AppColor.paragraphColor,
+        color: color ?? AppColor.paragraphColor,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: letterSpacing,
@@ -176,7 +176,7 @@ TextStyle paragraphStyle({
 }) {
   return GoogleFonts.roboto(
     fontSize: fontSize,
-    color: color ?? AppColor.headerColor,
+    color: color ?? AppColor.paragraphColor,
     fontWeight: fontWeight,
     fontStyle: fontStyle,
     letterSpacing: letterSpacing,
@@ -203,5 +203,45 @@ TextStyle titleStyle({
     letterSpacing: letterSpacing,
     wordSpacing: wordSpacing,
     height: height,
+  );
+}
+
+TextStyle listTitleStyle({
+  double fontSize = 16.0,
+  Color? color,
+  FontWeight? fontWeight = FontWeight.w800,
+  FontStyle fontStyle = FontStyle.normal,
+  double letterSpacing = 0.0,
+  double? height,
+  TextDecoration? textDecoration,
+}) {
+  return GoogleFonts.roboto(
+    fontSize: fontSize,
+    color: color ?? AppColor.titleColor,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    letterSpacing: letterSpacing,
+    height: height,
+    decoration: textDecoration,
+  );
+}
+
+TextStyle subtitleStyle({
+  double fontSize = 14.0,
+  Color? color,
+  FontWeight? fontWeight = FontWeight.w500,
+  FontStyle fontStyle = FontStyle.normal,
+  double letterSpacing = 0.0,
+  double? height,
+  TextDecoration? textDecoration,
+}) {
+  return GoogleFonts.nunito(
+    fontSize: fontSize,
+    color: color ?? AppColor.subtitleColor,
+    fontWeight: fontWeight,
+    fontStyle: fontStyle,
+    letterSpacing: letterSpacing,
+    height: height,
+    decoration: textDecoration,
   );
 }

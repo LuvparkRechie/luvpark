@@ -2,14 +2,17 @@
 
 import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/billers/index.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../custom_widgets/alert_dialog.dart';
 import '../../custom_widgets/app_color.dart';
@@ -62,7 +65,7 @@ class _TicketUIState extends State<TicketUI> {
     CustomDialog().loadingDialog(Get.context!);
 
     ScreenshotController()
-        .captureFromWidget(myTicket(billerAddress),
+        .captureFromWidget(shareDownloadTicket(billerAddress),
             delay: const Duration(seconds: 3))
         .then((image) async {
       final dir = await getApplicationDocumentsDirectory();
@@ -126,6 +129,71 @@ class _TicketUIState extends State<TicketUI> {
   }
 
   Widget myTicket(billerAddress) => Container(
+        padding: const EdgeInsets.all(15),
+        child: TicketClipper(
+          clipper: RoundedEdgeClipper(edge: Edge.vertical, depth: 15),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+            width: double.infinity,
+            decoration: const BoxDecoration(color: AppColor.scafColor),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                _buildMessage(),
+                Divider(
+                  color: AppColor.primaryColor,
+                ),
+                _buildDetailRow("Biller", params["biller_name"]),
+                Visibility(
+                    visible: billerAddress != "",
+                    child: _buildDetailRow("Biller Address", billerAddress)),
+                _buildDetailRow("Account Name", params["account_name"]),
+                _buildDetailRow("Date Paid", dateNow),
+                _buildDetailRow("Amount", params["original_amount"]),
+                _buildTotalAmount(),
+                Container(height: 10),
+                GestureDetector(
+                  onTap: () async {
+                    String randomNumber =
+                        await Random().nextInt(100000).toString();
+                    CustomDialog().loadingDialog(Get.context!);
+                    File? imgFile;
+
+                    String fname = "booking$randomNumber.png";
+                    final directory =
+                        (await getApplicationDocumentsDirectory()).path;
+                    Uint8List bytes = await ScreenshotController()
+                        .captureFromWidget(shareDownloadTicket(billerAddress));
+                    imgFile = File('$directory/$fname');
+                    imgFile.writeAsBytes(bytes);
+
+                    Get.back();
+
+                    // ignore: deprecated_member_use
+                    await Share.shareFiles([imgFile.path]);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        LucideIcons.share2,
+                        size: 20,
+                      ),
+                      Container(width: 10),
+                      Text(
+                        "Share",
+                        style: subtitleStyle(fontWeight: FontWeight.w600),
+                      )
+                    ],
+                  ),
+                ),
+                Container(height: 10),
+              ],
+            ),
+          ),
+        ),
+      );
+  Widget shareDownloadTicket(billerAddress) => Container(
         padding: const EdgeInsets.all(15),
         child: TicketClipper(
           clipper: RoundedEdgeClipper(edge: Edge.vertical, depth: 15),

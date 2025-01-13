@@ -260,3 +260,66 @@ class CustomElevatedButton extends StatelessWidget {
     );
   }
 }
+
+class CustomNextButton extends StatelessWidget {
+  final String text;
+  final IconData? icon;
+  final Function onPressed;
+  final Color? btnColor;
+  final bool? loading;
+  final Color? bordercolor;
+  final Color? textColor;
+  final double? borderRadius;
+  final double? btnHeight;
+  final double? fontSize;
+  const CustomNextButton({
+    super.key,
+    required this.text,
+    this.icon,
+    required this.onPressed,
+    this.btnColor,
+    this.loading,
+    this.bordercolor,
+    this.textColor,
+    this.borderRadius = 7,
+    this.btnHeight,
+    this.fontSize = 14,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        onPressed();
+      },
+      child: Container(
+        height: btnHeight,
+        width: MediaQuery.of(context).size.width,
+        padding: const EdgeInsets.all(13),
+        decoration: BoxDecoration(
+          color: btnColor ?? AppColor.primaryColor,
+          border: Border.all(color: bordercolor ?? Colors.transparent),
+          borderRadius: BorderRadius.circular(borderRadius!),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomTitle(
+              text: text,
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+            ),
+            Visibility(visible: icon != null, child: Container(width: 10)),
+            Visibility(
+                visible: icon != null,
+                child: Icon(
+                  icon,
+                  color: Colors.white,
+                ))
+          ],
+        ),
+      ),
+    );
+  }
+}

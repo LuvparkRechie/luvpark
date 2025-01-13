@@ -92,7 +92,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
             appBar: AppBar(
               elevation: 0,
               backgroundColor: Colors.transparent,
-              toolbarHeight: 0,
+              toolbarHeight: 10,
               systemOverlayStyle: const SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
                 statusBarBrightness: Brightness.light,
@@ -185,6 +185,16 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: Offset(0, -1),
+                                      ),
+                                    ],
+                                  ),
                                   key: controller.parkKey,
                                   child: _buildDialItem("parking", () {
                                     controller.routeToParkingAreas();
@@ -192,6 +202,16 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 ),
                                 const SizedBox(width: 10),
                                 Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: Offset(0, -1),
+                                      ),
+                                    ],
+                                  ),
                                   key: controller.locKey,
                                   child: _buildDialItem("gps", () {
                                     controller.getCurrentLoc();
@@ -224,17 +244,14 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                   decoration: ShapeDecoration(
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFDFE7EF)),
                                       borderRadius: BorderRadius.circular(7),
                                     ),
-                                    shadows: const [
+                                    shadows: [
                                       BoxShadow(
-                                        color: Color(0x0C000000),
-                                        blurRadius: 15,
-                                        offset: Offset(0, 5),
-                                        spreadRadius: 0,
-                                      )
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: Offset(0, 1),
+                                      ),
                                     ],
                                   ),
                                   child: Row(
@@ -310,17 +327,14 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                   decoration: ShapeDecoration(
                                     color: Colors.white,
                                     shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFDFE7EF)),
                                       borderRadius: BorderRadius.circular(7),
                                     ),
-                                    shadows: const [
+                                    shadows: [
                                       BoxShadow(
-                                        color: Color(0x0C000000),
-                                        blurRadius: 15,
-                                        offset: Offset(0, 5),
-                                        spreadRadius: 0,
-                                      )
+                                        color: Colors.black.withOpacity(0.2),
+                                        blurRadius: 5,
+                                        offset: Offset(0, 1),
+                                      ),
                                     ],
                                   ),
                                   child: Center(
@@ -510,7 +524,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 contentPadding: EdgeInsets.symmetric(vertical: 10),
                 hintText: 'Search parking',
                 filled: true,
-                fillColor: const Color(0xFFFBFBFB),
+                fillColor: Colors.grey.shade100,
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(54),
                   borderSide: BorderSide(color: AppColor.primaryColor),
@@ -524,7 +538,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Container(width: 15),
-                    SvgPicture.asset("assets/dashboard_icon/search.svg"),
+                    Icon(
+                      LucideIcons.search,
+                      weight: 2000,
+                    ),
                     Container(width: 10),
                   ],
                 ),
@@ -543,8 +560,17 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                             controller.panelController.open();
                           });
                         },
-                        child:
-                            SvgPicture.asset("assets/dashboard_icon/close.svg"),
+                        child: Container(
+                          padding: EdgeInsets.all(7),
+                          decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.shade300),
+                          child: Icon(
+                            LucideIcons.x,
+                            color: AppColor.headerColor,
+                            size: 18,
+                          ),
+                        ),
                       ),
                     Container(width: 10),
                     Row(
@@ -585,8 +611,17 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                   true, // Ensure the height is respected
                             );
                           },
-                          child: SvgPicture.asset(
-                              "assets/dashboard_icon/filter.svg"),
+                          child: Container(
+                            padding: EdgeInsets.all(7),
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.grey.shade300),
+                            child: Icon(
+                              LucideIcons.slidersHorizontal,
+                              color: AppColor.headerColor,
+                              size: 18,
+                            ),
+                          ),
                         ),
                         Container(width: 10),
                         if (controller.searchCon.text.isEmpty)
@@ -605,8 +640,17 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 },
                               );
                             },
-                            child: SvgPicture.asset(
-                                "assets/dashboard_icon/voice.svg"),
+                            child: Container(
+                              padding: EdgeInsets.all(7),
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.grey.shade300),
+                              child: Icon(
+                                LucideIcons.mic,
+                                color: AppColor.headerColor,
+                                size: 18,
+                              ),
+                            ),
                           ),
                         Container(width: 15),
                       ],
@@ -614,7 +658,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                   ],
                 ),
                 hintStyle: paragraphStyle(
-                    color: AppColor.hintColor, fontWeight: FontWeight.w500),
+                    color: Color(0xFF646263),
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14),
                 labelStyle: paragraphStyle(
                     fontWeight: FontWeight.w500, color: AppColor.hintColor),
               ),
@@ -683,7 +729,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 Flexible(
                   child: TextField(
                     //  controller: ct.searchCon,
+
                     decoration: InputDecoration(
+                      fillColor: Colors.grey.shade100,
+                      filled: true,
                       hintText: 'Search parking',
                       hintStyle: paragraphStyle(),
                       border: InputBorder.none,
@@ -763,22 +812,32 @@ class _DraggableDetailsSheetState extends State<DraggableDetailsSheet> {
         controller: dragController,
         builder: (BuildContext context, ScrollController scrollController) {
           return Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 borderRadius: BorderRadius.vertical(
                   top: Radius.circular(15),
                 ),
                 color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 5,
+                    offset: Offset(0, -1),
+                  ),
+                ],
               ),
               child: Obx(
                 () => Column(
                   children: [
-                    Container(height: 10),
-                    Container(
-                      width: 100,
-                      height: 5,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: Colors.grey.shade200),
+                    Container(height: 20),
+                    Center(
+                      child: Container(
+                        width: 71,
+                        height: 6,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(56),
+                          color: const Color(0xffd9d9d9),
+                        ),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
@@ -1266,9 +1325,10 @@ class _DraggableDetailsSheetState extends State<DraggableDetailsSheet> {
                                 CustomParagraph(
                                   text: controller.vehicleTypes[i]["name"],
                                   fontSize: 12,
+                                  fontWeight: FontWeight.w500,
                                   color: controller.denoInd.value == i
                                       ? AppColor.primaryColor
-                                      : Colors.grey[600],
+                                      : AppColor.paragraphColor,
                                 ),
                               ],
                             ),

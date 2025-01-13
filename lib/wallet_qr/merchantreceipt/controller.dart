@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -10,14 +11,16 @@ import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_cutter.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
-import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
-
 import 'package:luvpark/main.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
-class merchantQRRController extends GetxController
+import '../../custom_widgets/alert_dialog.dart';
+
+class MerchantQRRController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  merchantQRRController();
+  MerchantQRRController();
   final parameter = Get.arguments;
 
   void initializeTimezone() {

@@ -825,7 +825,7 @@ class DashboardMapController extends GetxController
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: filteredMarkers[0].position,
-              zoom: 17,
+              zoom: 15,
             ),
           ),
         );
@@ -900,6 +900,7 @@ class DashboardMapController extends GetxController
     HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
         .get()
         .then((returnData) async {
+      print("get parking rates $returnData");
       Get.back();
       if (returnData == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -1001,11 +1002,6 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> goingBackToTheCornerWhenIFirstSawYou() async {
-    bool isOpenPa = await isOpenArea();
-    if (!isOpenPa) {
-      isOpen.value = isOpenPa;
-      return;
-    }
     final vehicleTypesList = markerData[0]['vehicle_types_list'] as String;
 
     List inataya = _parseVehicleTypes(vehicleTypesList).map((e) {
@@ -1029,12 +1025,15 @@ class DashboardMapController extends GetxController
     vehicleTypes.value = Functions.sortJsonList(inataya, 'count');
 
     denoInd.value = 0;
-
     finalSttime = formatTime(markerData[0]["start_time"]);
     finalEndtime = formatTime(markerData[0]["end_time"]);
+    bool isOpenPa = await isOpenArea();
     bool openBa = await Functions.checkAvailability(finalSttime, finalEndtime);
-    isOpen.value = openBa;
-
+    if (!isOpenPa) {
+      isOpen.value = isOpenPa;
+    } else {
+      isOpen.value = openBa;
+    }
     getVhRatesData(vehicleTypes[0]["vh_types"]);
   }
 
@@ -1047,6 +1046,8 @@ class DashboardMapController extends GetxController
           .toLowerCase()
           .contains(vhType.toString().trim().toLowerCase());
     }).toList();
+
+    print("getVhRatesData $data");
 
     ratesWidget.add(Column(
       children: [

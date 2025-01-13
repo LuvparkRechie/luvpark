@@ -5,6 +5,6 @@ import 'controller.dart';
 class merchantQRRBindings implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<merchantQRRController>(() => merchantQRRController());
+    Get.lazyPut<MerchantQRRController>(() => MerchantQRRController());
   }
 }

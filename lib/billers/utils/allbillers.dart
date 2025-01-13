@@ -32,50 +32,141 @@ class Allbillers extends GetView<BillersController> {
             width: double.infinity,
             child: Column(
               children: [
+                // Padding(
+                //   padding: const EdgeInsets.all(15),
+                //   child: SearchBar(
+                //     padding: MaterialStateProperty.all(
+                //       EdgeInsets.only(left: 15),
+                //     ),
+                //     elevation: MaterialStateProperty.all(.2),
+                //     controller: searchController,
+                //     side: MaterialStateProperty.all(
+                //       BorderSide(
+                //         color: Color(0x232563EB), // Border color
+                //         width: 1.0, // Border width
+                //       ),
+                //     ),
+                //     trailing: [
+                //       Visibility(
+                //         visible: searchController.text.isNotEmpty,
+                //         child: IconButton(
+                //             onPressed: () {
+                //               searchController.clear();
+                //               controller.filterBillers('');
+                //             },
+                //             icon: Icon(
+                //               LucideIcons.xCircle,
+                //               color: AppColor.paragraphColor,
+                //             )),
+                //       )
+                //     ],
+                //     leading: Icon(
+                //       LucideIcons.search,
+                //       color: AppColor.primaryColor,
+                //     ),
+                //     hintStyle: MaterialStateProperty.resolveWith<TextStyle?>(
+                //         (Set<MaterialState> states) {
+                //       return paragraphStyle(
+                //           fontWeight: FontWeight.w500,
+                //           color: AppColor.hintColor);
+                //     }),
+                //     hintText: "Search billers",
+                //     onChanged: (value) {
+                //       controller.filterBillers(value);
+                //     },
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(15),
-                  child: SearchBar(
-                    padding: MaterialStateProperty.all(
-                      EdgeInsets.only(left: 15),
-                    ),
-                    elevation: MaterialStateProperty.all(.2),
-                    controller: searchController,
-                    side: MaterialStateProperty.all(
-                      BorderSide(
-                        color: Color(0x232563EB), // Border color
-                        width: 1.0, // Border width
+                  child: SizedBox(
+                    height: 54,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 3,
+                            offset: Offset(0, 0),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(
+                            54), // Match TextField border radius
+                      ),
+                      child: TextField(
+                        autofocus: false,
+                        style: paragraphStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w500,
+                        ),
+                        maxLines: 1, // Ensures single line input
+                        textAlign: TextAlign.left,
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(vertical: 10),
+                          hintText: "Search billers",
+                          filled: true,
+                          fillColor: Colors.white,
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(54),
+                            borderSide:
+                                BorderSide(color: AppColor.primaryColor),
+                          ),
+                          border: const OutlineInputBorder(),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(54),
+                            borderSide:
+                                BorderSide(width: 1, color: Color(0xFFCECECE)),
+                          ),
+                          prefixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(width: 15),
+                              Icon(LucideIcons.search),
+                              Container(width: 10),
+                            ],
+                          ),
+                          suffixIcon: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Visibility(
+                                visible: searchController.text.isNotEmpty,
+                                child: InkWell(
+                                  onTap: () {
+                                    searchController.clear();
+                                    controller.filterBillers('');
+                                  },
+                                  child: Container(
+                                    padding: EdgeInsets.all(7),
+                                    decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: Colors.grey.shade300),
+                                    child: Icon(
+                                      LucideIcons.x,
+                                      color: AppColor.headerColor,
+                                      size: 18,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          hintStyle: paragraphStyle(
+                            color: Color(0xFF646263),
+                            fontWeight: FontWeight.w600,
+                            fontSize: 14,
+                          ),
+                          labelStyle: paragraphStyle(
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.hintColor,
+                          ),
+                        ),
+                        onChanged: (value) {
+                          controller.filterBillers(value);
+                        },
                       ),
                     ),
-                    trailing: [
-                      Visibility(
-                        visible: searchController.text.isNotEmpty,
-                        child: IconButton(
-                            onPressed: () {
-                              searchController.clear();
-                              controller.filterBillers('');
-                            },
-                            icon: Icon(
-                              LucideIcons.xCircle,
-                              color: AppColor.paragraphColor,
-                            )),
-                      )
-                    ],
-                    leading: Icon(
-                      LucideIcons.search,
-                      color: AppColor.primaryColor,
-                    ),
-                    hintStyle: MaterialStateProperty.resolveWith<TextStyle?>(
-                        (Set<MaterialState> states) {
-                      return paragraphStyle(
-                          fontWeight: FontWeight.w500,
-                          color: AppColor.hintColor);
-                    }),
-                    hintText: "Search billers",
-                    onChanged: (value) {
-                      controller.filterBillers(value);
-                    },
                   ),
                 ),
+
                 Expanded(
                   child: controller.filteredBillers.isEmpty
                       ? NoDataFound(
@@ -89,8 +180,16 @@ class Allbillers extends GetView<BillersController> {
                               padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
                               child: Container(
                                 decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(10)),
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 3,
+                                      offset: Offset(0, 0),
+                                    ),
+                                  ],
+                                ),
                                 child: ListTile(
                                   onTap: () async {
                                     controller.filterBillers('');

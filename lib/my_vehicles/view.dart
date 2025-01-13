@@ -564,73 +564,75 @@ class _DetailPageState extends State<DetailPage> {
             ),
           ),
           Expanded(
-            child: isLoading
-                ? const PageLoader()
-                : subsListData.isEmpty
-                    ? NoDataFound(
-                        text: "No data subscription",
-                      )
-                    : ListView.separated(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        itemCount: subsListData.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8.0),
-                              border: Border.all(
-                                color: Colors.grey.shade300,
-                                width: 1.0,
+            child: Container(
+              color: AppColor.bodyColor,
+              child: isLoading
+                  ? const PageLoader()
+                  : subsListData.isEmpty
+                      ? NoDataFound(
+                          text: "No data subscription",
+                        )
+                      : ListView.separated(
+                          padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+                          itemCount: subsListData.length,
+                          itemBuilder: (context, index) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                border: Border.all(
+                                  color: Colors.grey.shade300,
+                                  width: 1.0,
+                                ),
                               ),
-                            ),
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomTitle(
-                                    text:
-                                        "Plate No: ${subsListData[index]["vehicle_plate_no"]}"),
-                                SizedBox(height: 8),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    CustomParagraph(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomTitle(
                                       text:
-                                          "Brand: ${subsListData[index]["vehicle_brand_name"]}",
-                                      color: Colors.grey[600],
-                                    ),
-                                    CustomParagraph(
+                                          "Plate No: ${subsListData[index]["vehicle_plate_no"]}"),
+                                  SizedBox(height: 8),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      CustomParagraph(
+                                        text:
+                                            "Brand: ${subsListData[index]["vehicle_brand_name"]}",
+                                        color: Colors.grey[600],
+                                      ),
+                                      CustomParagraph(
+                                        text:
+                                            "Rate: ${subsListData[index]["subscription_rate"]}",
+                                        color: Colors.green,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8),
+                                  CustomParagraph(
                                       text:
-                                          "Rate: ${subsListData[index]["subscription_rate"]}",
-                                      color: Colors.green,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8),
-                                CustomParagraph(
+                                          "Type: ${subsListData[index]["vehicle_type"]} (${subsListData[index]["subscription_type"]})"),
+                                  SizedBox(height: 8),
+                                  CustomParagraph(
                                     text:
-                                        "Type: ${subsListData[index]["vehicle_type"]} (${subsListData[index]["subscription_type"]})"),
-                                SizedBox(height: 8),
-                                CustomParagraph(
-                                  text:
-                                      "Location: ${subsListData[index]["group_area_name"]} - ${subsListData[index]["park_area_name"]}",
-                                  fontSize: 14,
-                                  color: Colors.blue,
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                        separatorBuilder: (context, index) {
-                          return SizedBox(
-                            height: 5,
-                          );
-                        },
-                      ),
+                                        "Location: ${subsListData[index]["group_area_name"]} - ${subsListData[index]["park_area_name"]}",
+                                    fontSize: 14,
+                                    color: Colors.blue,
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(
+                              height: 5,
+                            );
+                          },
+                        ),
+            ),
           ),
-          Container(height: 5),
         ],
       ),
     );

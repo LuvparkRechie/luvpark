@@ -12,6 +12,7 @@ import '../routes/routes.dart';
 
 class ParkingController extends GetxController
     with GetTickerProviderStateMixin {
+  ParkingController();
   String parameter = Get.arguments;
   late TabController tabController;
   TextEditingController searchCtrl = TextEditingController();
@@ -25,8 +26,8 @@ class ParkingController extends GetxController
   RxInt tabIndex = 0.obs;
   RxBool tabLoading = true.obs;
   RxBool isLoading = true.obs;
+
   Timer? _timer;
-  ParkingController();
 
   @override
   void onInit() {
@@ -38,7 +39,6 @@ class ParkingController extends GetxController
     }
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       onRefresh();
-      onTimerRun();
     });
   }
 
@@ -47,7 +47,8 @@ class ParkingController extends GetxController
     tabController.dispose();
     pageController.dispose();
     searchCtrl.dispose();
-    _timer?.cancel();
+
+    _timer!.cancel();
     super.onClose();
   }
 
@@ -58,19 +59,15 @@ class ParkingController extends GetxController
           "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
 
       final returnData = await HttpRequest(api: api).get();
-      resData.value = [];
 
       List itemData = returnData["items"];
-      // print("api $api");
-      // print("itemData $itemData");
-      // if (itemData.isNotEmpty) {
-      //   itemData = itemData.where((element) {
-      //     DateTime timeNow = now;
-      //     DateTime timeOut = DateTime.parse(element["dt_out"].toString());
-      //     return timeNow.isBefore(timeOut);
-      //   }).toList();
-      // }
-      resData.value = itemData;
+
+      if (itemData.isEmpty) {
+        resData.value = itemData;
+        isLoading.value = false;
+      } else {
+        initializeTimers(itemData);
+      }
     });
   }
 
@@ -83,6 +80,10 @@ class ParkingController extends GetxController
 
   Future<void> onRefresh() async {
     isLoading.value = true;
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+
     getReserveData(currentPage.value == 0 ? "C" : "U");
   }
 
@@ -92,37 +93,36 @@ class ParkingController extends GetxController
 
     String api =
         "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
+    final returnData = await HttpRequest(api: api).get();
 
-    try {
-      final returnData = await HttpRequest(api: api).get();
-
-      print("returnData $returnData");
-
-      tabLoading.value = false;
-      if (returnData == "No Internet") {
-        isLoading.value = false;
-        hasNet.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
+    tabLoading.value = false;
+    if (returnData == "No Internet") {
       isLoading.value = false;
-      hasNet.value = true;
-      if (returnData == null) {
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      } else {
-        resData.value = [];
-        List itemData = returnData["items"];
+      hasNet.value = false;
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    isLoading.value = false;
+    hasNet.value = true;
+    if (returnData == null) {
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    } else {
+      resData.value = [];
+      List itemData = returnData["items"];
+
+      if (itemData.isEmpty) {
         resData.value = itemData;
-        _timer?.cancel();
-        onTimerRun();
+        isLoading.value = false;
+      } else {
+        initializeTimers(itemData);
       }
-    } finally {
-      isLoading.value = false;
+
+      onTimerRun();
     }
   }
 
@@ -247,5 +247,155 @@ class ParkingController extends GetxController
     //   };
     //   Get.toNamed(Routes.bookingReceipt, arguments: args);
     // }
+  }
+
+  Future<List> calculateCancelTime(objData) async {
+    List dataListitem = [];
+
+    DateTime currentTime = await Functions.getTimeNow();
+    //compute time remaining
+    DateTime timeIn = DateTime.parse(objData["dt_in"].toString());
+
+    DateTime endTime = DateTime.parse(objData["dt_out"]);
+    Duration timeLeft = endTime.difference(currentTime);
+    Duration remainingTime = timeLeft.isNegative ? Duration.zero : timeLeft;
+
+    Duration newTimeLeft = endTime.difference(DateTime.now());
+    if (newTimeLeft.isNegative || newTimeLeft == Duration.zero) {
+      remainingTime = Duration.zero; // Set to zero when time runs out
+    } else {
+      remainingTime = newTimeLeft;
+    }
+    bool cancelTimeRemaining = currentTime.difference(timeIn).inMinutes > 5 ||
+            currentTime.difference(timeIn).inMinutes < 0 ||
+            currentPage.value == 1
+        ? false
+        : true;
+
+    dataListitem = [
+      {
+        "can_cancel": cancelTimeRemaining,
+        "time_remaining": remainingTime,
+      }
+    ];
+
+    return dataListitem;
+  }
+
+  void initializeTimers(data) async {
+    List dataItems = data;
+
+    // We need to collect the future results before proceeding
+    List futures = dataItems.map((e) async {
+      List objData = await calculateCancelTime(e);
+
+      e["can_cancelBooking"] = objData[0]["can_cancel"];
+      e["time_remaining"] = objData[0]["time_remaining"];
+      return e;
+    }).toList();
+
+    // Wait for all the futures to complete
+    resData.value = await Future.wait(futures as Iterable<Future>);
+  }
+
+  void cancelAdvanceParking(data) async {
+    DateTime now = await Functions.getTimeNow();
+    DateTime resDate = DateTime.parse(data["dt_in"].toString());
+
+    if (int.parse(now.difference(resDate).inMinutes.toString()) >
+        int.parse(data["cancel_minutes"].toString())) {
+      CustomDialog().errorDialog(Get.context!, "luvpark",
+          "The cancellation period for your booking has expired.", () {
+        Get.back();
+      });
+      return;
+    }
+    CustomDialog().confirmationDialog(Get.context!, "Cancel Booking",
+        "Are you sure you want to cancel your booking? ", "No", "Yes", () {
+      Get.back();
+    }, () {
+      Get.back();
+      CustomDialog().loadingDialog(Get.context!);
+      Map<String, dynamic> param = {"reservation_id": data["reservation_id"]};
+
+      HttpRequest(api: ApiKeys.gApiPostCancelParking, parameters: param)
+          .postBody()
+          .then((objData) async {
+        if (objData == "No Internet") {
+          Get.back();
+          CustomDialog().internetErrorDialog(Get.context!, () {
+            Get.back();
+          });
+          return;
+        }
+        if (objData == null) {
+          Get.back();
+          CustomDialog().serverErrorDialog(Get.context!, () {
+            Get.back();
+          });
+        }
+
+        if (objData["success"] == "Y") {
+          dynamic paramRefund = {
+            "amount": objData["amount"],
+            "points_used": objData["points_used"],
+            "luvpay_id": objData["luvpay_id"],
+            "payment_code": "RAP"
+          };
+
+          final response = await HttpRequest(
+                  api: ApiKeys.gApiRefundCancelled, parameters: paramRefund)
+              .postBody();
+
+          Get.back();
+          if (response == "No Internet") {
+            CustomDialog().internetErrorDialog(Get.context!, () {
+              Get.back();
+            });
+            return;
+          }
+          if (response == null) {
+            CustomDialog().serverErrorDialog(Get.context!, () {
+              Get.back();
+            });
+          }
+          if (response["success"] == "Y") {
+            CustomDialog().successDialog(Get.context!, "Success",
+                "Successfully cancelled booking", "Okay", () {
+              Get.back();
+              onRefresh();
+            });
+          } else {
+            CustomDialog().errorDialog(Get.context!, "luvpark", response["msg"],
+                () {
+              Get.back();
+            });
+          }
+        } else {
+          Get.back();
+          CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
+              () {
+            Get.back();
+          });
+          return;
+        }
+      });
+    });
+  }
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String hours = twoDigits(duration.inHours);
+    String minutes = twoDigits(duration.inMinutes.remainder(60));
+
+    if (duration.inSeconds <= 0) {
+      return "Expired";
+    } else if (hours != "00") {
+      return "$hours ${int.parse(hours.toString()) > 1 ? "hrs" : "hr"} $minutes min";
+    } else if (minutes != "00") {
+      return "$minutes min";
+    } else {
+      return "Expires soon";
+    }
   }
 }

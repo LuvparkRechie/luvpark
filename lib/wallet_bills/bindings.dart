@@ -2,9 +2,9 @@ import 'package:get/get.dart';
 
 import 'controller.dart';
 
-class walletBillerBindings implements Bindings {
+class MerchantBillerBindings implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<walletBillerController>(() => walletBillerController());
+    Get.lazyPut<MerchantBillerController>(() => MerchantBillerController());
   }
 }

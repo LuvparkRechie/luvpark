@@ -66,40 +66,15 @@ class BookingPage extends GetView<BookingController> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      InkWell(
-                                        onTap: () async {
-                                          FocusNode().unfocus();
-                                          CustomDialog().loadingDialog(context);
-                                          Future.delayed(Duration(seconds: 1),
-                                              () {
-                                            Get.back();
-                                            Get.back();
-                                          });
-                                        },
-                                        child: Container(
-                                            padding: const EdgeInsets.all(10),
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: ShapeDecoration(
-                                              color: Color(0xFF0078FF),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(43),
-                                              ),
-                                              shadows: [
-                                                BoxShadow(
-                                                  color: Color(0x0C000000),
-                                                  blurRadius: 15,
-                                                  offset: Offset(0, 5),
-                                                  spreadRadius: 0,
-                                                )
-                                              ],
-                                            ),
-                                            child: Icon(
-                                              LucideIcons.arrowLeft,
-                                              color: Colors.white,
-                                              size: 16,
-                                            )),
-                                      ),
+                                      CustomButtonClose(onTap: () {
+                                        FocusNode().unfocus();
+                                        CustomDialog().loadingDialog(context);
+                                        Future.delayed(Duration(seconds: 1),
+                                            () {
+                                          Get.back();
+                                          Get.back();
+                                        });
+                                      }),
 
                                       Container(height: 20),
                                       //Parking area
@@ -736,6 +711,7 @@ class BookingPage extends GetView<BookingController> {
                               )),
                               Container(
                                 decoration: BoxDecoration(
+                                  color: Colors.white,
                                   border: Border(
                                     top: BorderSide(
                                       width: 2,

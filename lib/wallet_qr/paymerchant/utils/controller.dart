@@ -70,7 +70,6 @@ class payMerchantVerifyController extends GetxController
       "luvpay_id": userid,
       "payment_hk": parameter["payment_hk"],
     };
-    print("requestparam: $requestParam");
     HttpRequest(api: ApiKeys.gApiMerchantScan, parameters: requestParam)
         .postBody()
         .then(
@@ -89,6 +88,7 @@ class payMerchantVerifyController extends GetxController
           });
         }
         if (retvalue['success'] == "Y") {
+          Get.back();
           Get.toNamed(Routes.merchantReceipt, arguments: {
             "merchant_name": parameter["merchant_name"],
             "amount": parameter["amount"],

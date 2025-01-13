@@ -24,9 +24,9 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
-class payMerchantController extends GetxController
+class PayMerchantController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  payMerchantController();
+  PayMerchantController();
   dynamic parameter = Get.arguments;
   Map<String, dynamic> get merchantDetails => parameter["data"][0];
   String get merchantName => parameter["merchant_name"];

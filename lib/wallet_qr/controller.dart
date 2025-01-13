@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
 // import 'package:gallery_saver/gallery_saver.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
@@ -40,6 +41,29 @@ class QrWalletController extends GetxController
   RxString mobNum = "".obs;
   RxString mono = ''.obs;
   RxString payKey = "".obs;
+  List optionData = [
+    {
+      "label": "Pay Using QR",
+      "title": "QR Pay",
+      "subtitle":
+          "Enable QR Pay for fast and secure payment transactions directly from your account.",
+      "icon": Icons.qr_code_rounded
+    },
+    {
+      "label": "Scan and Pay through our partnered merchants",
+      "title": "Scan Merchant Code",
+      "subtitle":
+          "Scan with our merchant's QR code for fast and secure payment transactions directly from your account.",
+      "icon": Icons.qr_code_scanner_rounded
+    },
+    {
+      "label": "Receive money through QR",
+      "title": "QR Receive",
+      "subtitle":
+          "Receive money quickly and securely by sharing your QR Code with other luvpark accounts.",
+      "icon": Iconsax.scan
+    },
+  ];
 
   RxInt denoInd = 0.obs;
   PermissionStatus cameraStatus = PermissionStatus.denied;
@@ -374,6 +398,21 @@ class QrWalletController extends GetxController
       );
     } else if (status.isPermanentlyDenied) {
       AppSettings.openAppSettings();
+    }
+  }
+
+  void onOptionTap(int index) {
+    switch (index) {
+      case 0:
+        Get.toNamed(Routes.paywithQR);
+        break;
+      case 1:
+        FocusManager.instance.primaryFocus!.unfocus();
+        requestCameraPermission();
+        break;
+      case 2:
+        Get.toNamed(Routes.myQR);
+        break;
     }
   }
 }

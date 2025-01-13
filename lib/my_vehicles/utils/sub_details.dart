@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
+
 import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_button.dart';
 
@@ -47,9 +48,9 @@ class SubscriptionDetails extends StatelessWidget {
                       var subscriptionRate = data[index]["subscription_rate"];
                       var parkareaname = data[index]["park_area_name"];
                       var startdate = data[index]["start_date"];
-                      var client_name = data[index]["client_name"];
+                      var clientName = data[index]["client_name"];
                       var vehicletype = data[index]["vehicle_type"];
-                      var vehicle_plate_no = data[index]["vehicle_plate_no"];
+                      var plateNo = data[index]["vehicle_plate_no"];
                       return Column(
                         children: [
                           Container(
@@ -91,7 +92,7 @@ class SubscriptionDetails extends StatelessWidget {
                                         Row(
                                           children: [
                                             CustomParagraph(
-                                              text: client_name.toString(),
+                                              text: clientName.toString(),
                                               color: Colors.black,
                                               fontSize: 12,
                                               fontWeight: FontWeight.normal,
@@ -126,7 +127,7 @@ class SubscriptionDetails extends StatelessWidget {
                                 ),
                                 SizedBox(height: 10),
                                 CustomParagraph(
-                                  text: vehicle_plate_no,
+                                  text: plateNo,
                                   fontSize: 14,
                                   color: Colors.black,
                                   fontWeight: FontWeight.w500,

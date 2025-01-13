@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 
+import '../routes/routes.dart';
+
 class OnboardingController extends GetxController {
   RxInt currentPage = 0.obs;
   PageController pageController = PageController();
@@ -47,5 +49,23 @@ class OnboardingController extends GetxController {
 
   void clearStoredData() {
     Authentication().clearStoredData();
+  }
+
+  void btnTap() {
+    FocusScope.of(Get.context!).requestFocus(FocusNode());
+
+    switch (currentPage.value) {
+      case 0 || 1:
+        pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut);
+
+        break;
+      case 2:
+        Get.offAndToNamed(
+          Routes.login,
+        );
+        break;
+    }
   }
 }

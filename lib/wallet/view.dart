@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
@@ -13,8 +12,6 @@ import 'package:luvpark/wallet/controller.dart';
 import 'package:luvpark/wallet/utils/transaction_details.dart';
 import 'package:shimmer/shimmer.dart';
 
-import '../auth/authentication.dart';
-import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/app_color.dart';
 import 'utils/transaction_history/index.dart';
 
@@ -48,20 +45,12 @@ class WalletScreen extends GetView<WalletController> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(7)),
-                        border: Border(
-                          left: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                          top: BorderSide(color: Color(0xFFDFE7EF)),
-                          right: BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                          bottom:
-                              BorderSide(width: 1, color: Color(0xFFDFE7EF)),
-                        ),
                         boxShadow: [
                           BoxShadow(
-                            color: Color(0x0C000000),
-                            blurRadius: 15,
-                            offset: Offset(0, 5),
-                            spreadRadius: 0,
-                          )
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 3,
+                            offset: Offset(0, 0),
+                          ),
                         ],
                       ),
                       child: Column(
@@ -137,226 +126,44 @@ class WalletScreen extends GetView<WalletController> {
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 5),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          overlayColor:
-                              WidgetStatePropertyAll(Colors.transparent),
-                          onTap: () async {
-                            final item = await Authentication().getUserData2();
-                            String? fname = item["first_name"];
-
-                            if (fname == null || fname.toString().isEmpty) {
-                              CustomDialog().infoDialog("Unverified Account",
-                                  "Complete your account information to access the requested service.\nGo to profile and update your account.",
-                                  () {
-                                Get.back();
-                              });
-                              return;
-                            }
-                            Get.toNamed(Routes.walletrecharge);
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 3.6,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 13),
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    width: 1, color: Color(0xFFDFE7EF)),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/wallet_wallet.svg',
-                                  height: 20,
-                                  width: 20,
-                                ),
-                                Container(
-                                  width: 10,
-                                ),
-                                CustomParagraph(
-                                  text: "Load",
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(width: 5),
-                        InkWell(
-                          overlayColor:
-                              WidgetStatePropertyAll(Colors.transparent),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (int i = 0; i < controller.btnData.length; i++)
+                      Expanded(
+                        child: GestureDetector(
                           onTap: () {
-                            Get.toNamed(Routes.send2);
+                            controller.onBtnTap(i);
                           },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 3.6,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 13),
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    width: 1, color: Color(0xFFDFE7EF)),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/wallet_send.svg',
-                                  height: 20,
-                                  width: 20,
-                                ),
-                                Container(
-                                  width: 10,
-                                ),
-                                CustomParagraph(
-                                  text: "Send",
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Container(width: 5),
-                        InkWell(
-                          overlayColor:
-                              WidgetStatePropertyAll(Colors.transparent),
-                          onTap: () {
-                            Get.toNamed(Routes.qrwallet);
-                          },
-                          child: Container(
-                            width: MediaQuery.of(context).size.width / 3.2,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 13),
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    width: 1, color: Color(0xFFDFE7EF)),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                SvgPicture.asset(
-                                  'assets/images/wallet_qr.svg',
-                                  height: 20,
-                                  width: 20,
-                                ),
-                                Container(
-                                  width: 5,
-                                ),
-                                CustomParagraph(
-                                  text: "QR Code",
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        InkWell(
-                          overlayColor:
-                              WidgetStatePropertyAll(Colors.transparent),
-                          onTap: () async {
-                            Get.toNamed(Routes.walletbiller);
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 21, vertical: 13),
-                            decoration: ShapeDecoration(
-                              color: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                side: BorderSide(
-                                    width: 1, color: Color(0xFFDFE7EF)),
-                                borderRadius: BorderRadius.circular(7),
-                              ),
-                              shadows: [
-                                BoxShadow(
-                                  color: Color(0x0C000000),
-                                  blurRadius: 15,
-                                  offset: Offset(0, 5),
-                                  spreadRadius: 0,
-                                )
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                  "assets/images/bill.png",
-                                  width: 20,
-                                  height: 20,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.all(15),
+                                decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: const Color.fromARGB(
+                                        255, 237, 239, 246)),
+                                child: Icon(
+                                  controller.btnData[i]["icon"],
                                   color: AppColor.primaryColor,
+                                  size: 20,
                                 ),
-                                Container(
-                                  width: 10,
-                                ),
-                                CustomParagraph(
-                                  text: "Merchants",
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ],
-                            ),
+                              ),
+                              Container(height: 10),
+                              CustomParagraph(
+                                text: controller.btnData[i]["btn_name"],
+                                fontSize: 12,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ],
+                      ),
+                  ],
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
@@ -371,19 +178,20 @@ class WalletScreen extends GetView<WalletController> {
               ),
               Expanded(
                 child: Container(
-                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 5),
-                  clipBehavior: Clip.antiAlias,
-                  decoration: BoxDecoration(color: Colors.white),
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
                   child: Column(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 15),
+                        padding: const EdgeInsets.fromLTRB(15, 10, 20, 15),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            CustomTitle(
-                              text: "Current Transactions",
+                            CustomParagraph(
+                              text: "Recent Activities",
                               fontSize: 16,
+                              color: AppColor.headerColor,
+                              fontWeight: FontWeight.w700,
                             ),
                             GestureDetector(
                               onTap: () {
@@ -392,6 +200,7 @@ class WalletScreen extends GetView<WalletController> {
                               child: CustomParagraph(
                                 text: "See all",
                                 color: AppColor.primaryColor,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ],
@@ -436,17 +245,15 @@ class WalletScreen extends GetView<WalletController> {
                               )
                             : controller.logs.isEmpty
                                 ? NoDataFound()
-                                : ListView.builder(
+                                : ListView.separated(
                                     physics: BouncingScrollPhysics(
                                         decelerationRate:
                                             ScrollDecelerationRate.fast),
-                                    padding: EdgeInsets.zero,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 10),
                                     itemCount: controller.logs.length,
                                     itemBuilder: (context, index) {
                                       var log = controller.logs[index];
-                                      String trans = log["tran_desc"]
-                                          .toString()
-                                          .toLowerCase();
 
                                       return GestureDetector(
                                         onTap: () {
@@ -454,34 +261,46 @@ class WalletScreen extends GetView<WalletController> {
                                               data: controller.logs,
                                               index: index));
                                         },
-                                        child: ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          title: CustomTitle(
-                                            text: log["tran_desc"],
-                                            fontSize: 15,
-                                            fontWeight: FontWeight.w600,
-                                            maxlines: 1,
-                                          ),
-                                          subtitle: CustomParagraph(
-                                            text:
-                                                DateFormat('MMM d, yyyy h:mm a')
-                                                    .format(DateTime.parse(
-                                                        log["tran_date"])),
-                                            fontSize: 12,
-                                            maxlines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          trailing: CustomTitle(
-                                            text: log["amount"],
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color:
-                                                double.parse(log["amount"]) < 0
-                                                    ? const Color(0xFFFF0000)
-                                                    : const Color(0xFF0078FF),
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                              horizontal: 15),
+                                          decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              borderRadius:
+                                                  BorderRadius.circular(7)),
+                                          child: ListTile(
+                                            contentPadding: EdgeInsets.zero,
+                                            title: CustomTitle(
+                                              text: log["tran_desc"],
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w600,
+                                              maxlines: 1,
+                                            ),
+                                            subtitle: CustomParagraph(
+                                              text: DateFormat(
+                                                      'MMM d, yyyy h:mm a')
+                                                  .format(DateTime.parse(
+                                                      log["tran_date"])),
+                                              fontSize: 12,
+                                              maxlines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            trailing: CustomTitle(
+                                              text: log["amount"],
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color:
+                                                  double.parse(log["amount"]) <
+                                                          0
+                                                      ? const Color(0xFFFF0000)
+                                                      : const Color(0xFF0078FF),
+                                            ),
                                           ),
                                         ),
                                       );
+                                    },
+                                    separatorBuilder: (context, index) {
+                                      return SizedBox(height: 5);
                                     },
                                   ),
                       ),

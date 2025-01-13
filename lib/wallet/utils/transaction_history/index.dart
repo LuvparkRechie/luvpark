@@ -135,6 +135,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: CustomAppbar(
         title: "Transaction History",
         action: [
@@ -166,7 +167,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                       child: ScrollConfiguration(
                         behavior: ScrollBehavior().copyWith(overscroll: false),
                         child: ListView.separated(
-                          padding: const EdgeInsets.all(10),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
                           itemCount: filterLogs.length,
                           itemBuilder: (context, index) {
                             String trans = filterLogs[index]["tran_desc"]
@@ -191,41 +193,43 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                                   ),
                                 );
                               },
-                              child: ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                leading: SvgPicture.asset(
-                                  fit: BoxFit.cover,
-                                  "assets/images/$img.svg",
-                                  height: 50,
-                                ),
-                                title: CustomTitle(
-                                  text: filterLogs[index]["tran_desc"],
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                subtitle: CustomParagraph(
-                                  text: DateFormat('MMM d, yyyy h:mm a').format(
-                                    DateTime.parse(
-                                        filterLogs[index]["tran_date"]),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                decoration: BoxDecoration(
+                                    color: Colors.grey.shade100,
+                                    borderRadius: BorderRadius.circular(7)),
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  title: CustomTitle(
+                                    text: filterLogs[index]["tran_desc"],
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    maxlines: 1,
                                   ),
-                                  fontSize: 12,
-                                ),
-                                trailing: CustomTitle(
-                                  text: filterLogs[index]["amount"],
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: double.parse(
-                                              filterLogs[index]["amount"]) <
-                                          0
-                                      ? const Color(0xFFFF0000)
-                                      : const Color(0xFF0078FF),
+                                  subtitle: CustomParagraph(
+                                    text: DateFormat('MMM d, yyyy h:mm a')
+                                        .format(DateTime.parse(
+                                            filterLogs[index]["tran_date"])),
+                                    fontSize: 12,
+                                    maxlines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  trailing: CustomTitle(
+                                    text: filterLogs[index]["amount"],
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: double.parse(
+                                                filterLogs[index]["amount"]) <
+                                            0
+                                        ? const Color(0xFFFF0000)
+                                        : const Color(0xFF0078FF),
+                                  ),
                                 ),
                               ),
                             );
                           },
-                          separatorBuilder: (context, index) => const Divider(
-                            endIndent: 1,
-                            height: 1,
+                          separatorBuilder: (context, index) => const SizedBox(
+                            height: 5,
                           ),
                         ),
                       ),

@@ -5,6 +5,6 @@ import 'controller.dart';
 class payMerchantBinding implements Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<payMerchantController>(() => payMerchantController());
+    Get.lazyPut<PayMerchantController>(() => PayMerchantController());
   }
 }

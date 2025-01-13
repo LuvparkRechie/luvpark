@@ -98,6 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         body: Container(
           width: double.infinity,
+          height: double.infinity,
           color: AppColor.bodyColor,
           child: isLoadingPage
               ? const Center(
@@ -308,7 +309,7 @@ class DefaultLoginScreen extends StatelessWidget {
                   CustomParagraph(
                     text: "Mobile Number",
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                   CustomMobileNumber(
@@ -321,7 +322,7 @@ class DefaultLoginScreen extends StatelessWidget {
                   CustomParagraph(
                     text: "Password",
                     fontSize: 13,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),
                   CustomTextField(
@@ -424,7 +425,7 @@ class DefaultLoginScreen extends StatelessWidget {
                       const SizedBox(height: 20),
                       CustomButton(
                         text: "Create Account",
-                        btnColor: Colors.white,
+                        btnColor: AppColor.bodyColor,
                         bordercolor: AppColor.borderColor,
                         textColor: Colors.black,
                         onPressed: () {

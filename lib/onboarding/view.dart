@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/onboarding/controller.dart';
-
-import '../routes/routes.dart';
+import 'package:luvpark/routes/routes.dart';
 
 class MyOnboardingPage extends StatelessWidget {
   const MyOnboardingPage({Key? key}) : super(key: key);
@@ -91,31 +89,65 @@ class MyOnboardingPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                      // Container(
+                      //   height: 20,
+                      // ),
+                      // CustomButton(
+                      //   text: "Log in",
+                      //   onPressed: () async {
+                      //     CustomDialog().loadingDialog(context);
+                      //     await Future.delayed(Duration(seconds: 1));
+                      //     Get.back();
+                      //     Get.offAndToNamed(Routes.login);
+                      //   },
+                      // ),
+                      // Container(height: 10),
+                      // CustomButton(
+                      //   bordercolor: AppColor.primaryColor,
+                      //   btnColor: Colors.white,
+                      //   textColor: AppColor.primaryColor,
+                      //   text: "Create Account",
+                      //   onPressed: () async {
+                      //     CustomDialog().loadingDialog(context);
+                      //     await Future.delayed(Duration(seconds: 1));
+                      //     Get.back();
+                      //     Get.offAndToNamed(Routes.landing);
+                      //   },
+                      // ),
                       Container(
-                        height: 20,
+                        height: MediaQuery.of(context).size.width * .15,
                       ),
-                      CustomButton(
-                        text: "Log in",
-                        onPressed: () async {
-                          CustomDialog().loadingDialog(context);
-                          await Future.delayed(Duration(seconds: 1));
-                          Get.back();
-                          Get.offAndToNamed(Routes.login);
-                        },
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 15),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  Get.offAndToNamed(Routes.login);
+                                },
+                                child: CustomTitle(
+                                  text: "Skip",
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: AppColor.primaryColor,
+                                ),
+                              ),
+                            ),
+                            Container(width: 10),
+                            Expanded(
+                              child: CustomNextButton(
+                                text: "Next",
+                                icon: Icons.arrow_right_alt_outlined,
+                                onPressed: controller.btnTap,
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                      Container(height: 10),
-                      CustomButton(
-                        bordercolor: AppColor.primaryColor,
-                        btnColor: Colors.white,
-                        textColor: AppColor.primaryColor,
-                        text: "Create Account",
-                        onPressed: () async {
-                          CustomDialog().loadingDialog(context);
-                          await Future.delayed(Duration(seconds: 1));
-                          Get.back();
-                          Get.offAndToNamed(Routes.landing);
-                        },
-                      ),
+                      Container(
+                        height: MediaQuery.of(context).size.width * .15,
+                      )
                     ],
                   ),
                 ),

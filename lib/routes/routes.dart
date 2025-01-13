@@ -50,5 +50,5 @@ class Routes {
   static const paywithQR = "/paywithQR";
   static const merchantQRverify = "/merchantQRverify";
   static const merchantReceipt = "/merchantReceipt";
-  static const walletbiller = "/walletbiller";
+  static const merchant = "/merchant";
 }

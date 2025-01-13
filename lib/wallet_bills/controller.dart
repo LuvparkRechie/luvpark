@@ -4,16 +4,19 @@ import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
-import 'package:luvpark/routes/routes.dart';
 
-class walletBillerController extends GetxController
+import '../wallet_qr/paymerchant/index.dart';
+
+class MerchantBillerController extends GetxController
     with GetSingleTickerProviderStateMixin {
-  walletBillerController();
+  MerchantBillerController();
 
   RxBool isLoadingPage = true.obs;
   RxBool isBtnLoading = false.obs;
   RxBool isNetConn = true.obs;
+  RxBool isPayPage = false.obs;
   RxList merchantData = [].obs;
+  RxList merchantParam = [].obs;
   RxString pkey = "".obs;
   @override
   void onInit() {
@@ -29,7 +32,7 @@ class walletBillerController extends GetxController
     getMyMerchantData();
   }
 
-  Future<void> getPaymentKey(items, mkey, mname) async {
+  Future<void> getPaymentKey(items, mkey, mname, mAddress) async {
     CustomDialog().loadingDialog(Get.context!);
     final userID = await Authentication().getUserId();
 
@@ -50,12 +53,18 @@ class walletBillerController extends GetxController
         });
       } else
         Get.back();
-      Get.toNamed(Routes.merchantQR, arguments: {
-        "data": items,
-        'merchant_key': mkey,
-        "merchant_name": mname,
-        "payment_key": paymentResponse["items"][0]["payment_hk"],
-      });
+      List itemData = [
+        {
+          "data": items,
+          'merchant_key': mkey,
+          'merchant_address': mAddress,
+          "merchant_name": mname,
+          "payment_key": paymentResponse["items"][0]["payment_hk"],
+        }
+      ];
+
+      merchantParam.value = itemData;
+      Get.bottomSheet(PayMerchant(data: merchantParam));
     });
   }
 
@@ -91,5 +100,11 @@ class walletBillerController extends GetxController
         isNetConn.value = true;
       },
     );
+  }
+
+  void pageSwitcher() {
+    isPayPage.value = !isPayPage.value;
+
+    update();
   }
 }

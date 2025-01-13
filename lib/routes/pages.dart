@@ -9,18 +9,14 @@ import 'package:luvpark/my_account/utils/index.dart';
 import 'package:luvpark/my_account/utils/otp_update/index.dart';
 import 'package:luvpark/profile/index.dart';
 import 'package:luvpark/wallet_qr/index.dart';
-import 'package:luvpark/wallet_recharge_load/index.dart';
-import 'package:luvpark/wallet_bills/index.dart';
 import 'package:luvpark/wallet_qr/merchantreceipt/index.dart';
-
 import 'package:luvpark/wallet_qr/myqr/bindings.dart';
 import 'package:luvpark/wallet_qr/myqr/view.dart';
-import 'package:luvpark/wallet_qr/paymerchant/bindings.dart';
 import 'package:luvpark/wallet_qr/paymerchant/utils/bindings.dart';
 import 'package:luvpark/wallet_qr/paymerchant/utils/view.dart';
-import 'package:luvpark/wallet_qr/paymerchant/view.dart';
 import 'package:luvpark/wallet_qr/paywithqr/bindings.dart';
 import 'package:luvpark/wallet_qr/paywithqr/view.dart';
+import 'package:luvpark/wallet_recharge_load/index.dart';
 
 import '../activate_acc/index.dart';
 import '../billers/index.dart';
@@ -46,6 +42,7 @@ import '../registration/utils/otp_screen/index.dart';
 import '../security_settings/index.dart';
 import '../splash_screen/index.dart';
 import '../wallet/index.dart';
+import '../wallet_bills/index.dart';
 import '../wallet_recharge/index.dart';
 import '../wallet_send/index.dart';
 import '../wallet_send/send_otp/index.dart';
@@ -253,11 +250,11 @@ class AppPages {
       page: () => myQR(),
       binding: myQRBindings(),
     ),
-    GetPage(
-      name: Routes.merchantQR,
-      page: () => payMerchant(),
-      binding: payMerchantBinding(),
-    ),
+    // GetPage(
+    //   name: Routes.merchantQR,
+    //   page: () => payMerchant(),
+    //   binding: payMerchantBinding(),
+    // ),
     GetPage(
       name: Routes.paywithQR,
       page: () => paywithQR(),
@@ -270,13 +267,13 @@ class AppPages {
     ),
     GetPage(
       name: Routes.merchantReceipt,
-      page: () => merchantQRReceipt(),
+      page: () => MerchantQRReceipt(),
       binding: merchantQRRBindings(),
     ),
     GetPage(
-      name: Routes.walletbiller,
-      page: () => walletBiller(),
-      binding: walletBillerBindings(),
+      name: Routes.merchant,
+      page: () => MerchantBiller(),
+      binding: MerchantBillerBindings(),
     ),
   ];
 }

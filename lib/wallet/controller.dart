@@ -4,12 +4,16 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 
+import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/custom_text.dart';
+import '../routes/routes.dart';
 
 class WalletController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -20,6 +24,7 @@ class WalletController extends GetxController
   RxBool isNetConnLogs = true.obs;
   RxList logs = [].obs;
   RxList userData = [].obs;
+  RxList btnData = [].obs;
   RxString userImage = "".obs;
   RxString fname = "".obs;
   RxList filterLogs = [].obs;
@@ -35,9 +40,22 @@ class WalletController extends GetxController
 
   @override
   void onInit() {
-    super.onInit();
+    getBtnData();
     getCurrentTime();
     getUserData();
+    super.onInit();
+  }
+
+  void getBtnData() async {
+    List item = [
+      {"btn_name": "Load", "icon": LucideIcons.wallet},
+      {"btn_name": "Send", "icon": LucideIcons.send},
+      {"btn_name": "QR Code", "icon": LucideIcons.qrCode},
+      {"btn_name": "Merchant", "icon": Iconsax.receipt_text}
+    ];
+    btnData.value = item;
+
+    print("btnData $btnData");
   }
 
   void getCurrentTime() async {
@@ -227,6 +245,34 @@ class WalletController extends GetxController
       } else {
         toDate.text = formattedDate;
       }
+    }
+  }
+
+  Future<void> onBtnTap(int index) async {
+    switch (index) {
+      case 0:
+        final item = await Authentication().getUserData2();
+        String? fname = item["first_name"];
+
+        if (fname == null || fname.toString().isEmpty) {
+          CustomDialog().infoDialog("Unverified Account",
+              "Complete your account information to access the requested service.\nGo to profile and update your account.",
+              () {
+            Get.back();
+          });
+          return;
+        }
+        Get.toNamed(Routes.walletrecharge);
+        break;
+      case 1:
+        Get.toNamed(Routes.send2);
+        break;
+      case 2:
+        Get.toNamed(Routes.qrwallet);
+        break;
+      case 3:
+        Get.toNamed(Routes.merchant);
+        break;
     }
   }
 

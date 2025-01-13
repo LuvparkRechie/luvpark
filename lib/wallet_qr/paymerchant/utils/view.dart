@@ -34,71 +34,67 @@ class _merchantQRverifyState extends State<merchantQRverify> {
       backgroundColor: AppColor.bodyColor,
       resizeToAvoidBottomInset: true, // Adjust screen when keyboard appears
       body: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
           // Wrap entire body to make it scrollable
           child: Obx(
-        () => Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(7),
-                    ),
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
-                        spreadRadius: 2,
-                        blurRadius: 5,
-                        offset: Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 15.0, vertical: 15),
-                        child: CustomParagraph(
-                            fontSize: 12,
-                            text:
-                                "Please take time to review the details below before clicking Pay"),
-                      ),
-                      Container(
-                          width: double.infinity,
-                          color: AppColor.scafColor,
-                          child: Image.asset(
-                            fit: BoxFit.fill,
-                            "assets/images/pu_confirmation.png",
-                          )),
-                      SizedBox(height: 10),
-                      _buildDetailRow("Merchant: ",
-                          "${_capitalize(controller.parameter["merchant_name"] ?? "N/A")}"),
-                      _buildDetailRow(
-                        "Available Balance: ",
-                        !controller.isNetConnCard.value
-                            ? "........"
-                            : controller.isLoadingCard.value
-                                ? "........"
-                                : toCurrencyString(controller.userData[0]
-                                        ["amount_bal"]
-                                    .toString()),
-                      ),
-                      _buildTotalAmount(
-                          controller.parameter["amount"].toString()),
-                    ],
-                  ),
-                ),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+            () => Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  Container(height: 30),
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(7),
+                      ),
+                      color: Colors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 15.0, vertical: 15),
+                          child: CustomParagraph(
+                              fontSize: 12,
+                              text:
+                                  "Please take time to review the details below before clicking Pay"),
+                        ),
+                        Container(
+                            width: double.infinity,
+                            color: AppColor.scafColor,
+                            child: Image.asset(
+                              fit: BoxFit.fill,
+                              "assets/images/pu_confirmation.png",
+                            )),
+                        SizedBox(height: 10),
+                        _buildDetailRow("Merchant: ",
+                            "${_capitalize(controller.parameter["merchant_name"] ?? "N/A")}"),
+                        _buildDetailRow(
+                          "Available Balance: ",
+                          !controller.isNetConnCard.value
+                              ? "........"
+                              : controller.isLoadingCard.value
+                                  ? "........"
+                                  : toCurrencyString(controller.userData[0]
+                                          ["amount_bal"]
+                                      .toString()),
+                        ),
+                        _buildTotalAmount(
+                            controller.parameter["amount"].toString()),
+                      ],
+                    ),
+                  ),
+                  Container(height: 20),
                   CheckboxListTile(
                     value: isVerified,
                     onChanged: (value) {
@@ -115,28 +111,20 @@ class _merchantQRverifyState extends State<merchantQRverify> {
                     controlAffinity: ListTileControlAffinity.leading,
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(15, 0, 15, 15),
-                    child: CustomElevatedButton(
-                      btnwidth: double.infinity,
-                      text: "Pay ${controller.parameter["amount"].toString()}",
-                      btnColor: isVerified
-                          ? AppColor.primaryColor
-                          : AppColor.primaryColor.withOpacity(0.5),
-                      btnHeight: 40,
-                      textColor: Colors.white,
-                      onPressed: isVerified
-                          ? () {
-                              controller.payMerchantVerify();
-                            }
-                          : null,
-                    ),
-                  ),
+                      padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
+                      child: CustomButton(
+                        text:
+                            "Pay ${controller.parameter["amount"].toString()}",
+                        onPressed: isVerified
+                            ? () {
+                                controller.payMerchantVerify();
+                              }
+                            : () {},
+                      )),
                 ],
               ),
-            ],
-          ),
-        ),
-      )),
+            ),
+          )),
     );
   }
 }
