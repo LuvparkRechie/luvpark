@@ -35,6 +35,7 @@ class MerchantBiller extends GetView<MerchantBillerController> {
                       )
                     : Column(
                         children: [
+                          SizedBox(height: 5),
                           Padding(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 15, vertical: 10),
