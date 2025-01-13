@@ -260,11 +260,14 @@ class BookingController extends GetxController
 
       if (myVehicles["items"].length > 0) {
         for (var row in myVehicles["items"]) {
+          print("ddVehiclesData $ddVehiclesData");
           List dataVBrand = await Functions.getBranding(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
           List fData = ddVehiclesData.where((obj) {
+            print("ob ${obj["value"]} == ${row["vehicle_type_id"]}");
             return obj["value"] == row["vehicle_type_id"];
           }).toList();
+
           if (fData.isNotEmpty) {
             myVehiclesData.add({
               "vehicle_type_id": row["vehicle_type_id"],

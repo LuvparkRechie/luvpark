@@ -113,6 +113,9 @@ class _merchantQRverifyState extends State<merchantQRverify> {
                   Padding(
                       padding: const EdgeInsets.fromLTRB(15, 30, 15, 15),
                       child: CustomButton(
+                        btnColor: isVerified
+                            ? AppColor.primaryColor
+                            : AppColor.primaryColor.withOpacity(0.5),
                         text:
                             "Pay ${controller.parameter["amount"].toString()}",
                         onPressed: isVerified

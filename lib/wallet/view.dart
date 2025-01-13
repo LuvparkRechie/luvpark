@@ -70,7 +70,8 @@ class WalletScreen extends GetView<WalletController> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       CustomParagraph(
-                                        text: "My balance",
+                                        text: "Wallet balance",
+                                        fontWeight: FontWeight.w600,
                                       ),
                                       CustomTitle(
                                         text: !controller.isNetConnCard.value
@@ -103,7 +104,8 @@ class WalletScreen extends GetView<WalletController> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       CustomParagraph(
-                                        text: "My rewards",
+                                        text: "Rewards",
+                                        fontWeight: FontWeight.w600,
                                       ),
                                       CustomTitle(
                                         text: !controller.isNetConnCard.value
