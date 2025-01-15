@@ -30,7 +30,6 @@ class BillersController extends GetxController {
   RxBool isLoading = true.obs;
   var fav = <int, bool>{}.obs;
   RxList filteredBillers = [].obs;
-  RxString userBalance = "".obs;
 
 //for sorting
   RxString selectedSortOption = "Biller Name".obs;

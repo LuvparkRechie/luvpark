@@ -819,4 +819,9 @@ class Functions {
       Get.back();
     }
   }
+
+  static bool isValidInput(double inputAmount, serviceFee, balance) {
+    double totalAmount = inputAmount + serviceFee;
+    return totalAmount <= balance;
+  }
 }
