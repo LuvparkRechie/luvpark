@@ -214,11 +214,7 @@ class _PayBillState extends State<PayBill> {
                                 if (amount == null || value.startsWith('0')) {
                                   return "Invalid amount";
                                 }
-                                if (amount >
-                                    double.parse(
-                                        controller.userBalance.toString())) {
-                                  return "Amount exceeds user balance";
-                                }
+
                                 return null;
                               },
                             ),
