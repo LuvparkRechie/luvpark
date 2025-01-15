@@ -126,7 +126,7 @@ class _PayBillState extends State<PayBill> {
       ),
       body: isLoading
           ? PageLoader()
-          : !controller.isNetConn.value
+          : !isNetConn
               ? NoInternetConnected(
                   onTap: getBalance,
                 )
