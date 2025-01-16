@@ -271,16 +271,14 @@ class BillersController extends GetxController {
         isNetConn.value = false;
         return;
       }
-      if (response == null || response["items"].isEmpty) {
+      if (response == null) {
         isLoading.value = false;
         isNetConn.value = true;
         return;
       }
-      if (response["items"].isNotEmpty) {
-        isLoading.value = false;
-        favBillers.assignAll(response["items"]);
-      }
+      favBillers.value = response["items"];
       isNetConn.value = true;
+      isLoading.value = false;
     });
   }
 
@@ -328,8 +326,8 @@ class BillersController extends GetxController {
             Get.back();
           });
         } else if (retDelete == "Success") {
-          favBillers
-              .removeWhere((biller) => biller['user_biller_id'] == billerId);
+          // favBillers
+          //     .removeWhere((biller) => biller['user_biller_id'] == billerId);
           CustomDialog().successDialog(
               Get.context!, "Success", "Successfully deleted", "Okay", () {
             Get.back();
