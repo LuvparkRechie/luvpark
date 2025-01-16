@@ -328,11 +328,11 @@ class BillersController extends GetxController {
             Get.back();
           });
         } else if (retDelete == "Success") {
-          favBillers.removeWhere((biller) => biller['biller_id'] == billerId);
+          favBillers
+              .removeWhere((biller) => biller['user_biller_id'] == billerId);
           CustomDialog().successDialog(
               Get.context!, "Success", "Successfully deleted", "Okay", () {
             Get.back();
-
             loadFavoritesAndBillers();
           });
         } else {
