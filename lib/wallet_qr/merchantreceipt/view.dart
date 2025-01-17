@@ -70,7 +70,7 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
                             CustomDialog().loadingDialog(Get.context!);
                             File? imgFile;
 
-                            String fname = "booking$randomNumber.png";
+                            String fname = "luv_merchant$randomNumber.png";
                             final directory =
                                 (await getApplicationDocumentsDirectory()).path;
                             Uint8List bytes = await ScreenshotController()
@@ -113,7 +113,7 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
                 text: "Download Receipt",
                 onPressed: () async {
                   String randomNumber = Random().nextInt(100000).toString();
-                  String fname = 'luvpark$randomNumber.png';
+                  String fname = 'luv_merchant$randomNumber.png';
 
                   CustomDialog().loadingDialog(Get.context!);
 
@@ -141,7 +141,6 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
                 height: 10,
               ),
               _custombutton("Back to wallet", () {
-                Get.back();
                 Get.back();
                 Get.back();
               }),
@@ -187,24 +186,26 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomParagraph(
-                                text: "Reference No.",
-                                color: AppColor.primaryColor,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 12,
-                              ),
-                              CustomParagraph(
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 12,
-                                  text: controller.parameter["reference_no"],
-                                  color: Colors.lightBlue),
-                            ],
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: CustomParagraph(
+                              text: "Reference No.",
+                              color: AppColor.primaryColor,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
-                        Container()
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: CustomParagraph(
+                                fontWeight: FontWeight.w400,
+                                fontSize: 12,
+                                text: controller.parameter["reference_no"],
+                                color: Colors.lightBlue),
+                          ),
+                        ),
                       ],
                     ),
                   ),

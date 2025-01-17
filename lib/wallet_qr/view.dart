@@ -15,7 +15,7 @@ class QrWallet extends GetView<QrWalletController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppbar(
-        title: "Send",
+        title: "",
         onTap: () {
           Get.back();
         },

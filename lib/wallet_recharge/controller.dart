@@ -17,15 +17,15 @@ class WalletRechargeController extends GetxController
   var ndData = [].obs;
   RxList padData = [].obs;
   List dataList = [
-    {"value": 20, "is_active": false},
-    {"value": 30, "is_active": false},
-    {"value": 50, "is_active": false},
     {"value": 100, "is_active": false},
+    {"value": 150, "is_active": false},
     {"value": 200, "is_active": false},
-    {"value": 250, "is_active": false},
     {"value": 300, "is_active": false},
+    {"value": 400, "is_active": false},
     {"value": 500, "is_active": false},
+    {"value": 750, "is_active": false},
     {"value": 1000, "is_active": false},
+    {"value": 1500, "is_active": false},
   ].obs;
 
   @override

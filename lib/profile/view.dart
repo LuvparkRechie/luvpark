@@ -8,7 +8,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
-import 'package:luvpark/mapa/index.dart';
 import 'package:luvpark/profile/controller.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -231,8 +230,6 @@ class Profile extends GetView<ProfileScreenController> {
                                         "Yes", () {
                                       Get.back();
                                     }, () async {
-                                      final mapController =
-                                          Get.put(DashboardMapController());
                                       Get.back();
                                       CustomDialog().loadingDialog(context);
                                       await Future.delayed(

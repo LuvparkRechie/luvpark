@@ -89,6 +89,7 @@ class payMerchantVerifyController extends GetxController
         }
         if (retvalue['success'] == "Y") {
           Get.back();
+          Get.back();
           Get.toNamed(Routes.merchantReceipt, arguments: {
             "merchant_name": parameter["merchant_name"],
             "amount": parameter["amount"],

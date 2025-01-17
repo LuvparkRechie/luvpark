@@ -177,6 +177,7 @@ Widget _buildTotalAmount(amount) {
           text: amount,
           fontSize: 15,
           color: Colors.blueAccent,
+          fontWeight: FontWeight.w700,
         ),
       ],
     ),

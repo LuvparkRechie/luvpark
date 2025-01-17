@@ -5,6 +5,7 @@ import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/my_account/utils/index.dart';
 import 'package:luvpark/routes/routes.dart';
 
 import '../../http/api_keys.dart';
@@ -78,6 +79,20 @@ class UpdateProfileController extends GetxController {
   var obscureTextAnswer1 = true.obs;
   var obscureTextAnswer2 = true.obs;
   var obscureTextAnswer3 = true.obs;
+
+  RxInt currentIndex = 0.obs;
+
+  final List<Widget> pages = [
+    Container(
+      key: ValueKey(1),
+      child: Stepp1(),
+    ),
+    Container(
+      key: ValueKey(2),
+      child: Stepp2(),
+    ),
+    Container(key: ValueKey(3), child: Stepp3()),
+  ];
 
   @override
   // ignore: unnecessary_overrides
@@ -199,6 +214,7 @@ class UpdateProfileController extends GetxController {
   }
 
   void onToggleShowAnswer1(bool isShow) {
+    print("isShow $isShow");
     obscureTextAnswer1.value = isShow;
     update();
   }
@@ -428,31 +444,54 @@ class UpdateProfileController extends GetxController {
     update();
   }
 
-  void onNextPage() {
-    FocusScope.of(Get.context!).requestFocus(FocusNode());
+  // void onNextPage() {
+  //   FocusScope.of(Get.context!).requestFocus(FocusNode());
 
-    switch (currentPage.value) {
-      case 0:
-        if (formKeyStep1.currentState!.validate()) {
-          pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut);
-        }
+  //   switch (currentPage.value) {
+  //     case 0:
+  //       // if (formKeyStep1.currentState!.validate()) {
+  //       //   pageController.nextPage(
+  //       //       duration: const Duration(milliseconds: 300),
+  //       //       curve: Curves.easeInOut);
+  //       // }
 
-        break;
-      case 1:
-        if (formKeyStep2.currentState!.validate()) {
-          pageController.nextPage(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut);
-        }
+  //       break;
+  //     case 1:
+  //       // if (formKeyStep2.currentState!.validate()) {
+  //       //   pageController.nextPage(
+  //       //       duration: const Duration(milliseconds: 300),
+  //       //       curve: Curves.easeInOut);
+  //       // }
 
-        break;
-      case 2:
-        if (formKeyStep3.currentState!.validate()) {
-          onSubmit();
-        }
-        break;
+  //       break;
+  //     case 2:
+  //       // if (formKeyStep3.currentState!.validate()) {
+  //       //   onSubmit();
+  //       // }
+  //       break;
+  //   }
+  // }
+  // void nextPage() {
+  //   if (currentIndex.value == pages.length - 1) {
+  //     return;
+  //   }
+  //   currentIndex.value = (currentIndex.value + 1) % pages.length;
+  // }
+  void nextPage() {
+    if (currentIndex.value == 0 && formKeyStep1.currentState!.validate()) {
+      currentIndex.value++;
+    } else if (currentIndex.value == 1 &&
+        formKeyStep2.currentState!.validate()) {
+      currentIndex.value++;
+    } else if (currentIndex.value == 2 &&
+        formKeyStep3.currentState!.validate()) {
+      onSubmit();
+    }
+  }
+
+  void previousPage() {
+    if (currentIndex.value > 0) {
+      currentIndex.value--;
     }
   }
 

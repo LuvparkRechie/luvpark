@@ -141,11 +141,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
             hintText: widget.hintText,
             hintStyle: paragraphStyle(
               color: AppColor.hintColor,
-              fontWeight: FontWeight.w400,
-            ),
-            floatingLabelStyle: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 15,
+              fontWeight: FontWeight.w500,
             ),
           ),
           style:
@@ -381,16 +377,10 @@ DropdownButtonFormField<String> customDropdown({
           color: AppColor.borderColor,
         ),
       ),
-      labelText: labelText,
+      hintText: labelText,
       hintStyle: paragraphStyle(
         color: AppColor.hintColor,
         fontWeight: FontWeight.w400,
-      ),
-      labelStyle: paragraphStyle(
-          fontWeight: FontWeight.w400, color: AppColor.hintColor),
-      floatingLabelStyle: TextStyle(
-        fontWeight: FontWeight.w500,
-        fontSize: 15,
       ),
       errorStyle: paragraphStyle(
         color: Colors.red,

@@ -488,7 +488,7 @@ class _DetailPageState extends State<DetailPage> {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
+            padding: const EdgeInsets.fromLTRB(15, 15, 15, 10),
             child: GestureDetector(
               onTap: () {
                 FocusNode().unfocus();
@@ -527,6 +527,7 @@ class _DetailPageState extends State<DetailPage> {
               },
               child: Container(
                 width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8.0),
@@ -535,7 +536,6 @@ class _DetailPageState extends State<DetailPage> {
                     width: 1.0,
                   ),
                 ),
-                height: 50,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -544,10 +544,22 @@ class _DetailPageState extends State<DetailPage> {
                       color: AppColor.primaryColor,
                     ),
                     Container(width: 10),
-                    CustomParagraph(
-                      text: "Subscribe",
-                      color: AppColor.primaryColor,
-                      fontWeight: FontWeight.w600,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomTitle(
+                            text: "Subscribe",
+                            fontWeight: FontWeight.w700,
+                          ),
+                          Container(height: 5),
+                          CustomParagraph(
+                            text: "Scan QR code to subscribe.",
+                            maxlines: 1,
+                            fontSize: 13,
+                          ),
+                        ],
+                      ),
                     )
                   ],
                 ),
@@ -565,12 +577,13 @@ class _DetailPageState extends State<DetailPage> {
           ),
           Expanded(
             child: Container(
+              width: double.infinity,
               color: AppColor.bodyColor,
               child: isLoading
                   ? const PageLoader()
                   : subsListData.isEmpty
                       ? NoDataFound(
-                          text: "No data subscription",
+                          text: "No subscription data",
                         )
                       : ListView.separated(
                           padding: EdgeInsets.fromLTRB(15, 15, 15, 0),

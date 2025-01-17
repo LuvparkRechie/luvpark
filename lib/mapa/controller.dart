@@ -507,7 +507,7 @@ class DashboardMapController extends GetxController
           CameraPosition(
             target: LatLng(initialCameraPosition!.target.latitude,
                 initialCameraPosition!.target.longitude),
-            zoom: dataNearest.isEmpty ? 15 : 16,
+            zoom: dataNearest.isEmpty ? 16 : 17,
           ),
         ),
       );
@@ -825,7 +825,7 @@ class DashboardMapController extends GetxController
           CameraUpdate.newCameraPosition(
             CameraPosition(
               target: filteredMarkers[0].position,
-              zoom: 15,
+              zoom: 16,
             ),
           ),
         );
