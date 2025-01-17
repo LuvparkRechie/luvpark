@@ -274,6 +274,10 @@ class BillersController extends GetxController {
       if (response == null) {
         isLoading.value = false;
         isNetConn.value = true;
+        favBillers.value = [];
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
         return;
       }
       favBillers.value = response["items"];
@@ -326,8 +330,6 @@ class BillersController extends GetxController {
             Get.back();
           });
         } else if (retDelete == "Success") {
-          // favBillers
-          //     .removeWhere((biller) => biller['user_biller_id'] == billerId);
           CustomDialog().successDialog(
               Get.context!, "Success", "Successfully deleted", "Okay", () {
             Get.back();
@@ -340,13 +342,5 @@ class BillersController extends GetxController {
         }
       });
     });
-  } // Function to generate a random soft color
-
-  Color getRandomSoftColor() {
-    final random = Random();
-    int red = random.nextInt(156) + 100; // Range: 100-255
-    int green = random.nextInt(156) + 100; // Range: 100-255
-    int blue = random.nextInt(156) + 100; // Range: 100-255
-    return Color.fromARGB(255, red, green, blue); // Opaque color
   }
 }
