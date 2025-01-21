@@ -210,10 +210,11 @@ class _PayBillState extends State<PayBill> {
                               if (value == null || value.isEmpty) {
                                 return "Account Name is required";
                               }
-                              if ((value.endsWith(' ') ||
+                              if ((value.startsWith(' ') ||
+                                  value.endsWith(' ') ||
                                   value.endsWith('-') ||
                                   value.endsWith('.'))) {
-                                return "Account Name cannot end with a space, hyphen, or period";
+                                return "Account Name cannot start or end with a space";
                               }
 
                               return null;

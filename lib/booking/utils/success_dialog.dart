@@ -95,7 +95,7 @@ class _BookingDialogState extends State<BookingDialog> {
                         Container(height: 30),
                         Center(
                           child: QrImageView(
-                            data: widget.data[0]["refno"],
+                            data: widget.data[0]["referno"],
                             size: 180,
                           ),
                         ),

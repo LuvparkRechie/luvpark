@@ -116,7 +116,6 @@ class BookingController extends GetxController
   }
 
   void updateTimes() async {
-    print("isMaxLimit $isMaxLimit");
     if (isMaxLimit.value) return;
     _reloadPage();
   }
@@ -260,11 +259,9 @@ class BookingController extends GetxController
 
       if (myVehicles["items"].length > 0) {
         for (var row in myVehicles["items"]) {
-          print("ddVehiclesData $ddVehiclesData");
           List dataVBrand = await Functions.getBranding(
               row["vehicle_type_id"], row["vehicle_brand_id"]);
           List fData = ddVehiclesData.where((obj) {
-            print("ob ${obj["value"]} == ${row["vehicle_type_id"]}");
             return obj["value"] == row["vehicle_type_id"];
           }).toList();
 
@@ -469,7 +466,6 @@ class BookingController extends GetxController
         "${now.toString().split(" ")[0]} ${parameters["areaData"]["closed_time"].toString().trim()}");
 
     if (parameters["areaData"]["is_24_hrs"] == "N") {
-      print("is after ${pTime.isAfter(cTime)}");
       if (pTime.isAfter(cTime)) {
         int deductTime = pTime.difference(cTime).inHours > 0
             ? pTime.difference(cTime).inHours
@@ -574,7 +570,6 @@ class BookingController extends GetxController
     plateNo.text = selectedVh[0]["vehicle_plate_no"];
     dropdownValue = selectedVh[0]["vehicle_type_id"].toString();
     noHours.text = selectedNumber.value.toString();
-    print("selectedVh $selectedVh");
     Get.back();
     timeComputation();
     routeToComputation();
@@ -711,7 +706,6 @@ class BookingController extends GetxController
       "disc_rate": 0,
     };
     Get.back();
-    print("dynamicBookParam $dynamicBookParam");
     DateTime eet = now.add(Duration(minutes: areaEtaTime));
     DateTime ddEet = eet.subtract(Duration(minutes: 4));
     var ddd = Variables.timeFormatter("${eet.hour}:${eet.minute}");
@@ -766,6 +760,7 @@ class BookingController extends GetxController
             'hours': bookingParams[0]["no_hours"].toString(),
             'amount': totalAmount.value.toString(),
             'refno': objData["lp_ref_no"].toString(),
+            'referno': objData["ticket_ref_no"].toString(),
             'lat':
                 double.parse(parameters["areaData"]['pa_latitude'].toString()),
             'long':
@@ -958,8 +953,6 @@ class BookingController extends GetxController
   }
 
   void confirmBooking() {
-    print("isProcessing $isProcessing");
-    print("selectedVh[0] ${selectedVh[0]}");
     if (isProcessing) return;
     if (selectedVh[0]["isAllowSubscription"]) {
       if (double.parse(selectedVh[0]["sub_min_balance"].toString()) >
@@ -1143,7 +1136,6 @@ class BookingController extends GetxController
 
             List filterSub = await filterSubscriotion(
                 objData[0]["vehicle_plate_no"], objData[0]["vehicle_type_id"]);
-            print("filterSub $filterSub");
             if (filterSub.isNotEmpty) {
               Get.back();
               checkIfSubscribed(filterSub);
@@ -1152,7 +1144,6 @@ class BookingController extends GetxController
               List filterData = ddVehiclesData.where((obj) {
                 return obj["value"] == data[0]["vehicle_type_id"];
               }).toList();
-              print("filterData $filterData");
               if (filterData.isEmpty) {
                 selectedVh.value = objData;
               } else {

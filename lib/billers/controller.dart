@@ -69,6 +69,9 @@ class BillersController extends GetxController {
       if (response == null) {
         isLoading.value = false;
         isNetConn.value = true;
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
         return;
       }
       if (response["items"].isNotEmpty) {

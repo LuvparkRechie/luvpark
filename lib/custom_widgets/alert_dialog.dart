@@ -75,9 +75,7 @@ class CustomDialog {
           const SizedBox(height: 15),
           // Paragraph
           CustomParagraph(
-            text:
-                "We are currently experiencing technical issues connecting to the server."
-                " Please try again later or contact support for assistance.",
+            text: "Please refresh the page or \ntry again later.",
             textAlign: TextAlign.center,
           ),
           // Buttons
