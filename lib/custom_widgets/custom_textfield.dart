@@ -144,6 +144,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               fontWeight: FontWeight.w500,
             ),
           ),
+          buildCounter: (BuildContext context,
+              {required int currentLength,
+              required bool isFocused,
+              required int? maxLength}) {
+            return null;
+          },
           style:
               paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
           onChanged: (value) {

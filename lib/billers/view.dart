@@ -232,7 +232,7 @@ class Billers extends StatelessWidget {
                                               'user_biller_id':
                                                   controller.favBillers[index]
                                                       ['user_biller_id'],
-                                              'source': 'favorites'
+                                              'source': 'favorites',
                                             };
                                             Get.back();
                                             Get.to(PayBill(), arguments: fav);

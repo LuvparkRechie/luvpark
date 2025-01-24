@@ -14,6 +14,7 @@ import '../custom_widgets/alert_dialog.dart';
 import '../functions/functions.dart';
 import '../http/api_keys.dart';
 import 'utils/receipt_billing.dart';
+import 'utils/templ.dart';
 
 class BillersController extends GetxController {
   BillersController();
@@ -286,6 +287,38 @@ class BillersController extends GetxController {
       favBillers.value = response["items"];
       isNetConn.value = true;
       isLoading.value = false;
+    });
+  }
+
+  Future<void> getTemplate(billerData) async {
+    int billerId = billerData["biller_id"];
+    CustomDialog().loadingDialog(Get.context!);
+    HttpRequest(api: "${ApiKeys.gApiBillerTemplate}?biller_id=$billerId")
+        .get()
+        .then((response) async {
+      Get.back();
+      if (response["items"].isNotEmpty) {
+        List data = response["items"];
+        List dataBiller = [];
+
+        for (dynamic row in data) {
+          dataBiller.add({
+            "label": row["input_label"],
+            "key": row["input_key"],
+            "value": "",
+            "maxLength": row["max_length"],
+            "type": row["input_type"],
+            "required": row["is_required"] == "Y" ? true : false,
+            "is_validation": row["is_validation"],
+            "input_formatter": row["input_formatter"]
+          });
+          print("objectrow $row");
+        }
+        Get.to(
+            arguments: {"details": billerData, "field": dataBiller},
+            // const PayBill(),
+            const Templ());
+      }
     });
   }
 
