@@ -3,19 +3,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark/billers/utils/paybill.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../../custom_widgets/alert_dialog.dart';
 import '../../custom_widgets/custom_button.dart';
 import '../../custom_widgets/custom_textfield.dart';
-import '../../functions/functions.dart';
+import '../../http/thirdparty.dart';
 import '../controller.dart';
-import 'templ.dart';
 
 class Allbillers extends GetView<BillersController> {
   Allbillers({super.key});
@@ -252,8 +252,10 @@ class Allbillers extends GetView<BillersController> {
 }
 
 class ValidateAccount extends StatefulWidget {
+  final dynamic billerData;
   const ValidateAccount({
     super.key,
+    this.billerData,
   });
 
   @override
@@ -261,83 +263,238 @@ class ValidateAccount extends StatefulWidget {
 }
 
 class _ValidateAccountState extends State<ValidateAccount> {
+  Map<String, TextEditingController> controllers2 = {};
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController amountController = TextEditingController();
+  List tempData = [];
+  final Map<String, RegExp> _filter = {
+    'A': RegExp(r'[A-Za-z0-9]'),
+    '0': RegExp(r'[0-9]'),
+    'N': RegExp(r'[0-9]'),
+  };
 
   @override
   void initState() {
     super.initState();
+    initializedData();
+  }
+
+  Future<void> _selectDate(BuildContext context, String key) async {
+    DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        controllers2[key]!.text = "${picked.toLocal()}".split(' ')[0];
+      });
+    }
+  }
+
+  void initializedData() async {
+    List fieldData = widget.billerData["field"];
+    setState(() {
+      controllers2.clear();
+      tempData = fieldData
+          .where((element) => element["is_validation"] == "Y")
+          .toList();
+    });
+    for (var field in tempData) {
+      controllers2[field['key']] = TextEditingController(text: field['value']);
+    }
+
+    setState(() {});
+  }
+
+  void _verifyAccount() async {
+    if (_formKey.currentState!.validate()) {
+      Map<String, dynamic> formData = {};
+      for (var field in tempData) {
+        formData[field['key']] = controllers2[field['key']]!.text;
+      }
+
+      String paramUrl = widget.billerData["details"]["full_url"];
+
+      Map<String, dynamic> validateParam = {};
+      for (var field in tempData) {
+        String key = field["key"];
+        if (formData.containsKey(key)) {
+          field["value"] = formData[key];
+        }
+      }
+
+      for (var field in tempData) {
+        String key = field["key"];
+        String value = field["value"];
+        validateParam[key] = value;
+      }
+
+      Uri fullUri = Uri.parse(paramUrl).replace(queryParameters: validateParam);
+      String fullUrl = fullUri.toString();
+
+      CustomDialog().loadingDialog(Get.context!);
+      final inatay = await Http3rdPartyRequest(url: fullUrl).getBiller();
+      Get.back();
+
+      if (inatay == "No Internet") {
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      } else if (inatay["result"] == "true") {
+        print("success");
+        CustomDialog().successDialog(context, "Success", "Successs", "Okay",
+            () {
+          Get.back();
+        });
+      } else if (inatay == null) {
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      } else {
+        CustomDialog().infoDialog("Invalid request",
+            "Please provide the required information or ensure the data entered is valid.",
+            () {
+          Get.back();
+        });
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(15),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(7),
         ),
         color: Colors.white,
       ),
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(height: 20),
-                    Row(
+      child: tempData.isEmpty
+          ? PageLoader()
+          : Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(height: 40),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColor.iconBgColor),
-                          padding: EdgeInsets.all(10),
-                          child: Icon(
-                            Iconsax.bill,
-                            color: AppColor.primaryColor,
-                          ),
-                        ),
-                        Container(width: 10),
                         CustomTitle(
-                          text: "GCC hydra",
-                          fontSize: 18,
-                        )
+                          text: "Account Verification",
+                          fontSize: 20,
+                        ),
+                        Container(height: 10),
+                        CustomParagraph(
+                          text: "Ensure your account information is accurate.",
+                        ),
                       ],
                     ),
-                    Container(height: 15),
-                    CustomParagraph(
-                      text: "Bacolod city",
+                  ),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: EdgeInsets.fromLTRB(15, 20, 15, 10),
+                      itemCount: tempData.length,
+                      itemBuilder: (context, i) {
+                        final field = tempData[i];
+
+                        List<TextInputFormatter> inputFormatters = [];
+                        if (field['input_formatter'] != null &&
+                            field['input_formatter'].isNotEmpty) {
+                          String mask = field['input_formatter'];
+                          inputFormatters = [
+                            MaskTextInputFormatter(mask: mask, filter: _filter)
+                          ];
+                        }
+
+                        if (field['type'] == 'date') {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(fontSize: 14, text: field['label']),
+                              CustomTextField(
+                                controller: controllers2[field['key']]!,
+                                isReadOnly: true,
+                                isFilled: false,
+                                suffixIcon: Icons.calendar_today,
+                                onTap: () => _selectDate(context, field['key']),
+                                validator: (value) {
+                                  if (field['required'] &&
+                                      (value == null || value.isEmpty)) {
+                                    return '${field['label']} is required';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          );
+                        } else if (field['type'] == 'number') {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(fontSize: 14, text: field['label']),
+                              CustomTextField(
+                                controller: controllers2[field['key']]!,
+                                maxLength: field['maxLength'],
+                                keyboardType: TextInputType.number,
+                                hintText: "Enter ${field['label']}",
+                                inputFormatters: inputFormatters,
+                                validator: (value) {
+                                  if (field['required'] &&
+                                      (value == null || value.isEmpty)) {
+                                    return '${field['label']} is required';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
+                          );
+                        } else {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(fontSize: 14, text: field['label']),
+                              CustomTextField(
+                                textCapitalization:
+                                    TextCapitalization.characters,
+                                controller: controllers2[field['key']]!,
+                                maxLength: field['maxLength'],
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (field['required'] &&
+                                      (value == null || value.isEmpty)) {
+                                    return '${field['label']} is required';
+                                  }
+                                  return null;
+                                },
+                                inputFormatters: inputFormatters,
+                              ),
+                            ],
+                          );
+                        }
+                      },
                     ),
-                    Container(height: 20),
-                    CustomParagraph(
-                      text: "Amount",
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15),
+                    child: Visibility(
+                      visible: MediaQuery.of(context).viewInsets.bottom == 0,
+                      child: CustomButton(
+                          text: "Proceed",
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              _verifyAccount();
+                            }
+                          }),
                     ),
-                    CustomTextField(
-                      hintText: "Enter payment amount",
-                      keyboardType:
-                          TextInputType.numberWithOptions(decimal: true),
-                      controller: amountController,
-                      inputFormatters: [AutoDecimalInputFormatter()],
-                    ),
-                  ],
-                ),
+                  ),
+                  Container(height: 30),
+                ],
               ),
             ),
-            Visibility(
-              visible: MediaQuery.of(context).viewInsets.bottom == 0,
-              child: CustomButton(text: "Proceed", onPressed: () {}),
-            ),
-            Container(height: 20),
-          ],
-        ),
-      ),
     );
   }
 }

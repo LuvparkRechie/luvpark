@@ -2,7 +2,6 @@
 
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,8 +12,8 @@ import '../auth/authentication.dart';
 import '../custom_widgets/alert_dialog.dart';
 import '../functions/functions.dart';
 import '../http/api_keys.dart';
+import 'utils/allbillers.dart';
 import 'utils/receipt_billing.dart';
-import 'utils/templ.dart';
 
 class BillersController extends GetxController {
   BillersController();
@@ -312,12 +311,13 @@ class BillersController extends GetxController {
             "is_validation": row["is_validation"],
             "input_formatter": row["input_formatter"]
           });
-          print("objectrow $row");
         }
-        Get.to(
-            arguments: {"details": billerData, "field": dataBiller},
-            // const PayBill(),
-            const Templ());
+        dynamic param = {"details": billerData, "field": dataBiller};
+        Get.bottomSheet(ValidateAccount(billerData: param));
+        // Get.to(
+        //     arguments: {"details": billerData, "field": dataBiller},
+        //     // const PayBill(),
+        //     const Templ());
       }
     });
   }

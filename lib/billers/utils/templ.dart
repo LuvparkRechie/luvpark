@@ -1,22 +1,16 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'package:custom_input_formatter/custom_input_formatter.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
-import '../../auth/authentication.dart';
 import '../../custom_widgets/alert_dialog.dart';
 import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_appbar.dart';
 import '../../custom_widgets/custom_text.dart';
-import '../../functions/functions.dart';
-import '../../http/api_keys.dart';
-import '../../http/http_request.dart';
 import '../../http/thirdparty.dart';
 import '../controller.dart';
 
