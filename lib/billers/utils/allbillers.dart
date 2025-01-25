@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/billers/utils/templ.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -342,11 +343,15 @@ class _ValidateAccountState extends State<ValidateAccount> {
           Get.back();
         });
       } else if (inatay["result"] == "true") {
-        print("success");
-        CustomDialog().successDialog(context, "Success", "Successs", "Okay",
-            () {
-          Get.back();
-        });
+        print('fields ${widget.billerData["field"]}');
+        Get.to(
+            arguments: {
+              "details": widget.billerData["details"],
+              "field": widget.billerData["field"],
+              "user_details": inatay["data"]
+            },
+            // const PayBill(),
+            const Templ());
       } else if (inatay == null) {
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
@@ -387,7 +392,7 @@ class _ValidateAccountState extends State<ValidateAccount> {
                           text: "Account Verification",
                           fontSize: 20,
                         ),
-                        Container(height: 10),
+                        Container(height: 5),
                         CustomParagraph(
                           text: "Ensure your account information is accurate.",
                         ),
@@ -396,7 +401,7 @@ class _ValidateAccountState extends State<ValidateAccount> {
                   ),
                   Expanded(
                     child: ListView.builder(
-                      padding: EdgeInsets.fromLTRB(15, 20, 15, 10),
+                      padding: EdgeInsets.fromLTRB(15, 30, 15, 10),
                       itemCount: tempData.length,
                       itemBuilder: (context, i) {
                         final field = tempData[i];

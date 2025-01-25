@@ -7,10 +7,14 @@ import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
+import '../../auth/authentication.dart';
 import '../../custom_widgets/alert_dialog.dart';
 import '../../custom_widgets/app_color.dart';
 import '../../custom_widgets/custom_appbar.dart';
 import '../../custom_widgets/custom_text.dart';
+import '../../functions/functions.dart';
+import '../../http/api_keys.dart';
+import '../../http/http_request.dart';
 import '../../http/thirdparty.dart';
 import '../controller.dart';
 
@@ -26,6 +30,7 @@ class _TemplState extends State<Templ> {
   final _formKey = GlobalKey<FormState>();
   final controller = Get.put(BillersController());
   final args = Get.arguments;
+  final userDetails = Get.arguments["user_details"];
   final Map<String, RegExp> _filter = {
     'A': RegExp(r'[A-Za-z0-9]'),
     '0': RegExp(r'[0-9]'),
@@ -42,6 +47,7 @@ class _TemplState extends State<Templ> {
   void _initializeControllers() {
     setState(() {
       dataBiller = args["field"];
+
       controllers2.clear();
     });
 
@@ -52,144 +58,115 @@ class _TemplState extends State<Templ> {
 
   void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      Map<String, dynamic> formData = {};
-      for (var field in dataBiller) {
-        formData[field['key']] = controllers2[field['key']]!.text;
-      }
-
-      String paramUrl = args["details"]["full_url"];
-      List dataMap = args["field"];
-      List redundant = dataMap.where((e) {
-        return e["is_validation"] == "Y";
-      }).toList();
-
-      Map<String, dynamic> validateParam = {};
-      for (var field in redundant) {
-        String key = field["key"];
-        if (formData.containsKey(key)) {
-          field["value"] = formData[key];
-        }
-      }
-
-      for (var field in redundant) {
-        String key = field["key"];
-        String value = field["value"];
-        validateParam[key] = value;
-      }
-
-      Uri fullUri = Uri.parse(paramUrl).replace(queryParameters: validateParam);
-      String fullUrl = fullUri.toString();
-
-      CustomDialog().loadingDialog(Get.context!);
-      final inatay = await Http3rdPartyRequest(url: fullUrl).getBiller();
-      Get.back();
-
-      if (inatay == "No Internet") {
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      } else if (inatay["result"] == "true") {
-        print("success");
-        postData();
-      } else if (inatay == null) {
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-      } else {
-        CustomDialog().infoDialog("Invalid request",
-            "Please provide the required information or ensure the data entered is valid.",
-            () {
-          Get.back();
-        });
-      }
+      initializeFormData();
     }
   }
 
-  // Future<void> luvparkPayment() async {
-  //   FocusManager.instance.primaryFocus?.unfocus();
+  void initializeFormData() {
+    Map<String, dynamic> formData = {};
+    List postData =
+        dataBiller.where((e) => e["is_for_posting"] == "Y").toList();
+    for (var field in postData) {
+      formData[field['key']] = controllers2[field['key']]!.text;
+    }
 
-  //   CustomDialog().loadingDialog(Get.context!);
-  //   final response = await Functions.generateQr();
+    Map<String, dynamic> validateParam = {};
+    for (var field in postData) {
+      String key = field["key"];
+      if (formData.containsKey(key)) {
+        field["value"] = formData[key];
+      }
+    }
 
-  //   if (response["response"] == "Success") {
-  //     double serviceFee =
-  //         double.tryParse(args['service_fee'].toString()) ?? 0.0;
-  //     double userAmount = double.tryParse(amount.text) ?? 0.0;
-  //     double addedAmount = serviceFee + userAmount;
-  //     String totalAmount = addedAmount.toStringAsFixed(2);
-  //     int userId = await Authentication().getUserId();
-  //     CustomDialog().confirmationDialog(Get.context!, "Pay Bills",
-  //         "Are you sure you want to continue?", "No", "Okay", () {
-  //       Get.back();
-  //     }, () async {
-  //       Get.back();
-  //       var parameter = {
-  //         "luvpay_id": userId.toString(),
-  //         "biller_id": args["biller_id"].toString(),
-  //         "bill_acct_no": billAccNo.text,
-  //         "amount": totalAmount,
-  //         "payment_hk": response["data"],
-  //         "bill_no": billNo.text,
-  //         "account_name": billerAccountName.text,
-  //         'original_amount': amount.text
-  //       };
+    for (var field in postData) {
+      String key = field["key"];
+      String value = field["value"];
+      validateParam[key] = value;
+    }
+    print("validateParam $validateParam");
+    luvparkPayment(validateParam);
+  }
 
-  //       CustomDialog().loadingDialog(Get.context!);
+  Future<void> luvparkPayment(vParam) async {
+    FocusManager.instance.primaryFocus?.unfocus();
 
-  //       HttpRequest(api: ApiKeys.gApiPostPayBills, parameters: parameter)
-  //           .postBody()
-  //           .then((returnPost) async {
-  //         Get.back();
-  //         if (returnPost == "No Internet") {
-  //           CustomDialog().internetErrorDialog(Get.context!, () {
-  //             Get.back();
-  //           });
-  //         } else if (returnPost == null) {
-  //           CustomDialog().serverErrorDialog(Get.context!, () {
-  //             Get.back();
-  //           });
-  //         } else {
-  //           if (returnPost["success"] == 'Y') {
-  //             var params = {
-  //               "user_id": userId,
-  //               "biller_id": args["biller_id"].toString(),
-  //               "account_no": billAccNo.text,
-  //               "biller_name": args["biller_name"],
-  //               "biller_address": args["biller_address"],
-  //               'user_biller_id': args['user_biller_id'],
-  //               'amount': totalAmount.toString(),
-  //               "account_name": billerAccountName.text,
-  //               "service_fee": args['service_fee'].toString(),
-  //               "original_amount": amount.text
-  //             };
-  //             Get.to(TicketUI(), arguments: params);
-  //           } else {
-  //             CustomDialog()
-  //                 .errorDialog(Get.context!, "Error", returnPost["msg"], () {
-  //               Get.back();
-  //             });
-  //           }
-  //         }
-  //         isNetConn.value = true;
-  //       });
-  //     });
-  //   }
-  // }
+    CustomDialog().loadingDialog(Get.context!);
+    final response = await Functions.generateQr();
 
-  Future<void> postData() async {
-    Map<String, dynamic> validateParam = {
-      "accountno": "2021-0323-2",
-      "bill_ref_no": "BHBR25-01-0001",
-      "luvpark_trans_ref": "LPP-123456",
-      "received_amount": "629"
-    };
+    if (response["response"] == "Success") {
+      double serviceFee =
+          double.tryParse(args['service_fee'].toString()) ?? 0.0;
+      double userAmount = double.tryParse(vParam["received_amount"]) ?? 0.0;
+      double addedAmount = serviceFee + userAmount;
+      String totalAmount = addedAmount.toStringAsFixed(2);
+      int userId = await Authentication().getUserId();
+      CustomDialog().confirmationDialog(Get.context!, "Pay Bills",
+          "Are you sure you want to continue?", "No", "Okay", () {
+        Get.back();
+      }, () async {
+        Get.back();
+        var parameter = {
+          "luvpay_id": userId.toString(),
+          "biller_id": args["details"]["biller_id"],
+          "bill_acct_no": vParam["accountno"],
+          "amount": totalAmount,
+          "payment_hk": response["data"],
+          "bill_no": vParam["bill_ref_no"],
+          "account_name": userDetails["fullname"],
+          'original_amount': "20"
+        };
+
+        print("posting param $parameter");
+
+        CustomDialog().loadingDialog(Get.context!);
+
+        HttpRequest(api: ApiKeys.gApiPostPayBills, parameters: parameter)
+            .postBody()
+            .then((returnPost) async {
+          print("luvpark payment postin $returnPost");
+
+          if (returnPost == "No Internet") {
+            Get.back();
+            CustomDialog().internetErrorDialog(Get.context!, () {
+              Get.back();
+            });
+          } else if (returnPost == null) {
+            Get.back();
+            CustomDialog().serverErrorDialog(Get.context!, () {
+              Get.back();
+            });
+          } else {
+            if (returnPost["success"] == 'Y') {
+              vParam["payment_details"] = returnPost["lp_ref_no"];
+              postData(vParam);
+            } else {
+              Get.back();
+              CustomDialog()
+                  .errorDialog(Get.context!, "Error", returnPost["msg"], () {
+                Get.back();
+              });
+            }
+          }
+        });
+      });
+    }
+  }
+
+  Future<void> postData(vParam) async {
+    Get.back();
     String paramUrl = "http://192.168.7.78/web/eforms/hydracore/add_payment";
-    Uri fullUri = Uri.parse(paramUrl).replace(queryParameters: validateParam);
+    Uri fullUri = Uri.parse(paramUrl).replace(queryParameters: vParam);
     String fullUrl = fullUri.toString();
 
     print("fullUrl $fullUrl");
 
-    CustomDialog().loadingDialog(Get.context!);
+    // Map<String, dynamic> validateParam = {
+    //   "accountno": "2021-0323-2",
+    //   "bill_ref_no": "BHBR25-01-0001",
+    //   "luvpark_trans_ref": "LPP-123456",
+    //   "received_amount": "629"
+    // };
+
     final inatay = await Http3rdPartyRequest(url: fullUrl).postBiller();
     Get.back();
 

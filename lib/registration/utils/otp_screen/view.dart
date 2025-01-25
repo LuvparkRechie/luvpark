@@ -88,7 +88,7 @@ class OtpScreen extends GetView<OtpController> {
                             children: [
                               TextSpan(
                                   text:
-                                      "We have sent an OTP to your registered\nmobile number",
+                                      "We have sent an OTP to registered\nmobile number",
                                   style: GoogleFonts.openSans(
                                     fontWeight: FontWeight.w500,
                                     fontSize: 14,

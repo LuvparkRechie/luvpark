@@ -309,15 +309,12 @@ class BillersController extends GetxController {
             "type": row["input_type"],
             "required": row["is_required"] == "Y" ? true : false,
             "is_validation": row["is_validation"],
+            "is_for_posting": row["is_for_posting"],
             "input_formatter": row["input_formatter"]
           });
         }
         dynamic param = {"details": billerData, "field": dataBiller};
         Get.bottomSheet(ValidateAccount(billerData: param));
-        // Get.to(
-        //     arguments: {"details": billerData, "field": dataBiller},
-        //     // const PayBill(),
-        //     const Templ());
       }
     });
   }

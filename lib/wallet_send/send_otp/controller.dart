@@ -108,7 +108,7 @@ class SendOtpController extends GetxController {
         isRunning.value = false;
         startTimers();
         CustomDialog().successDialog(Get.context!, "Success",
-            "OTP has been sent to your registered mobile number.", "Okay", () {
+            "OTP has been sent to registered mobile number.", "Okay", () {
           Get.back();
         });
       } else {
