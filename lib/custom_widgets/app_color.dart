@@ -6,7 +6,7 @@ class AppColor {
   static Color mainColor = const Color(0xFF01b9c5);
   static const bodyColor = Color.fromARGB(255, 244, 243, 243);
   static const scafColor = Colors.white;
-  static Color borderColor = const Color.fromARGB(255, 198, 195, 195);
+  static Color borderColor = Color.fromARGB(255, 234, 232, 232);
   static Color hintColor = Color(0xFF646263);
   static const linkLabel = Color(0xFF070707);
   static Color paragraphColor = Color(0xFF646263);

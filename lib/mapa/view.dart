@@ -213,7 +213,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                     ],
                                   ),
                                   key: controller.locKey,
-                                  child: _buildDialItem("gps", () {
+                                  child: _buildDialItem("gps", () async {
                                     controller.getCurrentLoc();
                                   }),
                                 ),

@@ -150,6 +150,14 @@ class LoginScreenController extends GetxController {
               password.clear();
               var items = objData["items"][0];
 
+              //sms keys
+              final data = {
+                "sms_username": items["sms_username"],
+                "sms_password": items["sms_password"],
+                "sms_api_key": items["sms_api_key"]
+              };
+              final plainText = jsonEncode(data);
+
               Map<String, dynamic> parameters = {
                 "user_id": items['user_id'].toString(),
                 "mobile_no": param["mobile_no"],
@@ -157,10 +165,12 @@ class LoginScreenController extends GetxController {
                 "is_login": "Y",
               };
               prefs.remove("userData");
+
               Authentication().setLogin(jsonEncode(parameters));
               Authentication().setUserData(jsonEncode(items));
               Authentication().setPasswordBiometric(param["pwd"]);
               Authentication().setLogoutStatus(false);
+              Authentication().encryptData(plainText);
 
               if (items["image_base64"] != null) {
                 Authentication()
@@ -169,8 +179,17 @@ class LoginScreenController extends GetxController {
                 Authentication().setProfilePic("");
               }
 
+              List dataCb = objData["items"];
+
+              dataCb = dataCb.map((e) {
+                e["sms_username"] = "";
+                e["sms_password"] = "";
+                e["sms_api_key"] = "";
+                return e;
+              }).toList();
+
               cb([
-                {"has_net": true, "items": objData["items"]}
+                {"has_net": true, "items": dataCb}
               ]);
             }
           }

@@ -1,14 +1,15 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'dart:io';
-import 'package:luvpark/custom_widgets/page_loader.dart';
-import 'package:luvpark/functions/functions.dart';
-import 'package:luvpark/http/http_request.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:luvpark/functions/functions.dart';
+import 'package:luvpark/http/http_request.dart';
 
 import '../../auth/authentication.dart';
 import '../../custom_widgets/alert_dialog.dart';
@@ -97,7 +98,7 @@ class _PayBillState extends State<PayBill> {
         isAmountValid &&
         isBillNumberValid) {
       if (isFavSource) {
-        controller.addFavorites(args);
+        // controller.addFavorites(args, 1);
       } else if (args["source"] == "pay" || args["source"] == "favorites") {
         controller.onPay(args);
       }

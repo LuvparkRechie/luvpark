@@ -10,13 +10,11 @@ import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 
-import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/custom_appbar.dart';
 import '../custom_widgets/custom_button.dart';
 import '../custom_widgets/page_loader.dart';
 import '../functions/functions.dart';
 import 'controller.dart';
-import 'utils/paybill.dart';
 
 class Billers extends StatelessWidget {
   const Billers({Key? key}) : super(key: key);
@@ -200,43 +198,35 @@ class Billers extends StatelessWidget {
 
                                       return GestureDetector(
                                         onTap: () {
-                                          CustomDialog().confirmationDialog(
-                                              Get.context!,
-                                              controller.favBillers[index]
-                                                      ["biller_name"] ??
-                                                  "",
-                                              "Do you want to pay bills?",
-                                              "Close",
-                                              "Pay Bill", () {
-                                            Get.back();
-                                          }, () {
-                                            Map<String, dynamic> fav = {
-                                              'biller_name':
-                                                  controller.favBillers[index]
-                                                      ["biller_name"],
-                                              'biller_id':
-                                                  controller.favBillers[index]
-                                                      ["biller_id"],
-                                              'account_no':
-                                                  controller.favBillers[index]
-                                                      ["account_no"],
-                                              'biller_address':
-                                                  controller.favBillers[index]
-                                                      ["biller_address"],
-                                              'service_fee':
-                                                  controller.favBillers[index]
-                                                      ["service_fee"],
-                                              'account_name':
-                                                  controller.favBillers[index]
-                                                      ["account_name"],
-                                              'user_biller_id':
-                                                  controller.favBillers[index]
-                                                      ['user_biller_id'],
-                                              'source': 'favorites',
-                                            };
-                                            Get.back();
-                                            Get.to(PayBill(), arguments: fav);
-                                          });
+                                          Map<String, String> billerData = {
+                                            'biller_name': controller
+                                                .favBillers[index]
+                                                    ["account_name"]
+                                                .toString(),
+                                            'biller_id': controller
+                                                .favBillers[index]["biller_id"]
+                                                .toString(),
+                                            'biller_code': controller
+                                                .favBillers[index]
+                                                    ["biller_code"]
+                                                .toString(),
+                                            'biller_address': controller
+                                                .favBillers[index]
+                                                    ["biller_address"]
+                                                .toString(),
+                                            'service_fee': controller
+                                                .favBillers[index]
+                                                    ["service_fee"]
+                                                .toString(),
+                                            'accountno': controller
+                                                .favBillers[index]["account_no"]
+                                                .toString(),
+                                            'full_url': controller
+                                                .favBillers[index]["full_url"]
+                                                .toString(),
+                                          };
+
+                                          controller.getTemplate(billerData);
                                         },
                                         child: Container(
                                           margin: EdgeInsets.only(bottom: 10),

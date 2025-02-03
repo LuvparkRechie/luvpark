@@ -89,13 +89,16 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
                               Icon(
                                 LucideIcons.share2,
                                 size: 20,
+                                color: AppColor.primaryColor,
                               ),
                               Container(width: 10),
                               Text(
                                 "Share",
-                                style:
-                                    subtitleStyle(fontWeight: FontWeight.w600),
-                              )
+                                style: subtitleStyle(
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColor.primaryColor,
+                                ),
+                              ),
                             ],
                           ),
                         ),

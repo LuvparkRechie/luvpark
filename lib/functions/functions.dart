@@ -820,8 +820,21 @@ class Functions {
     }
   }
 
+// tracking if has service fee
   static bool isValidInput(double inputAmount, serviceFee, balance) {
     double totalAmount = inputAmount + serviceFee;
     return totalAmount <= balance;
+  }
+
+  // i used this to generate unique secret key
+  static Uint8List generateKey(String key, int length) {
+    var keyBytes = utf8.encode(key);
+    if (keyBytes.length < length) {
+      keyBytes = Uint8List.fromList(
+          [...keyBytes, ...List.filled(length - keyBytes.length, 0)]);
+    } else if (keyBytes.length > length) {
+      keyBytes = keyBytes.sublist(0, length);
+    }
+    return Uint8List.fromList(keyBytes);
   }
 }

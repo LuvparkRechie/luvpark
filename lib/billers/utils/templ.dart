@@ -3,8 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/notification_controller.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../../auth/authentication.dart';
@@ -17,6 +19,7 @@ import '../../http/api_keys.dart';
 import '../../http/http_request.dart';
 import '../../http/thirdparty.dart';
 import '../controller.dart';
+import 'receipt_billing.dart';
 
 class Templ extends StatefulWidget {
   const Templ({super.key});
@@ -31,6 +34,7 @@ class _TemplState extends State<Templ> {
   final controller = Get.put(BillersController());
   final args = Get.arguments;
   final userDetails = Get.arguments["user_details"];
+  final billerDetails = Get.arguments["details"];
   final Map<String, RegExp> _filter = {
     'A': RegExp(r'[A-Za-z0-9]'),
     '0': RegExp(r'[0-9]'),
@@ -66,6 +70,8 @@ class _TemplState extends State<Templ> {
     Map<String, dynamic> formData = {};
     List postData =
         dataBiller.where((e) => e["is_for_posting"] == "Y").toList();
+
+    print("postData $postData");
     for (var field in postData) {
       formData[field['key']] = controllers2[field['key']]!.text;
     }
@@ -83,16 +89,13 @@ class _TemplState extends State<Templ> {
       String value = field["value"];
       validateParam[key] = value;
     }
-    print("validateParam $validateParam");
     luvparkPayment(validateParam);
   }
 
   Future<void> luvparkPayment(vParam) async {
     FocusManager.instance.primaryFocus?.unfocus();
-
     CustomDialog().loadingDialog(Get.context!);
     final response = await Functions.generateQr();
-
     if (response["response"] == "Success") {
       double serviceFee =
           double.tryParse(args['service_fee'].toString()) ?? 0.0;
@@ -105,7 +108,7 @@ class _TemplState extends State<Templ> {
         Get.back();
       }, () async {
         Get.back();
-        var parameter = {
+        var parameters = {
           "luvpay_id": userId.toString(),
           "biller_id": args["details"]["biller_id"],
           "bill_acct_no": vParam["accountno"],
@@ -113,14 +116,12 @@ class _TemplState extends State<Templ> {
           "payment_hk": response["data"],
           "bill_no": vParam["bill_ref_no"],
           "account_name": userDetails["fullname"],
-          'original_amount': "20"
+          'original_amount': userAmount
         };
-
-        print("posting param $parameter");
 
         CustomDialog().loadingDialog(Get.context!);
 
-        HttpRequest(api: ApiKeys.gApiPostPayBills, parameters: parameter)
+        HttpRequest(api: ApiKeys.gApiPostPayBills, parameters: parameters)
             .postBody()
             .then((returnPost) async {
           print("luvpark payment postin $returnPost");
@@ -137,8 +138,9 @@ class _TemplState extends State<Templ> {
             });
           } else {
             if (returnPost["success"] == 'Y') {
-              vParam["payment_details"] = returnPost["lp_ref_no"];
-              postData(vParam);
+              vParam["luvpark_trans_ref"] = returnPost["lp_ref_no"];
+              postData(
+                  vParam, returnPost["msg"], userAmount, vParam["accountno"]);
             } else {
               Get.back();
               CustomDialog()
@@ -152,44 +154,51 @@ class _TemplState extends State<Templ> {
     }
   }
 
-  Future<void> postData(vParam) async {
-    Get.back();
+  Future<void> postData(vParam, msg, amount, accountNo) async {
     String paramUrl = "http://192.168.7.78/web/eforms/hydracore/add_payment";
     Uri fullUri = Uri.parse(paramUrl).replace(queryParameters: vParam);
     String fullUrl = fullUri.toString();
-
-    print("fullUrl $fullUrl");
-
-    // Map<String, dynamic> validateParam = {
-    //   "accountno": "2021-0323-2",
-    //   "bill_ref_no": "BHBR25-01-0001",
-    //   "luvpark_trans_ref": "LPP-123456",
-    //   "received_amount": "629"
-    // };
-
+    DateTime dateNow = await Functions.getTimeNow();
     final inatay = await Http3rdPartyRequest(url: fullUrl).postBiller();
     Get.back();
-
+    print("inatay $inatay");
     if (inatay == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
         Get.back();
       });
-    } else if (inatay["result"] == "true") {
-      CustomDialog().successDialog(
-          context, "Payment Successfull", inatay["msg"], "Return to billers",
-          () {
-        Get.back();
+      return;
+    }
+    if (inatay["result"]) {
+      NotificationController.parkingNotif(
+          dateNow.microsecond, 0, "Payment Successfull", msg, "");
+      String payDate = DateFormat("MMM dd, yyyy hh:mm a").format(dateNow);
+
+      Map<String, String> receiptData = {
+        "Biller Name": "${billerDetails["biller_name"]}",
+        "Biller Address": "${billerDetails["biller_address"]}",
+        "Account Name": "${userDetails["fullname"]}",
+        "Date Paid": "$payDate",
+        "Amount Paid": "$amount"
+      };
+      Get.to(TicketUI(), arguments: {
+        "receipt_data": receiptData,
+        "biller_id": "${args["details"]["biller_id"]}",
+        "account_no": "$accountNo"
       });
-    } else if (inatay == null) {
+      return;
+    }
+    if (inatay == null) {
       CustomDialog().serverErrorDialog(Get.context!, () {
         Get.back();
       });
+      return;
     } else {
       CustomDialog().infoDialog("Invalid request",
           "Please provide the required information or ensure the data entered is valid.",
           () {
         Get.back();
       });
+      return;
     }
   }
 
@@ -251,6 +260,7 @@ class _TemplState extends State<Templ> {
                             itemCount: dataBiller.length,
                             itemBuilder: (context, i) {
                               final field = dataBiller[i];
+                              print("field $field");
                               List<TextInputFormatter> inputFormatters = [];
                               if (field['input_formatter'] != null &&
                                   field['input_formatter'].isNotEmpty) {
@@ -261,71 +271,92 @@ class _TemplState extends State<Templ> {
                                 ];
                               }
                               if (field['type'] == 'date') {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomTitle(
-                                        fontSize: 14, text: field['label']),
-                                    CustomTextField(
-                                      controller: controllers2[field['key']]!,
-                                      isReadOnly: true,
-                                      isFilled: false,
-                                      suffixIcon: Icons.calendar_today,
-                                      onTap: () =>
-                                          _selectDate(context, field['key']),
-                                      validator: (value) {
-                                        if (field['required'] &&
-                                            (value == null || value.isEmpty)) {
-                                          return '${field['label']} is required';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ],
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomTitle(
+                                          fontSize: 14, text: field['label']),
+                                      CustomTextField(
+                                        controller: controllers2[field['key']]!,
+                                        isReadOnly: true,
+                                        isFilled: false,
+                                        suffixIcon: Icons.calendar_today,
+                                        onTap: () =>
+                                            _selectDate(context, field['key']),
+                                        validator: (value) {
+                                          if (field['required'] &&
+                                              (value == null ||
+                                                  value.isEmpty)) {
+                                            return '${field['label']} is required';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               } else if (field['type'] == 'number') {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomTitle(
-                                        fontSize: 14, text: field['label']),
-                                    CustomTextField(
-                                      controller: controllers2[field['key']]!,
-                                      maxLength: field['maxLength'],
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: inputFormatters,
-                                      validator: (value) {
-                                        if (field['required'] &&
-                                            (value == null || value.isEmpty)) {
-                                          return '${field['label']} is required';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                  ],
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomTitle(
+                                          fontSize: 14, text: field['label']),
+                                      CustomTextField(
+                                        controller: controllers2[field['key']]!,
+                                        maxLength: field['maxLength'],
+                                        isReadOnly:
+                                            field['is_validation'] == "Y",
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: inputFormatters,
+                                        isFilled: field['is_validation'] == "Y",
+                                        validator: (value) {
+                                          if (field['required'] &&
+                                              (value == null ||
+                                                  value.isEmpty)) {
+                                            return '${field['label']} is required';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 );
                               } else {
-                                return Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    CustomTitle(
-                                        fontSize: 14, text: field['label']),
-                                    CustomTextField(
-                                      textCapitalization:
-                                          TextCapitalization.characters,
-                                      controller: controllers2[field['key']]!,
-                                      maxLength: field['maxLength'],
-                                      keyboardType: TextInputType.text,
-                                      validator: (value) {
-                                        if (field['required'] &&
-                                            (value == null || value.isEmpty)) {
-                                          return '${field['label']} is required';
-                                        }
-                                        return null;
-                                      },
-                                      inputFormatters: inputFormatters,
-                                    ),
-                                  ],
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomTitle(
+                                          fontSize: 14, text: field['label']),
+                                      CustomTextField(
+                                        textCapitalization:
+                                            TextCapitalization.characters,
+                                        controller: controllers2[field['key']]!,
+                                        maxLength: field['maxLength'],
+                                        keyboardType: TextInputType.text,
+                                        isFilled: field['is_validation'] == "Y",
+                                        isReadOnly:
+                                            field['is_validation'] == "Y",
+                                        validator: (value) {
+                                          if (field['required'] &&
+                                              (value == null ||
+                                                  value.isEmpty)) {
+                                            return '${field['label']} is required';
+                                          }
+                                          return null;
+                                        },
+                                        inputFormatters: inputFormatters,
+                                      ),
+                                    ],
+                                  ),
                                 );
                               }
                             })),

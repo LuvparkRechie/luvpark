@@ -39,50 +39,6 @@ class Allbillers extends GetView<BillersController> {
             width: double.infinity,
             child: Column(
               children: [
-                // Padding(
-                //   padding: const EdgeInsets.all(15),
-                //   child: SearchBar(
-                //     padding: MaterialStateProperty.all(
-                //       EdgeInsets.only(left: 15),
-                //     ),
-                //     elevation: MaterialStateProperty.all(.2),
-                //     controller: searchController,
-                //     side: MaterialStateProperty.all(
-                //       BorderSide(
-                //         color: Color(0x232563EB), // Border color
-                //         width: 1.0, // Border width
-                //       ),
-                //     ),
-                //     trailing: [
-                //       Visibility(
-                //         visible: searchController.text.isNotEmpty,
-                //         child: IconButton(
-                //             onPressed: () {
-                //               searchController.clear();
-                //               controller.filterBillers('');
-                //             },
-                //             icon: Icon(
-                //               LucideIcons.xCircle,
-                //               color: AppColor.paragraphColor,
-                //             )),
-                //       )
-                //     ],
-                //     leading: Icon(
-                //       LucideIcons.search,
-                //       color: AppColor.primaryColor,
-                //     ),
-                //     hintStyle: MaterialStateProperty.resolveWith<TextStyle?>(
-                //         (Set<MaterialState> states) {
-                //       return paragraphStyle(
-                //           fontWeight: FontWeight.w500,
-                //           color: AppColor.hintColor);
-                //     }),
-                //     hintText: "Search billers",
-                //     onChanged: (value) {
-                //       controller.filterBillers(value);
-                //     },
-                //   ),
-                // ),
                 Padding(
                   padding: const EdgeInsets.all(15),
                   child: SizedBox(
@@ -173,7 +129,6 @@ class Allbillers extends GetView<BillersController> {
                     ),
                   ),
                 ),
-
                 Expanded(
                   child: controller.filteredBillers.isEmpty
                       ? NoDataFound(
@@ -301,8 +256,11 @@ class _ValidateAccountState extends State<ValidateAccount> {
           .where((element) => element["is_validation"] == "Y")
           .toList();
     });
+
     for (var field in tempData) {
-      controllers2[field['key']] = TextEditingController(text: field['value']);
+      String key = field['key'];
+      String value = widget.billerData["details"][key]?.toString() ?? '';
+      controllers2[key] = TextEditingController(text: value);
     }
 
     setState(() {});
@@ -343,15 +301,12 @@ class _ValidateAccountState extends State<ValidateAccount> {
           Get.back();
         });
       } else if (inatay["result"] == "true") {
-        print('fields ${widget.billerData["field"]}');
-        Get.to(
-            arguments: {
-              "details": widget.billerData["details"],
-              "field": widget.billerData["field"],
-              "user_details": inatay["data"]
-            },
-            // const PayBill(),
-            const Templ());
+        Get.back();
+        Get.to(arguments: {
+          "details": widget.billerData["details"],
+          "field": widget.billerData["field"],
+          "user_details": inatay["data"]
+        }, const Templ());
       } else if (inatay == null) {
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
@@ -416,68 +371,78 @@ class _ValidateAccountState extends State<ValidateAccount> {
                         }
 
                         if (field['type'] == 'date') {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTitle(fontSize: 14, text: field['label']),
-                              CustomTextField(
-                                controller: controllers2[field['key']]!,
-                                isReadOnly: true,
-                                isFilled: false,
-                                suffixIcon: Icons.calendar_today,
-                                onTap: () => _selectDate(context, field['key']),
-                                validator: (value) {
-                                  if (field['required'] &&
-                                      (value == null || value.isEmpty)) {
-                                    return '${field['label']} is required';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomTitle(fontSize: 14, text: field['label']),
+                                CustomTextField(
+                                  controller: controllers2[field['key']]!,
+                                  isReadOnly: true,
+                                  isFilled: false,
+                                  suffixIcon: Icons.calendar_today,
+                                  onTap: () =>
+                                      _selectDate(context, field['key']),
+                                  validator: (value) {
+                                    if (field['required'] &&
+                                        (value == null || value.isEmpty)) {
+                                      return '${field['label']} is required';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
                           );
                         } else if (field['type'] == 'number') {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTitle(fontSize: 14, text: field['label']),
-                              CustomTextField(
-                                controller: controllers2[field['key']]!,
-                                maxLength: field['maxLength'],
-                                keyboardType: TextInputType.number,
-                                hintText: "Enter ${field['label']}",
-                                inputFormatters: inputFormatters,
-                                validator: (value) {
-                                  if (field['required'] &&
-                                      (value == null || value.isEmpty)) {
-                                    return '${field['label']} is required';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomTitle(fontSize: 14, text: field['label']),
+                                CustomTextField(
+                                  controller: controllers2[field['key']]!,
+                                  maxLength: field['maxLength'],
+                                  keyboardType: TextInputType.number,
+                                  hintText: "Enter ${field['label']}",
+                                  inputFormatters: inputFormatters,
+                                  validator: (value) {
+                                    if (field['required'] &&
+                                        (value == null || value.isEmpty)) {
+                                      return '${field['label']} is required';
+                                    }
+                                    return null;
+                                  },
+                                ),
+                              ],
+                            ),
                           );
                         } else {
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              CustomTitle(fontSize: 14, text: field['label']),
-                              CustomTextField(
-                                textCapitalization:
-                                    TextCapitalization.characters,
-                                controller: controllers2[field['key']]!,
-                                maxLength: field['maxLength'],
-                                keyboardType: TextInputType.text,
-                                validator: (value) {
-                                  if (field['required'] &&
-                                      (value == null || value.isEmpty)) {
-                                    return '${field['label']} is required';
-                                  }
-                                  return null;
-                                },
-                                inputFormatters: inputFormatters,
-                              ),
-                            ],
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomTitle(fontSize: 14, text: field['label']),
+                                CustomTextField(
+                                  textCapitalization:
+                                      TextCapitalization.characters,
+                                  controller: controllers2[field['key']]!,
+                                  maxLength: field['maxLength'],
+                                  keyboardType: TextInputType.text,
+                                  validator: (value) {
+                                    if (field['required'] &&
+                                        (value == null || value.isEmpty)) {
+                                      return '${field['label']} is required';
+                                    }
+                                    return null;
+                                  },
+                                  inputFormatters: inputFormatters,
+                                ),
+                              ],
+                            ),
                           );
                         }
                       },

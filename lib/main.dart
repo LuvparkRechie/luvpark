@@ -17,7 +17,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 
 import 'custom_widgets/alert_dialog.dart';
-import 'http/api_keys.dart';
 import 'notification_controller.dart';
 import 'routes/pages.dart';
 import 'security/app_security.dart';
@@ -68,8 +67,8 @@ void _onUserActivity() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove("last_booking");
     Authentication().setLogoutStatus(true);
-    AwesomeNotifications().dismissAllNotifications();
-    AwesomeNotifications().cancelAll();
+    // AwesomeNotifications().dismissAllNotifications();
+    // AwesomeNotifications().cancelAll();
     Variables.inactiveTmr!.cancel();
     // Variables.bgProcess!.cancel();
 
@@ -115,12 +114,28 @@ class _MyAppState extends State<MyApp> {
     NotificationController.startListeningNotificationEvents();
     AndroidAlarmManager.initialize();
     initializedPotcha();
+    initializedLogStatus();
   }
 
   void initializedPotcha() async {
     await AndroidAlarmManager.periodic(
-        const Duration(seconds: 5), 0, backgroundFunc,
-        startAt: DateTime.now());
+      const Duration(seconds: 5),
+      0,
+      backgroundFunc,
+      startAt: DateTime.now(),
+    );
+  }
+
+  void initializedLogStatus() async {
+    final userLogin = await Authentication().getUserLogin();
+    List userData = [userLogin];
+    userData = userData.map((e) {
+      e["is_login"] = "N";
+      return e;
+    }).toList();
+    await Authentication().setLogin(jsonEncode(userData[0]));
+    Authentication().setLogoutStatus(true);
+    Variables.inactiveTmr!.cancel();
   }
 
   @override
@@ -137,7 +152,7 @@ class _MyAppState extends State<MyApp> {
         _onUserActivity();
       },
       child: GetMaterialApp(
-        debugShowCheckedModeBanner: !ApiKeys.isProduction,
+        //debugShowCheckedModeBanner: !ApiKeys.isProduction,
         title: 'MyApp',
         theme: ThemeData(
           useMaterial3: false,

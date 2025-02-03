@@ -1,10 +1,8 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables, unused_local_variable, unnecessary_null_comparison, prefer_const_constructors
-
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -33,8 +31,11 @@ class TicketUI extends StatefulWidget {
 
 class _TicketUIState extends State<TicketUI> {
   final controller = Get.put(BillersController());
-  final params = Get.arguments;
+  Map<String, String> param2 = Get.arguments["receipt_data"];
+  String billId = Get.arguments["biller_id"];
+  String accountNo = Get.arguments["account_no"];
   String dateNow = "Loading...";
+  List<Widget> receiptBody = [];
 
   @override
   void initState() {
@@ -61,7 +62,7 @@ class _TicketUIState extends State<TicketUI> {
   Future<void> saveTicket() async {
     String randomNumber = Random().nextInt(100000).toString();
     String fname = 'luvpark$randomNumber.png';
-    String billerAddress = params["biller_address"] ?? "";
+    String billerAddress = param2["biller_address"] ?? "";
     CustomDialog().loadingDialog(Get.context!);
 
     ScreenshotController()
@@ -83,10 +84,20 @@ class _TicketUIState extends State<TicketUI> {
 
   @override
   Widget build(BuildContext context) {
-    String billerAddress = params["biller_address"] ?? "";
+    String billerAddress = param2["biller_address"] ?? "";
     return PopScope(
       canPop: false,
       child: Scaffold(
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          backgroundColor: AppColor.primaryColor,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor,
+            statusBarBrightness: Brightness.light,
+            statusBarIconBrightness: Brightness.light,
+          ),
+        ),
         backgroundColor: AppColor.primaryColor,
         body: Center(
           child: Padding(
@@ -109,16 +120,10 @@ class _TicketUIState extends State<TicketUI> {
                   CustomButton(
                       bordercolor: AppColor.bodyColor,
                       text: "Back to Billers",
-                      onPressed: params['user_biller_id'] == null
-                          ? () {
-                              Get.back();
-                              Get.back();
-                              Get.back();
-                            }
-                          : () {
-                              Get.back();
-                              Get.back();
-                            }),
+                      onPressed: () {
+                        Get.back();
+                        Get.back();
+                      }),
                 ],
               ),
             ),
@@ -129,7 +134,6 @@ class _TicketUIState extends State<TicketUI> {
   }
 
   Widget myTicket(billerAddress) => Container(
-        padding: const EdgeInsets.all(15),
         child: TicketClipper(
           clipper: RoundedEdgeClipper(edge: Edge.vertical, depth: 15),
           child: Container(
@@ -143,19 +147,13 @@ class _TicketUIState extends State<TicketUI> {
                 Divider(
                   color: AppColor.primaryColor,
                 ),
-                _buildDetailRow("Biller", params["biller_name"]),
-                Visibility(
-                    visible: billerAddress != "",
-                    child: _buildDetailRow("Biller Address", billerAddress)),
-                _buildDetailRow("Account Name", params["account_name"]),
-                _buildDetailRow("Date Paid", dateNow),
-                _buildDetailRow("Amount", params["original_amount"]),
-                _buildTotalAmount(),
+                ...param2.entries.map((entry) {
+                  return _buildDetailRow(entry.key, entry.value);
+                }).toList(),
                 Container(height: 10),
                 GestureDetector(
                   onTap: () async {
-                    String randomNumber =
-                        await Random().nextInt(100000).toString();
+                    String randomNumber = Random().nextInt(100000).toString();
                     CustomDialog().loadingDialog(Get.context!);
                     File? imgFile;
 
@@ -210,14 +208,9 @@ class _TicketUIState extends State<TicketUI> {
                 Divider(
                   color: AppColor.primaryColor,
                 ),
-                _buildDetailRow("Biller", params["biller_name"]),
-                Visibility(
-                    visible: billerAddress != "",
-                    child: _buildDetailRow("Biller Address", billerAddress)),
-                _buildDetailRow("Account Name", params["account_name"]),
-                _buildDetailRow("Date Paid", dateNow),
-                _buildDetailRow("Amount", params["original_amount"]),
-                _buildTotalAmount(),
+                ...param2.entries.map((entry) {
+                  return _buildDetailRow(entry.key, entry.value);
+                }).toList(),
               ],
             ),
           ),
@@ -253,8 +246,8 @@ class _TicketUIState extends State<TicketUI> {
           Expanded(
             child: CustomParagraph(
               text: value,
-              fontWeight: FontWeight.w400,
-              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
               color: Colors.lightBlue,
               textAlign: TextAlign.end,
             ),
@@ -264,57 +257,21 @@ class _TicketUIState extends State<TicketUI> {
     );
   }
 
-  Widget _buildTotalAmount() {
-    return Padding(
-      padding: const EdgeInsets.only(top: 10, bottom: 15),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomParagraph(
-                  text: "Total Amount",
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  color: Colors.blueAccent,
-                ),
-                CustomParagraph(
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                    text: params["service_fee"] == null
-                        ? ""
-                        : "Service Fee : ${params["service_fee"]}",
-                    color: Colors.lightBlue),
-              ],
-            ),
-          ),
-          CustomParagraph(
-              text: "${params['amount']}",
-              fontSize: 18,
-              color: Colors.blueAccent),
-        ],
-      ),
-    );
-  }
-
   Widget _viewAccount() {
     return Row(
       children: [
         Visibility(
-          visible: params['user_biller_id'] == null,
+          visible: param2['user_biller_id'] == null,
           child: Expanded(
               child: CustomButton(
                   bordercolor: AppColor.bodyColor,
                   text: "Add to Favorites",
                   onPressed: () {
-                    controller.addFavorites(params);
+                    controller.addFavorites(param2, billId, accountNo);
                   })),
         ),
         Visibility(
-            visible: params['user_biller_id'] == null,
+            visible: param2['user_biller_id'] == null,
             child: SizedBox(width: 10)),
         Expanded(
             child: CustomButton(

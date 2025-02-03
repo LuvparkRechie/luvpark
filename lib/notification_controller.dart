@@ -110,7 +110,7 @@ class NotificationController {
         body: body!,
         wakeUpScreen: true,
         autoDismissible: true,
-        notificationLayout: NotificationLayout.BigPicture,
+        notificationLayout: NotificationLayout.BigText,
         payload: {'notificationId': payload!, "geo_share_id": "$geoShareId"},
       ),
     );
@@ -130,7 +130,7 @@ class NotificationController {
         body: body!,
         wakeUpScreen: true,
         autoDismissible: true,
-        notificationLayout: NotificationLayout.BigPicture,
+        notificationLayout: NotificationLayout.BigText,
         payload: {'notificationId': payload!, "geo_share_id": "$geoShareId"},
       ),
     );
@@ -150,7 +150,7 @@ class NotificationController {
           body: body!,
           wakeUpScreen: true,
           autoDismissible: false,
-          notificationLayout: NotificationLayout.BigPicture,
+          notificationLayout: NotificationLayout.BigText,
           payload: {'notificationId': payload!},
         ),
         actionButtons: [
@@ -172,7 +172,7 @@ class NotificationController {
         body: body!,
         wakeUpScreen: true,
         autoDismissible: false,
-        notificationLayout: NotificationLayout.BigPicture,
+        notificationLayout: NotificationLayout.BigText,
         payload: {
           'notificationId': payload!,
           "geo_share_id": "$geoShareId",
@@ -451,7 +451,7 @@ Future<void> getMessNotif() async {
             };
 
             PaMessageDatabase.instance.insertUpdate(json).then((value) {
-              Variables.tts.speak(dataRow["message"]);
+              //Variables.tts.speak(dataRow["message"]);
               NotificationController.createInformationMessage(
                   dataRow["push_msg_id"],
                   0,

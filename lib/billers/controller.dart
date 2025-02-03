@@ -23,6 +23,7 @@ class BillersController extends GetxController {
   final TextEditingController billNo = TextEditingController();
   final TextEditingController amount = TextEditingController();
   final ScreenshotController screenshotController = ScreenshotController();
+  Map<String, TextEditingController> controllers2 = {};
   RxBool isNetConn = true.obs;
   RxList billers = [].obs;
   RxList favBillers = [].obs;
@@ -126,11 +127,13 @@ class BillersController extends GetxController {
     update();
   }
 
-  Future<void> addFavorites(params) async {
+  Future<void> addFavorites(params, billId, accountNo) async {
+    print("params $params");
+
     int userId = await Authentication().getUserId();
     bool isButtonEnabled = true;
     CustomDialog().confirmationDialog(Get.context!, "Add to Favorites",
-        "Do you want to add this biller to your favorites?", "No", "Add", () {
+        "Do you want to add this biller to your favorites?", "No", "Yes", () {
       Get.back();
     }, () {
       Get.back();
@@ -139,9 +142,9 @@ class BillersController extends GetxController {
       CustomDialog().loadingDialog(Get.context!);
       var parameter = {
         "user_id": userId,
-        "biller_id": params["biller_id"],
-        "account_no": billAccNo.text,
-        "account_name": billerAccountName.text
+        "biller_id": billId,
+        "account_no": accountNo,
+        "account_name": params["Biller Name"]
       };
       HttpRequest(api: ApiKeys.gApiPostFavBiller, parameters: parameter)
           .postBody()
@@ -290,7 +293,7 @@ class BillersController extends GetxController {
   }
 
   Future<void> getTemplate(billerData) async {
-    int billerId = billerData["biller_id"];
+    int billerId = int.parse(billerData["biller_id"].toString());
     CustomDialog().loadingDialog(Get.context!);
     HttpRequest(api: "${ApiKeys.gApiBillerTemplate}?biller_id=$billerId")
         .get()
@@ -313,7 +316,10 @@ class BillersController extends GetxController {
             "input_formatter": row["input_formatter"]
           });
         }
+        controllers2.clear();
+
         dynamic param = {"details": billerData, "field": dataBiller};
+
         Get.bottomSheet(ValidateAccount(billerData: param));
       }
     });
