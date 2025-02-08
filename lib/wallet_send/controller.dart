@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/http/api_keys.dart';
@@ -13,11 +12,13 @@ import 'package:permission_handler/permission_handler.dart';
 
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/scanner.dart';
+import '../custom_widgets/variables.dart';
+import '../notification_controller.dart';
+import 'view.dart';
 
 class WalletSendController extends GetxController {
   WalletSendController();
   final GlobalKey<FormState> formKeySend = GlobalKey<FormState>();
-  final TextEditingController recipient = TextEditingController();
   final TextEditingController tokenAmount = TextEditingController();
   final TextEditingController message = TextEditingController();
   final GlobalKey contentKey = GlobalKey();
@@ -26,7 +27,10 @@ class WalletSendController extends GetxController {
   PermissionStatus cameraStatus = PermissionStatus.denied;
   RxBool isNetConn = true.obs;
   RxList userData = [].obs;
+  RxList recipientData = [].obs;
   String mobileNumber = '';
+  RxString userName = "".obs;
+  RxString userImage = "".obs;
   List<SimCard> simCard = <SimCard>[];
 
   RxInt denoInd = 0.obs;
@@ -48,16 +52,9 @@ class WalletSendController extends GetxController {
   void onInit() {
     super.onInit();
     _checkCameraPermission();
-    MobileNumber.listenPhonePermission((isPermissionGranted) {
-      if (isPermissionGranted) {
-        initMobileNumberState();
-      } else {}
-    });
-
     refreshUserData();
+    showBottomSheet();
     padData.value = dataList;
-
-    initMobileNumberState();
   }
 
   @override
@@ -71,6 +68,16 @@ class WalletSendController extends GetxController {
   Future<void> _checkCameraPermission() async {
     PermissionStatus status = await Permission.camera.status;
     cameraStatus = status;
+  }
+
+  Future<void> showBottomSheet() async {
+    await Future.delayed(Duration(seconds: 1), () {
+      Get.bottomSheet(
+          UsersBottomsheet(
+            index: 1,
+          ),
+          isDismissible: false);
+    });
   }
 
   Future<void> requestCameraPermission() async {
@@ -95,7 +102,6 @@ class WalletSendController extends GetxController {
           if (formattedNumber.isEmpty ||
               formattedNumber.length != 10 ||
               formattedNumber[0] == '0') {
-            recipient.text = "";
             CustomDialog().errorDialog(
               Get.context!,
               "Invalid QR Code",
@@ -105,8 +111,9 @@ class WalletSendController extends GetxController {
               },
             );
           } else {
-            recipient.text = formattedNumber;
-            onTextChange();
+            print("formattedNumber $formattedNumber");
+
+            getRecipient(formattedNumber);
           }
         },
       ));
@@ -120,23 +127,16 @@ class WalletSendController extends GetxController {
     }
   }
 
-// //naa
-  Future<void> onTextChange() async {
-    denoInd.value = -1;
-  }
-
 //naa
   Future<void> getVerifiedAcc() async {
     CustomDialog().loadingDialog(Get.context!);
-    final userData = await Authentication().getUserData2();
-
-    print("userData $userData");
 
     var params =
-        "${ApiKeys.gApiSubFolderVerifyNumber}?mobile_no=63${recipient.text.toString().replaceAll(" ", "")}";
+        "${ApiKeys.gApiSubFolderVerifyNumber}?mobile_no=${recipientData[0]["mobile_no"]}";
     HttpRequest(
       api: params,
     ).get().then((returnData) async {
+      final item = await Authentication().getUserLogin();
       if (returnData == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -150,111 +150,30 @@ class WalletSendController extends GetxController {
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
+        return;
       }
 
       if (returnData["items"][0]["is_valid"] == "Y") {
-        sendOtp();
-        // if (mobileNumber.isNotEmpty) {
-        //   String myMobile = mobileNumber.toString().split("+")[1];
-
-        //   if (myMobile.toString() == userData["mobile_no"].toString()) {
-        //     final responseOb =
-        //         await Functions.getObtainOtp(userData["mobile_no"]);
-        //     print("responseOb $responseOb");
-        //   } else {
-        //     sendOtp();
-        //   }
-        // } else {
-        //   sendOtp();
-        // }
-
-        // return;
+        Get.back();
+        Get.toNamed(
+          Routes.otpField,
+          arguments: {
+            "mobile_no": item["mobile_no"].toString(),
+            "callback": () {
+              shareToken();
+            }
+          },
+        );
+        return;
       } else {
         Get.back();
         CustomDialog().errorDialog(
             Get.context!, "luvpark", returnData["items"][0]["msg"], () {
           Get.back();
         });
+        return;
       }
     });
-  }
-
-  // Platform messages are asynchronous, so we initialize in an async method.
-  Future<void> initMobileNumberState() async {
-    if (!await MobileNumber.hasPhonePermission) {
-      await MobileNumber.requestPhonePermission;
-      return;
-    }
-    // Platform messages may fail, so we use a try/catch PlatformException.
-    try {
-      mobileNumber = (await MobileNumber.mobileNumber)!;
-      simCard = (await MobileNumber.getSimCards)!;
-    } on PlatformException catch (e) {
-      debugPrint("Failed to get mobile number because of '${e.message}'");
-    }
-
-    // If the widget was removed from the tree while the asynchronous platform
-    // message was in flight, we want to discard the reply rather than calling
-    // setState to update our non-existent appearance.
-  }
-
-//naa
-  Future<void> sendOtp() async {
-    final item = await Authentication().getUserLogin();
-    Map<String, dynamic> paramSend = {
-      "mobile_no": item["mobile_no"],
-    };
-
-    HttpRequest(
-            api: ApiKeys.gApiSubFolderPostReqOtpShare, parameters: paramSend)
-        .post()
-        .then(
-      (retvalue) {
-        if (retvalue == "No Internet") {
-          Get.back();
-          CustomDialog().internetErrorDialog(Get.context!, () {
-            Get.back();
-          });
-          return;
-        }
-        if (retvalue == null) {
-          Get.back();
-          CustomDialog().serverErrorDialog(Get.context!, () {
-            Get.back();
-          });
-        } else {
-          if (retvalue["success"] == "Y") {
-            Get.back();
-            List otpData = [
-              {
-                "amount": tokenAmount.text.toString().replaceAll(",", ""),
-                "to_msg": message.text,
-                "mobile_no": item["mobile_no"],
-                "otp": int.parse(retvalue["otp"].toString()),
-                "to_mobile_no": "63${recipient.text.replaceAll(" ", "")}"
-              }
-            ];
-
-            Get.toNamed(
-              Routes.sendOtp,
-              arguments: {
-                "otpData": otpData,
-                "cb": () {
-                  Get.back();
-                  refreshUserData();
-                }
-              },
-            );
-          } else {
-            Get.back();
-            CustomDialog().errorDialog(Get.context!, "Error", retvalue["msg"],
-                () {
-              Get.back();
-            });
-          }
-        }
-      },
-    );
   }
 
   Future<void> pads(int value) async {
@@ -289,6 +208,140 @@ class WalletSendController extends GetxController {
       isNetConn.value = true;
       if (returnBalance["items"].isNotEmpty) {
         userData.value = returnBalance["items"];
+      }
+    });
+  }
+
+//Share token
+  Future<void> shareToken() async {
+    int userId = await Authentication().getUserId();
+
+    CustomDialog().loadingDialog(Get.context!);
+    Map<String, dynamic> parameters = {
+      "user_id": userId.toString(),
+      "to_mobile_no": recipientData[0]["mobile_no"],
+      "amount": tokenAmount.text.toString().replaceAll(",", ""),
+      "to_msg": message.text,
+    };
+    print("parameters $parameters");
+
+    HttpRequest(api: ApiKeys.gApiSubFolderPutShareLuv, parameters: parameters)
+        .putBoy()
+        .then(
+      (retvalue) {
+        print("retvalue $retvalue");
+        if (retvalue == "No Internet") {
+          Get.back();
+          CustomDialog().errorDialog(Get.context!, "Error",
+              "Please check your internet connection and try again.", () {
+            Get.back();
+          });
+          return;
+        }
+        if (retvalue == null) {
+          Get.back();
+          CustomDialog().errorDialog(Get.context!, "Error",
+              "Error while connecting to server, Please try again.", () {
+            if (Navigator.canPop(Get.context!)) {
+              Get.back();
+            }
+          });
+        } else {
+          if (retvalue["success"] == "Y") {
+            NotificationController.shareTokenNotification(
+                0, 0, 'Transfer Token', "${retvalue["msg"]}.", "walletScreen");
+
+            Get.back();
+
+            CustomDialog().successDialog(
+                Get.context!, "Success", "Transaction complete", "Okay", () {
+              Get.back();
+
+              refreshUserData();
+            });
+          } else {
+            Get.back();
+            CustomDialog().errorDialog(
+              Get.context!,
+              "Error",
+              retvalue["msg"],
+              () {
+                Get.back();
+              },
+            );
+          }
+        }
+      },
+    );
+  }
+//get user data
+
+  Future<void> getRecipient(String mobileNo) async {
+    CustomDialog().loadingDialog(Get.context!);
+    String api =
+        "${ApiKeys.gApiSubFolderGetUserInfo}?mobile_no=63${mobileNo.toString().replaceAll(" ", '')}";
+    HttpRequest(api: api).get().then((objData) {
+      print("api $api");
+      FocusScope.of(Get.context!).unfocus();
+      if (objData == "No Internet") {
+        Get.back();
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+      if (objData == null) {
+        Get.back();
+
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      }
+      if (objData["items"].length == 0) {
+        Get.back();
+
+        CustomDialog().errorDialog(
+            Get.context!, "Error", "Sorry, we're unable to find your account.",
+            () {
+          Get.back();
+        });
+        return;
+      } else {
+        Get.back();
+
+        List data = objData["items"];
+        recipientData.value = data;
+
+        String fname = recipientData[0]["first_name"] == null
+            ? ""
+            : recipientData[0]["first_name"].toString();
+        userImage.value = recipientData[0]["image_base64"] == null
+            ? ""
+            : recipientData[0]["image_base64"].toString();
+
+        if (fname.toString().isNotEmpty) {
+          String transformedFullName = Variables.transformFullName(
+              fname.replaceAll(RegExp(r'\..*'), ''));
+          String transformedLname = Variables.transformFullName(recipientData[0]
+                  ["last_name"]
+              .toString()
+              .replaceAll(RegExp(r'\..*'), ''));
+
+          String middelName = "";
+          if (recipientData[0]["middle_name"] != null) {
+            middelName = recipientData[0]["middle_name"].toString()[0];
+          } else {
+            middelName = "";
+          }
+
+          userName.value =
+              '$transformedFullName $middelName${middelName.isNotEmpty ? "." : ""} $transformedLname';
+        } else {
+          userName.value = "Not Verified";
+        }
+        Get.back();
+        print("userName $userName");
       }
     });
   }

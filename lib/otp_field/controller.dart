@@ -8,8 +8,8 @@ import '../auth/authentication.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
 
-class ActivateAccountController extends GetxController {
-  ActivateAccountController();
+class OtpFieldScreenController extends GetxController {
+  OtpFieldScreenController();
   final callback = Get.arguments["callback"];
   String parameters = Get.arguments["mobile_no"];
   RxBool isAgree = false.obs;
@@ -53,16 +53,13 @@ class ActivateAccountController extends GetxController {
   void getOtpRequest() {
     inputPin.value = "";
     CustomDialog().loadingDialog(Get.context!);
-    var otpData = {
-      "mobile_no": parameters.toString(),
-      "reg_type": "REQUEST_OTP"
-    };
-
+    var otpData = {"mobile_no": parameters.toString()};
     print("otp param $otpData");
 
-    HttpRequest(api: ApiKeys.gApiSubFolderPutOTP, parameters: otpData)
-        .put()
+    HttpRequest(api: ApiKeys.gApiPostGenerateOTP, parameters: otpData)
+        .postBody()
         .then((returnData) async {
+      print("otp returnData $returnData");
       if (returnData == "No Internet") {
         inputPin.value = "";
         isLoadingPage.value = false;
@@ -96,9 +93,9 @@ class ActivateAccountController extends GetxController {
         inputPin.value = "";
         minutes.value = initialMinutes.value;
         seconds.value = 0;
-        otpCode.value = int.parse(returnData["otp"]);
-        isRequested = true;
 
+        otpCode.value = int.parse(returnData["otp"].toString());
+        isRequested = true;
         startTimers();
       } else {
         inputPin.value = "";
@@ -125,6 +122,7 @@ class ActivateAccountController extends GetxController {
   }
 
   Future<void> startTimers() async {
+    print("start timer");
     const oneSecond = Duration(seconds: 1);
     timer = Timer.periodic(oneSecond, (timer) {
       if (minutes.value == 0 && seconds.value == 0) {
@@ -145,65 +143,7 @@ class ActivateAccountController extends GetxController {
     if (timer!.isActive) {
       timer!.cancel();
     }
-    resendFunction();
-  }
-
-  void resendFunction() {
-    inputPin.value = "";
-    CustomDialog().loadingDialog(Get.context!);
-    var otpData = {
-      "mobile_no": parameters.toString(),
-      "reg_type": "REQUEST_OTP"
-    };
-
-    HttpRequest(api: ApiKeys.gApiSubFolderPutOTP, parameters: otpData)
-        .put()
-        .then((returnData) async {
-      if (returnData == "No Internet") {
-        inputPin.value = "";
-        Get.back();
-        CustomDialog().errorDialog(Get.context!, "Error",
-            "Please check your internet connection and try again.", () {
-          Get.back();
-        });
-
-        return;
-      }
-      if (returnData == null) {
-        inputPin.value = "";
-        Get.back();
-        CustomDialog().errorDialog(Get.context!, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Get.back();
-        });
-
-        return;
-      }
-
-      if (returnData["success"] == 'Y') {
-        Get.back();
-
-        pinController.clear();
-        inputPin.value = "";
-        minutes.value = initialMinutes.value;
-        seconds.value = 0;
-        otpCode.value = int.parse(returnData["otp"]);
-        isRequested = true;
-
-        startTimers();
-        CustomDialog().successDialog(Get.context!, "Success",
-            "OTP has been sent to registered mobile number.", "Okay", () {
-          Get.back();
-        });
-      } else {
-        inputPin.value = "";
-        Get.back();
-        CustomDialog().errorDialog(Get.context!, "LuvPark", returnData["msg"],
-            () {
-          Get.back();
-        });
-      }
-    });
+    getOtpRequest();
   }
 
   Future<void> verifyAccount() async {
@@ -219,16 +159,15 @@ class ActivateAccountController extends GetxController {
     CustomDialog().loadingDialog(Get.context!);
     var otpData = {
       "mobile_no": parameters.toString(),
-      "reg_type": "VERIFY",
       "otp": int.parse(pinController.text)
     };
-    print("otpData $otpData");
-    HttpRequest(api: ApiKeys.gApiSubFolderPutOTP, parameters: otpData)
-        .put()
+
+    HttpRequest(api: ApiKeys.gApiPutVerifyOTP, parameters: otpData)
+        .putBoy()
         .then((returnData) async {
-      print("returnData $returnData");
       if (returnData == "No Internet") {
         Get.back();
+
         CustomDialog().errorDialog(Get.context!, "Error",
             'Please check your internet connection and try again.', () {
           Get.back();
@@ -247,7 +186,9 @@ class ActivateAccountController extends GetxController {
       }
       if (returnData["success"] == 'Y') {
         Get.back();
+        Get.back();
         callback();
+        return;
       } else {
         Get.back();
         CustomDialog().errorDialog(Get.context!, "Error",
@@ -255,6 +196,7 @@ class ActivateAccountController extends GetxController {
           pinController.text = "";
           Get.back();
         });
+        return;
       }
     });
   }

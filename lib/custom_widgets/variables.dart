@@ -173,7 +173,7 @@ class Variables {
   static String maskMobileNumber(String mobileNumber,
       {int visibleStartDigits = 4, int visibleEndDigits = 4}) {
     if (mobileNumber.length <= (visibleStartDigits + visibleEndDigits)) {
-      return mobileNumber; // Return as is if it's too short
+      return mobileNumber;
     }
 
     // Keep the '+' sign if present

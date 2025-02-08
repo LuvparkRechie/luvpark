@@ -9,7 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -113,6 +115,11 @@ class DashboardMapController extends GetxController
     {"code": "S", "icon": "security"},
     {"code": "P", "icon": "pwd"},
     {"code": "XXX", "icon": "no_image"},
+  ];
+  List<Map<String, dynamic>> menuIcons = [
+    {"icon": LucideIcons.car, "label": "My Parking", "index": 0},
+    {"icon": LucideIcons.walletCards, "label": "Wallet", "index": 1},
+    {"icon": Iconsax.car, "label": "My Vehicles", "index": 2},
   ];
   RxList<dynamic> amenData = <dynamic>[].obs;
   RxList<dynamic> carsInfo = <dynamic>[].obs;
@@ -317,7 +324,7 @@ class DashboardMapController extends GetxController
   void getNearest(LatLng coordinates) async {
     String params =
         "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-    print("params $params");
+    print("getNearest $params");
     try {
       var returnData = await HttpRequest(api: params).get();
       Get.back();
@@ -518,7 +525,7 @@ class DashboardMapController extends GetxController
     String? userData = await Authentication().getUserData();
     final item = await Authentication().getUserData2();
     final profPic = await Authentication().getUserProfilePic();
-
+    print("menuIcons $menuIcons");
     userProfile = item;
     myProfPic.value = profPic;
     userProfile = item;
@@ -1047,8 +1054,6 @@ class DashboardMapController extends GetxController
           .contains(vhType.toString().trim().toLowerCase());
     }).toList();
 
-    print("getVhRatesData $data");
-
     ratesWidget.add(Column(
       children: [
         Row(
@@ -1388,6 +1393,20 @@ class DashboardMapController extends GetxController
           });
         }
       });
+    }
+  }
+
+  void onMenuIconsTap(int index) {
+    switch (index) {
+      case 0:
+        Get.toNamed(Routes.parking, arguments: "D");
+        break;
+      case 1:
+        Get.toNamed(Routes.wallet);
+        break;
+      case 2:
+        Get.toNamed(Routes.myVehicles);
+        break;
     }
   }
 }

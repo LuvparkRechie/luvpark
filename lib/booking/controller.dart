@@ -75,7 +75,7 @@ class BookingController extends GetxController
 
   Timer? timeUpdateTimer;
   Timer? debounce;
-  RxInt endNumber = 0.obs;
+  RxInt maxHrs = 0.obs;
 
   //Rewards param
   RxString usedRewards = "0".obs;
@@ -93,7 +93,7 @@ class BookingController extends GetxController
     super.onInit();
     selectedNumber.value = 1;
     noHours.text = 1.toString();
-    endNumber.value =
+    maxHrs.value =
         int.parse(parameters["areaData"]["res_max_hours"].toString());
 
     displayRewards.value =
@@ -106,7 +106,28 @@ class BookingController extends GetxController
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
 
+    computingMaxBookingLimit();
+
     getNotice();
+  }
+
+  void computingMaxBookingLimit() async {
+    DateTime now = await Functions.getTimeNow();
+    bool is24Hrs = parameters["areaData"]["is_24_hrs"].toString() == "Y";
+    // now = now.add(Duration(hours: 11)); //for testing
+    String endDate =
+        "${now.year.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${parameters["areaData"]["closed_time"].toString().trim()}";
+    DateTime parsedEndDate = DateTime.parse(endDate);
+    int diff = parsedEndDate.difference(now).inHours;
+    maxHrs.value = is24Hrs
+        ? maxHrs.value
+        : diff < maxHrs.value
+            ? diff == 0
+                ? 1
+                : diff
+            : maxHrs.value;
+
+    print("maxHrs.value ${maxHrs.value}");
   }
 
   void startTimeUpdateTimer() {
@@ -513,11 +534,13 @@ class BookingController extends GetxController
 
 //working
   void onTapChanged(bool isIncrement) {
-    if (selectedVh[0]["isAllowSubscription"] || isProcessing) return;
+    if (selectedVh[0]["isAllowSubscription"] ||
+        isProcessing ||
+        int.parse(selectedVh[0]["succeeding_rate"].toString()) == 0) return;
     int inatay = selectedVh.isEmpty ? 1 : selectedVh[0]["base_hours"];
 
     if (isIncrement) {
-      if (selectedNumber.value == endNumber.value || isMaxLimit.value) return;
+      if (selectedNumber.value == maxHrs.value || isMaxLimit.value) return;
       isProcessing = true;
       selectedNumber.value++;
       numberOfhours.value = selectedNumber.value;
@@ -536,6 +559,7 @@ class BookingController extends GetxController
     if (debounce?.isActive ?? false) debounce?.cancel();
 
     Duration duration = const Duration(seconds: 1);
+    bool is24Hrs = parameters["areaData"]["is_24_hrs"].toString() == "Y";
     debounce = Timer(duration, () {
       CustomDialog().loadingDialog(Get.context!);
       Future.delayed(Duration(milliseconds: 100), () {
@@ -543,14 +567,23 @@ class BookingController extends GetxController
 
         isProcessing = false;
 
-        Get.back();
-        if (int.parse(noHours.text.toString()) >= endNumber.value) {
-          CustomDialog().infoDialog("Booking Hours",
-              "You have maximum ${endNumber.value} hours of booking.", () {
-            Get.back();
+        print("is24Hrs.value ${parameters["areaData"]["res_max_hours"]}");
 
-            isExtendchecked.value = false;
-          });
+        Get.back();
+        if (!is24Hrs) {
+          print("eeee");
+          if (int.parse(noHours.text.toString()) > maxHrs.value) {
+            CustomDialog().infoDialog(
+                maxHrs.value == 1 ? "Booking Unavailable" : "Booking Hours",
+                maxHrs.value == 1
+                    ? "Booking unavailable as parking closes soon."
+                    : "You have maximum ${maxHrs.value} hours of booking.", () {
+              Get.back();
+              selectedNumber--;
+              numberOfhours.value = selectedNumber.value;
+              isExtendchecked.value = false;
+            });
+          }
         }
       });
       update();
@@ -618,7 +651,7 @@ class BookingController extends GetxController
         "${DateFormat('yyyy-MM-dd').format(DateTime.parse(dateOut.toString()))} ${paramEndTime.value}";
     DateTime finalDateOut = DateTime.parse(dtOut);
     isExtendchecked.value = value;
-    if (endNumber.value == 0) return;
+    if (maxHrs.value == 0) return;
     if (finalDateOut.isAfter(cTime) || finalDateOut.isAtSameMomentAs(cTime)) {
       CustomDialog().infoDialog("Auto Extend",
           "Unfortunately, auto-extend is not available at this time. Please be aware that the parking area is about to close soon.",
@@ -628,12 +661,14 @@ class BookingController extends GetxController
       });
       return;
     }
-    if (int.parse(noHours.text.toString()) >= endNumber.value) {
-      CustomDialog().infoDialog("Booking Hours",
-          "You have maximum ${endNumber.value} hours of booking.", () {
+
+    if (int.parse(noHours.text.toString()) > maxHrs.value) {
+      CustomDialog().infoDialog(
+          "Booking Hours", "You have maximum ${maxHrs.value} hours of booking.",
+          () {
         Get.back();
-        noHours.text = "${endNumber.value}";
-        selectedNumber.value = endNumber.value;
+        noHours.text = "${maxHrs.value}";
+        selectedNumber.value = maxHrs.value;
 
         numberOfhours.value = selectedNumber.value;
         isExtendchecked.value = false;
@@ -729,6 +764,7 @@ class BookingController extends GetxController
       HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
+        print("objData $objData");
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
           Get.back();

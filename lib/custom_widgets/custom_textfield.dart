@@ -17,6 +17,8 @@ class CustomTextField extends StatefulWidget {
   final bool isObscure;
   final Color? filledColor;
   final String? title;
+  final int? maxLines;
+  final int? minLines;
 
   final TextEditingController controller;
   final ValueChanged<String>? onChange;
@@ -59,7 +61,9 @@ class CustomTextField extends StatefulWidget {
       this.keyboardType = TextInputType.text,
       this.textCapitalization = TextCapitalization.none,
       this.onTap,
-      this.errorText});
+      this.errorText,
+      this.maxLines = 1,
+      this.minLines = 1});
 
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
@@ -72,9 +76,10 @@ class _CustomTextFieldState extends State<CustomTextField> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+        padding: const EdgeInsets.only(top: 10.0, bottom: 20),
         child: TextFormField(
-          minLines: 1,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
           maxLength: widget.maxLength,
           textCapitalization: widget.textCapitalization,
           obscureText: widget.isObscure,
@@ -140,9 +145,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 : null,
             hintText: widget.hintText,
             hintStyle: paragraphStyle(
-              color: AppColor.hintColor,
-              fontWeight: FontWeight.w500,
-            ),
+                color: AppColor.hintColor,
+                fontWeight: FontWeight.w400,
+                letterSpacing: -.5),
           ),
           buildCounter: (BuildContext context,
               {required int currentLength,
@@ -166,7 +171,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
 }
 
 class CustomMobileNumber extends StatefulWidget {
-  final String? labelText;
   final String? hintText;
   final bool? isReadOnly;
   final Widget? prefix;
@@ -183,7 +187,6 @@ class CustomMobileNumber extends StatefulWidget {
 
   const CustomMobileNumber({
     super.key,
-    this.labelText,
     required this.controller,
     required this.hintText,
     this.onChange,
@@ -207,7 +210,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+      padding: const EdgeInsets.only(top: 10.0, bottom: 20),
       child: TextFormField(
         maxLines: 1,
         autofocus: false,
@@ -225,7 +228,6 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
             fontSize: 11,
           ),
           isDense: true,
-          labelText: widget.labelText,
           contentPadding:
               const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
           enabledBorder: OutlineInputBorder(
@@ -288,12 +290,6 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
           hintStyle: paragraphStyle(
             color: AppColor.hintColor,
             fontWeight: FontWeight.w400,
-          ),
-          labelStyle: paragraphStyle(
-              fontWeight: FontWeight.w400, color: AppColor.hintColor),
-          floatingLabelStyle: TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 15,
           ),
         ),
         style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),

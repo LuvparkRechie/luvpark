@@ -369,8 +369,11 @@ class DefaultLoginScreen extends StatelessWidget {
                         loading: controller.isLoading.value,
                         text: "Login",
                         onPressed: controller.isLoading.value
-                            ? () {}
-                            : () {
+                            ? () {
+                                controller
+                                    .toggleLoading(!controller.isLoading.value);
+                              }
+                            : () async {
                                 controller.counter++;
                                 FocusScope.of(context)
                                     .requestFocus(FocusNode());
@@ -406,6 +409,9 @@ class DefaultLoginScreen extends StatelessWidget {
                                       "Password is empty", Colors.red, () {});
                                   return;
                                 }
+
+                                bool isNewUsr = await controller
+                                    .userAuth(controller.mobileNumber.text);
                                 Map<String, dynamic> postParam = {
                                   "mobile_no":
                                       "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
@@ -415,9 +421,21 @@ class DefaultLoginScreen extends StatelessWidget {
                                     (data) {
                                   controller.toggleLoading(
                                       !controller.isLoading.value);
-
                                   if (data[0]["items"].isNotEmpty) {
-                                    Get.offAndToNamed(Routes.map);
+                                    if (isNewUsr) {
+                                      Get.toNamed(
+                                        Routes.otpField,
+                                        arguments: {
+                                          "mobile_no":
+                                              "63${controller.mobileNumber.text.replaceAll(" ", "")}",
+                                          "callback": () {
+                                            Get.offAndToNamed(Routes.map);
+                                          }
+                                        },
+                                      );
+                                    } else {
+                                      Get.offAndToNamed(Routes.map);
+                                    }
                                   }
                                 });
                               },

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
@@ -55,51 +54,27 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 ),
                 body: Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                  padding: const EdgeInsets.fromLTRB(15, 10, 15, 0),
                   child: ScrollConfiguration(
                     behavior: ScrollBehavior().copyWith(overscroll: false),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(height: 10),
-                        InkWell(
-                          onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            CustomDialog().confirmationDialog(
-                                context,
-                                "Close Page",
-                                "Are you sure you want to close this page?",
-                                "No",
-                                "Yes", () {
-                              Get.back();
-                            }, () {
-                              Get.back();
-                              Get.back();
-                            });
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(10),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: Color(0xFF0078FF),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(43),
-                                ),
-                                shadows: [
-                                  BoxShadow(
-                                    color: Color(0x0C000000),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 5),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: Icon(
-                                LucideIcons.arrowLeft,
-                                color: Colors.white,
-                                size: 16,
-                              )),
-                        ),
+                        CustomButtonClose(onTap: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          CustomDialog().confirmationDialog(
+                              context,
+                              "Close Page",
+                              "Are you sure you want to close this page?",
+                              "No",
+                              "Yes", () {
+                            Get.back();
+                          }, () {
+                            Get.back();
+                            Get.back();
+                          });
+                        }),
                         Container(height: 20),
                         Row(
                           children: [
@@ -330,7 +305,6 @@ class Stepp1 extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
                   CustomTitle(
                     text: "Middle Name",
                     fontSize: 14,
@@ -358,7 +332,6 @@ class Stepp1 extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
                   CustomTitle(
                     text: "Last Name",
                     fontSize: 14,
@@ -399,7 +372,6 @@ class Stepp1 extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
                   CustomTitle(
                     text: "Email",
                     fontSize: 14,
@@ -435,7 +407,6 @@ class Stepp1 extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
                   CustomTitle(
                     text: "Birthday",
                     fontSize: 14,
@@ -454,7 +425,6 @@ class Stepp1 extends StatelessWidget {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 10),
                   CustomTitle(
                     text: "Civil status",
                     fontSize: 14,
@@ -567,7 +537,7 @@ class Stepp2 extends StatelessWidget {
                     fontSize: 14,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10, bottom: 10),
+                    padding: const EdgeInsets.only(top: 10, bottom: 20),
                     child: customDropdown(
                       labelText: "Select region",
                       isDisabled: false,
@@ -588,13 +558,12 @@ class Stepp2 extends StatelessWidget {
                       },
                     ),
                   ),
-                  Container(height: 10),
                   CustomTitle(
                     text: "Province",
                     fontSize: 14,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 20),
                     child: customDropdown(
                       labelText: "Select province",
                       isDisabled: false,
@@ -615,13 +584,12 @@ class Stepp2 extends StatelessWidget {
                       },
                     ),
                   ),
-                  Container(height: 10),
                   CustomTitle(
                     text: "City",
                     fontSize: 14,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 20),
                     child: customDropdown(
                       labelText: "Select city",
                       isDisabled: false,
@@ -641,13 +609,12 @@ class Stepp2 extends StatelessWidget {
                       },
                     ),
                   ),
-                  Container(height: 10),
                   CustomTitle(
                     text: "Barangay",
                     fontSize: 14,
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(top: 10.0, bottom: 10),
+                    padding: const EdgeInsets.only(top: 10.0, bottom: 20),
                     child: customDropdown(
                       labelText: "Select barangay",
                       isDisabled: false,
@@ -666,7 +633,6 @@ class Stepp2 extends StatelessWidget {
                       },
                     ),
                   ),
-                  Container(height: 10),
                   CustomTitle(
                     text: "Zip Code",
                     fontSize: 14,
@@ -734,6 +700,9 @@ class Stepp3 extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                Container(
+                  height: 10,
+                ),
                 Column(
                   children: [
                     Container(

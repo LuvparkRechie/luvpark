@@ -1,15 +1,18 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
+import 'package:luvpark/custom_widgets/custom_text.dart';
 
 import '../custom_widgets/custom_textfield.dart';
 import '../custom_widgets/variables.dart';
+import '../wallet_qr/paymerchant/view.dart';
 import 'controller.dart';
 
 class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
@@ -18,14 +21,15 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        toolbarHeight: 0,
         elevation: 0,
-        backgroundColor: Colors.white,
+        toolbarHeight: 0,
+        backgroundColor: AppColor.mainColor,
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
+          statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.light,
-          statusBarIconBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
         ),
       ),
       body: Form(
@@ -38,38 +42,12 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(height: 10),
-                InkWell(
-                  onTap: () {
-                    Get.back();
-                  },
-                  child: Container(
-                      padding: const EdgeInsets.all(10),
-                      clipBehavior: Clip.antiAlias,
-                      decoration: ShapeDecoration(
-                        color: Color(0xFF0078FF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(43),
-                        ),
-                        shadows: [
-                          BoxShadow(
-                            color: Color(0x0C000000),
-                            blurRadius: 15,
-                            offset: Offset(0, 5),
-                            spreadRadius: 0,
-                          )
-                        ],
-                      ),
-                      child: Icon(
-                        LucideIcons.arrowLeft,
-                        color: Colors.white,
-                        size: 16,
-                      )),
-                ),
+                CustomButtonClose(onTap: Get.back),
                 Container(height: 20),
                 Text(
                   "Top-up Account",
                   style: GoogleFonts.openSans(
-                    fontSize: 25,
+                    fontSize: 20,
                     fontWeight: FontWeight.w700,
                     color: AppColor.headerColor,
                   ),
@@ -81,8 +59,12 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                     const SizedBox(
                       height: 10,
                     ),
+                    CustomParagraph(
+                      text: "Recipient Number",
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                     CustomMobileNumber(
-                      labelText: "Recipient Number",
                       hintText: "Recipient Number",
                       controller: controller.mobNum,
                       inputFormatters: [Variables.maskFormatter],
@@ -92,6 +74,11 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                             value.replaceAll(" ", ""), false);
                       },
                     ),
+                    CustomParagraph(
+                      text: "Recipient Name",
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                     CustomTextField(
                       isReadOnly: true,
                       controller: controller.rname,
@@ -99,17 +86,36 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                       filledColor: Colors.grey.shade200,
                       isFilled: true,
                     ),
+                    CustomParagraph(
+                      text: "Amount",
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black,
+                    ),
                     CustomTextField(
-                      isReadOnly: true,
-                      filledColor: Colors.grey.shade200,
+                      hintText: "Enter amount",
                       controller: controller.amountController,
-                      isFilled: true,
-                      hintText: "Amount",
+                      inputFormatters: [
+                        AutoDecimalInputFormatter(),
+                      ],
+                      keyboardType: Platform.isAndroid
+                          ? TextInputType.number
+                          : const TextInputType.numberWithOptions(
+                              signed: true, decimal: false),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return "Amount is required";
+                        }
+                        if (double.parse(value.toString()) < 10) {
+                          return "Minimum of 10 tokens";
+                        }
+
+                        return null;
+                      },
                     ),
                   ],
                 ),
                 const SizedBox(
-                  height: 20,
+                  height: 30,
                 ),
                 if (MediaQuery.of(context).viewInsets.bottom ==
                     0) //hide custombutton

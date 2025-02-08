@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
 
+import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/custom_button.dart';
 import '../routes/routes.dart';
@@ -35,46 +35,27 @@ class WalletRechargeScreen extends GetView<WalletRechargeController> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              Container(height: 20),
               Obx(() => Padding(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 15,
-                      vertical: 20,
                     ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(height: 10),
-                        InkWell(
-                          onTap: () {
+                        CustomButtonClose(onTap: () {
+                          FocusNode().unfocus();
+                          CustomDialog().loadingDialog(context);
+                          Future.delayed(Duration(milliseconds: 200), () {
                             Get.back();
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(10),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: Color(0xFF0078FF),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(43),
-                                ),
-                                shadows: [
-                                  BoxShadow(
-                                    color: Color(0x0C000000),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 5),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: Icon(
-                                LucideIcons.arrowLeft,
-                                color: Colors.white,
-                                size: 16,
-                              )),
-                        ),
+                            Get.back();
+                          });
+                        }),
+
                         Container(height: 20),
                         Text(
-                          "Buy Load",
+                          "Top up",
                           style: GoogleFonts.openSans(
                             fontSize: 25,
                             fontWeight: FontWeight.w700,

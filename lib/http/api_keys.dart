@@ -274,4 +274,9 @@ class ApiKeys {
 
 //Biller Template
   static const gApiBillerTemplate = '/ords/$luvApi/bs/templ';
+
+  //Generate OTp using mobile number
+  static const gApiPostGenerateOTP = '/ords/$luvApi/wv2/otp/';
+  //Verify OTP
+  static const gApiPutVerifyOTP = '/ords/$luvApi/wv2/otp/';
 }

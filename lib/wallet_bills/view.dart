@@ -117,16 +117,16 @@ class MerchantBiller extends GetView<MerchantBillerController> {
                                       const EdgeInsets.fromLTRB(15, 10, 15, 0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                      color: Colors.grey.shade50,
-                                      borderRadius: BorderRadius.circular(10),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.2),
-                                          blurRadius: 3,
-                                          offset: Offset(0, 0),
-                                        ),
-                                      ],
-                                    ),
+                                        color: Colors.grey.shade100,
+                                        borderRadius: BorderRadius.circular(7),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.1),
+                                            blurRadius: 3,
+                                            offset: Offset(0, 1),
+                                          ),
+                                        ]),
                                     child: ListTile(
                                       title: CustomTitle(
                                         text:

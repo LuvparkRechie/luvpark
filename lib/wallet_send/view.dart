@@ -1,17 +1,20 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/auth/authentication.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/wallet_send/index.dart';
 
+import '../auth/authentication.dart';
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
 
@@ -22,22 +25,21 @@ class WalletSend extends GetView<WalletSendController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
-      appBar: CustomAppbar(
-        title: "Send",
-        onTap: () {
-          FocusNode().unfocus();
-          CustomDialog().loadingDialog(context);
-          Future.delayed(Duration(seconds: 1), () {
-            Get.back();
-            Get.back();
-          });
-        },
+      appBar: AppBar(
+        elevation: 0,
+        toolbarHeight: 0,
+        backgroundColor: AppColor.mainColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.light,
+        ),
       ),
       body: ScrollConfiguration(
         behavior: ScrollBehavior().copyWith(overscroll: false),
         child: SingleChildScrollView(
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
             child: Obx(
               () => controller.isLoading.value
                   ? Container(
@@ -51,74 +53,74 @@ class WalletSend extends GetView<WalletSendController> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColor.primaryColor,
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10.0,
-                              vertical: 15,
+                        Container(height: 20),
+                        CustomButtonClose(onTap: () {
+                          FocusNode().unfocus();
+                          CustomDialog().loadingDialog(context);
+                          Future.delayed(Duration(milliseconds: 200), () {
+                            Get.back();
+                            Get.back();
+                          });
+                        }),
+                        Container(height: 20),
+                        CustomTitle(
+                          text: "Send Token",
+                          fontWeight: FontWeight.w700,
+                          fontSize: 20,
+                        ),
+                        Container(height: 5),
+                        Row(
+                          children: [
+                            CustomParagraph(text: "Account balance:"),
+                            Container(
+                              width: 5,
                             ),
-                            child: Row(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(
-                                      7,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.wallet_rounded,
-                                    color: AppColor.primaryColor,
-                                  ),
-                                ),
-                                Container(
-                                  width: 10,
-                                ),
-                                const CustomParagraph(
-                                  text: "Available Balance",
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                  textAlign: TextAlign.center,
-                                ),
-                                Expanded(
-                                  child: controller.isLoading.value
-                                      ? Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            SizedBox(
-                                              width: 16,
-                                              height: 16,
-                                              child: CircularProgressIndicator(
-                                                color: Colors.white,
-                                              ),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: controller.isLoading.value
+                                    ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          SizedBox(
+                                            width: 16,
+                                            height: 16,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
                                             ),
-                                            SizedBox(
-                                              width: 10,
-                                            ),
-                                          ],
-                                        )
-                                      : CustomParagraph(
-                                          text: !controller.isNetConn.value
-                                              ? "No internet"
-                                              : controller.userData.isEmpty
-                                                  ? ""
-                                                  : toCurrencyString(controller
-                                                      .userData[0]["amount_bal"]
-                                                      .toString()),
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.w700,
-                                          textAlign: TextAlign.right,
-                                        ),
-                                )
-                              ],
+                                          ),
+                                          SizedBox(
+                                            width: 10,
+                                          ),
+                                        ],
+                                      )
+                                    : CustomParagraph(
+                                        text: !controller.isNetConn.value
+                                            ? "No internet"
+                                            : controller.userData.isEmpty
+                                                ? ""
+                                                : toCurrencyString(controller
+                                                    .userData[0]["amount_bal"]
+                                                    .toString()),
+                                        color: AppColor.primaryColor,
+                                        fontWeight: FontWeight.w500,
+                                        textAlign: TextAlign.right,
+                                      ),
+                              ),
                             ),
-                          ),
+                          ],
+                        ),
+                        SizedBox(
+                          height: 30,
+                        ),
+                        AnimatedCrossFade(
+                          firstChild: const SizedBox.shrink(),
+                          secondChild: secondChild(),
+                          crossFadeState: controller.recipientData.isEmpty
+                              ? CrossFadeState.showFirst
+                              : CrossFadeState.showSecond,
+                          duration: Duration(milliseconds: 200),
                         ),
                         SizedBox(
                           height: 20,
@@ -129,62 +131,16 @@ class WalletSend extends GetView<WalletSendController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               CustomParagraph(
-                                text: "Mobile Number",
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
-                              ),
-                              CustomMobileNumber(
-                                hintText: "Enter mobile number",
-                                onChange: (text) {
-                                  controller.onTextChange();
-                                },
-                                controller: controller.recipient,
-                                inputFormatters: [Variables.maskFormatter],
-                                keyboardType: Platform.isAndroid
-                                    ? TextInputType.number
-                                    : const TextInputType.numberWithOptions(
-                                        signed: true, decimal: false),
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Field is required';
-                                  }
-                                  if (value
-                                          .toString()
-                                          .replaceAll(" ", "")
-                                          .length <
-                                      10) {
-                                    return 'Invalid mobile number';
-                                  }
-                                  if (value.toString().replaceAll(" ", "")[0] ==
-                                      '0') {
-                                    return 'Invalid mobile number';
-                                  }
-
-                                  return null;
-                                },
-                                suffixIcon: Icons.qr_code,
-                                onIconTap: () async {
-                                  FocusManager.instance.primaryFocus!.unfocus();
-                                  controller.requestCameraPermission();
-                                },
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              CustomParagraph(
                                 text: "Amount",
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black,
                               ),
                               CustomTextField(
-                                hintText: " Minimum amount of 10 tokens ",
+                                hintText: "Enter amount",
                                 controller: controller.tokenAmount,
-                                inputFormatters: <TextInputFormatter>[
-                                  FilteringTextInputFormatter.digitsOnly,
-                                  FilteringTextInputFormatter.allow(
-                                      RegExp(r'^\d*\.?\d*$')),
+                                inputFormatters: [
+                                  AutoDecimalInputFormatter(),
                                 ],
                                 keyboardType: Platform.isAndroid
                                     ? TextInputType.number
@@ -192,7 +148,6 @@ class WalletSend extends GetView<WalletSendController> {
                                         signed: true, decimal: false),
                                 onChange: (text) {
                                   controller.pads(int.parse(text.toString()));
-                                  controller.onTextChange();
                                 },
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -227,11 +182,21 @@ class WalletSend extends GetView<WalletSendController> {
                                 },
                               ),
                               SizedBox(height: 10),
-                              CustomParagraph(
-                                text: "Note",
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                              Row(
+                                children: [
+                                  CustomParagraph(
+                                    text: "Description",
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                    color: Colors.black,
+                                  ),
+                                  Container(width: 5),
+                                  CustomParagraph(
+                                    text: "(Optional)",
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ],
                               ),
                               CustomTextField(
                                 inputFormatters: [
@@ -240,27 +205,16 @@ class WalletSend extends GetView<WalletSendController> {
                                   ),
                                 ],
                                 maxLength: 30,
-                                hintText: "Optional",
                                 controller: controller.message,
+                                maxLines: 5,
+                                minLines: 3,
                               ),
-                              for (int i = 0;
-                                  i < controller.padData.length;
-                                  i += 3)
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    for (int j = i;
-                                        j < i + 3 &&
-                                            j < controller.padData.length;
-                                        j++)
-                                      myPads(controller.padData[j], j)
-                                  ],
-                                ),
                               SizedBox(
                                 height: 30,
                               ),
-                              if (MediaQuery.of(context).viewInsets.bottom ==
+                              if (MediaQuery.of(Get.context!)
+                                      .viewInsets
+                                      .bottom ==
                                   0) //hide button
                                 CustomButton(
                                   text: "Continue",
@@ -272,9 +226,11 @@ class WalletSend extends GetView<WalletSendController> {
                                           await Authentication().getUserLogin();
 
                                       if (item["mobile_no"].toString() ==
-                                          "63${controller.recipient.text.replaceAll(" ", "")}") {
+                                          controller.recipientData[0]
+                                                  ["mobile_no"]
+                                              .toString()) {
                                         CustomDialog().snackbarDialog(
-                                            context,
+                                            Get.context!,
                                             "Please use another number.",
                                             Colors.red,
                                             () {});
@@ -291,7 +247,7 @@ class WalletSend extends GetView<WalletSendController> {
                                               .toString()
                                               .removeAllWhitespace)) {
                                         CustomDialog().snackbarDialog(
-                                          context,
+                                          Get.context!,
                                           "Insufficient balance.",
                                           Colors.red,
                                           () {},
@@ -300,7 +256,7 @@ class WalletSend extends GetView<WalletSendController> {
                                       }
 
                                       CustomDialog().confirmationDialog(
-                                          context,
+                                          Get.context!,
                                           "Confirmation",
                                           "Are you sure you want to proceed?",
                                           "Back",
@@ -323,6 +279,131 @@ class WalletSend extends GetView<WalletSendController> {
         ),
       ),
     );
+  }
+
+  Widget secondChild() {
+    return controller.recipientData.isEmpty
+        ? Container()
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CustomParagraph(
+                text: "Recipient",
+                fontSize: 13,
+                fontWeight: FontWeight.w500,
+                color: Colors.black,
+              ),
+              SizedBox(
+                height: 10,
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(7),
+                    color: AppColor.primaryColor.withOpacity(.1)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white,
+                              width: 2.0,
+                            ),
+                          ),
+                          child: ClipRRect(
+                            clipBehavior: Clip.none,
+                            child: CircleAvatar(
+                              radius: 30,
+                              backgroundColor: Colors.grey[200],
+                              backgroundImage: controller
+                                      .userImage.value.isNotEmpty
+                                  ? MemoryImage(
+                                      base64Decode(controller.userImage.value
+                                          .toString()),
+                                    )
+                                  : null,
+                              child:
+                                  controller.userImage.value.toString().isEmpty
+                                      ? Icon(
+                                          Icons.person,
+                                          size: 32,
+                                          color: AppColor.primaryColor,
+                                        )
+                                      : null,
+                            ),
+                          ),
+                        ),
+                        Container(width: 10),
+                        Expanded(
+                          child: controller.userName.value == "Not Verified"
+                              ? CustomParagraph(
+                                  text: controller.userName.value,
+                                  color: Colors.black87,
+                                  fontWeight: FontWeight.w700,
+                                )
+                              : Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomParagraph(
+                                      text: controller.userName.value,
+                                      color: Colors.black87,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                    Container(height: 5),
+                                    CustomParagraph(
+                                      text: controller.recipientData[0]["email"]
+                                          .toString(),
+                                      fontSize: 13,
+                                    )
+                                  ],
+                                ),
+                        ),
+                        Container(width: 5),
+                        GestureDetector(
+                          onTap: () {
+                            Get.bottomSheet(UsersBottomsheet(index: 2),
+                                isDismissible: false);
+                          },
+                          child: Icon(
+                            LucideIcons.edit,
+                            size: 18,
+                            color: AppColor.primaryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Divider(),
+                    Row(
+                      children: [
+                        Expanded(
+                            child: CustomParagraph(
+                          text: "Mobile No",
+                          fontSize: 12,
+                        )),
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: CustomParagraph(
+                              text: controller.recipientData[0]["mobile_no"],
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black87,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+            ],
+          );
   }
 
   Widget myPads(data, int index) {
@@ -380,4 +461,123 @@ class WalletSend extends GetView<WalletSendController> {
       ),
     );
   }
+}
+
+class UsersBottomsheet extends StatefulWidget {
+  final int index;
+  const UsersBottomsheet({super.key, required this.index});
+
+  @override
+  State<UsersBottomsheet> createState() => _UsersBottomsheetState();
+}
+
+class _UsersBottomsheetState extends State<UsersBottomsheet> {
+  final _formKey = GlobalKey<FormState>();
+  final TextEditingController mobileNo = TextEditingController();
+  final ct = Get.put(WalletSendController());
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Container(
+        height: 260,
+        padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(7),
+          ),
+          color: Colors.white,
+        ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: InkWell(
+                  onTap: () {
+                    Functions.popPage(widget.index == 1 ? 2 : 1);
+                  },
+                  child: Icon(
+                    Iconsax.close_circle,
+                    color: Colors.black54,
+                    size: 20,
+                  ),
+                ),
+              ),
+              CustomTitle(text: "Recipient Number"),
+              CustomMobileNumber(
+                hintText: "Enter mobile number",
+                controller: mobileNo,
+                inputFormatters: [Variables.maskFormatter],
+                keyboardType: Platform.isAndroid
+                    ? TextInputType.number
+                    : const TextInputType.numberWithOptions(
+                        signed: true, decimal: false),
+                validator: (value) {
+                  if (value!.isEmpty) {
+                    return 'Field is required';
+                  }
+                  if (value.toString().replaceAll(" ", "").length < 10) {
+                    return 'Invalid mobile number';
+                  }
+                  if (value.toString().replaceAll(" ", "")[0] == '0') {
+                    return 'Invalid mobile number';
+                  }
+
+                  return null;
+                },
+                suffixIcon: Icons.qr_code,
+                onIconTap: () async {
+                  FocusManager.instance.primaryFocus!.unfocus();
+                  ct.requestCameraPermission();
+                },
+              ),
+              Container(height: 30),
+              CustomButton(
+                  text: "Proceed",
+                  onPressed: () {
+                    if (_formKey.currentState?.validate() ?? false) {
+                      ct.getRecipient(mobileNo.text);
+                    }
+                  }),
+              Container(height: 10),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AutoDecimalInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    if (newValue.text.isEmpty) return newValue;
+
+    // Remove non-numeric characters
+    final numericValue = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
+
+    // Format as decimal (e.g., "123" -> "1.23")
+    final value = double.tryParse(numericValue) ?? 0.0;
+    final formattedValue = (value / 100).toStringAsFixed(2);
+
+    return TextEditingValue(
+      text: formattedValue,
+      selection: TextSelection.collapsed(offset: formattedValue.length),
+    );
+  }
+}
+
+String _capitalize(String text) {
+  if (text.isEmpty) return text;
+  return text[0].toUpperCase() + text.substring(1).toLowerCase();
 }

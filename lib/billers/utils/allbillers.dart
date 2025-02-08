@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/billers/utils/add_favorites.dart';
 import 'package:luvpark/billers/utils/templ.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
@@ -24,6 +25,8 @@ class Allbillers extends GetView<BillersController> {
   @override
   Widget build(BuildContext context) {
     final TextEditingController searchController = TextEditingController();
+    final dataArgs = Get.arguments;
+
     return Scaffold(
         appBar: CustomAppbar(
           onTap: () {
@@ -178,7 +181,15 @@ class Allbillers extends GetView<BillersController> {
                                       'full_url': controller
                                           .filteredBillers[index]["full_url"],
                                     };
-                                    controller.getTemplate(billerData);
+                                    if (dataArgs["source"] == "fav") {
+                                      print("billerData $billerData");
+                                      Get.to(AddFavoritesWidget(),
+                                          transition: Transition.rightToLeft,
+                                          duration: Duration(milliseconds: 200),
+                                          arguments: billerData);
+                                    } else {
+                                      controller.getTemplate(billerData);
+                                    }
                                   },
                                   title: CustomParagraph(
                                     fontSize: 12,

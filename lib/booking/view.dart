@@ -55,7 +55,6 @@ class BookingPage extends GetView<BookingController> {
                         : Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(height: 10),
                               Expanded(
                                   child: StretchingOverscrollIndicator(
                                 axisDirection: AxisDirection.down,
@@ -66,6 +65,7 @@ class BookingPage extends GetView<BookingController> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
+                                      Container(height: 10),
                                       CustomButtonClose(onTap: () {
                                         FocusNode().unfocus();
                                         CustomDialog().loadingDialog(context);
@@ -629,13 +629,19 @@ class BookingPage extends GetView<BookingController> {
                                                 ["isAllowSubscription"])
                                               Visibility(
                                                 visible:
-                                                    controller.endNumber.value >
-                                                        0,
+                                                    controller.maxHrs.value > 0,
                                                 child: CustomParagraph(
-                                                  text:
-                                                      "Booking limit is up to ${controller.endNumber.value} ${controller.endNumber.value > 1 ? "Hours" : "Hour"}",
+                                                  text: controller
+                                                              .maxHrs.value ==
+                                                          1
+                                                      ? "Parking will be closing soon."
+                                                      : "Booking limit is up to ${controller.maxHrs.value} ${controller.maxHrs.value > 1 ? "Hours" : "Hour"}.",
                                                   fontWeight: FontWeight.w500,
-                                                  color: AppColor.primaryColor,
+                                                  color: controller
+                                                              .maxHrs.value ==
+                                                          1
+                                                      ? Colors.red
+                                                      : AppColor.primaryColor,
                                                   fontSize: 12,
                                                 ),
                                               ),

@@ -9,7 +9,7 @@ class Routes {
   static const otp = "/otp";
   static const map = "/map";
   static const loading = "/loading";
-  static const activate = "/activate_acc";
+  static const activateAcc = "/activate_account";
   static const permission = "/permission";
   static const splash = "/splash";
   static const parking = "/parking";
@@ -19,7 +19,6 @@ class Routes {
   static const booking = "/booking";
   static const bookingNotice = "/booking_notice";
   static const bookingReceipt = "/booking_receipt";
-  static const sendOtp = "/wallet_otp";
   static const customdrawer = "/customdrawer";
   static const walletrecharge = "/wallet_recharge";
   static const walletrechargeload = "/wallet_recharge_load";
@@ -51,4 +50,5 @@ class Routes {
   static const merchantQRverify = "/merchantQRverify";
   static const merchantReceipt = "/merchantReceipt";
   static const merchant = "/merchant";
+  static const otpField = "/otp_field";
 }

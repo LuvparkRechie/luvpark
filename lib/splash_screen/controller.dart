@@ -111,19 +111,19 @@ class SplashController extends GetxController
             }
             if (items[0]["login_attempt"] >= 5) {
               Get.toNamed(
-                Routes.activate,
+                Routes.activateAcc,
                 arguments: items["mobile_no"],
               );
               return;
             }
             if (items[0]["is_active"] == "N") {
-              Get.offAndToNamed(Routes.login);
+              Get.toNamed(Routes.login);
               return;
             } else {
               final userLogin = await Authentication().getUserLogin();
 
               if (userLogin["is_login"] == "N") {
-                Get.offAndToNamed(Routes.login);
+                Get.toNamed(Routes.login);
                 return;
               } else {
                 Get.offAndToNamed(Routes.map);

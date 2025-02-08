@@ -156,10 +156,14 @@ class _PayMerchantState extends State<PayMerchant> {
                                         shape: BoxShape.circle,
                                         color: AppColor.iconBgColor,
                                       ),
-                                      padding: EdgeInsets.all(10),
-                                      child: Icon(
-                                        Iconsax.wallet,
-                                        color: AppColor.primaryColor,
+                                      padding: EdgeInsets.all(5),
+                                      child: Image(
+                                        fit: BoxFit.contain,
+                                        image: AssetImage(
+                                          "assets/images/logo.png",
+                                        ),
+                                        width: 30,
+                                        height: 30,
                                       ),
                                     ),
                                     Container(width: 10),

@@ -90,7 +90,7 @@ class CustomParagraph extends StatelessWidget {
       group: AutoSizeGroup(),
       style: paragraphStyle(
         fontSize: fontSize,
-        color: color ?? AppColor.paragraphColor,
+        color: color ?? Colors.black54,
         fontWeight: fontWeight,
         fontStyle: fontStyle,
         letterSpacing: letterSpacing,

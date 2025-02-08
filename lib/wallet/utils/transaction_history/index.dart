@@ -16,6 +16,7 @@ import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 
 import '../../../auth/authentication.dart';
+import '../../../custom_widgets/app_color.dart';
 import '../transaction_details.dart';
 
 class TransactionHistory extends StatefulWidget {
@@ -135,7 +136,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
         title: "Transaction History",
         action: [
@@ -167,8 +168,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                       child: ScrollConfiguration(
                         behavior: ScrollBehavior().copyWith(overscroll: false),
                         child: ListView.separated(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 15, vertical: 10),
                           itemCount: filterLogs.length,
                           itemBuilder: (context, index) {
                             String trans = filterLogs[index]["tran_desc"]
@@ -196,15 +197,20 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 decoration: BoxDecoration(
-                                    color: Colors.grey.shade100,
-                                    borderRadius: BorderRadius.circular(7)),
+                                  color: Colors.grey.shade100,
+                                  border:
+                                      Border.all(color: Colors.grey.shade300),
+                                  borderRadius: BorderRadius.circular(7),
+                                ),
                                 child: ListTile(
                                   contentPadding: EdgeInsets.zero,
                                   title: CustomTitle(
                                     text: filterLogs[index]["tran_desc"],
-                                    fontSize: 15,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     maxlines: 1,
+                                    letterSpacing: -.5,
+                                    color: AppColor.headerColor,
                                   ),
                                   subtitle: CustomParagraph(
                                     text: DateFormat('MMM d, yyyy h:mm a')
@@ -229,7 +235,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                             );
                           },
                           separatorBuilder: (context, index) => const SizedBox(
-                            height: 5,
+                            height: 10,
                           ),
                         ),
                       ),

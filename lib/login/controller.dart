@@ -83,8 +83,21 @@ class LoginScreenController extends GetxController {
           }, () {
             Get.back();
             Get.toNamed(
-              Routes.activate,
-              arguments: "63${mobileNumber.text.replaceAll(" ", "")}",
+              Routes.activateAcc,
+              arguments: {
+                "mobile_no": "63${mobileNumber.text.replaceAll(" ", "")}",
+                "callback": () {
+                  CustomDialog().successDialog(
+                    Get.context!,
+                    "Congratulations!",
+                    "Your account has been activated.\nContinue to log in",
+                    "Okay",
+                    () {
+                      Get.offAllNamed(Routes.login);
+                    },
+                  );
+                }
+              },
             );
           });
           return;
@@ -145,9 +158,6 @@ class LoginScreenController extends GetxController {
               });
               return;
             } else {
-              //refresh the login aft logout
-              mobileNumber.clear();
-              password.clear();
               var items = objData["items"][0];
 
               //sms keys
@@ -219,6 +229,17 @@ class LoginScreenController extends GetxController {
         Get.offAndToNamed(Routes.login);
       });
     });
+  }
+
+  Future<bool> userAuth(String mobile) async {
+    final data = await Authentication().getUserLogin();
+    int mobaNo =
+        int.parse(data["mobile_no"].toString().trim().replaceAll(" ", ""));
+    int usrMo = int.parse("63${mobile.toString().trim().replaceAll(" ", "")}");
+    print("usrMo $mobaNo  == $usrMo");
+    print("usrMo ${mobaNo == usrMo}");
+
+    return mobaNo == usrMo ? false : true;
   }
 
   @override

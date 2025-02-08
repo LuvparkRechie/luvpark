@@ -1,4 +1,4 @@
-library SendOtp;
+library activate;
 
 export './bindings.dart';
 export './controller.dart';

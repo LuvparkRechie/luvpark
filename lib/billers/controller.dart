@@ -128,8 +128,6 @@ class BillersController extends GetxController {
   }
 
   Future<void> addFavorites(params, billId, accountNo) async {
-    print("params $params");
-
     int userId = await Authentication().getUserId();
     bool isButtonEnabled = true;
     CustomDialog().confirmationDialog(Get.context!, "Add to Favorites",
@@ -146,9 +144,12 @@ class BillersController extends GetxController {
         "account_no": accountNo,
         "account_name": params["Biller Name"]
       };
+
+      print("parameterparameterparameter $parameter");
       HttpRequest(api: ApiKeys.gApiPostFavBiller, parameters: parameter)
           .postBody()
           .then((returnPost) async {
+        print("returnPost $returnPost");
         Get.back();
         if (returnPost == "No Internet") {
           CustomDialog().internetErrorDialog(Get.context!, () {

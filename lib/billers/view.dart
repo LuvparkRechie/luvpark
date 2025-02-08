@@ -82,18 +82,20 @@ class Billers extends StatelessWidget {
                                     children: [
                                       Icon(
                                         Icons.payment_outlined,
-                                        color: Colors.black,
+                                        color: AppColor.primaryColor,
                                       ),
                                       SizedBox(width: 10),
                                       CustomParagraph(
-                                          color: Colors.black,
-                                          fontSize: 10,
-                                          text: "Select Biller"),
+                                        color: Colors.black,
+                                        fontSize: 10,
+                                        text: "Select Biller",
+                                        fontWeight: FontWeight.w500,
+                                      ),
                                     ],
                                   ),
                                   Icon(
                                     Iconsax.arrow_right_2,
-                                    color: Colors.black,
+                                    color: AppColor.primaryColor,
                                   )
                                 ],
                               ),
@@ -129,9 +131,9 @@ class Billers extends StatelessWidget {
                                     decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
-                                            color: AppColor.hintColor)),
+                                            color: AppColor.primaryColor)),
                                     child: Icon(Icons.add,
-                                        color: AppColor.hintColor),
+                                        color: AppColor.primaryColor),
                                   ),
                                   SizedBox(width: 10),
                                   CustomParagraph(
@@ -232,18 +234,17 @@ class Billers extends StatelessWidget {
                                           margin: EdgeInsets.only(bottom: 10),
                                           padding: EdgeInsets.all(15),
                                           decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.black
-                                                    .withOpacity(0.1),
-                                                blurRadius: 5,
-                                                offset: Offset(0, 3),
-                                              ),
-                                            ],
-                                          ),
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(7),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black
+                                                      .withOpacity(0.1),
+                                                  blurRadius: 3,
+                                                  offset: Offset(0, 1),
+                                                ),
+                                              ]),
                                           child: Column(
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,

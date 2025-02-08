@@ -28,6 +28,8 @@ class WalletController extends GetxController
   RxString userImage = "".obs;
   RxString fname = "".obs;
   RxList filterLogs = [].obs;
+  RxString mobileNo = "".obs;
+  RxBool isShowBal = false.obs;
   RxList<Widget> unverified = <Widget>[].obs;
 
   var userProfile;
@@ -47,10 +49,13 @@ class WalletController extends GetxController
   }
 
   void getBtnData() async {
+    final authData = await Authentication().getUserData2();
+    mobileNo.value = authData["mobile_no"].toString();
     List item = [
-      {"btn_name": "Load", "icon": LucideIcons.wallet},
+      {"btn_name": "Top up", "icon": LucideIcons.wallet},
       {"btn_name": "Send", "icon": LucideIcons.send},
       {"btn_name": "QR Code", "icon": LucideIcons.qrCode},
+      {"btn_name": "Bill", "icon": LucideIcons.wallet},
       {"btn_name": "Merchant", "icon": Iconsax.receipt_text}
     ];
     btnData.value = item;
@@ -262,7 +267,7 @@ class WalletController extends GetxController
           });
           return;
         }
-        Get.toNamed(Routes.walletrecharge);
+        Get.toNamed(Routes.walletrechargeload);
         break;
       case 1:
         Get.toNamed(Routes.send2);
@@ -271,9 +276,16 @@ class WalletController extends GetxController
         Get.toNamed(Routes.qrwallet);
         break;
       case 3:
+        Get.toNamed(Routes.billers);
+        break;
+      case 4:
         Get.toNamed(Routes.merchant);
         break;
     }
+  }
+
+  void onShowBal() {
+    isShowBal.value = !isShowBal.value;
   }
 
   @override

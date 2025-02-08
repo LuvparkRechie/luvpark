@@ -7,7 +7,7 @@ import 'package:luvpark/forgot_password/utils/forgot_verified_acc/index.dart';
 import 'package:luvpark/my_account/index.dart';
 import 'package:luvpark/my_account/utils/index.dart';
 import 'package:luvpark/my_account/utils/otp_update/index.dart';
-import 'package:luvpark/profile/index.dart';
+import 'package:luvpark/otp_field/index.dart';
 import 'package:luvpark/wallet_qr/index.dart';
 import 'package:luvpark/wallet_qr/merchantreceipt/index.dart';
 import 'package:luvpark/wallet_qr/myqr/bindings.dart';
@@ -45,7 +45,6 @@ import '../wallet/index.dart';
 import '../wallet_bills/index.dart';
 import '../wallet_recharge/index.dart';
 import '../wallet_send/index.dart';
-import '../wallet_send/send_otp/index.dart';
 import 'routes.dart';
 
 class AppPages {
@@ -78,9 +77,9 @@ class AppPages {
     ),
 
     GetPage(
-      name: Routes.activate,
+      name: Routes.activateAcc,
       page: () => const ActivateAccount(),
-      binding: ActivateAccBinding(),
+      binding: ActivateAccountBinding(),
     ),
     GetPage(
       name: Routes.permission,
@@ -134,11 +133,6 @@ class AppPages {
     ),
 
     GetPage(
-      name: Routes.sendOtp,
-      page: () => const SendOtp(),
-      binding: SendOtpBinding(),
-    ),
-    GetPage(
       name: Routes.faqpage,
       page: () => const FaqPage(),
       binding: FaqPageBinding(),
@@ -154,11 +148,11 @@ class AppPages {
       page: () => const AboutUs(),
       binding: AboutUsBinding(),
     ),
-    GetPage(
-      name: Routes.profile,
-      page: () => const Profile(),
-      binding: ProfileScreenBinding(),
-    ),
+    // GetPage(
+    //   name: Routes.profile,
+    //   page: () => const Profile(),
+    //   binding: ProfileScreenBinding(),
+    // ),
     GetPage(
       name: Routes.security,
       page: () => const Security(),
@@ -274,6 +268,11 @@ class AppPages {
       name: Routes.merchant,
       page: () => MerchantBiller(),
       binding: MerchantBillerBindings(),
+    ),
+    GetPage(
+      name: Routes.otpField,
+      page: () => const OtpFieldScreen(),
+      binding: OtpFieldScreenBinding(),
     ),
   ];
 }

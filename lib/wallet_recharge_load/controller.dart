@@ -40,9 +40,6 @@ class WalletRechargeLoadController extends GetxController
   Rxn<int> selectedBankTracker = Rxn<int>(null);
   Rxn<int> selectedBankType = Rxn<int>(null);
 
-  final String tokenAmount =
-      Get.arguments; // from wallet recharge screen tokenAmount
-
   var userDataInfo;
   final TextEditingController userName = TextEditingController();
 
@@ -58,7 +55,7 @@ class WalletRechargeLoadController extends GetxController
   @override
   void onInit() {
     rname = TextEditingController();
-    amountController = TextEditingController(text: tokenAmount);
+    amountController = TextEditingController();
     fullName.value = "";
     WidgetsBinding.instance.addPostFrameCallback((_) {
       getBankUrl();
@@ -123,10 +120,6 @@ class WalletRechargeLoadController extends GetxController
 
     HttpRequest(api: bankParamApi).get().then((objData) {
       if (objData == "No Internet") {
-        isSelectedPartner.value = false;
-        selectedBankType.value = null;
-        selectedBankTracker.value = null;
-
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
@@ -178,12 +171,10 @@ class WalletRechargeLoadController extends GetxController
 
     // Encrypt
     final encrypted = await Variables.encryptData(secretKey, nonce, plainText);
-    print("encrypted $encrypted");
     final concatenatedArray = Variables.concatBuffers(nonce, encrypted);
     final output = Variables.arrayBufferToBase64(concatenatedArray);
 
     hash.value = Uri.encodeComponent(output);
-    print("hash.value ${hash.value}");
 
     Get.to(
       () => WebviewPage(
@@ -212,14 +203,16 @@ class WalletRechargeLoadController extends GetxController
       }
 
       var dataParam = {
-        "amount": tokenAmount,
+        "amount": amountController.text.toString().split(".")[0],
         "user_id": userDataInfo["user_id"],
         "to_mobile_no": "63${mobNum.text.replaceAll(" ", "")}",
       };
+      print("dataParam $dataParam");
       CustomDialog().loadingDialog(Get.context!);
       HttpRequest(api: ApiKeys.gApiSubFolderPostUbTrans, parameters: dataParam)
-          .post()
+          .postBody()
           .then((returnPost) {
+        print("returnPost $returnPost");
         if (returnPost == "No Internet") {
           Get.back();
           CustomDialog().errorDialog(Get.context!, "Error",
@@ -237,7 +230,7 @@ class WalletRechargeLoadController extends GetxController
         } else {
           if (returnPost["success"] == 'Y') {
             var plainText = {
-              "Amt": tokenAmount,
+              "Amt": amountController.text,
               "Email": item['email'].toString(),
               "Mobile": mobNum.text.replaceAll(" ", ""),
               "Redir": "https://www.example.com",
@@ -293,12 +286,10 @@ class WalletRechargeLoadController extends GetxController
 
     _debounce = Timer(duration, () {
       CustomDialog().loadingDialog(Get.context!);
-
-      HttpRequest(
-              api:
-                  "${ApiKeys.gApiSubFolderGetUserInfo}?mobile_no=63${mobile.toString().replaceAll(" ", '')}")
-          .get()
-          .then((objData) {
+      String api =
+          "${ApiKeys.gApiSubFolderGetUserInfo}?mobile_no=63${mobile.toString().replaceAll(" ", '')}";
+      HttpRequest(api: api).get().then((objData) {
+        print("api $api");
         FocusScope.of(Get.context!).unfocus();
         if (objData == "No Internet") {
           isValidNumber.value = false;

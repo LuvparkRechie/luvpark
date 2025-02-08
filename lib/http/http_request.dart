@@ -96,6 +96,34 @@ class HttpRequest {
     }
   }
 
+  Future<dynamic> putBoy() async {
+    List appSecurity = await AppSecurity.checkDeviceSecurity();
+    bool isAppSecured = appSecurity[0]["is_secured"];
+    if (!isAppSecured) {
+      Variables.showSecurityPopUp(appSecurity[0]["msg"]);
+    } else {
+      try {
+        var response = await http
+            .put(
+              Uri.parse(
+                  Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
+              headers: {"Content-Type": "application/json"},
+              body: json.encode(parameters),
+            )
+            .timeout(
+              Duration(seconds: 10),
+            );
+        if (response.statusCode == 200) {
+          return json.decode(response.body);
+        } else {
+          return null;
+        }
+      } catch (e) {
+        return "No Internet";
+      }
+    }
+  }
+
   Future<dynamic> put() async {
     List appSecurity = await AppSecurity.checkDeviceSecurity();
     bool isAppSecured = appSecurity[0]["is_secured"];

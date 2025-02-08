@@ -3,7 +3,11 @@ import 'dart:convert';
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
+import 'package:luvpark/functions/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../custom_widgets/variables.dart';
+import '../decryptor/decryptor.dart';
 
 class Authentication {
   static EncryptedSharedPreferences encryptedSharedPreferences =
@@ -213,5 +217,47 @@ class Authentication {
   Future<void> remove(String key) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.remove(key);
+  }
+
+  //encrypt data
+  Future<void> encryptData(String plaintText, [String? secretKey]) async {
+    final prefs = await SharedPreferences.getInstance();
+    String skey = secretKey ?? "luvpark";
+
+    String inatayaaa = jsonEncode(skey);
+    Uint8List aesKey = Functions.generateKey(inatayaaa, 16);
+    final nonce = Variables.generateRandomNonce();
+
+    final encrypted =
+        await Variables.encryptData(aesKey, nonce, json.encode(plaintText));
+
+    final concatenatedArray = Variables.concatBuffers(nonce, encrypted);
+    final output = Variables.arrayBufferToBase64(concatenatedArray);
+
+    prefs.setString("encrypt_data", output);
+  }
+
+  Future<dynamic> getEncryptedSmsKeys(String plaintText,
+      [String? secretKey]) async {
+    String hash = "";
+    String skey = secretKey ?? "luvpark";
+    final prefs = await SharedPreferences.getInstance();
+    final output = prefs.getString("encrypt_data");
+    hash = Uri.encodeComponent(output!);
+    String inatayaaa = jsonEncode(skey);
+    Uint8List aesKey = Functions.generateKey(inatayaaa, 16);
+
+    final encryptedData = base64Decode(Uri.decodeComponent(hash));
+
+    final nonces = encryptedData.sublist(0, 16);
+
+    final cipherText = encryptedData.sublist(16);
+
+    final decryptedData =
+        await Encryption().decryptData(aesKey, nonces, cipherText);
+    final data = utf8.decode(decryptedData);
+    final dataList = await jsonDecode(data);
+
+    return jsonDecode(dataList);
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
@@ -13,6 +14,7 @@ import 'package:luvpark/wallet/utils/transaction_details.dart';
 import 'package:shimmer/shimmer.dart';
 
 import '../custom_widgets/app_color.dart';
+import '../custom_widgets/variables.dart';
 import 'utils/transaction_history/index.dart';
 
 class WalletScreen extends GetView<WalletController> {
@@ -20,6 +22,7 @@ class WalletScreen extends GetView<WalletController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColor.bodyColor,
       appBar: CustomAppbar(
         elevation: 0,
         title: "My Wallet",
@@ -37,90 +40,144 @@ class WalletScreen extends GetView<WalletController> {
                   Container(
                     color: Color(0xFFE8F0F9),
                     width: double.infinity,
-                    height: 60,
+                    height: 80,
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(15, 15, 15, 23),
                     child: Container(
+                      width: double.infinity,
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 15, vertical: 15),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.all(Radius.circular(7)),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 3,
-                            offset: Offset(0, 0),
+                            color:
+                                Colors.black.withOpacity(0.1), // Light shadow
+                            blurRadius: 8, // Soft blur
+                            spreadRadius: 2, // Spread effect
+                            offset: Offset(0, 4), // Shadow positioned below
                           ),
                         ],
                       ),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Image.asset(
-                                    height: 30, "assets/images/logo.png"),
-                                SizedBox(width: 14),
-                                Expanded(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      CustomParagraph(
-                                        text: "Wallet balance",
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      CustomTitle(
-                                        text: !controller.isNetConnCard.value
-                                            ? "........"
-                                            : controller.isLoadingCard.value
-                                                ? "........"
-                                                : toCurrencyString(controller
-                                                    .userData[0]["amount_bal"]),
-                                      ),
-                                    ],
-                                  ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomParagraph(
+                                      text: "Current Balance",
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                    ),
+                                    CustomTitle(
+                                      fontSize: 25,
+                                      text: !controller.isNetConnCard.value
+                                          ? "........"
+                                          : controller.isLoadingCard.value
+                                              ? "........"
+                                              : !controller.isShowBal.value
+                                                  ? "••••••"
+                                                  : toCurrencyString(
+                                                      controller.userData[0]
+                                                          ["amount_bal"],
+                                                    ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                          Divider(
-                            color: Colors.black12,
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                    height: 30, "assets/images/rewardicon.png"),
-                                SizedBox(width: 14),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CustomParagraph(
-                                        text: "Rewards",
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      CustomTitle(
-                                        text: !controller.isNetConnCard.value
-                                            ? "........"
-                                            : controller.isLoadingCard.value
-                                                ? "........"
-                                                : toCurrencyString(controller
-                                                    .userData[0]["points_bal"]
-                                                    .toString()),
-                                      ),
-                                    ],
-                                  ),
+                              ),
+                              IconButton(
+                                onPressed: controller.onShowBal,
+                                icon: Icon(
+                                  controller.isShowBal.value
+                                      ? LucideIcons.eyeOff
+                                      : LucideIcons.eye,
+                                  color: Colors.black54,
                                 ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(width: 10),
+                            ],
+                          ),
+                          Container(height: 20),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    CustomParagraph(
+                                      text: "Mobile Number",
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 12,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: CustomParagraph(
+                                        text: Variables.maskMobileNumber(
+                                            controller.mobileNo.value,
+                                            visibleStartDigits: 4,
+                                            visibleEndDigits: 3),
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black87,
+                                        letterSpacing: -.5,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: CustomParagraph(
+                                        text: "Reward",
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 5),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Image.asset(
+                                              height: 20,
+                                              "assets/images/rewardicon.png"),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(left: 5),
+                                            child: CustomParagraph(
+                                              text: !controller
+                                                      .isNetConnCard.value
+                                                  ? "........"
+                                                  : controller
+                                                          .isLoadingCard.value
+                                                      ? "........"
+                                                      : toCurrencyString(
+                                                          controller.userData[0]
+                                                                  ["points_bal"]
+                                                              .toString()),
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              )
+                            ],
                           ),
                         ],
                       ),
@@ -129,7 +186,7 @@ class WalletScreen extends GetView<WalletController> {
                 ],
               ),
               Padding(
-                padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
+                padding: const EdgeInsets.fromLTRB(5, 5, 5, 10),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
@@ -145,20 +202,30 @@ class WalletScreen extends GetView<WalletController> {
                               Container(
                                 padding: EdgeInsets.all(15),
                                 decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: const Color.fromARGB(
-                                        255, 237, 239, 246)),
+                                  shape: BoxShape.circle,
+                                  color:
+                                      const Color.fromARGB(255, 250, 249, 249),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 6,
+                                      spreadRadius: 1,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
                                 child: Icon(
                                   controller.btnData[i]["icon"],
                                   color: AppColor.primaryColor,
                                   size: 20,
                                 ),
                               ),
-                              Container(height: 10),
+                              Container(height: 15),
                               CustomParagraph(
                                 text: controller.btnData[i]["btn_name"],
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
+                                color: Colors.black,
                               ),
                             ],
                           ),
@@ -179,135 +246,137 @@ class WalletScreen extends GetView<WalletController> {
                 ),
               ),
               Expanded(
-                child: Container(
-                  color: Colors.white,
-                  padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 10, 20, 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            CustomParagraph(
-                              text: "Recent Activities",
-                              fontSize: 16,
-                              color: AppColor.headerColor,
-                              fontWeight: FontWeight.w700,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(15, 15, 20, 15),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          CustomParagraph(
+                            text: "Recent Transaction",
+                            fontSize: 16,
+                            color: AppColor.headerColor,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -1,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Get.to(TransactionHistory());
+                            },
+                            child: CustomParagraph(
+                              text: "See all",
+                              fontWeight: FontWeight.w400,
+                              letterSpacing: -.5,
+                              color: AppColor.primaryColor,
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                Get.to(TransactionHistory());
-                              },
-                              child: CustomParagraph(
-                                text: "See all",
-                                color: AppColor.primaryColor,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                      Expanded(
-                        child: controller.isLoadingLogs.value
-                            ? Shimmer.fromColors(
-                                baseColor: Colors.grey[300]!,
-                                highlightColor: Colors.grey[100]!,
-                                child: ListView.builder(
-                                  padding: EdgeInsets.zero,
-                                  itemCount: 10,
-                                  itemBuilder: (context, index) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 8.0),
-                                    child: ListTile(
-                                      contentPadding: EdgeInsets.zero,
-                                      leading: Container(
-                                        width: 40,
-                                        height: 40,
-                                        color: Colors.grey[300],
-                                      ),
-                                      title: Container(
-                                        width: double.infinity,
-                                        height: 16,
-                                        color: Colors.grey[300],
-                                      ),
-                                      subtitle: Container(
-                                        width: 15,
-                                        height: 14,
-                                        color: Colors.grey[300],
-                                      ),
-                                      trailing: Container(
-                                        width: 60,
-                                        height: 16,
-                                        color: Colors.grey[300],
-                                      ),
+                    ),
+                    Expanded(
+                      child: controller.isLoadingLogs.value
+                          ? Shimmer.fromColors(
+                              baseColor: Colors.grey[300]!,
+                              highlightColor: Colors.grey[100]!,
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                itemCount: 10,
+                                itemBuilder: (context, index) => Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8.0),
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: Container(
+                                      width: 40,
+                                      height: 40,
+                                      color: Colors.grey[300],
+                                    ),
+                                    title: Container(
+                                      width: double.infinity,
+                                      height: 16,
+                                      color: Colors.grey[300],
+                                    ),
+                                    subtitle: Container(
+                                      width: 15,
+                                      height: 14,
+                                      color: Colors.grey[300],
+                                    ),
+                                    trailing: Container(
+                                      width: 60,
+                                      height: 16,
+                                      color: Colors.grey[300],
                                     ),
                                   ),
                                 ),
-                              )
-                            : controller.logs.isEmpty
-                                ? NoDataFound()
-                                : ListView.separated(
-                                    physics: BouncingScrollPhysics(
-                                        decelerationRate:
-                                            ScrollDecelerationRate.fast),
-                                    padding:
-                                        EdgeInsets.symmetric(horizontal: 10),
-                                    itemCount: controller.logs.length,
-                                    itemBuilder: (context, index) {
-                                      var log = controller.logs[index];
+                              ),
+                            )
+                          : controller.logs.isEmpty
+                              ? NoDataFound()
+                              : ListView.separated(
+                                  physics: BouncingScrollPhysics(
+                                      decelerationRate:
+                                          ScrollDecelerationRate.fast),
+                                  padding: EdgeInsets.symmetric(horizontal: 10),
+                                  itemCount: controller.logs.length,
+                                  itemBuilder: (context, index) {
+                                    var log = controller.logs[index];
 
-                                      return GestureDetector(
-                                        onTap: () {
-                                          Get.bottomSheet(TransactionDetails(
-                                              data: controller.logs,
-                                              index: index));
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 15),
-                                          decoration: BoxDecoration(
-                                              color: Colors.grey.shade100,
-                                              borderRadius:
-                                                  BorderRadius.circular(7)),
-                                          child: ListTile(
-                                            contentPadding: EdgeInsets.zero,
-                                            title: CustomTitle(
-                                              text: log["tran_desc"],
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.w600,
-                                              maxlines: 1,
-                                            ),
-                                            subtitle: CustomParagraph(
-                                              text: DateFormat(
-                                                      'MMM d, yyyy h:mm a')
-                                                  .format(DateTime.parse(
-                                                      log["tran_date"])),
-                                              fontSize: 12,
-                                              maxlines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                            ),
-                                            trailing: CustomTitle(
-                                              text: log["amount"],
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color:
-                                                  double.parse(log["amount"]) <
-                                                          0
-                                                      ? const Color(0xFFFF0000)
-                                                      : const Color(0xFF0078FF),
-                                            ),
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Get.bottomSheet(TransactionDetails(
+                                            data: controller.logs,
+                                            index: index));
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 15),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade100,
+                                          border: Border.all(
+                                              color: Colors.grey.shade300),
+                                          borderRadius:
+                                              BorderRadius.circular(7),
+                                        ),
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          title: CustomParagraph(
+                                            text: log["tran_desc"],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            maxlines: 1,
+                                            letterSpacing: -.5,
+                                            color: AppColor.headerColor,
+                                          ),
+                                          subtitle: CustomParagraph(
+                                            text:
+                                                DateFormat('MMM d, yyyy h:mm a')
+                                                    .format(DateTime.parse(
+                                                        log["tran_date"])),
+                                            fontSize: 12,
+                                            maxlines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            letterSpacing: -.5,
+                                          ),
+                                          trailing: CustomTitle(
+                                            text: log["amount"],
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color:
+                                                double.parse(log["amount"]) < 0
+                                                    ? const Color(0xFFFF0000)
+                                                    : const Color(0xFF0078FF),
                                           ),
                                         ),
-                                      );
-                                    },
-                                    separatorBuilder: (context, index) {
-                                      return SizedBox(height: 5);
-                                    },
-                                  ),
-                      ),
-                    ],
-                  ),
+                                      ),
+                                    );
+                                  },
+                                  separatorBuilder: (context, index) {
+                                    return SizedBox(height: 10);
+                                  },
+                                ),
+                    ),
+                  ],
                 ),
               )
             ],
