@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
+import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/wallet_qr/paymerchant/utils/controller.dart';
 
-class merchantQRverify extends StatefulWidget {
-  const merchantQRverify({super.key});
+import '../../../routes/routes.dart';
+
+class MerchantQRverify extends StatefulWidget {
+  const MerchantQRverify({super.key});
 
   @override
-  State<merchantQRverify> createState() => _merchantQRverifyState();
+  State<MerchantQRverify> createState() => _MerchantQRverifyState();
 }
 
-class _merchantQRverifyState extends State<merchantQRverify> {
+class _MerchantQRverifyState extends State<MerchantQRverify> {
   final _formKey = GlobalKey<FormState>();
   final controller = Get.put(payMerchantVerifyController());
   bool isVerified = false;
@@ -119,8 +122,20 @@ class _merchantQRverifyState extends State<merchantQRverify> {
                         text:
                             "Pay ${controller.parameter["amount"].toString()}",
                         onPressed: isVerified
-                            ? () {
-                                controller.payMerchantVerify();
+                            ? () async {
+                                final uData =
+                                    await Authentication().getUserData2();
+                                String? mobileNo =
+                                    uData["mobile_no"].toString();
+                                Get.toNamed(
+                                  Routes.otpField,
+                                  arguments: {
+                                    "mobile_no": mobileNo,
+                                    "callback": (d) {
+                                      controller.payMerchantVerify();
+                                    }
+                                  },
+                                );
                               }
                             : () {},
                       )),

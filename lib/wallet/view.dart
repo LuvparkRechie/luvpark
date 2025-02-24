@@ -8,7 +8,6 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
-import 'package:luvpark/routes/routes.dart';
 import 'package:luvpark/wallet/controller.dart';
 import 'package:luvpark/wallet/utils/transaction_details.dart';
 import 'package:shimmer/shimmer.dart';
@@ -200,24 +199,22 @@ class WalletScreen extends GetView<WalletController> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(
-                                padding: EdgeInsets.all(15),
+                                padding: EdgeInsets.all(13),
                                 decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color:
-                                      const Color.fromARGB(255, 250, 249, 249),
+                                  borderRadius: BorderRadius.circular(7),
+                                  color: Color(0xFFeff4fb),
                                   boxShadow: [
                                     BoxShadow(
                                       color: Colors.black.withOpacity(0.1),
-                                      blurRadius: 6,
-                                      spreadRadius: 1,
-                                      offset: Offset(0, 3),
+                                      blurRadius: 1,
+                                      offset: Offset(0, 0),
                                     ),
                                   ],
                                 ),
                                 child: Icon(
                                   controller.btnData[i]["icon"],
                                   color: AppColor.primaryColor,
-                                  size: 20,
+                                  size: 25,
                                 ),
                               ),
                               Container(height: 15),
@@ -225,7 +222,7 @@ class WalletScreen extends GetView<WalletController> {
                                 text: controller.btnData[i]["btn_name"],
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,
-                                color: Colors.black,
+                                color: Color(0xFF2b2b2b),
                               ),
                             ],
                           ),
@@ -234,17 +231,17 @@ class WalletScreen extends GetView<WalletController> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
-                child: InkWell(
-                  onTap: () {
-                    Get.toNamed(Routes.myaccount);
-                  },
-                  child: Column(
-                    children: controller.unverified.toList(),
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(15, 0, 15, 10),
+              //   child: InkWell(
+              //     onTap: () {
+              //       Get.toNamed(Routes.myaccount);
+              //     },
+              //     child: Column(
+              //       children: controller.unverified.toList(),
+              //     ),
+              //   ),
+              // ),
               Expanded(
                 child: Column(
                   children: [
@@ -257,7 +254,7 @@ class WalletScreen extends GetView<WalletController> {
                             text: "Recent Transaction",
                             fontSize: 16,
                             color: AppColor.headerColor,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             letterSpacing: -1,
                           ),
                           GestureDetector(

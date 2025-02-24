@@ -30,6 +30,7 @@ import '../custom_widgets/app_color.dart';
 import '../sqlite/pa_message_table.dart';
 
 // ignore: deprecated_member_use
+
 class DashboardMapController extends GetxController
     with GetTickerProviderStateMixin, WidgetsBindingObserver {
   // Dependencies
@@ -53,10 +54,12 @@ class DashboardMapController extends GetxController
   List markerData = [];
 
   //drawerdata
-  var userProfile;
+  RxMap userProfile = {}.obs;
   Circle circle = const Circle(circleId: CircleId('dottedCircle'));
   RxList suggestions = [].obs;
   RxString myProfPic = "".obs;
+  var profWidget = <Widget>[].obs;
+
   Polyline polyline = const Polyline(
     polylineId: PolylineId('dottedPolyLine'),
   );
@@ -140,8 +143,6 @@ class DashboardMapController extends GetxController
 
   @override
   void onInit() {
-    super.onInit();
-
     ddRadius.value = "10000";
     pTypeCode = "";
     amenities = "";
@@ -170,6 +171,8 @@ class DashboardMapController extends GetxController
     WidgetsBinding.instance.addObserver(this);
     _checkLocationService();
     getBgTmrStatus();
+    fetchData();
+    super.onInit();
   }
 
   @override
@@ -190,7 +193,6 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> _checkLocationService() async {
-    getUserData();
     getDefaultLocation();
   }
 
@@ -263,7 +265,7 @@ class DashboardMapController extends GetxController
         await PaMessageDatabase.instance.getUnreadMessages();
     unreadMsg.value = msgdata.length;
 
-    String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$item";
+    String subApi = "${ApiKeys.getUserBalance}$item";
 
     HttpRequest(api: subApi).get().then((returnBalance) async {
       if (returnBalance["items"].isNotEmpty) {
@@ -271,22 +273,6 @@ class DashboardMapController extends GetxController
         balanceData.value = returnBalance["items"];
       }
     });
-  }
-
-  void getUserData() async {
-    String? userData = await Authentication().getUserData();
-    final item = await Authentication().getUserData2();
-    final profPic = await Authentication().getUserProfilePic();
-
-    myProfPic.value = profPic;
-
-    userProfile = item;
-    if (jsonDecode(userData!)["first_name"] == null) {
-      myName.value = "";
-    } else {
-      myName.value = jsonDecode(userData)["first_name"];
-    }
-    fetchData();
   }
 
   //GEt nearest data based on
@@ -323,21 +309,23 @@ class DashboardMapController extends GetxController
 
   void getNearest(LatLng coordinates) async {
     String params =
-        "${ApiKeys.gApiSubGetNearybyParkings}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-    print("getNearest $params");
+        "${ApiKeys.getNearbyParkingLoc}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
+
     try {
       var returnData = await HttpRequest(api: params).get();
-      Get.back();
 
       if (returnData == "No Internet") {
+        Get.back();
         handleNoInternet();
         return;
       }
       if (returnData == null) {
+        Get.back();
         handleServerError();
         return;
       }
       if (returnData["items"].isEmpty) {
+        Get.back();
         handleNoParkingFound(returnData["items"]);
         return;
       }
@@ -522,19 +510,64 @@ class DashboardMapController extends GetxController
   }
 
   void onDrawerOpen() async {
-    String? userData = await Authentication().getUserData();
     final item = await Authentication().getUserData2();
     final profPic = await Authentication().getUserProfilePic();
-    print("menuIcons $menuIcons");
-    userProfile = item;
-    myProfPic.value = profPic;
-    userProfile = item;
 
-    if (jsonDecode(userData!)["first_name"] == null) {
-      myName.value = "";
+    profWidget.clear();
+    userProfile.addAll(item);
+    myProfPic.value = profPic;
+
+    if (userProfile["first_name"] == null) {
+      myName.value = userProfile["mobile_no"];
     } else {
-      myName.value = jsonDecode(userData)["first_name"];
+      String midName = userProfile["middle_name"] == null
+          ? ""
+          : userProfile["middle_name"].toString();
+      myName.value =
+          "${userProfile["first_name"]} ${midName.isEmpty ? "" : "${midName[0]}."} ${userProfile["last_name"]}";
     }
+
+    profWidget.add(
+      Hero(
+        tag: "profile_pic",
+        createRectTween: (begin, end) {
+          // Custom Tween for smoother animation
+          return MaterialRectCenterArcTween(begin: begin, end: end);
+        },
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: Colors.white,
+                width: 2.0,
+              ),
+            ),
+            child: ClipRRect(
+              clipBehavior: Clip.none,
+              child: CircleAvatar(
+                radius: 40,
+                backgroundColor: Colors.grey[200],
+                backgroundImage: myProfPic.isNotEmpty
+                    ? MemoryImage(
+                        base64Decode(myProfPic.value),
+                      )
+                    : null,
+                child: myProfPic.isEmpty
+                    ? Icon(
+                        Icons.person,
+                        size: 32,
+                        color: AppColor.primaryColor,
+                      )
+                    : null,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
     update();
   }
 
@@ -681,6 +714,8 @@ class DashboardMapController extends GetxController
         );
         filteredMarkers.assignAll(markers);
       }
+
+      Get.back();
     }
   }
 
@@ -855,7 +890,7 @@ class DashboardMapController extends GetxController
   //Get amenities
   Future<void> getAmenities(parkId) async {
     final response = await HttpRequest(
-            api: "${ApiKeys.gApiSubFolderGetAmenities}?park_area_id=$parkId")
+            api: "${ApiKeys.getParkingAmenities}?park_area_id=$parkId")
         .get();
 
     if (response == "No Internet") {
@@ -904,10 +939,9 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> getParkingRates(parkId) async {
-    HttpRequest(api: '${ApiKeys.gApiSubFolderGetRates}?park_area_id=$parkId')
+    HttpRequest(api: '${ApiKeys.getParkingRates}?park_area_id=$parkId')
         .get()
         .then((returnData) async {
-      print("get parking rates $returnData");
       Get.back();
       if (returnData == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -1354,7 +1388,7 @@ class DashboardMapController extends GetxController
     } else {
       int? userId = await Authentication().getUserId();
       String api =
-          "${ApiKeys.gApiSubscribedList}?park_area_id=${markerData[0]["park_area_id"]}&luvpay_id=$userId";
+          "${ApiKeys.getSubscribedVehicle}?park_area_id=${markerData[0]["park_area_id"]}&luvpay_id=$userId";
       final response = await HttpRequest(api: api).get();
       if (response == "No Internet") {
         Get.back();

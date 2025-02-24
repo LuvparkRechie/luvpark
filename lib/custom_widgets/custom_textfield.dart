@@ -250,6 +250,7 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
               borderSide: BorderSide(color: Color(0xFFDF0000))),
           suffixIcon: widget.suffixIcon != null
               ? InkWell(
+                  onLongPress: () {},
                   onTap: () {
                     widget.onIconTap!();
                   },
@@ -368,13 +369,13 @@ DropdownButtonFormField<String> customDropdown({
         borderSide: BorderSide(
           color: AppColor.borderColor,
         ),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
+        borderRadius: BorderRadius.all(Radius.circular(7)),
       ),
       focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
+          borderRadius: BorderRadius.all(Radius.circular(7)),
           borderSide: BorderSide(color: Color(0xFF0078FF))),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(7),
         borderSide: BorderSide(
           color: AppColor.borderColor,
         ),

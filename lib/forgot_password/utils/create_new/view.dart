@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/auth/authentication.dart';
-import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
@@ -17,16 +14,20 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
   const CreateNewPassword({super.key});
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarBrightness: Brightness.light,
-      statusBarIconBrightness: Brightness.dark,
-    ));
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
-      appBar: const CustomAppbar(),
+      appBar: AppBar(
+        leading: null,
+        elevation: 0,
+        toolbarHeight: 0,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+      ),
       body: Padding(
-          padding: const EdgeInsets.all(15.0),
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
           child: Obx(
             () => Form(
               // autovalidateMode: AutovalidateMode.always,
@@ -39,17 +40,19 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const CustomTitle(
+                        Container(height: 20),
+                        CustomButtonClose(onTap: () {
+                          Get.back();
+                        }),
+                        Container(height: 20),
+                        CustomTitle(
                           text: "Create a new password",
-                          color: Colors.black,
                           fontSize: 20,
-                          fontWeight: FontWeight.w700,
                         ),
                         Container(height: 10),
-                        const CustomParagraph(
+                        CustomParagraph(
                           text:
                               "Your new password must be different from previous used passwords.",
-                          fontWeight: FontWeight.w400,
                         ),
                         const VerticalHeight(height: 20),
                         CustomParagraph(
@@ -95,7 +98,6 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                             return null;
                           },
                         ),
-                        Container(height: 10),
                         CustomParagraph(
                           text: "Confirm password",
                           fontSize: 13,
@@ -123,6 +125,11 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                             }
                             if (txtValue != controller.newPass.text) {
                               return "Password doesn't match";
+                            }
+                            if (Variables.getPasswordStrengthText(
+                                    controller.passStrength.value) !=
+                                "Strong Password") {
+                              return "For enhanced security, please create a stronger password.";
                             }
                             return null;
                           },
@@ -236,30 +243,6 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                                     .requestFocus(FocusNode());
                                 if (controller.formKeyCreatePass.currentState!
                                     .validate()) {
-                                  String? bio = await Authentication()
-                                      .getPasswordBiometric();
-
-                                  if (controller.newPass.text == bio) {
-                                    CustomDialog().infoDialog(
-                                        "Invalid Password",
-                                        "To continue, please create a new password that you haven't used before.",
-                                        () {
-                                      Get.back();
-                                    });
-                                    return;
-                                  }
-                                  if (Variables.getPasswordStrengthText(
-                                          controller.passStrength.value) !=
-                                      "Strong Password") {
-                                    CustomDialog().infoDialog(
-                                        "Invalid Password",
-                                        "For enhanced security, please create a stronger password.",
-                                        () {
-                                      Get.back();
-                                    });
-
-                                    return;
-                                  }
                                   controller.requestOtp();
                                 }
                               })

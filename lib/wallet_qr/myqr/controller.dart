@@ -80,7 +80,7 @@ class myQRController extends GetxController
     mobNum.value = userData['mobile_no'];
     isLoading.value = true;
 
-    HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}${userData["user_id"]}")
+    HttpRequest(api: "${ApiKeys.getPaymentKey}${userData["user_id"]}")
         .get()
         .then((paymentKey) {
       if (paymentKey == "No Internet") {
@@ -112,7 +112,7 @@ class myQRController extends GetxController
 
     int userId = await Authentication().getUserId();
     dynamic param = {"luvpay_id": userId};
-    HttpRequest(api: ApiKeys.gApiSubFolderPutChangeQR, parameters: param)
+    HttpRequest(api: ApiKeys.generatePayKey, parameters: param)
         .put()
         .then((objKey) {
       if (objKey == "No Internet") {

@@ -11,7 +11,6 @@ import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/my_vehicles/utils/add_vehicle.dart';
-import 'package:luvpark/my_vehicles/utils/sub_details.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 
 import '../sqlite/vehicle_brands_table.dart';
@@ -79,7 +78,7 @@ class MyVehiclesController extends GetxController {
   void getMyVehicle() async {
     final userId = await Authentication().getUserId();
     String api =
-        "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=";
+        "${ApiKeys.getRegisteredVehicle}?user_id=$userId&vehicle_types_id_list=";
 
     HttpRequest(api: api).get().then((myVehicles) async {
       if (myVehicles == "No Internet") {
@@ -118,9 +117,7 @@ class MyVehiclesController extends GetxController {
 
   void getVehicleDropDown() {
     CustomDialog().loadingDialog(Get.context!);
-    HttpRequest(api: ApiKeys.gApiLuvParkDDVehicleTypes)
-        .get()
-        .then((returnData) async {
+    HttpRequest(api: ApiKeys.getDdVehicleTypes).get().then((returnData) async {
       Get.back();
       if (returnData == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -281,7 +278,7 @@ class MyVehiclesController extends GetxController {
       Get.back();
       CustomDialog().loadingDialog(Get.context!);
 
-      HttpRequest(api: ApiKeys.gApiLuvParkPostGetVehicleReg, parameters: params)
+      HttpRequest(api: ApiKeys.deleteRegVh, parameters: params)
           .deleteData()
           .then((retDelete) {
         Get.back();
@@ -321,8 +318,7 @@ class MyVehiclesController extends GetxController {
         "vcr_image_base64": crImageBase64.value,
       };
 
-      HttpRequest(
-              api: ApiKeys.gApiLuvParkPostGetVehicleReg, parameters: parameter)
+      HttpRequest(api: ApiKeys.postRegisterVehicle, parameters: parameter)
           .postBody()
           .then((returnPost) async {
         FocusManager.instance.primaryFocus?.unfocus();
@@ -365,7 +361,7 @@ class MyVehiclesController extends GetxController {
       "vehicle_brand_id": brandId,
     };
     final returnPost =
-        await HttpRequest(api: ApiKeys.gApiSubscribeVh, parameters: param)
+        await HttpRequest(api: ApiKeys.postVhParkingSubs, parameters: param)
             .postBody();
     if (returnPost == "No Internet") {
       Get.back();
@@ -393,56 +389,6 @@ class MyVehiclesController extends GetxController {
         Get.back();
       });
       return true;
-    }
-  }
-
-  Future<void> getVhSubscriptionDetails(int index) async {
-    String vehiclePlateNo = vehicleData[index]["vehicle_plate_no"];
-
-    CustomDialog().loadingDialog(Get.context!);
-    subDetailsData.value = [];
-
-    try {
-      final objData = await HttpRequest(
-        api:
-            "${ApiKeys.gApiGetSubscriptionDetails}?vehicle_plate_no=$vehiclePlateNo",
-      ).get();
-      Get.back();
-      if (objData == "No Internet") {
-        isLoadingsubDetails.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-
-      if (objData == null) {
-        isLoadingsubDetails.value = false;
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      } else {
-        subDetailsData.value = objData['items'];
-        Get.bottomSheet(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              top: Radius.circular(7),
-            ),
-          ),
-          backgroundColor: Colors.white,
-          SubscriptionDetails(
-            data: subDetailsData,
-          ),
-        );
-      }
-    } catch (e) {
-      isLoadingsubDetails.value = false;
-      CustomDialog().serverErrorDialog(Get.context!, () {
-        Get.back();
-      });
-    } finally {
-      isLoadingsubDetails.value = false;
     }
   }
 }

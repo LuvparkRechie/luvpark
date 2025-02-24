@@ -54,7 +54,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
     final userId = await Authentication().getUserId();
 
     String subApi =
-        "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${filterfromDate.text}&tran_date_to=${filtertoDate.text}";
+        "${ApiKeys.getTransLogs}?user_id=$userId&tran_date_from=${filterfromDate.text}&tran_date_to=${filtertoDate.text}";
 
     HttpRequest(api: subApi).get().then((response) {
       setState(() {

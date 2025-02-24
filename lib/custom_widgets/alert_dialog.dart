@@ -174,6 +174,7 @@ class CustomDialog {
     String title,
     String paragraph,
     VoidCallback onTapConfirm, {
+    String? btnName,
     Color? btnOkBackgroundColor,
     Color? btnOkTextColor,
   }) {
@@ -209,7 +210,7 @@ class CustomDialog {
                   btnColor: AppColor.primaryColor,
                   txtColor: Colors.white,
                   borderColor: AppColor.primaryColor,
-                  text: "Okay",
+                  text: btnName != null ? btnName : "Okay",
                   onTap: onTapConfirm,
                 ),
               ),

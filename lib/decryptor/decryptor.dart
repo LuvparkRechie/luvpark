@@ -92,7 +92,7 @@ class Encryption {
     final cipherText = encryptedData.sublist(16);
 
     final decryptedData = await decryptData(secretKey, nonce, cipherText);
-    print("decryptedData $decryptedData");
+
     return utf8.decode(decryptedData);
   }
 }

@@ -1,14 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
-import 'package:luvpark/http/api_keys.dart';
-import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
+
+import '../../../auth/authentication.dart';
+import '../../../http/api_keys.dart';
+import '../../../http/http_request.dart';
 
 class CreateNewPassController extends GetxController {
   CreateNewPassController();
-  String parameters = Get.arguments;
+  String mobileNoParam = Get.arguments;
   final GlobalKey<FormState> formKeyCreatePass = GlobalKey<FormState>();
   TextEditingController newPass = TextEditingController();
   TextEditingController confirmPass = TextEditingController();
@@ -43,49 +47,62 @@ class CreateNewPassController extends GetxController {
 
   Future<void> requestOtp() async {
     isLoading.value = true;
-    Map<String, dynamic> requestParam = {
-      "mobile_no": parameters,
-    };
+    Get.toNamed(
+      Routes.otpField,
+      arguments: {
+        "mobile_no": mobileNoParam,
+        "is_forget_vfd_pass": true,
+        "callback": (otp) {
+          Get.back();
+          isLoading.value = false;
+          CustomDialog().loadingDialog(Get.context!);
 
-    HttpRequest(
-            api: ApiKeys.gApiSubFolderPostReqOtpShare, parameters: requestParam)
-        .post()
-        .then(
-      (retvalue) {
-        if (retvalue == "No Internet") {
-          isLoading.value = false;
-          CustomDialog().internetErrorDialog(Get.context!, () {
-            Get.back();
-          });
-          return;
-        }
-        if (retvalue == null) {
-          isLoading.value = false;
-          CustomDialog().serverErrorDialog(Get.context!, () {
-            Get.back();
-          });
-        } else {
-          isLoading.value = false;
-          if (retvalue["success"] == "Y") {
-            List args = [
-              {
-                "otp": int.parse(retvalue["otp"].toString()),
-                "mobile_no": parameters,
-                "new_pass": newPass.text,
-                "isVerAcct": false,
-              }
-            ];
+          Map<String, dynamic> postParam = {
+            "mobile_no": mobileNoParam,
+            "otp": otp.toString(),
+            "new_pwd": newPass.text,
+          };
 
-            Get.toNamed(
-              Routes.forgotPassOtp,
-              arguments: args,
-            );
-          } else {
-            CustomDialog().errorDialog(Get.context!, "luvpark", retvalue["msg"],
-                () {
+          HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
+              .putBody()
+              .then(
+            (retvalue) {
               Get.back();
-            });
-          }
+              if (retvalue == "No Internet") {
+                CustomDialog().errorDialog(Get.context!, "Error",
+                    "Please check your internet connection and try again.", () {
+                  Get.back();
+                });
+                return;
+              }
+              if (retvalue == null) {
+                CustomDialog().errorDialog(Get.context!, "Error",
+                    "Error while connecting to server, Please try again.", () {
+                  Get.back();
+                });
+              } else {
+                if (retvalue["success"] == "Y") {
+                  Map<String, dynamic> data = {
+                    "mobile_no": mobileNoParam,
+                    "pwd": newPass.text,
+                  };
+                  final plainText = jsonEncode(data);
+
+                  Authentication().encryptData(plainText);
+                  Get.toNamed(Routes.forgotPassSuccess);
+                } else {
+                  CustomDialog().errorDialog(
+                    Get.context!,
+                    "Error",
+                    retvalue["msg"],
+                    () {
+                      Get.back();
+                    },
+                  );
+                }
+              }
+            },
+          );
         }
       },
     );

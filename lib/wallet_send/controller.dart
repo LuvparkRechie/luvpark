@@ -4,6 +4,7 @@ import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
@@ -75,7 +76,11 @@ class WalletSendController extends GetxController {
       Get.bottomSheet(
           UsersBottomsheet(
             index: 1,
+            cb: (index) {
+              Functions.popPage(index);
+            },
           ),
+          enableDrag: false,
           isDismissible: false);
     });
   }
@@ -111,8 +116,6 @@ class WalletSendController extends GetxController {
               },
             );
           } else {
-            print("formattedNumber $formattedNumber");
-
             getRecipient(formattedNumber);
           }
         },
@@ -132,7 +135,8 @@ class WalletSendController extends GetxController {
     CustomDialog().loadingDialog(Get.context!);
 
     var params =
-        "${ApiKeys.gApiSubFolderVerifyNumber}?mobile_no=${recipientData[0]["mobile_no"]}";
+        "${ApiKeys.verifyUserAccount}?mobile_no=${recipientData[0]["mobile_no"]}";
+
     HttpRequest(
       api: params,
     ).get().then((returnData) async {
@@ -159,7 +163,7 @@ class WalletSendController extends GetxController {
           Routes.otpField,
           arguments: {
             "mobile_no": item["mobile_no"].toString(),
-            "callback": () {
+            "callback": (otp) {
               shareToken();
             }
           },
@@ -189,7 +193,7 @@ class WalletSendController extends GetxController {
   Future<void> refreshUserData() async {
     isLoading.value = true;
     final userId = await Authentication().getUserId();
-    String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$userId";
+    String subApi = "${ApiKeys.getUserBalance}$userId";
 
     HttpRequest(
       api: subApi,
@@ -223,13 +227,11 @@ class WalletSendController extends GetxController {
       "amount": tokenAmount.text.toString().replaceAll(",", ""),
       "to_msg": message.text,
     };
-    print("parameters $parameters");
 
-    HttpRequest(api: ApiKeys.gApiSubFolderPutShareLuv, parameters: parameters)
-        .putBoy()
+    HttpRequest(api: ApiKeys.postShareToken, parameters: parameters)
+        .postBody()
         .then(
       (retvalue) {
-        print("retvalue $retvalue");
         if (retvalue == "No Internet") {
           Get.back();
           CustomDialog().errorDialog(Get.context!, "Error",
@@ -256,7 +258,7 @@ class WalletSendController extends GetxController {
             CustomDialog().successDialog(
                 Get.context!, "Success", "Transaction complete", "Okay", () {
               Get.back();
-
+              Get.back();
               refreshUserData();
             });
           } else {
@@ -279,9 +281,8 @@ class WalletSendController extends GetxController {
   Future<void> getRecipient(String mobileNo) async {
     CustomDialog().loadingDialog(Get.context!);
     String api =
-        "${ApiKeys.gApiSubFolderGetUserInfo}?mobile_no=63${mobileNo.toString().replaceAll(" ", '')}";
+        "${ApiKeys.getRecipient}?mobile_no=63${mobileNo.toString().replaceAll(" ", '')}";
     HttpRequest(api: api).get().then((objData) {
-      print("api $api");
       FocusScope.of(Get.context!).unfocus();
       if (objData == "No Internet") {
         Get.back();
@@ -341,7 +342,6 @@ class WalletSendController extends GetxController {
           userName.value = "Not Verified";
         }
         Get.back();
-        print("userName $userName");
       }
     });
   }

@@ -45,7 +45,7 @@ class _PermissionHandlerScreenState extends State<PermissionHandlerScreen>
     Location location = Location();
 
     permissionGranted = await location.hasPermission();
-    print("permissionGranted $permissionGranted");
+
     if (permissionGranted == PermissionStatus.granted) {
       Get.offAllNamed(Routes.map);
     } else if (permissionGranted == PermissionStatus.deniedForever) {

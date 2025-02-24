@@ -1,8 +1,9 @@
 import 'dart:convert';
 
+import 'package:http/http.dart' as http;
+
 import '../custom_widgets/variables.dart';
 import '../security/app_security.dart';
-import 'package:http/http.dart' as http;
 
 class Http3rdPartyRequest {
   final String? api;
@@ -33,7 +34,6 @@ class Http3rdPartyRequest {
           return null;
         }
       } catch (e) {
-        print("eee $e");
         return "No Internet";
       }
     }

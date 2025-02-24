@@ -56,8 +56,7 @@ class MessageScreenController extends GetxController {
         "push_status": "R",
         "push_msg_id": messages[index]["push_msg_id"],
       };
-      HttpRequest(
-              api: ApiKeys.gApiLuvParkPutUpdMessageNotif, parameters: params)
+      HttpRequest(api: ApiKeys.getPaMessage, parameters: params)
           .put()
           .then((updateData) async {
         if (updateData == "No Internet") {

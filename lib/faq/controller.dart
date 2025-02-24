@@ -24,8 +24,8 @@ class FaqPageController extends GetxController {
 
   Future<void> getFaq() async {
     isLoadingPage.value = true;
-    var returnData = await const HttpRequest(
-      api: ApiKeys.gAPISubFolderFaqList,
+    var returnData = await HttpRequest(
+      api: ApiKeys.getFAQ,
     ).get();
 
     if (returnData == "No Internet") {
@@ -49,7 +49,7 @@ class FaqPageController extends GetxController {
   Future<void> getFaqAnswers(String id, int index) async {
     CustomDialog().loadingDialog(Get.context!);
     var returnData = await HttpRequest(
-      api: '${ApiKeys.gAPISubFolderFaqAnswer}?faq_id=$id',
+      api: '${ApiKeys.getFAQsAnswer}?faq_id=$id',
     ).get();
     Get.back();
     if (returnData == "No Internet") {

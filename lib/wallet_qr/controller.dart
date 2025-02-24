@@ -27,6 +27,7 @@ import '../custom_widgets/app_color.dart';
 import '../custom_widgets/custom_cutter.dart';
 import '../custom_widgets/custom_cutter_top_bottom.dart';
 import '../routes/routes.dart';
+import 'view.dart';
 
 class QrWalletController extends GetxController
     with GetSingleTickerProviderStateMixin {
@@ -61,7 +62,7 @@ class QrWalletController extends GetxController
       "title": "QR Receive",
       "subtitle":
           "Receive money quickly and securely by sharing your QR Code with other luvpark accounts.",
-      "icon": Iconsax.scan
+      "icon": Icons.qr_code_rounded
     },
   ];
 
@@ -121,7 +122,7 @@ class QrWalletController extends GetxController
     mobNum.value = userData['mobile_no'];
     isLoading.value = true;
 
-    HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}${userData["user_id"]}")
+    HttpRequest(api: "${ApiKeys.getPaymentKey}${userData["user_id"]}")
         .get()
         .then((paymentKey) {
       if (paymentKey == "No Internet") {
@@ -153,7 +154,7 @@ class QrWalletController extends GetxController
 
     int userId = await Authentication().getUserId();
     dynamic param = {"luvpay_id": userId};
-    HttpRequest(api: ApiKeys.gApiSubFolderPutChangeQR, parameters: param)
+    HttpRequest(api: ApiKeys.generatePayKey, parameters: param)
         .put()
         .then((objKey) {
       if (objKey == "No Internet") {
@@ -307,7 +308,7 @@ class QrWalletController extends GetxController
     // CustomDialog().loadingDialog(Get.context!);
     final userID = await Authentication().getUserId();
 
-    HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}$userID")
+    HttpRequest(api: "${ApiKeys.getPaymentKey}$userID")
         .get()
         .then((paymentKey) {
       Get.back();
@@ -351,8 +352,8 @@ class QrWalletController extends GetxController
       Get.to(ScannerScreen(
         onchanged: (ScannedData args) async {
           CustomDialog().loadingDialog(Get.context!);
-          String merchant_key = args.scannedHash;
-          String api = "${ApiKeys.gApiMerchantScan}?merchant_key=$merchant_key";
+          String mKey = args.scannedHash;
+          String api = "${ApiKeys.getMerchantScan}?merchant_key=$mKey";
 
           final response = await HttpRequest(api: api).get();
           String merchantname = response["items"][0]["merchant_name"];
@@ -378,7 +379,7 @@ class QrWalletController extends GetxController
           if (response["items"].isNotEmpty) {
             getpaymentHK(
               response["items"],
-              merchant_key,
+              mKey,
               merchantname,
             );
           } else {
@@ -401,7 +402,7 @@ class QrWalletController extends GetxController
     }
   }
 
-  void onOptionTap(int index) {
+  void onOptionTap(int index) async {
     switch (index) {
       case 0:
         Get.toNamed(Routes.paywithQR);
@@ -411,7 +412,12 @@ class QrWalletController extends GetxController
         requestCameraPermission();
         break;
       case 2:
-        Get.toNamed(Routes.myQR);
+        final data = await Authentication().getUserData2();
+        String mobileNo = data["mobile_no"].toString();
+
+        Get.bottomSheet(QrBottomSheet(
+          qrCode: mobileNo,
+        ));
         break;
     }
   }

@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 
 import 'controller.dart';
 
-class merchantQRverifyBindings implements Bindings {
+class MerchantQRverifyBindings implements Bindings {
   @override
   void dependencies() {
     Get.lazyPut<payMerchantVerifyController>(

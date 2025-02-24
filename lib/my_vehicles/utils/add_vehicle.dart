@@ -3,8 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/my_vehicles/controller.dart';
@@ -20,14 +18,15 @@ class AddVehicles extends GetView<MyVehiclesController> {
   Widget build(BuildContext context) {
     Get.put(MyVehiclesController());
     return Scaffold(
+      backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
         toolbarHeight: 0,
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: Colors.white,
-          statusBarBrightness: Brightness.light,
-          statusBarIconBrightness: Brightness.dark,
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
         ),
       ),
       body: SafeArea(
@@ -43,42 +42,19 @@ class AddVehicles extends GetView<MyVehiclesController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(height: 10),
-                        InkWell(
-                          onTap: () {
-                            Get.back();
-                          },
-                          child: Container(
-                              padding: const EdgeInsets.all(10),
-                              clipBehavior: Clip.antiAlias,
-                              decoration: ShapeDecoration(
-                                color: Color(0xFF0078FF),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(43),
-                                ),
-                                shadows: [
-                                  BoxShadow(
-                                    color: Color(0x0C000000),
-                                    blurRadius: 15,
-                                    offset: Offset(0, 5),
-                                    spreadRadius: 0,
-                                  )
-                                ],
-                              ),
-                              child: Icon(
-                                LucideIcons.arrowLeft,
-                                color: Colors.white,
-                                size: 16,
-                              )),
-                        ),
                         Container(height: 20),
-                        Text(
-                          "Vehicle Registration",
-                          style: GoogleFonts.openSans(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.headerColor,
-                          ),
+                        CustomButtonClose(onTap: () {
+                          Get.back();
+                        }),
+                        Container(height: 20),
+                        CustomTitle(
+                          text: "Vehicle Registration",
+                          fontSize: 20,
+                        ),
+                        Container(height: 10),
+                        CustomParagraph(
+                          text:
+                              "Register your vehicle to access seamless parking.",
                         ),
                         Container(height: 20),
                         CustomParagraph(

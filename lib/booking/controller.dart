@@ -126,8 +126,6 @@ class BookingController extends GetxController
                 ? 1
                 : diff
             : maxHrs.value;
-
-    print("maxHrs.value ${maxHrs.value}");
   }
 
   void startTimeUpdateTimer() {
@@ -143,7 +141,7 @@ class BookingController extends GetxController
 
   Future<void> getNotice() async {
     isShowNotice.value = true;
-    String subApi = "${ApiKeys.gApiLuvParkGetNotice}?msg_code=PREBOOKMSG";
+    String subApi = "${ApiKeys.getParkingNotice}?msg_code=PREBOOKMSG";
 
     HttpRequest(api: subApi).get().then((retDataNotice) async {
       if (retDataNotice == "No Internet") {
@@ -197,7 +195,7 @@ class BookingController extends GetxController
   Future<void> getDropdownVehicles() async {
     HttpRequest(
             api:
-                "${ApiKeys.gApiLuvParkDDVehicleTypes2}?park_area_id=${parameters["areaData"]["park_area_id"]}")
+                "${ApiKeys.getDropdownVhTypesArea}?park_area_id=${parameters["areaData"]["park_area_id"]}")
         .get()
         .then((returnData) async {
       if (returnData == "No Internet") {
@@ -248,7 +246,7 @@ class BookingController extends GetxController
   Future<void> getMyVehicle() async {
     int? userId = await Authentication().getUserId();
     String api =
-        "${ApiKeys.gApiLuvParkPostGetVehicleReg}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
+        "${ApiKeys.getRegisteredVehicle}?user_id=$userId&vehicle_types_id_list=${parameters["areaData"]["vehicle_types_id_list"]}";
 
     HttpRequest(api: api).get().then((myVehicles) async {
       if (myVehicles == "No Internet") {
@@ -567,11 +565,8 @@ class BookingController extends GetxController
 
         isProcessing = false;
 
-        print("is24Hrs.value ${parameters["areaData"]["res_max_hours"]}");
-
         Get.back();
         if (!is24Hrs) {
-          print("eeee");
           if (int.parse(noHours.text.toString()) > maxHrs.value) {
             CustomDialog().infoDialog(
                 maxHrs.value == 1 ? "Booking Unavailable" : "Booking Hours",
@@ -731,8 +726,9 @@ class BookingController extends GetxController
       "vehicle_plate_no": params["vehicle_plate_no"],
       "park_area_id": params["park_area_id"].toString(),
       "points_used": double.parse(usedRewards.value.toString()),
-      'zv_subscription_dtl_id': selectedVh[0]["subscription_dtl_id"] ??
-          selectedVh[0]["subscription_dtl_id"],
+      'zv_subscription_dtl_id': selectedVh[0]["subscription_dtl_id"] == null
+          ? 0
+          : selectedVh[0]["subscription_dtl_id"],
       "auto_extend": isExtendchecked.value ? "Y" : "N",
       "version": 3,
       'base_rate': params["base_rate"],
@@ -740,6 +736,7 @@ class BookingController extends GetxController
       "succeeding_rate": params["succeeding_rate"],
       "disc_rate": 0,
     };
+
     Get.back();
     DateTime eet = now.add(Duration(minutes: areaEtaTime));
     DateTime ddEet = eet.subtract(Duration(minutes: 4));
@@ -761,10 +758,10 @@ class BookingController extends GetxController
     }, () {
       Get.back();
       CustomDialog().loadingDialog(Get.context!);
-      HttpRequest(api: ApiKeys.gApiBooking, parameters: dynamicBookParam)
+
+      HttpRequest(api: ApiKeys.bookParking, parameters: dynamicBookParam)
           .postBody()
           .then((objData) async {
-        print("objData $objData");
         if (objData == "No Internet") {
           isSubmitBooking.value = false;
           Get.back();
@@ -845,8 +842,7 @@ class BookingController extends GetxController
               'vehicle_plate_no': params["vehicle_plate_no"]
             };
 
-            HttpRequest(
-                    api: ApiKeys.gApiLuvParkResQueue, parameters: queueParam)
+            HttpRequest(api: ApiKeys.postQueueBooking, parameters: queueParam)
                 .post()
                 .then((queParamData) {
               if (queParamData == "No Internet") {
@@ -899,7 +895,7 @@ class BookingController extends GetxController
       "luvpay_id": lpId,
     };
 
-    HttpRequest(api: ApiKeys.gApiPostSelfCheckIn, parameters: chkInParam)
+    HttpRequest(api: ApiKeys.postSelfChkIn, parameters: chkInParam)
         .postBody()
         .then((returnData) async {
       if (returnData == "No Internet") {
@@ -1002,8 +998,12 @@ class BookingController extends GetxController
         return;
       }
     }
-    if (double.parse(parameters["userData"][0]["amount_bal"].toString()) >=
-        double.parse(totalAmount.value.toString())) {
+    double myBal = isUseRewards.value
+        ? double.parse(parameters["userData"][0]["amount_bal"].toString()) +
+            double.parse(displayRewards.toString())
+        : double.parse(parameters["userData"][0]["amount_bal"].toString());
+
+    if (myBal >= double.parse(totalAmount.value.toString())) {
       Get.bottomSheet(
         ConfirmBooking(),
         shape: RoundedRectangleBorder(

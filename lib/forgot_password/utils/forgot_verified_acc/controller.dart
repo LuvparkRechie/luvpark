@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/http/api_keys.dart';
@@ -10,7 +12,7 @@ import 'package:luvpark/routes/routes.dart';
 
 class ForgotVerifiedAcctController extends GetxController {
   ForgotVerifiedAcctController();
-  String parameters = Get.arguments;
+  String mobileNoParam = Get.arguments;
 
   TextEditingController answer = TextEditingController();
   TextEditingController newPass = TextEditingController();
@@ -51,7 +53,7 @@ class ForgotVerifiedAcctController extends GetxController {
     isLoading.value = true;
 
     String subApi =
-        "${ApiKeys.gApiSubFolderGetDropdownSeq}?mobile_no=$parameters&secq_no=$randomNumber";
+        "${ApiKeys.getSecQue}?mobile_no=$mobileNoParam&secq_no=$randomNumber";
 
     HttpRequest(api: subApi).get().then((returnData) {
       if (returnData == "No Internet") {
@@ -91,15 +93,13 @@ class ForgotVerifiedAcctController extends GetxController {
     isBtnLoading.value = true;
     var forgotParam = {
       "secq_no": randomNumber,
-      "mobile_no": parameters,
+      "mobile_no": mobileNoParam,
       "secq_id": questionData[0]["secq_id"],
       "seca": answer.text
     };
 
-    HttpRequest(
-            api: ApiKeys.gApiSubFolderPostPutGetResetPass,
-            parameters: forgotParam)
-        .post()
+    HttpRequest(api: ApiKeys.getSecQue, parameters: forgotParam)
+        .postBody()
         .then((returnData) {
       isBtnLoading.value = false;
       isVerifiedAns.value = false;
@@ -117,17 +117,6 @@ class ForgotVerifiedAcctController extends GetxController {
       } else {
         if (returnData["success"] == 'Y') {
           isVerifiedAns.value = true;
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: ((context) => ResetPassword(
-          //           mobileNo: widget.mobileNumber,
-          //           seqId: questionData["secq_id"],
-          //           seca: sqa.text,
-          //           seqNo: randomNumber,
-          //         )),
-          //   ),
-          // );
         } else {
           CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
               () {
@@ -140,50 +129,64 @@ class ForgotVerifiedAcctController extends GetxController {
 
   Future<void> onSubmit() async {
     FocusManager.instance.primaryFocus!.unfocus();
-    isBtnLoading.value = true;
-    dynamic resetParam = {
-      "mobile_no": parameters,
-    };
+    Get.toNamed(
+      Routes.otpField,
+      arguments: {
+        "mobile_no": mobileNoParam,
+        "is_forget_vfd_pass": true,
+        "callback": (otp) {
+          CustomDialog().loadingDialog(Get.context!);
 
-    HttpRequest(api: ApiKeys.gApiSubFolderPutForgotPass, parameters: resetParam)
-        .put()
-        .then((returnData) {
-      isBtnLoading.value = false;
+          Map<String, dynamic> postParam = {
+            "mobile_no": mobileNoParam,
+            "otp": otp.toString(),
+            "new_pwd": newPass.text,
+          };
+          HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
+              .putBody()
+              .then(
+            (retvalue) {
+              Get.back();
+              if (retvalue == "No Internet") {
+                CustomDialog().errorDialog(Get.context!, "Error",
+                    "Please check your internet connection and try again.", () {
+                  Get.back();
+                });
+                return;
+              }
+              if (retvalue == null) {
+                CustomDialog().errorDialog(Get.context!, "Error",
+                    "Error while connecting to server, Please try again.", () {
+                  Get.back();
+                });
+              } else {
+                if (retvalue["success"] == "Y") {
+                  Map<String, dynamic> data = {
+                    "mobile_no": mobileNoParam,
+                    "pwd": newPass.text,
+                  };
+                  final plainText = jsonEncode(data);
 
-      if (returnData == "No Internet") {
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (returnData == null) {
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      } else {
-        if (returnData["success"] == 'Y') {
-          List args = [
-            {
-              "otp": int.parse(returnData["otp"].toString()),
-              "mobile_no": parameters,
-              "new_pass": newPass.text,
-              "isVerAcct": false,
-            }
-          ];
-
-          Get.toNamed(
-            Routes.forgotPassOtp,
-            arguments: args,
+                  Authentication().encryptData(plainText);
+                  Get.offAndToNamed(Routes.forgotPassSuccess);
+                  return;
+                } else {
+                  CustomDialog().errorDialog(
+                    Get.context!,
+                    "Error",
+                    retvalue["msg"],
+                    () {
+                      Get.back();
+                      Get.back();
+                    },
+                  );
+                }
+              }
+            },
           );
-        } else {
-          CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
-              () {
-            Get.back();
-          });
         }
-      }
-    });
+      },
+    );
   }
 
   @override

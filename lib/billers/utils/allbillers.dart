@@ -182,7 +182,6 @@ class Allbillers extends GetView<BillersController> {
                                           .filteredBillers[index]["full_url"],
                                     };
                                     if (dataArgs["source"] == "fav") {
-                                      print("billerData $billerData");
                                       Get.to(AddFavoritesWidget(),
                                           transition: Transition.rightToLeft,
                                           duration: Duration(milliseconds: 200),

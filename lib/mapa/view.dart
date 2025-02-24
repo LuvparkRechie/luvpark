@@ -402,9 +402,10 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 children: [
                   InkWell(
                       onTap: () async {
+                        controller.panelController.close();
                         FocusManager.instance.primaryFocus!.unfocus();
                         CustomDialog().loadingDialog(context);
-                        controller.panelController.close();
+
                         controller.addressText.value = controller
                                 .suggestions[index]
                                 .split("=structured=")[1]
@@ -414,6 +415,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                                 .split(",")[0]
                             : controller.suggestions[index]
                                 .split("=structured=")[1];
+
                         await Functions.searchPlaces(context,
                             controller.suggestions[index].split("=Rechie=")[0],
                             (searchedPlace) {
@@ -428,6 +430,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                             controller.isSearched.value = true;
                             controller.bridgeLocation(
                                 LatLng(searchedPlace[0], searchedPlace[1]));
+                            return;
                           }
                         });
                       },
@@ -517,7 +520,9 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
               focusNode: controller.focusNode,
 
               style: paragraphStyle(
-                  color: Colors.black, fontWeight: FontWeight.w500),
+                  color: Colors.black,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16),
               maxLines: 1, // Ensures single line input
               textAlign: TextAlign.left,
               decoration: InputDecoration(
@@ -728,8 +733,6 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                 const SizedBox(width: 6),
                 Flexible(
                   child: TextField(
-                    //  controller: ct.searchCon,
-
                     decoration: InputDecoration(
                       fillColor: Colors.grey.shade100,
                       filled: true,

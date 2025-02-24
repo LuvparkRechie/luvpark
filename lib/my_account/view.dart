@@ -1,7 +1,5 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
@@ -30,7 +28,7 @@ class MyAccount extends GetView<MyAccountScreenController> {
           title: "My Profile",
           onTap: () {
             Get.back();
-            controller.parameter();
+            controller.callBack();
           },
         ),
         body: controller.isLoading.value
@@ -57,32 +55,11 @@ class MyAccount extends GetView<MyAccountScreenController> {
                           Stack(
                             clipBehavior: Clip.none,
                             children: [
-                              Container(
-                                padding: const EdgeInsets.all(2.0),
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Colors.white,
-                                ),
-                                child: CircleAvatar(
-                                  radius: 44.5,
-                                  backgroundColor: Colors.white,
-                                  backgroundImage:
-                                      controller.myprofile.value.isNotEmpty
-                                          ? MemoryImage(
-                                              base64Decode(
-                                                  controller.myprofile.value),
-                                            )
-                                          : null,
-                                  child: controller.myprofile.value.isEmpty
-                                      ? const Icon(Icons.person,
-                                          size: 44, color: Colors.blueAccent)
-                                      : null,
-                                ),
-                              ),
+                              Column(children: controller.heroTag),
                               // Edit button
                               Positioned(
-                                right: -4,
-                                top: 10,
+                                right: -5,
+                                bottom: 5,
                                 child: GestureDetector(
                                   onTap: () {
                                     controller.showBottomSheetCamera();
@@ -97,39 +74,15 @@ class MyAccount extends GetView<MyAccountScreenController> {
                             ],
                           ),
                           const SizedBox(height: 10),
-                          controller.userData.isNotEmpty &&
-                                  controller.userData[0]['first_name'] != null
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    CustomTitle(
-                                      text: controller.userData[0]['last_name']
-                                                      .length >
-                                                  15 ||
-                                              controller
-                                                      .userData[0]['first_name']
-                                                      .length >
-                                                  15
-                                          ? '${controller.userData[0]['first_name'].split(" ")[0]}'
-                                          : '${controller.userData[0]['first_name']} ${controller.userData[0]['last_name']}',
-                                      color: Colors.white,
-                                      fontSize: 18,
-                                      fontStyle: FontStyle.normal,
-                                      textAlign: TextAlign.center,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: -0.408,
-                                    ),
-                                    Container(width: 5),
-                                    const Icon(
-                                      Icons.verified,
-                                      color: Colors.white,
-                                    ),
-                                  ],
-                                )
-                              : const CustomTitle(
-                                  text: "Not Verified",
-                                  color: Colors.white,
-                                ),
+                          CustomTitle(
+                            text: controller.myName.value,
+                            color: Colors.white,
+                            fontSize: 18,
+                            fontStyle: FontStyle.normal,
+                            textAlign: TextAlign.center,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: -0.408,
+                          ),
                           CustomParagraph(
                             text: "+${controller.userData[0]['mobile_no']}",
                             color: const Color.fromARGB(255, 240, 240, 240),
@@ -178,9 +131,12 @@ class MyAccount extends GetView<MyAccountScreenController> {
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
                                       horizontal: 10, vertical: 10),
-                                  child: const Center(
-                                    child:
-                                        CustomLinkLabel(text: "Edit Profile"),
+                                  child: Center(
+                                    child: CustomParagraph(
+                                      text: "Update Profile",
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.primaryColor,
+                                    ),
                                   ),
                                 ),
                               )

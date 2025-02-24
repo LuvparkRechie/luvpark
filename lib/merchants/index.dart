@@ -1,4 +1,4 @@
-library walletBiller;
+library merchantBiller;
 
 export 'bindings.dart';
 export 'controller.dart';

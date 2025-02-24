@@ -46,7 +46,7 @@ class Variables {
   static String mobileRegex = r"^[1-9]\d{9}$";
 
   static String mapApiKey =
-      'AIzaSyDSEZqVU21Ku5aSp8OB5wvkb1QiYspHMd8'; //'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE';
+      'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'; //'kang sir > AIzaSyDSEZqVU21Ku5aSp8OB5wvkb1QiYspHMd8';
   static String popUpMessageOutsideArea =
       'Booking request denied. Location exceeds service area. Check and update location information.';
   static String popUpMessageOutsideAreas =
@@ -723,5 +723,31 @@ class Variables {
 
   double _degreesToRadians(double degrees) {
     return degrees * pi / 180;
+  }
+
+  //dynamic dialog
+
+  static snackbarDynamicDialog(String msg, {context}) {
+    ScaffoldMessenger.of(context == null ? Get.context! : context).showSnackBar(
+      SnackBar(
+        margin: EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: MediaQuery.of(Get.context!).size.width * 0.27,
+        ),
+        elevation: 5.0,
+        behavior: SnackBarBehavior.floating,
+        duration: Duration(seconds: 4),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(7.0),
+        ),
+        content: Wrap(
+          children: [
+            Center(
+              child: Text(msg),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

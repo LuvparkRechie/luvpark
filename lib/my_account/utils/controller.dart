@@ -6,6 +6,7 @@ import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/my_account/utils/index.dart';
+import 'package:luvpark/my_account/utils/success/update_success.dart';
 import 'package:luvpark/routes/routes.dart';
 
 import '../../http/api_keys.dart';
@@ -190,20 +191,19 @@ class UpdateProfileController extends GetxController {
 
       CustomDialog().loadingDialog(Get.context!);
       executeCodeAddress(
-          "${ApiKeys.gApiSubFolderGetProvince}?p_region_id=${userData['region_id']}",
-          1, (data) {
+          "${ApiKeys.getProvince}?p_region_id=${userData['region_id']}", 1,
+          (data) {
         if (data.isNotEmpty) {
           provinceData.value = data;
         }
         executeCodeAddress(
-            "${ApiKeys.gApiSubFolderGetCity}?p_province_id=${userData['province_id']}",
-            2, (data) {
+            "${ApiKeys.getCity}?p_province_id=${userData['province_id']}", 2,
+            (data) {
           if (data.isNotEmpty) {
             cityData.value = data;
           }
           executeCodeAddress(
-              "${ApiKeys.gApiSubFolderGetBrgy}?p_city_id=${userData['city_id']}",
-              3, (data) {
+              "${ApiKeys.getBrgy}?p_city_id=${userData['city_id']}", 3, (data) {
             if (data.isNotEmpty) {
               brgyData.value = data;
             }
@@ -214,7 +214,6 @@ class UpdateProfileController extends GetxController {
   }
 
   void onToggleShowAnswer1(bool isShow) {
-    print("isShow $isShow");
     obscureTextAnswer1.value = isShow;
     update();
   }
@@ -318,9 +317,7 @@ class UpdateProfileController extends GetxController {
   }
 
   void getQuestionData() {
-    const HttpRequest(api: ApiKeys.gApiSubFolderGetDD)
-        .get()
-        .then((returnData) async {
+    HttpRequest(api: ApiKeys.getSecDropdown).get().then((returnData) async {
       isLoading.value = false;
       questionData.value = [];
       if (returnData == "No Internet") {
@@ -348,9 +345,8 @@ class UpdateProfileController extends GetxController {
     cityData.value = [];
     brgyData.value = [];
     CustomDialog().loadingDialog(Get.context!);
-    var returnData = await HttpRequest(
-            api: "${ApiKeys.gApiSubFolderGetProvince}?p_region_id=$id")
-        .get();
+    var returnData =
+        await HttpRequest(api: "${ApiKeys.getProvince}?p_region_id=$id").get();
     Get.back();
     if (returnData == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -381,9 +377,8 @@ class UpdateProfileController extends GetxController {
     cityData.value = [];
     brgyData.value = [];
     CustomDialog().loadingDialog(Get.context!);
-    var returnData = await HttpRequest(
-            api: "${ApiKeys.gApiSubFolderGetCity}?p_province_id=$id")
-        .get();
+    var returnData =
+        await HttpRequest(api: "${ApiKeys.getCity}?p_province_id=$id").get();
     Get.back();
     if (returnData == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -413,8 +408,7 @@ class UpdateProfileController extends GetxController {
     brgyData.value = [];
     CustomDialog().loadingDialog(Get.context!);
     var returnData =
-        await HttpRequest(api: "${ApiKeys.gApiSubFolderGetBrgy}?p_city_id=$id")
-            .get();
+        await HttpRequest(api: "${ApiKeys.getBrgy}?p_city_id=$id").get();
     Get.back();
     if (returnData == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -444,39 +438,6 @@ class UpdateProfileController extends GetxController {
     update();
   }
 
-  // void onNextPage() {
-  //   FocusScope.of(Get.context!).requestFocus(FocusNode());
-
-  //   switch (currentPage.value) {
-  //     case 0:
-  //       // if (formKeyStep1.currentState!.validate()) {
-  //       //   pageController.nextPage(
-  //       //       duration: const Duration(milliseconds: 300),
-  //       //       curve: Curves.easeInOut);
-  //       // }
-
-  //       break;
-  //     case 1:
-  //       // if (formKeyStep2.currentState!.validate()) {
-  //       //   pageController.nextPage(
-  //       //       duration: const Duration(milliseconds: 300),
-  //       //       curve: Curves.easeInOut);
-  //       // }
-
-  //       break;
-  //     case 2:
-  //       // if (formKeyStep3.currentState!.validate()) {
-  //       //   onSubmit();
-  //       // }
-  //       break;
-  //   }
-  // }
-  // void nextPage() {
-  //   if (currentIndex.value == pages.length - 1) {
-  //     return;
-  //   }
-  //   currentIndex.value = (currentIndex.value + 1) % pages.length;
-  // }
   void nextPage() {
     if (currentIndex.value == 0 && formKeyStep1.currentState!.validate()) {
       currentIndex.value++;
@@ -535,56 +496,42 @@ class UpdateProfileController extends GetxController {
       "seca3": answer3.text,
       "image_base64": "",
     };
+    Get.toNamed(
+      Routes.otpField,
+      arguments: {
+        "mobile_no": data["mobile_no"],
+        "callback": (otpData) {
+          CustomDialog().loadingDialog(Get.context!);
 
-    CustomDialog().confirmationDialog(Get.context!, "Update profile",
-        "Are you sure you want to proceed?", "No", "Okay", () {
-      Get.back();
-    }, () {
-      Get.back();
-      CustomDialog().loadingDialog(Get.context!);
-      Map<String, dynamic> parameters = {
-        "mobile_no": data["mobile_no"].toString(),
-      };
-
-      HttpRequest(
-              api: ApiKeys.gApiSubFolderPostReqOtpShare, parameters: parameters)
-          .post()
-          .then(
-        (retvalue) {
-          Get.back();
-          if (retvalue == "No Internet") {
-            CustomDialog().internetErrorDialog(Get.context!, () {
-              Get.back();
-            });
-          }
-          if (retvalue == null) {
-            CustomDialog().serverErrorDialog(Get.context!, () {
-              Get.back();
-            });
-          } else {
-            if (retvalue["success"] == "Y") {
-              List otpData = [
-                {
-                  "mobile_no": data["mobile_no"],
-                  "otp": int.parse(retvalue["otp"].toString()),
-                }
-              ];
-              dynamic args = {"otp_data": otpData, "parameter": submitParam};
-
-              Get.toNamed(
-                Routes.otpUpdProfile,
-                arguments: args,
-              );
-            } else {
-              CustomDialog()
-                  .errorDialog(Get.context!, "luvpark", retvalue["msg"], () {
+          HttpRequest(api: ApiKeys.putUpdateUserProf, parameters: submitParam)
+              .putBody()
+              .then((res) async {
+            Get.back();
+            if (res == "No Internet") {
+              CustomDialog().internetErrorDialog(Get.context!, () {
                 Get.back();
               });
             }
-          }
-        },
-      );
-    });
+            if (res == null) {
+              CustomDialog().serverErrorDialog(Get.context!, () {
+                Get.back();
+              });
+            } else {
+              if (res["success"] == "Y") {
+                Get.to(const UpdateInfoSuccess());
+              } else {
+                CustomDialog().errorDialog(Get.context!, "luvpark", res["msg"],
+                    () {
+                  Get.back();
+                });
+
+                return;
+              }
+            }
+          });
+        }
+      },
+    );
   }
 
   void showBottomSheet(

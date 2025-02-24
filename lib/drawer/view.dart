@@ -11,6 +11,7 @@ import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/mapa/controller.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -35,99 +36,123 @@ class CustomDrawer extends GetView<DashboardMapController> {
             child: Column(
               children: [
                 Container(height: 20),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.blue,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 2.0,
+                InkWell(
+                  onTap: () {
+                    Get.toNamed(Routes.myaccount, arguments: {
+                      "hero_tag": controller.profWidget,
+                      "callBack": () {
+                        controller.onDrawerOpen();
+                        controller.fetchData();
+                      }
+                    });
+                  },
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 15.0),
+                    child: Row(
+                      children: [
+                        Hero(
+                          tag: "profile_pic",
+                          createRectTween: (begin, end) {
+                            // Custom Tween for smoother animation
+                            return MaterialRectCenterArcTween(
+                                begin: begin, end: end);
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.blue,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2.0,
+                              ),
+                            ),
+                            child: ClipRect(
+                              clipBehavior: Clip.none,
+                              child: CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey[200],
+                                backgroundImage: controller.myProfPic.isNotEmpty
+                                    ? MemoryImage(
+                                        base64Decode(
+                                            controller.myProfPic.value),
+                                      )
+                                    : null,
+                                child: controller.myProfPic.isEmpty
+                                    ? Icon(
+                                        Icons.person,
+                                        size: 32,
+                                        color: AppColor.primaryColor,
+                                      )
+                                    : null,
+                              ),
+                            ),
                           ),
                         ),
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey[200],
-                          backgroundImage: controller.myProfPic.isNotEmpty
-                              ? MemoryImage(
-                                  base64Decode(controller.myProfPic.value),
-                                )
-                              : null,
-                          child: controller.myProfPic.isEmpty
-                              ? Icon(
-                                  Icons.person,
-                                  size: 32,
-                                  color: AppColor.primaryColor,
-                                )
-                              : null,
-                        ),
-                      ),
-                      SizedBox(width: 10),
-                      Expanded(
-                        child: Container(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              controller.userProfile != null &&
-                                      controller.userProfile['first_name'] !=
-                                          null
-                                  ? CustomParagraph(
-                                      text: controller.userProfile['last_name']
-                                                      .length >
-                                                  15 ||
-                                              controller
-                                                      .userProfile['first_name']
-                                                      .length >
-                                                  15
-                                          ? '${controller.userProfile['first_name'].split(" ")[0]}'
-                                          : '${controller.userProfile['first_name']} ${controller.userProfile['last_name']}',
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontStyle: FontStyle.normal,
-                                      textAlign: TextAlign.center,
-                                      fontSize: 16,
-                                      maxlines: 1,
-                                      minFontSize: 8,
-                                      overflow: TextOverflow.ellipsis,
-                                    )
-                                  : CustomTitle(
-                                      text: "Not Verified",
-                                      color: Colors.white,
-                                    ),
-                              OutlinedButton(
-                                onPressed: () {
-                                  Get.toNamed(Routes.myaccount, arguments: () {
-                                    controller.getUserData();
-                                  });
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor:
-                                      AppColor.primaryColor.withOpacity(0.1),
-                                  side: const BorderSide(
-                                      color: Colors.white, width: 1.0),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(58.0),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20.0),
-                                ),
-                                child: CustomParagraph(
-                                  text: "View Profile",
-                                  fontSize: 14,
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Container(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                CustomParagraph(
+                                  text: controller.myName.value,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
                                   fontStyle: FontStyle.normal,
                                   textAlign: TextAlign.center,
-                                  color: AppColor.bodyColor,
+                                  fontSize: 16,
+                                  maxlines: 1,
+                                  minFontSize: 8,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
+                                if (controller.userProfile["email"] != null)
+                                  CustomParagraph(
+                                    text: controller.userProfile["email"],
+                                    fontSize: 12,
+                                    color: AppColor.bodyColor,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                Container(height: 10),
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color:
+                                        controller.userProfile["is_verified"] ==
+                                                "Y"
+                                            ? AppColor.mainColor
+                                            : Colors.white,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: CustomParagraph(
+                                    text:
+                                        controller.userProfile["is_verified"] ==
+                                                "Y"
+                                            ? "Verified"
+                                            : "Not verified",
+                                    fontSize: 10,
+                                    minFontSize: 10,
+                                    letterSpacing: .80,
+                                    color:
+                                        controller.userProfile["is_verified"] ==
+                                                "Y"
+                                            ? Colors.white
+                                            : Colors.red,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                        Icon(
+                          LucideIcons.chevronRight,
+                          size: 18,
+                          color: AppColor.bodyColor,
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -212,7 +237,6 @@ class CustomDrawer extends GetView<DashboardMapController> {
                                 size: 18,
                               ),
                               onTap: () {
-                                print("e $e");
                                 controller.onMenuIconsTap(e["index"]);
                               },
                             );
@@ -243,7 +267,7 @@ class CustomDrawer extends GetView<DashboardMapController> {
                           ),
                           Container(height: 10),
                           GestureDetector(
-                            onTap: () {
+                            onTap: () async {
                               CustomDialog().confirmationDialog(
                                   context,
                                   "Logout",
@@ -253,34 +277,40 @@ class CustomDrawer extends GetView<DashboardMapController> {
                                 Get.back();
                               }, () async {
                                 Get.back();
-                                CustomDialog().loadingDialog(context);
-                                await Future.delayed(
-                                    const Duration(seconds: 3));
-                                final userLogin =
-                                    await Authentication().getUserLogin();
-                                List userData = [userLogin];
-                                userData = userData.map((e) {
-                                  e["is_login"] = "N";
-                                  return e;
-                                }).toList();
-                                await NotificationDatabase.instance.deleteAll();
-                                await Authentication()
-                                    .setLogin(jsonEncode(userData[0]));
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                prefs.remove("last_booking");
-                                Authentication().setLogoutStatus(true);
-                                AwesomeNotifications()
-                                    .dismissAllNotifications();
-                                AwesomeNotifications().cancelAll();
+                                final uData =
+                                    await Authentication().getUserData2();
 
-                                Get.back();
-                                Get.offAllNamed(Routes.login);
+                                Functions.logoutUser(
+                                    uData["session_id"].toString(),
+                                    (isSuccess) async {
+                                  if (isSuccess["is_true"]) {
+                                    final userLogin =
+                                        await Authentication().getUserLogin();
+                                    List userData = [userLogin];
+                                    userData = userData.map((e) {
+                                      e["is_login"] = "N";
+                                      return e;
+                                    }).toList();
+                                    await NotificationDatabase.instance
+                                        .deleteAll();
+                                    await Authentication()
+                                        .setLogin(jsonEncode(userData[0]));
+                                    final prefs =
+                                        await SharedPreferences.getInstance();
+                                    prefs.remove("last_booking");
+                                    Authentication().setLogoutStatus(true);
+                                    AwesomeNotifications()
+                                        .dismissAllNotifications();
+                                    AwesomeNotifications().cancelAll();
+
+                                    Get.offAllNamed(Routes.login);
+                                  }
+                                });
                               });
                             },
                             child: CustomParagraph(
                               text: "Logout",
-                              color: Colors.black,
+                              color: Colors.red,
                             ),
                           ),
                         ],

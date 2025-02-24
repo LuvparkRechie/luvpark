@@ -189,9 +189,7 @@ class _FilterMapState extends State<FilterMap> {
     vhTypeData = [];
     isLoadingPage = true;
     setState(() {});
-    const HttpRequest(api: ApiKeys.gApiLuvParkDDVehicleTypes)
-        .get()
-        .then((returnData) async {
+    HttpRequest(api: ApiKeys.getDdVehicleTypes).get().then((returnData) async {
       if (returnData == "No Internet") {
         isNetConn = false;
         isLoadingPage = false;
@@ -228,9 +226,7 @@ class _FilterMapState extends State<FilterMap> {
   Future<void> loadParkingType() async {
     parkTypeData = [];
     setState(() {});
-    var returnData =
-        await const HttpRequest(api: ApiKeys.gApiSubFolderGetParkingTypes)
-            .get();
+    var returnData = await HttpRequest(api: ApiKeys.getParkingTypes).get();
 
     if (returnData == "No Internet") {
       isNetConn = false;
@@ -267,9 +263,7 @@ class _FilterMapState extends State<FilterMap> {
   Future<void> loadAmenities() async {
     amenitiesData = [];
     setState(() {});
-    var returnData =
-        await const HttpRequest(api: ApiKeys.gApiSubFolderGetAllAmenities)
-            .get();
+    var returnData = await HttpRequest(api: ApiKeys.getAllAmenities).get();
 
     if (returnData == "No Internet") {
       isNetConn = false;
@@ -306,8 +300,7 @@ class _FilterMapState extends State<FilterMap> {
   Future<void> loadRadius() async {
     radiusData = [];
     setState(() {});
-    var returnData =
-        await const HttpRequest(api: ApiKeys.gApiSubFolderGetDDNearest).get();
+    var returnData = await HttpRequest(api: ApiKeys.getDropdownRadius).get();
 
     if (returnData == "No Internet") {
       isNetConn = false;

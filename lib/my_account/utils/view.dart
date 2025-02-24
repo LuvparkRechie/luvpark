@@ -45,11 +45,11 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                 appBar: AppBar(
                   toolbarHeight: 0,
                   elevation: 0,
-                  backgroundColor: AppColor.bodyColor,
+                  backgroundColor: AppColor.primaryColor,
                   systemOverlayStyle: SystemUiOverlayStyle(
-                    statusBarColor: AppColor.bodyColor,
-                    statusBarBrightness: Brightness.light,
-                    statusBarIconBrightness: Brightness.dark,
+                    statusBarColor: AppColor.primaryColor,
+                    statusBarBrightness: Brightness.dark,
+                    statusBarIconBrightness: Brightness.light,
                   ),
                 ),
                 body: Container(
@@ -744,6 +744,7 @@ class Stepp3 extends StatelessWidget {
                               hintText: "Answer",
                               textCapitalization: TextCapitalization.characters,
                               inputFormatters: [
+                                UpperCaseTextFormatter(),
                                 LengthLimitingTextInputFormatter(30),
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[a-zA-Z\s]')),
@@ -820,6 +821,7 @@ class Stepp3 extends StatelessWidget {
                             CustomTextField(
                               hintText: "Answer",
                               inputFormatters: [
+                                UpperCaseTextFormatter(),
                                 LengthLimitingTextInputFormatter(30),
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[a-zA-Z\s]')),
@@ -900,6 +902,7 @@ class Stepp3 extends StatelessWidget {
                             CustomTextField(
                               hintText: "Answer",
                               inputFormatters: [
+                                UpperCaseTextFormatter(),
                                 LengthLimitingTextInputFormatter(30),
                                 FilteringTextInputFormatter.allow(
                                     RegExp(r'[a-zA-Z\s]')),
@@ -1000,5 +1003,14 @@ class Stepp3 extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class UpperCaseTextFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+      TextEditingValue oldValue, TextEditingValue newValue) {
+    return TextEditingValue(
+        text: newValue.text.toUpperCase(), selection: newValue.selection);
   }
 }

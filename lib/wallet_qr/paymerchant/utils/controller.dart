@@ -41,7 +41,6 @@ class payMerchantVerifyController extends GetxController
 
   @override
   void onInit() {
-    print("testing2: $parameter");
     super.onInit();
   }
 
@@ -70,11 +69,11 @@ class payMerchantVerifyController extends GetxController
       "luvpay_id": userid,
       "payment_hk": parameter["payment_hk"],
     };
-    HttpRequest(api: ApiKeys.gApiMerchantScan, parameters: requestParam)
+
+    HttpRequest(api: ApiKeys.postMerchant, parameters: requestParam)
         .postBody()
         .then(
       (retvalue) {
-        print("retvalue: $retvalue");
         Get.back();
         if (retvalue == "No Internet") {
           CustomDialog().internetErrorDialog(Get.context!, () {

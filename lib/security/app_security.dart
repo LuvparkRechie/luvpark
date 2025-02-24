@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:local_auth_android/local_auth_android.dart';
@@ -20,6 +19,7 @@ class AppSecurity {
     } else if (Platform.isIOS) {
       await iosJailbreak();
     }
+
     if (rootedCheck || devMode || jailbreak) {
       if (rootedCheck && jailbreak && devMode) {
         message = 'rooted, jailbroken, and in developer mode';
@@ -38,7 +38,7 @@ class AppSecurity {
       }
       return [
         {'is_secured': false, 'msg': message}
-        //{'is_secured': true, 'msg': ""}
+        // {'is_secured': true, 'msg': ""}
       ];
     } else {
       return [
@@ -92,10 +92,8 @@ class AppSecurity {
           ),
         ],
       );
-    } catch (e) {
-      debugPrint("$e");
-    }
-    print("authenticated $authenticated");
+    } catch (e) {}
+
     return authenticated;
   }
 }

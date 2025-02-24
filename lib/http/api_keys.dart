@@ -1,282 +1,162 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class ApiKeys {
-  static const bool isProduction = false;
-  static const String luvApi = isProduction ? "lpw" : "luv";
-  static const String parkSpaceApi = isProduction ? "ps" : "parkspace";
+  static final bool isProduction = dotenv.env['IS_PRODUCTION'] == 'true';
+  static final String luvApi =
+      isProduction ? dotenv.env['LUV_API_PROD']! : dotenv.env['LUV_API_TEST']!;
+  static final String parkSpaceApi = isProduction
+      ? dotenv.env['PARK_SPACE_API_PROD']!
+      : dotenv.env['PARK_SPACE_API_TEST']!;
+  static final String gApiURL = isProduction
+      ? dotenv.env['G_API_URL_PROD']!
+      : dotenv.env['G_API_URL_TEST']!;
 
-  static const String gApiURL = isProduction
-      ? 'app.luvpark.ph'
-      : 'gce81b2a8b40195-gccdb.adb.ap-singapore-1.oraclecloudapps.com';
+  static final String getPaymentKey =
+      dotenv.env['GET_PAYMENT_KEY']!.replaceAll('{LUV_API}', luvApi);
+  static final String generatePayKey =
+      dotenv.env['GENERATE_PAY_KEY']!.replaceAll('{LUV_API}', luvApi); //
 
-  // static String getFullUrl(String endpoint) {
-  //   return '$gApiURL$endpoint';
-  // }
+  static final String getSecQue =
+      dotenv.env['GET_SEC_QUE']!.replaceAll('{LUV_API}', luvApi);
+  static final String getSecDropdown =
+      dotenv.env['GET_SEC_DROPDOWN']!.replaceAll('{LUV_API}', luvApi);
+  static final String getUserBalance =
+      dotenv.env['GET_USER_BALANCE']!.replaceAll('{LUV_API}', luvApi);
+  static final String verifyUserAccount =
+      dotenv.env['VERIFY_USER_ACCOUNT']!.replaceAll('{LUV_API}', luvApi);
+  static final String getIdle =
+      dotenv.env['GET_IDLE']!.replaceAll('{LUV_API}', luvApi);
+  static final String getTransLogs =
+      dotenv.env['GET_TRANS_LOGS']!.replaceAll('{LUV_API}', luvApi);
+  static final String getParkingRes = dotenv.env['GET_PARKING_RES']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getActiveParking = dotenv.env['GET_ACTIVE_PARKING']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getNearbyParkingLoc = dotenv
+      .env['GET_NEARBY_PARKING_LOC']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getDropdownRadius =
+      dotenv.env['GET_DD_RADIUS']!.replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getParkingTypes = dotenv.env['GET_PARKING_TYPES']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
 
-  //get Payment key
-  static const gApiSubFolderPayments = '/ords/$luvApi/ps/qr/';
-  //Get luv ReferenceNo
-  static const gApiSubFolderPutChangeQR = '/ords/$luvApi/base/newqr/'; //put
-  //terms & conditions
-  static const gApiSubFolderPolicy = '/ords/$luvApi/base/policy';
-  //Privacy policy
-  static const gApiSubFolderPrivacyPolicy = '/ords/$luvApi/base/privacypolicy/';
+  static final String getRegion =
+      dotenv.env['GET_REGION']!.replaceAll('{LUV_API}', luvApi);
+  static final String getProvince =
+      dotenv.env['GET_PROVINCE']!.replaceAll('{LUV_API}', luvApi);
+  static final String getCity =
+      dotenv.env['GET_CITY']!.replaceAll('{LUV_API}', luvApi);
+  static final String getBrgy =
+      dotenv.env['GET_BRGY']!.replaceAll('{LUV_API}', luvApi);
+  static final String getRecipient =
+      dotenv.env['GET_RECIPIENT']!.replaceAll('{LUV_API}', luvApi);
+  static final String postThirdPartyPayment =
+      dotenv.env['POST_THIRD_PARTY_PAYMENT']!.replaceAll('{LUV_API}', luvApi);
+  static final String getUserAccStatus =
+      dotenv.env['GET_USER_ACC_STATUS']!.replaceAll('{LUV_API}', luvApi);
+  static final String unlockAccount =
+      dotenv.env['UNLOCK_ACCOUNT']!.replaceAll('{LUV_API}', luvApi);
+  static final String getBankDetails =
+      dotenv.env['GET_BANK_DETAILS']!.replaceAll('{LUV_API}', luvApi);
+  static final String getBankParam =
+      dotenv.env['GET_BANK_PARAM']!.replaceAll('{LUV_API}', luvApi);
+  static final String postShareToken =
+      dotenv.env['POST_SHARE_TOKEN']!.replaceAll('{LUV_API}', luvApi);
+  static final String getParkingRates = dotenv.env['GET_PARKING_RATES']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postUserReg =
+      dotenv.env['POST_USER_REG']!.replaceAll('{LUV_API}', luvApi);
 
-  // static const gApiSubFolderPostReg = '/ords/$luvApi/base/reg/'; //post
-//Change password
-  static const gApiSubFolderChangePass = '/ords/$luvApi/auth/chgpwd/';
-  //reset pasword random question
-  static const gApiSubFolderGetDropdownSeq = '/ords/$luvApi/auth/resetpwd/';
-  //sercurity question registration
-  static const gApiSubFolderGetDD = '/ords/$luvApi/base/reg/';
-  //get account balance
-  static const gApiSubFolderGetBalance = '/ords/$luvApi/acct/balance';
-//get notification
-  static const gApiSubFolderGetNotification =
-      '/ords/$luvApi/base/notification/';
+  static final String putUpdateUserProf =
+      dotenv.env['PUT_UPDATE_USER_PROF']!.replaceAll('{LUV_API}', luvApi);
+  static final String getRegisteredVehicle =
+      dotenv.env['GET_REGISTERED_VEHICLE']!.replaceAll('{LUV_API}', luvApi);
+  static final String postRegisterVehicle =
+      dotenv.env['POST_REGISTER_VEHICLE']!.replaceAll('{LUV_API}', luvApi);
+  static final String deleteRegVh =
+      dotenv.env['DELETE_REG_VH']!.replaceAll('{LUV_API}', luvApi);
+  static final String getVehicleBrands = dotenv.env['GET_VEHICLE_BRANDS']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postLogin =
+      dotenv.env['POST_LOGIN']!.replaceAll('{LUV_API}', luvApi);
+  static final String getLogin =
+      dotenv.env['GET_LOGIN']!.replaceAll('{LUV_API}', luvApi);
+  static final String putLogin =
+      dotenv.env['PUT_LOGIN']!.replaceAll('{LUV_API}', luvApi);
+  static final String putLogout =
+      dotenv.env['PUT_LOGOUT']!.replaceAll('{LUV_API}', luvApi);
+  static final String getParkingNotice = dotenv.env['GET_PARKING_NOTICE']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getComputeDistance = dotenv.env['GET_COMPUTE_DISTANCE']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getAcctStatus =
+      dotenv.env['GET_ACCT_STATUS']!.replaceAll('{LUV_API}', luvApi);
+  static final String getDdVehicleTypes = dotenv.env['GET_DD_VEHICLE_TYPES']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getDropdownVhTypesArea = dotenv
+      .env['GET_DROPDOWN_VH_TYPES_AREA']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
 
-//send otp forgot pass
-  static const gApiSubFolderPutForgotPass =
-      '/ords/$luvApi/auth/resetpwd-reqotp/';
-//Request Otp
-  static const gApiSubFolderPutOTP = '/ords/$luvApi/base/reg/'; //put
-
-//verify mobile no
-  static const gApiSubFolderVerifyNumber = '/ords/$luvApi/acct/verify'; //get
-
-//Forgot password first
-  static const gApiSubFolderPostPutGetResetPass =
-      '/ords/$luvApi/auth/resetpwd/'; //put//post
-
-//privacy policy
-  static const gApiSubFolderGetPrivacyPolicy =
-      '/ords/$luvApi/base/privacypolicy/';
-
-//Idle
-  static const gApiSubFolderIdle = '/ords/$luvApi/base/userpref/';
-//All Transaction Api
-// const gApiSubFolderGetPaymentTrans = '/ords/$luvApi/tnx/out/';
-//Ge ilisan ug ords/$luvApi/tnx/logs/
-  static const gApiSubFolderGetTransactionLogs = '/ords/$luvApi/tnx/logs/';
-//Reservation history
-  static const gApiSubFolderGetReservationHistory =
-      '/ords/$luvApi/tnx/reslist/';
-// //GEt REservation
-  static const gApiSubFolderGetReservations =
-      '/ords/$parkSpaceApi/pm/getAdvancedParking';
-  static const gApiSubFolderGetActiveParking =
-      '/ords/$parkSpaceApi/pm/getAdvancedParkingLogs';
-//Login API
-  //Get user data
-  static const gApiSubFolderLogin = '/ords/$luvApi/auth/login';
-//wala gi gamit
-  static const gApiSubFolderGetIdleTime = '/ords/$luvApi/base/userpref/';
-  //Post Login2
-  static const gApiSubFolderPostLogin2 = '/ords/$luvApi/auth/login'; //post
-  //Get user data
-  static const gApiSubFolderLogin2 = '/ords/$luvApi/auth/login';
-  //get vehicles
-  static const gApiSubFolderGetVehicleType =
-      '/ords/$parkSpaceApi/base/vehicletypes';
-//get neareast space data sa mapa
-  static const gApiSubFolderGetNearestSpace =
-      '/ords/$parkSpaceApi/zone/nearestParking';
-  static const gApiSubGetNearybyParkings =
-      '/ords/$parkSpaceApi/zone/nearbyParkings';
-  //get parking type filter dropdown dashboard
-  static const gApiSubFolderGetParkingTypes =
-      '/ords/$parkSpaceApi/base/parkingtypes';
-//get parking type filter dropdown radius
-  static const gApiSubFolderGetDDNearest =
-      '/ords/$parkSpaceApi/park/dd_nearest';
-//get Direction view payment details
-  static const gApiSubFolderGetDirection = '/ords/$parkSpaceApi/park/res/';
-// Get Address registration
-  static const gApiSubFolderGetRegion = 'ords/$luvApi/base/region/';
-  static const gApiSubFolderGetProvince = 'ords/$luvApi/base/prov/';
-  static const gApiSubFolderGetCity = 'ords/$luvApi/base/city/';
-  static const gApiSubFolderGetBrgy = 'ords/$luvApi/base/brgy/';
-
-//Extend API
-  static const gApiSubFolderPutExtendPay = '/ords/$luvApi/ps/payext'; //put
-  static const gApiSubFolderPutExtend = '/ords/$parkSpaceApi/park/extend'; //put
-//Get User Info connect with union bank
-  static const gApiSubFolderGetUserInfo = '/ords/$luvApi/base/userinfo';
-//UB CONNECT API
-  static const gApiSubFolderPostUbTrans = '/ords/$luvApi/topup/ub/'; //post
-//Check account Lock or unlock
-  static const gApiSubFolderGetLoginAttemptRecord =
-      '/ords/$luvApi/auth/chklogin/';
-//15 minuntes account activation
-  static const gApiSubFolderPutClearLockTimer =
-      'ords/$luvApi/auth/unlock/'; //put
-
-//UNIion bank apis
-  static const gApiSubFolderGetUbDetails = '/ords/$luvApi/3pa/hdr/';
-  static const gApiSubFolderGetBankParam = '/ords/$luvApi/3pa/dtl/';
-  static const gApiSubFolderGetTopUp = '/ords/$luvApi/topup/TPA';
-
-//Share or transfer token
-  static const gApiSubFolderPutShareLuv = '/ords/$luvApi/acct/st';
-// Share token get otp
-  static const gApiSubFolderPostReqOtpShare = '/ords/$luvApi/auth/get-otp/';
-
-//Update profile
-  static const gApiSubFolderPutUpdateProf = '/ords/$luvApi/base/userinfo';
-
-//$parkSpaceApi API
-  static const gApiSubFolderGetRates = '/ords/$parkSpaceApi/park/rates/';
-
-//MPIN
-  static const gApiSubFolderGetPutPostMpin = '/ords/$luvApi/auth/mpin';
-//MPIN SWitch button
-  static const gApiSubFolderPutSwitch = '/ords/$luvApi/base/mpin';
-
-  //LUVPARK REGISTRATION
-  static const gApiLuvParkPostReg = '/ords/$luvApi/user/reg/';
-  //LUVPARK REGISTRATION vehicle
-  static const gApiLuvParkPostGetVehicleReg = '/ords/$luvApi/fav/veh';
-  //LUVPARK Get Brand vehicle
-  //static const gApiLuvParkPostGetVehicleBrand = '/ords/$luvApi/ps/vb';
-  static const gApiLuvParkGetVehicleBrand =
-      '/ords/$parkSpaceApi/base/vehiclebrands';
-  //Track location to reserve
-  static const gApiLuvParkGetResLoc = '/ords/$parkSpaceApi/park/chkpsr';
-  //Change Pass
-  static const gApiLuvParkPostForgetPassNotVerified =
-      '/ords/$luvApi/auth/rpsf/';
-
-  //Add vehicle
-  // static const gApiLuvParkAddVehicle = '/ords/$luvApi/fav/addVehicle';
-
-  // //Delete vehicle\
-  // static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/fav/delVehicle';
-
-  //Get Parkspace app notice
-  static const gApiLuvParkGetNotice = '/ords/$parkSpaceApi/notify/pbm/';
-
-  //Rating Question
-  static const gApiLuvParkGetRatingQuestions =
-      '/ords/$parkSpaceApi/rating/questions/';
-  //Check direct in reservation
-  static const gApiLuvParkPutChkIn = '/ords/$parkSpaceApi/park/check_in/';
-  // Check in Luvpay
-  static const gApiLuvParkPutLPChkIn = '/ords/$luvApi/ps/check_in';
-  //Compute Distance
-  static const gApiLuvParkGetComputeDistance = '/ords/$parkSpaceApi/conf/psrc/';
-//Verify User
-  static const gApiLuvParkGetAcctStat = '/ords/$luvApi/user/verify';
-  //Rate Us
-  static const gApiLuvParkPostRating = '/ords/$luvApi/user/uxr';
-  //dd vehicle types
-  static const gApiLuvParkDDVehicleTypes =
-      '/ords/$parkSpaceApi/park/dd_vehicletypes';
-  //Changed to zvt
-  static const gApiLuvParkDDVehicleTypes2 =
-      '/ords/$parkSpaceApi/zone/vehicleTypes';
-  //Sharing Location API's
-  static const gApiLuvParkPostShareLoc = '/ords/$luvApi/geo/gpsShare';
-  //GETSHARE
-  ///Get pending  user in map share
-
-  //Invite friend
-  static const gApiLuvParkPutShareLoc = '/ords/$luvApi/geo/gpsShare';
-
-  static const gApiLuvParkPutAcceptShareLoc = '/ords/$luvApi/geo/acceptShare';
-  //End Share Location
-  static const gApiLuvParkPutCloseShareLoc = '/ords/$luvApi/geo/closeShare';
-  //Get active sharing
-  static const gApiLuvParkGetActiveShareLoc = '/ords/$luvApi/geo/activeShare';
-
-  // Invite map
-  static const gApiLuvParkPostAddUserMapSharing = '/ords/$luvApi/geo/addUser';
-  //NOTIFY/INVITE FRIENDS for the second time
-  // static const gApiLuvParkPostAddUserMapSharing = '/ords/$luvApi/geo/gpsShare';
-
-  //UPDATE LOCATION
-  static const gApiLuvParkPutUpdateUsersLoc = "/ords/$luvApi/geo/updateUserGPS";
-  //static const gApiLuvParkPutUpdateLoc = '/ords/$luvApi/geo/getUpdates';
-
-  //END SHARING
-  static const gApiLuvParkPutEndSharing = '/ords/$luvApi/geo/closeShare';
-
-  //Reservation Queue PUT&GET
-  static const gApiLuvParkResQueue = '/ords/$parkSpaceApi/park/queue';
-
-  //GET MESSAGE NOTIF
-  static const gApiLuvParkMessageNotif = '/ords/$luvApi/push/messages';
-
-  static const gApiLuvParkPutUpdMessageNotif = '/ords/$luvApi/push/updMessages';
-  //FAQ APIS
-  static const gAPISubFolderFaqList = '/ords/$parkSpaceApi/faqs/list';
-  //Faqs answer
-  static const gAPISubFolderFaqAnswer = '/ords/$parkSpaceApi/faqs/ans';
-
-  //POST mobile_no DELETE
-  static const gApiLuvPayPostDeleteAccount = '/ords/$luvApi/user/del';
-
-  //Cancel Auto Extend  POSt  parameter: reservation_id
-  // static const gApiCancelAutoExtend = '/ords/$parkSpaceApi/pm/cancelAutoExtend';
-  //GET amenities by park_area
-  static const gApiSubFolderGetAmenities =
-      '/ords/$parkSpaceApi/zone/parkingAmenities';
-  //Get all amenities
-  static const gApiSubFolderGetAllAmenities =
-      '/ords/$parkSpaceApi/rf/amenities';
-  static const gApiSubFolderGetAverage =
-      '/ords/$luvApi/feedback/getAverageRatingOnBooking';
-
-  //NEW BOOKING API added august 19
-  static const gApiBooking = '/ords/$luvApi/token/luvpark/booking';
-  static const gApiPostSelfCheckIn =
-      '/ords/$parkSpaceApi/pm/checkInAdvancedParking';
-  //Delete advance parking
-  static const gApiPostCancelParking =
-      '/ords/$parkSpaceApi/pm/cancelAdvancedParking';
-  //refund booking cancelled
-  static const gApiRefundCancelled = '/ords/$luvApi/token/luvpark/refund';
-  //  extendPost param reservation_id, no_hours
-  static const gApiExtendParking =
-      '/ords/$parkSpaceApi/pm/extendAdvancedParking';
-  //Cancel Auto Extend  POSt  parameter: reservation_id
-  static const gApiCancelAutoExtend = '/ords/$parkSpaceApi/pm/cancelAutoExtend';
-  //subscribe
-  static const gApiSubscribeVh = '/ords/$parkSpaceApi/zone/subscribe';
-  //subscription list
-  static const gApiSubscribedList = '/ords/$parkSpaceApi/zone/subscriptions';
-  //booking added
-  static const gApiIssueTicket = '/ords/$parkSpaceApi/pm/issueTicket';
-  //subscription_details per vehicle
-  static const gApiGetSubscriptionDetails =
-      '/ords/$parkSpaceApi/zone/subscription';
-  //ticket_id | QR Code for bookings
-  static const gApiGetParkingQR =
-      '/ords/$parkSpaceApi/pbm-dt/advanced-parking/qr';
-  //branch_id |Test QR Code for bookings
-  static const gApiGetTestParkingQR =
-      '/ords/$parkSpaceApi/pbm/advanced-parking/test_qr';
-  //Get app Version
-  static const gApiAppVersion = "/ords/luv/main/version";
-  //obtain OTP
-  static const gApiObtainOTP = "/ords/luv/auth/obtainOTP";
-
-  ///BILLERS
-  //POST Biller
-  static const gApiPostFavBiller = '/ords/$luvApi/fav/billers';
-  //GET Fav Biller
-  static const gApiGetFavBiller = '/ords/$luvApi/fav/billers';
-  //Delete Fav Biller
-  static const gApiLuvParkDeleteVehicle = '/ords/$luvApi/fav/billers';
-  //GET Biller
-  static const gApiGetBiller = '/ords/$luvApi/bs/biller';
-  //Pay Bills API - Post parameters:biller_id,amount,luvpay_id,payment_hk,bill_acct_no,bill_no
-  static const gApiPostPayBills = '/ords/$luvApi/token/bill/pay';
-  static const gApiMerchantScan = '/ords/$luvApi/token/merchant/scan2pay';
-  static const gApiBillerList = '/ords/$luvApi/ms/merchants';
-
-//Biller Template
-  static const gApiBillerTemplate = '/ords/$luvApi/bs/templ';
-
-  //Generate OTp using mobile number
-  static const gApiPostGenerateOTP = '/ords/$luvApi/wv2/otp/';
-  //Verify OTP
-  static const gApiPutVerifyOTP = '/ords/$luvApi/wv2/otp/';
+  static final String postQueueBooking = dotenv.env['POST_QUEUE_BOOKING']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getPaMessage =
+      dotenv.env['GET_PA_MESSAGE']!.replaceAll('{LUV_API}', luvApi);
+  static final String putReadPaMessages =
+      dotenv.env['PUT_READ_PA_MESSAGES']!.replaceAll('{LUV_API}', luvApi);
+  static final String getFAQ =
+      dotenv.env['GET_FAQ']!.replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getFAQsAnswer = dotenv.env['GET_FAQS_ANSWER']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postDeleteUserAcct =
+      dotenv.env['POST_DELETE_USER_ACCT']!.replaceAll('{LUV_API}', luvApi);
+  static final String getParkingAmenities = dotenv.env['GET_PARKING_AMENITIES']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getAllAmenities = dotenv.env['GET_ALL_AMENITIES']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String bookParking =
+      dotenv.env['BOOK_PARKING']!.replaceAll('{LUV_API}', luvApi);
+  static final String postSelfChkIn = dotenv.env['POST_SELF_CHK_IN']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String cancelParking = dotenv.env['CANCEL_PARKING']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postRefundBooking =
+      dotenv.env['POST_REFUND_BOOKING']!.replaceAll('{LUV_API}', luvApi);
+  static final String postExtendParking = dotenv.env['POST_EXTEND_PARKING']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postCancelAutoExtend = dotenv
+      .env['POST_CANCEL_AUTO_EXTEND']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postVhParkingSubs = dotenv.env['POST_VH_PARKING_SUBS']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getSubscribedVehicle = dotenv
+      .env['GET_SUBSCRIBED_VEHICLE']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getVhSubscription = dotenv.env['GET_VH_SUBSCRIPTION']!
+      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String postAddFavBiller =
+      dotenv.env['POST_ADD_FAV_BILLER']!.replaceAll('{LUV_API}', luvApi);
+  static final String getFavBiller =
+      dotenv.env['GET_FAV_BILLER']!.replaceAll('{LUV_API}', luvApi);
+  static final String deleteFavBiller =
+      dotenv.env['DELETE_FAV_BILLER']!.replaceAll('{LUV_API}', luvApi);
+  static final String postPayBills =
+      dotenv.env['POST_PAY_BILLS']!.replaceAll('{LUV_API}', luvApi);
+  static final String postMerchant =
+      dotenv.env['POST_MERCHANT']!.replaceAll('{LUV_API}', luvApi);
+  static final String getMerchantScan =
+      dotenv.env['GET_MERCHANT_SCAN']!.replaceAll('{LUV_API}', luvApi);
+  static final String getMerchants =
+      dotenv.env['GET_MERCHANTS']!.replaceAll('{LUV_API}', luvApi);
+  static final String getBillerTemp =
+      dotenv.env['GET_BILLER_TEMP']!.replaceAll('{LUV_API}', luvApi);
+  static final String getBillers =
+      dotenv.env['GET_BILLERS']!.replaceAll('{LUV_API}', luvApi);
+  static final String postGenerateOtp =
+      dotenv.env['POST_GENERATE_OTP']!.replaceAll('{LUV_API}', luvApi);
+  static final String putVerifyOtp =
+      dotenv.env['PUT_VERIFY_OTP']!.replaceAll('{LUV_API}', luvApi);
+  static final String postRegDevice =
+      dotenv.env['POST_REG_DEVICE']!.replaceAll('{LUV_API}', luvApi);
+  static final String getSession =
+      dotenv.env['GET_SESSION']!.replaceAll('{LUV_API}', luvApi);
 }

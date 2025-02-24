@@ -36,7 +36,7 @@ class ForgotPasswordController extends GetxController {
     isLoading.value = true;
     HttpRequest(
             api:
-                "${ApiKeys.gApiLuvParkGetAcctStat}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
+                "${ApiKeys.getAcctStatus}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
         .get()
         .then((objData) {
       if (objData == "No Internet") {

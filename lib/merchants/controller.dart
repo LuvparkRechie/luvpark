@@ -37,7 +37,7 @@ class MerchantBillerController extends GetxController
     CustomDialog().loadingDialog(Get.context!);
     final userID = await Authentication().getUserId();
 
-    HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}$userID")
+    HttpRequest(api: "${ApiKeys.getPaymentKey}$userID")
         .get()
         .then((paymentResponse) {
       // Get.back();
@@ -71,7 +71,7 @@ class MerchantBillerController extends GetxController
 
   void getMyMerchantData() {
     // API endpoint
-    String api = ApiKeys.gApiBillerList;
+    String api = ApiKeys.getMerchants;
 
     HttpRequest(api: api).get().then(
       (response) async {

@@ -60,7 +60,7 @@ class BillersController extends GetxController {
   }
 
   Future<void> getBillers() async {
-    String subApi = "${ApiKeys.gApiGetBiller}";
+    String subApi = "${ApiKeys.getBillers}";
     HttpRequest(api: subApi).get().then((response) async {
       if (response == "No Internet") {
         isLoading.value = false;
@@ -145,11 +145,9 @@ class BillersController extends GetxController {
         "account_name": params["Biller Name"]
       };
 
-      print("parameterparameterparameter $parameter");
-      HttpRequest(api: ApiKeys.gApiPostFavBiller, parameters: parameter)
+      HttpRequest(api: ApiKeys.postAddFavBiller, parameters: parameter)
           .postBody()
           .then((returnPost) async {
-        print("returnPost $returnPost");
         Get.back();
         if (returnPost == "No Internet") {
           CustomDialog().internetErrorDialog(Get.context!, () {
@@ -224,7 +222,7 @@ class BillersController extends GetxController {
 
         CustomDialog().loadingDialog(Get.context!);
 
-        HttpRequest(api: ApiKeys.gApiPostPayBills, parameters: parameter)
+        HttpRequest(api: ApiKeys.postPayBills, parameters: parameter)
             .postBody()
             .then((returnPost) async {
           Get.back();
@@ -271,7 +269,7 @@ class BillersController extends GetxController {
   Future<void> getFavorites() async {
     final item = await Authentication().getUserData();
     String userId = jsonDecode(item!)['user_id'].toString();
-    String subApi = "${ApiKeys.gApiGetFavBiller}?user_id=$userId";
+    String subApi = "${ApiKeys.getFavBiller}?user_id=$userId";
     HttpRequest(api: subApi).get().then((response) async {
       if (response == "No Internet") {
         isLoading.value = false;
@@ -296,7 +294,7 @@ class BillersController extends GetxController {
   Future<void> getTemplate(billerData) async {
     int billerId = int.parse(billerData["biller_id"].toString());
     CustomDialog().loadingDialog(Get.context!);
-    HttpRequest(api: "${ApiKeys.gApiBillerTemplate}?biller_id=$billerId")
+    HttpRequest(api: "${ApiKeys.getBillerTemp}?biller_id=$billerId")
         .get()
         .then((response) async {
       Get.back();
@@ -361,7 +359,7 @@ class BillersController extends GetxController {
     }, () {
       Get.back();
       CustomDialog().loadingDialog(Get.context!);
-      HttpRequest(api: ApiKeys.gApiLuvParkDeleteVehicle, parameters: params)
+      HttpRequest(api: ApiKeys.deleteFavBiller, parameters: params)
           .deleteData()
           .then((retDelete) {
         Get.back();

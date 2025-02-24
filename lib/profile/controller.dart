@@ -69,8 +69,7 @@ class ProfileScreenController extends GetxController
 
   void getRegions() async {
     CustomDialog().loadingDialog(Get.context!);
-    var returnData =
-        await const HttpRequest(api: ApiKeys.gApiSubFolderGetRegion).get();
+    var returnData = await HttpRequest(api: ApiKeys.getRegion).get();
     Get.back();
     if (returnData == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
@@ -99,7 +98,7 @@ class ProfileScreenController extends GetxController
   }
 
   void getProvince(regionId) async {
-    String params = "${ApiKeys.gApiSubFolderGetProvince}?p_region_id=$regionId";
+    String params = "${ApiKeys.getProvince}?p_region_id=$regionId";
 
     isLoading.value = false;
 
@@ -219,7 +218,7 @@ class ProfileScreenController extends GetxController
       "image_base64": imageBase64!.toString(),
     };
 
-    HttpRequest(api: ApiKeys.gApiSubFolderPutUpdateProf, parameters: parameters)
+    HttpRequest(api: ApiKeys.putUpdateUserProf, parameters: parameters)
         .put()
         .then((res) async {
       Get.back();

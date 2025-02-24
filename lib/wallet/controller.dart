@@ -11,7 +11,6 @@ import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 
-import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/custom_text.dart';
 import '../routes/routes.dart';
 
@@ -52,15 +51,13 @@ class WalletController extends GetxController
     final authData = await Authentication().getUserData2();
     mobileNo.value = authData["mobile_no"].toString();
     List item = [
-      {"btn_name": "Top up", "icon": LucideIcons.wallet},
-      {"btn_name": "Send", "icon": LucideIcons.send},
+      {"btn_name": "Load", "icon": LucideIcons.wallet},
+      {"btn_name": "Transfer", "icon": LucideIcons.arrowLeftRight},
       {"btn_name": "QR Code", "icon": LucideIcons.qrCode},
       {"btn_name": "Bill", "icon": LucideIcons.wallet},
       {"btn_name": "Merchant", "icon": Iconsax.receipt_text}
     ];
     btnData.value = item;
-
-    print("btnData $btnData");
   }
 
   void getCurrentTime() async {
@@ -172,7 +169,7 @@ class WalletController extends GetxController
     String userId = jsonDecode(item!)['user_id'].toString();
 
     String subApi =
-        "${ApiKeys.gApiSubFolderGetTransactionLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
+        "${ApiKeys.getTransLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
 
     HttpRequest(api: subApi).get().then((response) async {
       if (response == "No Internet") {
@@ -256,17 +253,6 @@ class WalletController extends GetxController
   Future<void> onBtnTap(int index) async {
     switch (index) {
       case 0:
-        final item = await Authentication().getUserData2();
-        String? fname = item["first_name"];
-
-        if (fname == null || fname.toString().isEmpty) {
-          CustomDialog().infoDialog("Unverified Account",
-              "Complete your account information to access the requested service.\nGo to profile and update your account.",
-              () {
-            Get.back();
-          });
-          return;
-        }
         Get.toNamed(Routes.walletrechargeload);
         break;
       case 1:

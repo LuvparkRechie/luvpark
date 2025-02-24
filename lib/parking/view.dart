@@ -394,7 +394,7 @@ class ListCard extends GetView<ParkingController> {
                         data["park_area_name"],
                         style: listTitleStyle(),
                       ),
-                      Container(height: 10),
+                      Container(height: 5),
                       Text(
                         data["address"],
                         style: subtitleStyle(),
@@ -406,6 +406,25 @@ class ListCard extends GetView<ParkingController> {
               ],
             ),
             Container(height: 15),
+            // Row(
+            //   crossAxisAlignment: CrossAxisAlignment.start,
+            //   children: [
+            //     Icon(
+            //       LucideIcons.parkingCircle,
+            //       color: AppColor.iconListColor,
+            //       size: 15,
+            //     ),
+            //     Container(width: 5),
+            //     AutoSizeText(
+            //       "VALET Parking",
+            //       style: subtitleStyle(
+            //           fontWeight: FontWeight.w700,
+            //           color: const Color.fromARGB(255, 53, 51, 51)),
+            //       maxLines: 1,
+            //     ),
+            //   ],
+            // ),
+            // Container(height: 5),
             Row(
               children: [
                 Expanded(

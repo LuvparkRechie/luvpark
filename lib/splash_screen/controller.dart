@@ -51,6 +51,7 @@ class SplashController extends GetxController
     isNetConn.value = true;
 
     final response = await HttpRequest(api: "").pingInternet();
+
     if (response == "Success") {
       final newVersion = NewVersionPlus(
         iOSId: 'com.cmds.luvpark',
@@ -65,7 +66,7 @@ class SplashController extends GetxController
 
   basicStatusCheck(NewVersionPlus newVersion) async {
     final version = await newVersion.getVersionStatus();
-    final data = await Authentication().getUserLogin();
+    final data = await Authentication().getUserData2();
     if (version != null && version.canUpdate) {
       release = version.releaseNotes ?? "A new version is available!";
       newVersion.showUpdateDialog(
@@ -95,40 +96,13 @@ class SplashController extends GetxController
         isNetConn.value = false;
         return;
       }
+
       if (vhData["response"] == "Success") {
         if (data != null) {
-          Functions.getAccountStatus(data["mobile_no"], (obj) async {
-            final items = obj[0]["items"];
-            print("items $items");
-
-            if (!obj[0]["has_net"]) {
-              isNetConn.value = false;
-              return;
-            }
-            if (items.isEmpty) {
-              Get.offAndToNamed(Routes.onboarding);
-              return;
-            }
-            if (items[0]["login_attempt"] >= 5) {
-              Get.toNamed(
-                Routes.activateAcc,
-                arguments: items["mobile_no"],
-              );
-              return;
-            }
-            if (items[0]["is_active"] == "N") {
+          Functions.logoutUser(data["session_id"].toString(), (isSuccess) {
+            if (isSuccess["is_true"]) {
               Get.toNamed(Routes.login);
               return;
-            } else {
-              final userLogin = await Authentication().getUserLogin();
-
-              if (userLogin["is_login"] == "N") {
-                Get.toNamed(Routes.login);
-                return;
-              } else {
-                Get.offAndToNamed(Routes.map);
-                return;
-              }
             }
           });
         } else {

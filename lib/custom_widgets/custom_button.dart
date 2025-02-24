@@ -166,6 +166,7 @@ class CustomDialogButton extends StatelessWidget {
           letterSpacing: 0.50,
           textAlign: TextAlign.center,
           fontWeight: FontWeight.w500,
+          minFontSize: 8,
           maxlines: 1,
         ),
       ),
@@ -216,14 +217,14 @@ class CustomElevatedButton extends StatelessWidget {
       width: btnwidth,
       child: ElevatedButton(
         onPressed: (loading || disabled) ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: disabled ? Colors.grey : btnColor ?? Colors.blue,
-          foregroundColor: textColor ?? Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(borderRadius),
-            side: BorderSide(
-              color: borderColor ?? Colors.transparent,
-              width: 1,
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all<Color>(
+              disabled ? Colors.grey : btnColor ?? Colors.blue),
+          foregroundColor:
+              MaterialStateProperty.all<Color>(textColor ?? Colors.white),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(7), // Adjust radius
             ),
           ),
         ),

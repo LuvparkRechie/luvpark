@@ -24,6 +24,18 @@ class WalletRechargeLoadController extends GetxController
       "img_url": "assets/images/ubank.png",
     },
   ];
+  List dataList = [
+    {"value": 100, "is_active": false},
+    {"value": 150, "is_active": false},
+    {"value": 200, "is_active": false},
+    {"value": 300, "is_active": false},
+    {"value": 400, "is_active": false},
+    {"value": 500, "is_active": false},
+    {"value": 750, "is_active": false},
+    {"value": 1000, "is_active": false},
+    {"value": 1500, "is_active": false},
+  ].obs;
+  RxList padData = [].obs;
   RxString email = "".obs;
   RxString fullName = "".obs;
   RxString hash = "".obs;
@@ -39,7 +51,7 @@ class WalletRechargeLoadController extends GetxController
 // Nullable integer uniform code
   Rxn<int> selectedBankTracker = Rxn<int>(null);
   Rxn<int> selectedBankType = Rxn<int>(null);
-
+  var denoInd = (-1).obs;
   var userDataInfo;
   final TextEditingController userName = TextEditingController();
 
@@ -54,6 +66,7 @@ class WalletRechargeLoadController extends GetxController
 
   @override
   void onInit() {
+    padData.value = dataList;
     rname = TextEditingController();
     amountController = TextEditingController();
     fullName.value = "";
@@ -71,8 +84,8 @@ class WalletRechargeLoadController extends GetxController
   }
 
   Future<void> getBankUrl() async {
-    String subApi = "${ApiKeys.gApiSubFolderGetUbDetails}?code=UB";
     CustomDialog().loadingDialog(Get.context!);
+    String subApi = "${ApiKeys.getBankDetails}?code=UB";
 
     try {
       var objData = await HttpRequest(api: subApi).get();
@@ -116,7 +129,7 @@ class WalletRechargeLoadController extends GetxController
   }
 
   getBankData(appId, url, ind) {
-    String bankParamApi = "${ApiKeys.gApiSubFolderGetBankParam}?app_id=$appId";
+    String bankParamApi = "${ApiKeys.getBankParam}?app_id=$appId";
 
     HttpRequest(api: bankParamApi).get().then((objData) {
       if (objData == "No Internet") {
@@ -207,12 +220,11 @@ class WalletRechargeLoadController extends GetxController
         "user_id": userDataInfo["user_id"],
         "to_mobile_no": "63${mobNum.text.replaceAll(" ", "")}",
       };
-      print("dataParam $dataParam");
+
       CustomDialog().loadingDialog(Get.context!);
-      HttpRequest(api: ApiKeys.gApiSubFolderPostUbTrans, parameters: dataParam)
+      HttpRequest(api: ApiKeys.postThirdPartyPayment, parameters: dataParam)
           .postBody()
           .then((returnPost) {
-        print("returnPost $returnPost");
         if (returnPost == "No Internet") {
           Get.back();
           CustomDialog().errorDialog(Get.context!, "Error",
@@ -287,9 +299,8 @@ class WalletRechargeLoadController extends GetxController
     _debounce = Timer(duration, () {
       CustomDialog().loadingDialog(Get.context!);
       String api =
-          "${ApiKeys.gApiSubFolderGetUserInfo}?mobile_no=63${mobile.toString().replaceAll(" ", '')}";
+          "${ApiKeys.getRecipient}?mobile_no=63${mobile.toString().replaceAll(" ", '')}";
       HttpRequest(api: api).get().then((objData) {
-        print("api $api");
         FocusScope.of(Get.context!).unfocus();
         if (objData == "No Internet") {
           isValidNumber.value = false;
@@ -366,5 +377,38 @@ class WalletRechargeLoadController extends GetxController
         }
       });
     });
+  }
+
+  //function for my pads
+  Future<void> pads(int value) async {
+    amountController.text = value.toString();
+    padData.value = dataList.map((obj) {
+      obj["is_active"] = (obj["value"] == value);
+      return obj;
+    }).toList();
+
+    isActiveBtn.value = true;
+  }
+
+  Future<void> onTextChange() async {
+    denoInd.value = -1;
+
+    final double? value = double.parse(amountController.text);
+    padData.value = padData.map((e) {
+      if (double.parse(e["value"].toString()) ==
+          double.parse(value.toString())) {
+        e["is_active"] = true;
+        return e;
+      } else {
+        e["is_active"] = false;
+        return e;
+      }
+    }).toList();
+
+    if (value == null || value < 20) {
+      isActiveBtn.value = false;
+    } else {
+      isActiveBtn.value = true;
+    }
   }
 }

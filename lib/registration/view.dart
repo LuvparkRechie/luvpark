@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -14,7 +13,6 @@ import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/custom_widgets/vertical_height.dart';
 import 'package:luvpark/registration/controller.dart';
 import 'package:luvpark/routes/routes.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../custom_widgets/app_color.dart';
 
@@ -26,14 +24,16 @@ class RegistrationPage extends GetView<RegistrationController> {
     return PopScope(
       canPop: false,
       child: Scaffold(
+          backgroundColor: AppColor.bodyColor,
           appBar: AppBar(
             leading: null,
             elevation: 0,
             toolbarHeight: 0,
+            backgroundColor: AppColor.primaryColor,
             systemOverlayStyle: SystemUiOverlayStyle(
-              statusBarColor: AppColor.bodyColor,
+              statusBarColor: AppColor.primaryColor,
               statusBarBrightness: Brightness.dark,
-              statusBarIconBrightness: Brightness.dark,
+              statusBarIconBrightness: Brightness.light,
             ),
           ),
           body: Container(
@@ -56,22 +56,10 @@ class RegistrationPage extends GetView<RegistrationController> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(height: 40),
-                              Image(
-                                image: AssetImage(
-                                    "assets/images/onboardluvpark.png"),
-                                width: 120,
-                                fit: BoxFit.contain,
-                              ),
-                              const SizedBox(height: 30),
+                              const SizedBox(height: 20),
                               CustomTitle(
-                                text: "Create account",
-                                color: Colors.black,
-                                maxlines: 1,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                textAlign: TextAlign.center,
-                                letterSpacing: -.1,
+                                text: "Create Account",
+                                fontSize: 20,
                               ),
                               Container(height: 10),
                               const CustomParagraph(
@@ -80,35 +68,27 @@ class RegistrationPage extends GetView<RegistrationController> {
                                     "Sign up to book, connect, and take advantage of exclusive promos!",
                                 fontSize: 13,
                               ),
-                              const VerticalHeight(height: 30),
-                              Row(
-                                children: [
-                                  CustomParagraph(
-                                    text: "Mobile Number",
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                ],
+                              const VerticalHeight(height: 20),
+                              CustomParagraph(
+                                text: "Mobile Number",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
                               ),
                               CustomMobileNumber(
                                 hintText: "10 digit mobile number",
                                 controller: controller.mobileNumber,
+                                keyboardType: TextInputType.numberWithOptions(),
                                 inputFormatters: [Variables.maskFormatter],
                                 onChange: (value) {
                                   controller.onMobileChanged(value);
                                 },
                               ),
-                              Container(height: 10),
-                              Row(
-                                children: [
-                                  CustomParagraph(
-                                    text: "Password",
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                ],
+                              CustomParagraph(
+                                text: "Password",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
                               ),
                               Obx(
                                 () => CustomTextField(
@@ -245,7 +225,6 @@ class RegistrationPage extends GetView<RegistrationController> {
                                         const CustomParagraph(
                                           text:
                                               "The password should have a minimum of 8 characters, including at least one uppercase letter and a number.",
-                                          textAlign: TextAlign.justify,
                                           fontSize: 12,
                                         ),
                                       ],
@@ -260,9 +239,8 @@ class RegistrationPage extends GetView<RegistrationController> {
                                   btnwidth: double.infinity,
                                   btnColor: AppColor.primaryColor,
                                   textColor: Colors.white,
-                                  loading: controller.isLoading.value,
                                   onPressed: () {
-                                    FocusScope.of(context)
+                                    FocusScope.of(Get.context!)
                                         .requestFocus(FocusNode());
                                     if (controller.formKeyRegister.currentState!
                                         .validate()) {
@@ -277,55 +255,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                         });
                                         return;
                                       }
-                                      if (controller.isLoading.value) return;
-                                      controller.toggleLoading(
-                                          !controller.isLoading.value);
-                                      Map<String, dynamic> parameters = {
-                                        "mobile_no":
-                                            "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
-                                        "pwd": controller.password.text,
-                                      };
-                                      controller.onSubmit(context, parameters,
-                                          (data) async {
-                                        controller.toggleLoading(
-                                            !controller.isLoading.value);
-                                        final prefs = await SharedPreferences
-                                            .getInstance();
-                                        prefs.setBool('isLoggedIn', false);
-                                        Authentication().setPasswordBiometric(
-                                            controller.password.text);
-
-                                        if (data[0]["success"]) {
-                                          // ignore: use_build_context_synchronously
-                                          CustomDialog().successDialog(
-                                              context,
-                                              "Success",
-                                              "We have sent an activation code to your mobile number.",
-                                              "Continue", () async {
-                                            Get.back();
-                                            List argsParam = [
-                                              {
-                                                "otp": int.parse(data[0]
-                                                        ["items"]
-                                                    .toString()),
-                                                'mobile_no':
-                                                    parameters["mobile_no"],
-                                                "req_type": "VERIFY",
-                                                "seq_id": 0,
-                                                "seca": "",
-                                                "seq_no": 1,
-                                                "new_pass":
-                                                    controller.password.text,
-                                              }
-                                            ];
-                                            controller
-                                                .formKeyRegister.currentState
-                                                ?.reset();
-                                            Get.toNamed(Routes.otp,
-                                                arguments: argsParam);
-                                          });
-                                        }
-                                      });
+                                      controller.onSubmit();
                                     }
                                   },
                                 ),
@@ -350,12 +280,9 @@ class RegistrationPage extends GetView<RegistrationController> {
                                             fontWeight: FontWeight.w700,
                                           ),
                                           recognizer: TapGestureRecognizer()
-                                            ..onTap = controller.isLoading.value
-                                                ? () {}
-                                                : () async {
-                                                    Get.offAllNamed(
-                                                        Routes.login);
-                                                  },
+                                            ..onTap = () async {
+                                              Get.offAllNamed(Routes.login);
+                                            },
                                         ),
                                       ],
                                     ),

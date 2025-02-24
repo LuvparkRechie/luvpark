@@ -25,9 +25,9 @@ class HelpandFeedbackController extends GetxController {
       Map<String, dynamic> param = {
         "mobile_no": mydata["mobile_no"],
       };
-      var returnData = await HttpRequest(
-              api: ApiKeys.gApiLuvPayPostDeleteAccount, parameters: param)
-          .post();
+      var returnData =
+          await HttpRequest(api: ApiKeys.postDeleteUserAcct, parameters: param)
+              .post();
       Get.back();
 
       if (returnData == "No Internet") {

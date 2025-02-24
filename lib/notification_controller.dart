@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
@@ -268,38 +268,54 @@ class NotificationController {
   }
 }
 
-Future<void> updateLocation(LatLng position) async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  var geoConId = prefs.getString('geo_connect_id');
+Future<void> getLogSession(context) async {
+  final userData = await Authentication().getUserData2();
+  final getUserLogin = await Authentication().getUserLogin();
 
-  if (geoConId == null) return;
-  var jsonParam = {
-    "geo_connect_id": geoConId,
-    "latitude": position.latitude,
-    "longitude": position.longitude
-  };
+  if (getUserLogin == null || getUserLogin["is_login"] == "N") {
+    return;
+  }
 
-  HttpRequest(api: ApiKeys.gApiLuvParkPutUpdateUsersLoc, parameters: jsonParam)
-      .put()
-      .then((returnData) async {
-    if (returnData == "No Internet") {
-      return;
-    }
-    if (returnData == null) {
-      return;
-    }
-    if (returnData["success"] == "Y") {
-      return;
-    }
-  });
+  String sessionId = userData["session_id"].toString();
+
+  final response =
+      await HttpRequest(api: "${ApiKeys.getSession}?session_id=$sessionId")
+          .get();
+  if (response["items"].isNotEmpty && response["items"][0]["dt_out"] != null) {
+    Functions.logoutUser(
+        userData == null ? "" : userData["session_id"].toString(),
+        (isSuccess) async {
+      if (isSuccess["is_true"]) {
+        Variables.snackbarDynamicDialog(
+            "Your account has been logged in on another device.");
+        final userLogin = await Authentication().getUserLogin();
+        List userData = [userLogin];
+        userData = userData.map((e) {
+          e["is_login"] = "N";
+          return e;
+        }).toList();
+        await Authentication().setLogin(jsonEncode(userData[0]));
+        final prefs = await SharedPreferences.getInstance();
+        prefs.remove("last_booking");
+        Authentication().setLogoutStatus(true);
+
+        if (Variables.inactiveTmr != null) {
+          Variables.inactiveTmr!.cancel();
+        }
+
+        Get.offAllNamed(Routes.login);
+      }
+    });
+  }
 }
 
 Future<void> getParkingTrans(int ctr) async {
   var akongId = await Authentication().getUserId();
   DateTime timeNow = await Functions.getTimeNow();
+  String api = "${ApiKeys.getActiveParking}?luvpay_id=${akongId.toString()}";
+
   HttpRequest(
-    api:
-        "${ApiKeys.gApiSubFolderGetActiveParking}?luvpay_id=${akongId.toString()}",
+    api: api,
   ).get().then((notificationData) async {
     if (notificationData == "No Internet") {
       return;
@@ -408,7 +424,7 @@ Future<void> getParkingQueue() async {
   var akongId = await Authentication().getUserId();
 
   HttpRequest(
-    api: "${ApiKeys.gApiLuvParkResQueue}?user_id=${akongId.toString()}",
+    api: "${ApiKeys.postQueueBooking}?user_id=${akongId.toString()}",
   ).get().then((queueData) async {
     if (queueData == "No Internet") {
       return;
@@ -422,7 +438,7 @@ Future<void> getMessNotif() async {
   var akongId = await Authentication().getUserId();
 
   HttpRequest(
-    api: "${ApiKeys.gApiLuvParkMessageNotif}?user_id=$akongId",
+    api: "${ApiKeys.getPaMessage}?user_id=$akongId",
   ).get().then((messageData) async {
     // PaMessageDatabase.instance.deleteAll();
 

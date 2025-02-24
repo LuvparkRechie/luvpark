@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
@@ -8,17 +8,28 @@ import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/custom_widgets/vertical_height.dart';
 import 'package:luvpark/forgot_password/controller.dart';
 
+import '../custom_widgets/app_color.dart';
+
 class ForgotPassword extends GetView<ForgotPasswordController> {
   const ForgotPassword({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppbar(
-        title: "",
+      backgroundColor: AppColor.bodyColor,
+      appBar: AppBar(
+        leading: null,
+        elevation: 0,
+        toolbarHeight: 0,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
       ),
       body: Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 15, 20),
+        padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: ScrollConfiguration(
           behavior: ScrollBehavior().copyWith(overscroll: false),
           child: StretchingOverscrollIndicator(
@@ -27,42 +38,23 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
               child: Form(
                 key: controller.formKeyForgotPass,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: 100,
+                    Container(height: 20),
+                    CustomButtonClose(onTap: () {
+                      Get.back();
+                    }),
+                    Container(height: 20),
+                    CustomTitle(
+                      text: "Forgot Password",
+                      fontSize: 20,
                     ),
-                    const Center(
-                      child: Image(
-                        height: 100,
-                        width: 100,
-                        fit: BoxFit.contain,
-                        image: AssetImage(
-                          "assets/images/forget_pass_image.png",
-                        ),
-                      ),
+                    Container(height: 10),
+                    CustomParagraph(
+                      text:
+                          "Enter your phone number below to receive password reset instructions.",
                     ),
-                    Container(
-                      height: 20,
-                    ),
-                    const CustomTitle(
-                      text: "Forgot your Password?",
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                      fontSize: 16,
-                    ),
-                    Container(height: 5),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 15.0),
-                      child: CustomParagraph(
-                        text:
-                            "Enter your phone number below to receive password reset instructions",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Container(
-                      height: 50,
-                    ),
+                    Container(height: 20),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: CustomParagraph(
@@ -73,6 +65,7 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
                       ),
                     ),
                     CustomMobileNumber(
+                      keyboardType: TextInputType.phone,
                       hintText: "10 digit mobile number",
                       controller: controller.mobileNumber,
                       inputFormatters: [Variables.maskFormatter],

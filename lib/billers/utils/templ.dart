@@ -71,7 +71,6 @@ class _TemplState extends State<Templ> {
     List postData =
         dataBiller.where((e) => e["is_for_posting"] == "Y").toList();
 
-    print("postData $postData");
     for (var field in postData) {
       formData[field['key']] = controllers2[field['key']]!.text;
     }
@@ -121,11 +120,9 @@ class _TemplState extends State<Templ> {
 
         CustomDialog().loadingDialog(Get.context!);
 
-        HttpRequest(api: ApiKeys.gApiPostPayBills, parameters: parameters)
+        HttpRequest(api: ApiKeys.postPayBills, parameters: parameters)
             .postBody()
             .then((returnPost) async {
-          print("luvpark payment postin $returnPost");
-
           if (returnPost == "No Internet") {
             Get.back();
             CustomDialog().internetErrorDialog(Get.context!, () {
@@ -161,7 +158,7 @@ class _TemplState extends State<Templ> {
     DateTime dateNow = await Functions.getTimeNow();
     final inatay = await Http3rdPartyRequest(url: fullUrl).postBiller();
     Get.back();
-    print("inatay $inatay");
+
     if (inatay == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
         Get.back();
@@ -260,7 +257,7 @@ class _TemplState extends State<Templ> {
                             itemCount: dataBiller.length,
                             itemBuilder: (context, i) {
                               final field = dataBiller[i];
-                              print("field $field");
+
                               List<TextInputFormatter> inputFormatters = [];
                               if (field['input_formatter'] != null &&
                                   field['input_formatter'].isNotEmpty) {

@@ -4,7 +4,8 @@ class AppColor {
   static Color primaryColor = const Color(0xFF0078FF);
   static Color secondaryColor = const Color(0xFF3863c2);
   static Color mainColor = const Color(0xFF01b9c5);
-  static const bodyColor = Color.fromARGB(255, 244, 243, 243);
+  static const bodyColor =
+      Color(0xFFfaf7f7); // Color.fromARGB(255, 244, 243, 243);
   static const scafColor = Colors.white;
   static Color borderColor = Color.fromARGB(255, 211, 208, 208);
   static Color hintColor = Color(0xFF646263);

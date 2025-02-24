@@ -76,7 +76,7 @@ class paywithQRController extends GetxController
     mobNum.value = userData['mobile_no'];
     isLoading.value = true;
 
-    HttpRequest(api: "${ApiKeys.gApiSubFolderPayments}${userData["user_id"]}")
+    HttpRequest(api: "${ApiKeys.getPaymentKey}${userData["user_id"]}")
         .get()
         .then((paymentKey) {
       if (paymentKey == "No Internet") {
@@ -108,7 +108,7 @@ class paywithQRController extends GetxController
 
     int userId = await Authentication().getUserId();
     dynamic param = {"luvpay_id": userId};
-    HttpRequest(api: ApiKeys.gApiSubFolderPutChangeQR, parameters: param)
+    HttpRequest(api: ApiKeys.generatePayKey, parameters: param)
         .put()
         .then((objKey) {
       if (objKey == "No Internet") {
@@ -186,100 +186,41 @@ class paywithQRController extends GetxController
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Center(
+                child: CustomTitle(
+                  text: "Scan to Pay",
+                  fontSize: 20,
+                ),
+              ),
+              Container(height: 10),
+              Center(
+                child: CustomParagraph(
+                  text:
+                      "Align the QR code within the frame to proceed with payment.",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              Container(height: 20),
               Container(
+                margin: const EdgeInsets.all(40),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8.0),
-                    color: AppColor.primaryColor),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: 15,
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: PrettyQrView(
+                  decoration: const PrettyQrDecoration(
+                    background: Colors.white,
+                    image: PrettyQrDecorationImage(
+                      image: AssetImage("assets/images/logo.png"),
                     ),
-
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(width: 15),
-                            Image(
-                              height: 60,
-                              fit: BoxFit.cover,
-                              image:
-                                  AssetImage("assets/images/luvpark_logo.png"),
-                            ),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomParagraph(
-                                  text: fullName.value,
-                                  textAlign: TextAlign.start,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                ),
-                                const SizedBox(height: 5),
-                                CustomParagraph(
-                                  fontSize: 12,
-                                  text: mono.value,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.white,
-                                  textAlign: TextAlign.start,
-                                ),
-                              ],
-                            ),
-                          ],
-                        )
-                      ],
+                  ),
+                  qrImage: QrImage(
+                    QrCode.fromData(
+                      data: payKey.value,
+                      errorCorrectLevel: QrErrorCorrectLevel.H,
                     ),
-                    LineCutter(),
-                    const SizedBox(height: 10),
-                    Container(
-                      width: 200,
-                      height: 200,
-                      decoration: ShapeDecoration(
-                        shape: RoundedRectangleBorder(
-                          side: const BorderSide(
-                            width: 2,
-                            color: Color(0x162563EB),
-                          ),
-                          borderRadius: BorderRadius.circular(28),
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15.0),
-                        child: Container(
-                          height: MediaQuery.of(Get.context!).size.height / 4.5,
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(15))),
-                            padding: EdgeInsets.all(15),
-                            child: PrettyQrView(
-                              decoration: const PrettyQrDecoration(
-                                  image: PrettyQrDecorationImage(
-                                      image: AssetImage(
-                                          "assets/images/logo.png"))),
-                              qrImage: QrImage(QrCode.fromData(
-                                  data: payKey.value,
-                                  errorCorrectLevel: QrErrorCorrectLevel.H)),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 20,
-                    ),
-                    Container(
-                      height: 20,
-                    ),
-                    //BottomRowDecoration(color: Colors.grey.shade300)
-                  ],
+                  ),
                 ),
               ),
             ],

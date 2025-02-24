@@ -28,7 +28,7 @@ class WalletSend extends GetView<WalletSendController> {
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 0,
-        backgroundColor: AppColor.mainColor,
+        backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.light,
@@ -64,7 +64,7 @@ class WalletSend extends GetView<WalletSendController> {
                         }),
                         Container(height: 20),
                         CustomTitle(
-                          text: "Send Token",
+                          text: "Transfer Token",
                           fontWeight: FontWeight.w700,
                           fontSize: 20,
                         ),
@@ -308,35 +308,32 @@ class WalletSend extends GetView<WalletSendController> {
                     Row(
                       children: [
                         Container(
+                          width: 60,
+                          height: 60,
                           decoration: BoxDecoration(
-                            color: Colors.blue,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 2.0,
-                            ),
+                            color: Colors.grey[200],
+                            borderRadius:
+                                BorderRadius.circular(30), // Make it circular
                           ),
                           child: ClipRRect(
                             clipBehavior: Clip.none,
-                            child: CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.grey[200],
-                              backgroundImage: controller
-                                      .userImage.value.isNotEmpty
-                                  ? MemoryImage(
-                                      base64Decode(controller.userImage.value
-                                          .toString()),
-                                    )
-                                  : null,
-                              child:
-                                  controller.userImage.value.toString().isEmpty
-                                      ? Icon(
-                                          Icons.person,
-                                          size: 32,
-                                          color: AppColor.primaryColor,
-                                        )
-                                      : null,
-                            ),
+                            borderRadius: BorderRadius.circular(
+                                30), // Clip image to circle
+                            child: controller.userImage.value.isNotEmpty
+                                ? Image.memory(
+                                    base64Decode(
+                                        controller.userImage.value.toString()),
+                                    fit: BoxFit
+                                        .cover, // Ensures image covers the container
+                                    width: 60,
+                                    height: 60,
+                                  )
+                                : Icon(
+                                    Icons
+                                        .person, // Placeholder when no image is available
+                                    size: 30,
+                                    color: Colors.grey,
+                                  ),
                           ),
                         ),
                         Container(width: 10),
@@ -367,7 +364,12 @@ class WalletSend extends GetView<WalletSendController> {
                         Container(width: 5),
                         GestureDetector(
                           onTap: () {
-                            Get.bottomSheet(UsersBottomsheet(index: 2),
+                            Get.bottomSheet(
+                                UsersBottomsheet(
+                                    index: 2,
+                                    cb: (index) {
+                                      Functions.popPage(index);
+                                    }),
                                 isDismissible: false);
                           },
                           child: Icon(
@@ -405,67 +407,12 @@ class WalletSend extends GetView<WalletSendController> {
             ],
           );
   }
-
-  Widget myPads(data, int index) {
-    double walletBalance = double.parse((controller.userData.isEmpty
-            ? 0.0
-            : controller.userData[0]["amount_bal"] ?? 0)
-        .toString());
-
-    return Expanded(
-      child: Padding(
-        padding: const EdgeInsets.all(3.0),
-        child: InkWell(
-          onTap: walletBalance >= data["value"]
-              ? () {
-                  controller.pads(data["value"]);
-                }
-              : null,
-          child: Container(
-            padding: const EdgeInsets.fromLTRB(22, 17, 23, 17),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(7),
-              border: Border.all(color: Colors.grey.shade200, width: 1),
-              color: walletBalance >= data["value"]
-                  ? (data["is_active"] ? AppColor.primaryColor : Colors.white)
-                  : Colors.grey.shade300,
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                CustomParagraph(
-                  maxlines: 1,
-                  minFontSize: 8,
-                  text: "${data["value"].toString()}",
-                  fontWeight: FontWeight.w700,
-                  color: walletBalance >= data["value"]
-                      ? (data["is_active"] ? Colors.white : Colors.black)
-                      : Colors.grey,
-                ),
-                CustomParagraph(
-                  text: "Token",
-                  maxlines: 1,
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: walletBalance >= data["value"]
-                      ? (data["is_active"] ? Colors.white : null)
-                      : Colors.grey,
-                  minFontSize: 8,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
 
 class UsersBottomsheet extends StatefulWidget {
   final int index;
-  const UsersBottomsheet({super.key, required this.index});
+  final Function cb;
+  const UsersBottomsheet({super.key, required this.index, required this.cb});
 
   @override
   State<UsersBottomsheet> createState() => _UsersBottomsheetState();

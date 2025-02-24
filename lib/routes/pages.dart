@@ -1,35 +1,30 @@
 import 'package:get/get.dart';
 import 'package:luvpark/about_us/index.dart';
-import 'package:luvpark/change_pass/index.dart';
 import 'package:luvpark/faq/index.dart';
-import 'package:luvpark/forgot_password/utils/forgot_otp/index.dart';
+import 'package:luvpark/forgot_password/utils/forgot_pass_success.dart';
 import 'package:luvpark/forgot_password/utils/forgot_verified_acc/index.dart';
 import 'package:luvpark/my_account/index.dart';
 import 'package:luvpark/my_account/utils/index.dart';
-import 'package:luvpark/my_account/utils/otp_update/index.dart';
 import 'package:luvpark/otp_field/index.dart';
 import 'package:luvpark/wallet_qr/index.dart';
 import 'package:luvpark/wallet_qr/merchantreceipt/index.dart';
 import 'package:luvpark/wallet_qr/myqr/bindings.dart';
 import 'package:luvpark/wallet_qr/myqr/view.dart';
-import 'package:luvpark/wallet_qr/paymerchant/utils/bindings.dart';
-import 'package:luvpark/wallet_qr/paymerchant/utils/view.dart';
 import 'package:luvpark/wallet_qr/paywithqr/bindings.dart';
 import 'package:luvpark/wallet_qr/paywithqr/view.dart';
 import 'package:luvpark/wallet_recharge_load/index.dart';
 
-import '../activate_acc/index.dart';
 import '../billers/index.dart';
 import '../booking/index.dart';
 import '../booking/utils/booking_receipt/index.dart';
 import '../forgot_password/index.dart';
 import '../forgot_password/utils/create_new/index.dart';
-import '../forgot_password/utils/forgot_otp/utils/forgot_pass_success.dart';
 import '../help_feedback/index.dart';
 import '../landing/index.dart';
 import '../lock_screen/index.dart';
 import '../login/index.dart';
 import '../mapa/index.dart';
+import '../merchants/index.dart';
 import '../message/index.dart';
 import '../my_vehicles/index.dart';
 import '../my_vehicles/utils/add_vehicle.dart';
@@ -38,12 +33,10 @@ import '../parking/index.dart';
 import '../parking_areas/index.dart';
 import '../permission/permission.dart';
 import '../registration/index.dart';
-import '../registration/utils/otp_screen/index.dart';
 import '../security_settings/index.dart';
 import '../splash_screen/index.dart';
 import '../wallet/index.dart';
-import '../wallet_bills/index.dart';
-import '../wallet_recharge/index.dart';
+import '../wallet_qr/paymerchant/utils/index.dart';
 import '../wallet_send/index.dart';
 import 'routes.dart';
 
@@ -70,17 +63,7 @@ class AppPages {
         name: Routes.registration,
         page: () => const RegistrationPage(),
         binding: RegistrationBinding()),
-    GetPage(
-      name: Routes.otp,
-      page: () => const OtpScreen(),
-      binding: OtpBinding(),
-    ),
 
-    GetPage(
-      name: Routes.activateAcc,
-      page: () => const ActivateAccount(),
-      binding: ActivateAccountBinding(),
-    ),
     GetPage(
       name: Routes.permission,
       page: () => const PermissionHandlerScreen(),
@@ -121,11 +104,7 @@ class AppPages {
       page: () => const BookingPage(),
       binding: BookingBinding(),
     ),
-    GetPage(
-      name: Routes.changepassword,
-      page: () => const ChangePassword(),
-      binding: ChangePasswordBinding(),
-    ),
+
     GetPage(
       name: Routes.bookingReceipt,
       page: () => BookingReceipt(),
@@ -136,11 +115,6 @@ class AppPages {
       name: Routes.faqpage,
       page: () => const FaqPage(),
       binding: FaqPageBinding(),
-    ),
-    GetPage(
-      name: Routes.walletrecharge,
-      page: () => const WalletRechargeScreen(),
-      binding: WalletRechargeBinding(),
     ),
 
     GetPage(
@@ -174,11 +148,7 @@ class AppPages {
       page: () => const CreateNewPassword(),
       binding: CreateNewPasswordBinding(),
     ),
-    GetPage(
-      name: Routes.forgotPassOtp,
-      page: () => const ForgotPassOtp(),
-      binding: ForgotPassOtpBinding(),
-    ),
+
     GetPage(
       name: Routes.forgotPassSuccess,
       page: () => const ForgetPasswordSuccess(),
@@ -209,11 +179,7 @@ class AppPages {
       page: () => const UpdateProfile(),
       binding: UpdateProfileBinding(),
     ),
-    GetPage(
-      name: Routes.otpUpdProfile,
-      page: () => const OtpUpdate(),
-      binding: OtpUpdateBinding(),
-    ),
+
     GetPage(
       name: Routes.message,
       page: () => const MessageScreen(),
@@ -256,8 +222,8 @@ class AppPages {
     ),
     GetPage(
       name: Routes.merchantQRverify,
-      page: () => merchantQRverify(),
-      binding: merchantQRverifyBindings(),
+      page: () => MerchantQRverify(),
+      binding: MerchantQRverifyBindings(),
     ),
     GetPage(
       name: Routes.merchantReceipt,

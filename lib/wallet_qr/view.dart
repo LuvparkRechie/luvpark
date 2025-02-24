@@ -1,11 +1,14 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
+import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import '../custom_widgets/app_color.dart';
+import '../custom_widgets/custom_textfield.dart';
 import '../wallet_qr/controller.dart';
 
 class QrWallet extends GetView<QrWalletController> {
@@ -14,18 +17,27 @@ class QrWallet extends GetView<QrWalletController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        title: "",
-        onTap: () {
-          Get.back();
-        },
-      ),
       backgroundColor: AppColor.bodyColor,
+      appBar: AppBar(
+        elevation: 0,
+        toolbarHeight: 0,
+        backgroundColor: AppColor.mainColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.light,
+        ),
+      ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SizedBox(height: 20),
+            Container(height: 10),
+            Padding(
+              padding: const EdgeInsets.only(left: 15.0, top: 10),
+              child: CustomButtonClose(onTap: Get.back),
+            ),
+            Container(height: 20),
             for (int i = 0; i < controller.optionData.length; i++)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,45 +112,72 @@ class QrWallet extends GetView<QrWalletController> {
                               const Icon(Icons.chevron_right_sharp,
                                   color: Color(0xFF1C1C1E))
                             ],
-                          )
-
-                          //  ListTile(
-                          //   contentPadding: EdgeInsets.zero,
-                          //   leading: Container(
-                          //     padding: EdgeInsets.all(5),
-                          //     decoration: BoxDecoration(
-                          //       shape: BoxShape.circle,
-                          //       color: AppColor.primaryColor.withOpacity(0.1),
-                          //     ),
-                          //     child: Icon(
-                          //       controller.optionData[i]["icon"],
-                          //       color: AppColor.primaryColor,
-                          //       size: 24,
-                          //     ),
-                          //   ),
-                          //   title: CustomTitle(
-                          //     text: controller.optionData[i]["title"],
-                          //     fontSize: 14,
-                          //     fontStyle: FontStyle.normal,
-                          //     fontWeight: FontWeight.w700,
-                          //   ),
-                          //   subtitle: CustomParagraph(
-                          //     text: controller.optionData[i]["subtitle"],
-                          //     fontSize: 12,
-                          //   ),
-                          //   trailing: const Icon(Icons.chevron_right_sharp,
-                          //       color: Color(0xFF1C1C1E)),
-                          //   onTap: () {
-                          //     controller.onOptionTap(i);
-                          //   },
-                          // ),
-
-                          ),
+                          )),
                     ),
                   ),
                   Container(height: 15),
                 ],
               )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class QrBottomSheet extends StatelessWidget {
+  final String qrCode;
+  const QrBottomSheet({super.key, required this.qrCode});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(7),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+        child: Column(
+          children: [
+            CustomTitle(
+              text: "Scan QR Code",
+              fontSize: 20,
+            ),
+            Container(height: 5),
+            CustomParagraph(
+              text: "Align the QR code within the frame to scan",
+              fontSize: 14,
+            ),
+            Container(height: 30),
+            Expanded(
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: PrettyQrView(
+                  decoration: const PrettyQrDecoration(
+                    background: Colors.white,
+                    image: PrettyQrDecorationImage(
+                      image: AssetImage("assets/images/logo.png"),
+                    ),
+                  ),
+                  qrImage: QrImage(
+                    QrCode.fromData(
+                      data: "dsafd",
+                      errorCorrectLevel: QrErrorCorrectLevel.H,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Container(height: 10),
+            CustomButton(text: "Close", onPressed: Get.back),
+            Container(height: 30),
           ],
         ),
       ),

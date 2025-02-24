@@ -1,15 +1,18 @@
 import 'dart:async';
 
+import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
-import 'package:luvpark/login/index.dart';
 
+import '../auth/authentication.dart';
 import '../functions/functions.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
 import '../routes/routes.dart';
+import '../sqlite/pa_message_table.dart';
+import '../sqlite/reserve_notification_table.dart';
 
 class LockScreenController extends GetxController {
   LockScreenController();
@@ -60,7 +63,7 @@ class LockScreenController extends GetxController {
     hasNet.value = true;
     CustomDialog().loadingDialog(Get.context!);
     HttpRequest(
-            api: ApiKeys.gApiSubFolderPutClearLockTimer,
+            api: ApiKeys.unlockAccount,
             parameters: {"mobile_no": parameter[0]["mobile_no"]})
         .put()
         .then((returnPost) {
@@ -94,8 +97,26 @@ class LockScreenController extends GetxController {
     });
   }
 
-  void switchAccount() {
-    final logController = Get.put(LoginScreenController());
-    logController.switchAccount();
+  void switchAccount() async {
+    final uData = await Authentication().getUserData2();
+    CustomDialog().confirmationDialog(Get.context!, "Switch Account",
+        "Are you sure you want to switch Account?", "No", "Yes", () {
+      Get.back();
+    }, () async {
+      Get.back();
+      Functions.logoutUser(uData == null ? "" : uData["session_id"].toString(),
+          (isSuccess) async {
+        if (isSuccess["is_true"]) {
+          await Authentication().setLogoutStatus(true);
+          await Authentication().setBiometricStatus(false);
+          await Authentication().remove("userData");
+          await PaMessageDatabase.instance.deleteAll();
+          NotificationDatabase.instance.deleteAll();
+          AwesomeNotifications().cancelAllSchedules();
+          AwesomeNotifications().cancelAll();
+          Get.offAndToNamed(Routes.login);
+        }
+      });
+    });
   }
 }

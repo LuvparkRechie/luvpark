@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ class Authentication {
   static EncryptedSharedPreferences encryptedSharedPreferences =
       EncryptedSharedPreferences();
   final LocalAuthentication auth = LocalAuthentication();
+  final storage = FlutterSecureStorage();
 
   Future<void> clearStoredData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -31,18 +33,6 @@ class Authentication {
 
       return checkBiometrics;
     }
-  }
-
-  void setPasswordBiometric(String myPass) async {
-    encryptedSharedPreferences.setString('akong_password', myPass);
-  }
-
-  Future<String> getPasswordBiometric() async {
-    return encryptedSharedPreferences.getString('akong_password');
-  }
-
-  void clearPassword() {
-    encryptedSharedPreferences.remove('akong_password');
   }
 
   Future<void> setUserData(data) async {
@@ -79,8 +69,9 @@ class Authentication {
 
     if (data == null) {
       return null;
+    } else {
+      return jsonDecode(data);
     }
-    return jsonDecode(data);
   }
 
   //SET BRGY
@@ -237,27 +228,31 @@ class Authentication {
     prefs.setString("encrypt_data", output);
   }
 
-  Future<dynamic> getEncryptedSmsKeys(String plaintText,
-      [String? secretKey]) async {
+  Future<dynamic> getEncryptedKeys([String? secretKey]) async {
     String hash = "";
     String skey = secretKey ?? "luvpark";
     final prefs = await SharedPreferences.getInstance();
     final output = prefs.getString("encrypt_data");
-    hash = Uri.encodeComponent(output!);
-    String inatayaaa = jsonEncode(skey);
-    Uint8List aesKey = Functions.generateKey(inatayaaa, 16);
 
-    final encryptedData = base64Decode(Uri.decodeComponent(hash));
+    if (output != null) {
+      hash = Uri.encodeComponent(output!);
+      String inatayaaa = jsonEncode(skey);
+      Uint8List aesKey = Functions.generateKey(inatayaaa, 16);
 
-    final nonces = encryptedData.sublist(0, 16);
+      final encryptedData = base64Decode(Uri.decodeComponent(hash));
 
-    final cipherText = encryptedData.sublist(16);
+      final nonces = encryptedData.sublist(0, 16);
 
-    final decryptedData =
-        await Encryption().decryptData(aesKey, nonces, cipherText);
-    final data = utf8.decode(decryptedData);
-    final dataList = await jsonDecode(data);
+      final cipherText = encryptedData.sublist(16);
 
-    return jsonDecode(dataList);
+      final decryptedData =
+          await Encryption().decryptData(aesKey, nonces, cipherText);
+      final data = utf8.decode(decryptedData);
+      final dataList = await jsonDecode(data);
+
+      return jsonDecode(dataList);
+    } else {
+      return null;
+    }
   }
 }

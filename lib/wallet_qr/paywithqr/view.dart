@@ -1,13 +1,12 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
-import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
-import 'package:shimmer/shimmer.dart';
 
 import 'controller.dart';
 
@@ -17,301 +16,116 @@ class paywithQR extends GetView<paywithQRController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        title: "Pay with QR",
+      appBar: AppBar(
+        leading: null,
+        elevation: 0,
+        toolbarHeight: 0,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
       ),
       backgroundColor: AppColor.bodyColor,
-      body: Column(
-        children: [Expanded(child: PayQr())],
-      ),
-    );
-  }
-}
-
-BoxDecoration decor1() {
-  return BoxDecoration(
-    color: Colors.white30,
-    borderRadius: BorderRadius.circular(7),
-  );
-}
-
-class PayQr extends GetView<paywithQRController> {
-  const PayQr({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Obx(
-      () => !controller.isInternetConn.value
-          ? NoInternetConnected(onTap: controller.getQrData)
-          : Padding(
-              padding: const EdgeInsets.all(30),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                      margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+      body: Obx(
+        () => !controller.isInternetConn.value
+            ? NoInternetConnected(onTap: controller.getQrData)
+            : Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(height: 20),
+                    CustomButtonClose(onTap: () {
+                      Get.back();
+                    }),
+                    Container(height: 20),
+                    Center(
+                      child: CustomTitle(
+                        text: "Scan to Pay",
+                        fontSize: 20,
+                      ),
+                    ),
+                    Container(height: 10),
+                    Center(
+                      child: CustomParagraph(
+                        text:
+                            "Align the QR code within the frame to proceed with payment.",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    Container(height: 20),
+                    Container(
+                      margin: const EdgeInsets.all(40),
+                      padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          color: AppColor.primaryColor,
-                          boxShadow: [
-                            BoxShadow(
-                              blurRadius: 1,
-                              spreadRadius: 1,
-                              offset: Offset(0, 1),
-                              color: AppColor.bodyColor.withOpacity(.5),
-                            )
-                          ]),
-                      child: controller.isLoading.value
-                          ? _buildLoadingState()
-                          : _buildLoadedState()),
-                  _buildBottomNav(),
-                ],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: PrettyQrView(
+                        decoration: const PrettyQrDecoration(
+                          background: Colors.white,
+                          image: PrettyQrDecorationImage(
+                            image: AssetImage("assets/images/logo.png"),
+                          ),
+                        ),
+                        qrImage: QrImage(
+                          QrCode.fromData(
+                            data: controller.payKey.value,
+                            errorCorrectLevel: QrErrorCorrectLevel.H,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: TextButton.icon(
+                          onPressed: controller.generateQr,
+                          icon: Icon(
+                            Icons.refresh,
+                            color: AppColor.primaryColor,
+                          ),
+                          label: CustomParagraph(text: "Generate QR")),
+                    ),
+                    Container(height: 50),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: controller.saveQr,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                LucideIcons.download,
+                                color: AppColor.primaryColor,
+                              ),
+                              Container(height: 10),
+                              CustomParagraph(text: "Download")
+                            ],
+                          ),
+                        ),
+                        Container(width: 60),
+                        GestureDetector(
+                          onTap: controller.shareQr,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                LucideIcons.share,
+                                color: AppColor.primaryColor,
+                              ),
+                              Container(height: 10),
+                              CustomParagraph(text: "Share")
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            ),
-    );
-  }
-
-  Widget _buildLoadingState() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(15, 17, 15, 0),
-          child: Row(
-            children: [
-              const SizedBox(width: 10),
-              _buildShimmerAvatar(),
-              const SizedBox(width: 10),
-              _buildShimmerText(),
-            ],
-          ),
-        ),
-        TicketStyle(dtColor: AppColor.bodyColor),
-        _buildShimmerQr(),
-      ],
-    );
-  }
-
-  Widget _buildShimmerText() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildShimmerContainer(width: 120, height: 12),
-        const SizedBox(height: 5),
-        _buildShimmerContainer(width: 90, height: 10),
-      ],
-    );
-  }
-
-  Widget _buildShimmerAvatar() {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.white,
-      period: Duration(seconds: 2),
-      direction: ShimmerDirection.ltr,
-      child: Container(
-        height: 48,
-        width: 48,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white,
-        ),
       ),
-    );
-  }
-
-  Widget _buildShimmerContainer(
-      {required double width, required double height}) {
-    return Shimmer.fromColors(
-      baseColor: Colors.grey.shade200,
-      highlightColor: Colors.white,
-      period: Duration(seconds: 2),
-      direction: ShimmerDirection.ltr,
-      child: Container(
-        width: width,
-        height: height,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(1),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildShimmerQr() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 10),
-        Container(
-          margin: const EdgeInsets.all(30),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Shimmer.fromColors(
-            baseColor: Colors.grey.shade200,
-            highlightColor: Colors.white,
-            period: Duration(seconds: 2),
-            direction: ShimmerDirection.ltr,
-            child: Container(
-              width: double.infinity,
-              height: 200,
-              color: Colors.white,
-            ),
-          ),
-        ),
-        SizedBox(height: 30),
-      ],
-    );
-  }
-
-  Widget _buildLoadedState() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Padding(
-          padding: EdgeInsets.fromLTRB(15, 17, 15, 0),
-          child: Row(
-            children: [
-              const SizedBox(width: 10),
-              controller.userImage.isEmpty
-                  ? _buildDefaultAvatar()
-                  : _buildUserAvatar(),
-              const SizedBox(width: 10),
-              _buildUserDetails(),
-            ],
-          ),
-        ),
-        TicketStyle(dtColor: AppColor.bodyColor),
-        _buildQrCode(),
-      ],
-    );
-  }
-
-  Widget _buildQrCode() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        SizedBox(height: 10),
-        Container(
-          margin: const EdgeInsets.all(30),
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: PrettyQrView(
-            decoration: const PrettyQrDecoration(
-              background: Colors.white,
-              image: PrettyQrDecorationImage(
-                image: AssetImage("assets/images/logo.png"),
-              ),
-            ),
-            qrImage: QrImage(
-              QrCode.fromData(
-                data: controller.payKey.value,
-                errorCorrectLevel: QrErrorCorrectLevel.H,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 30),
-      ],
-    );
-  }
-
-  Widget _buildDefaultAvatar() {
-    return Container(
-      padding: EdgeInsets.all(2),
-      height: 48,
-      width: 48,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
-      child: const Icon(
-        Icons.person,
-        color: Colors.blueAccent,
-      ),
-    );
-  }
-
-  Widget _buildUserAvatar() {
-    return Container(
-      padding: EdgeInsets.all(2),
-      height: 48,
-      width: 48,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
-      child: CircleAvatar(
-        radius: 20,
-        backgroundImage: MemoryImage(base64Decode(controller.userImage.value)),
-      ),
-    );
-  }
-
-  Widget _buildUserDetails() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        CustomParagraph(
-          text: controller.fullName.value,
-          textAlign: TextAlign.start,
-          fontWeight: FontWeight.w500,
-          color: Colors.white,
-          fontSize: 14,
-        ),
-        const SizedBox(height: 5),
-        CustomParagraph(
-          fontSize: 12,
-          text: controller.mono.value,
-          fontWeight: FontWeight.w400,
-          color: Colors.white,
-          textAlign: TextAlign.start,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBottomNav() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColor.bodyColor,
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-      ),
-      width: double.infinity,
-      height: 70,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          _buildNavItem(Icons.save, "Save QR", controller.saveQr),
-          _buildNavItem(
-              Icons.qr_code_rounded, "Generate QR", controller.generateQr),
-          _buildNavItem(Icons.share, "Share QR", controller.shareQr),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String text, VoidCallback onTap) {
-    return Column(
-      children: [
-        IconButton(
-          onPressed: onTap,
-          icon: Icon(icon, color: AppColor.primaryColor),
-        ),
-        CustomParagraph(
-          text: text,
-          fontSize: 12,
-          color: AppColor.primaryColor,
-        ),
-      ],
     );
   }
 }

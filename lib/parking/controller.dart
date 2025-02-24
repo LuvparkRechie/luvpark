@@ -31,7 +31,6 @@ class ParkingController extends GetxController
 
   @override
   void onInit() {
-    print("inataya");
     super.onInit();
     tabController = TabController(vsync: this, length: 2);
 
@@ -57,7 +56,7 @@ class ParkingController extends GetxController
     _timer = Timer.periodic(Duration(seconds: 5), (t) async {
       final id = await Authentication().getUserId();
       String api =
-          "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
+          "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}?luvpay_id=$id";
 
       final returnData = await HttpRequest(api: api).get();
 
@@ -93,9 +92,9 @@ class ParkingController extends GetxController
     final id = await Authentication().getUserId();
 
     String api =
-        "${currentPage.value == 1 ? ApiKeys.gApiSubFolderGetActiveParking : ApiKeys.gApiSubFolderGetReservations}?luvpay_id=$id";
+        "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}?luvpay_id=$id";
     final returnData = await HttpRequest(api: api).get();
-    print("returnData $returnData");
+
     tabLoading.value = false;
     if (returnData == "No Internet") {
       isLoading.value = false;
@@ -319,7 +318,7 @@ class ParkingController extends GetxController
       CustomDialog().loadingDialog(Get.context!);
       Map<String, dynamic> param = {"reservation_id": data["reservation_id"]};
 
-      HttpRequest(api: ApiKeys.gApiPostCancelParking, parameters: param)
+      HttpRequest(api: ApiKeys.cancelParking, parameters: param)
           .postBody()
           .then((objData) async {
         if (objData == "No Internet") {
@@ -345,7 +344,7 @@ class ParkingController extends GetxController
           };
 
           final response = await HttpRequest(
-                  api: ApiKeys.gApiRefundCancelled, parameters: paramRefund)
+                  api: ApiKeys.postRefundBooking, parameters: paramRefund)
               .postBody();
 
           Get.back();

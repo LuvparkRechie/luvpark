@@ -139,7 +139,7 @@ class BookingReceiptController extends GetxController
         "reservation_id": parameters["reservationId"]
       };
 
-      HttpRequest(api: ApiKeys.gApiPostCancelParking, parameters: param)
+      HttpRequest(api: ApiKeys.cancelParking, parameters: param)
           .postBody()
           .then((objData) async {
         if (objData == "No Internet") {
@@ -165,7 +165,7 @@ class BookingReceiptController extends GetxController
           };
 
           final response = await HttpRequest(
-                  api: ApiKeys.gApiRefundCancelled, parameters: paramRefund)
+                  api: ApiKeys.postRefundBooking, parameters: paramRefund)
               .postBody();
 
           Get.back();
@@ -248,7 +248,7 @@ class BookingReceiptController extends GetxController
       if (int.parse(etaData[0]["distance"].toString().trim().split(" ")[0]) <=
           5) {
         btnDisabled.value = false;
-        HttpRequest(api: ApiKeys.gApiPostSelfCheckIn, parameters: chkInParam)
+        HttpRequest(api: ApiKeys.postSelfChkIn, parameters: chkInParam)
             .postBody()
             .then((returnData) async {
           Get.back();
@@ -305,7 +305,7 @@ class BookingReceiptController extends GetxController
       Map<String, dynamic> param = {
         "reservation_id": parameters["reservationId"]
       };
-      HttpRequest(api: ApiKeys.gApiCancelAutoExtend, parameters: param)
+      HttpRequest(api: ApiKeys.postCancelAutoExtend, parameters: param)
           .postBody()
           .then((objData) async {
         if (objData == "No Internet") {
@@ -408,8 +408,8 @@ class BookingReceiptController extends GetxController
         "reservation_id": parameters["reservationId"],
         "no_hours": noHours.value
       };
-      print("param $param");
-      HttpRequest(api: ApiKeys.gApiExtendParking, parameters: param)
+
+      HttpRequest(api: ApiKeys.postExtendParking, parameters: param)
           .postBody()
           .then((objData) async {
         Get.back();

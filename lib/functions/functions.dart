@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_maps_webservice/places.dart' as gmp;
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
@@ -23,6 +24,7 @@ import 'package:luvpark/sqlite/share_location_table.dart';
 import 'package:luvpark/sqlite/vehicle_brands_table.dart';
 import 'package:ntp/ntp.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:uuid/uuid.dart';
 
 import '../notification_controller.dart';
 import '../sqlite/vehicle_brands_model.dart';
@@ -50,8 +52,7 @@ class Functions {
         });
       } else {
         var user = jsonDecode(userData);
-        String subApi =
-            "${ApiKeys.gApiSubFolderGetBalance}?user_id=${user["user_id"]}";
+        String subApi = "${ApiKeys.getUserBalance}${user["user_id"]}";
 
         HttpRequest(api: subApi).get().then((returnBalance) async {
           if (returnBalance == "No Internet") {
@@ -105,7 +106,7 @@ class Functions {
                 ShareLocationDatabase.instance.deleteAll();
                 NotificationController.cancelNotifications();
                 //  ForegroundNotif.onStop();
-                Authentication().clearPassword();
+                // Authentication().clearPassword();
                 Get.offAndToNamed(Routes.login);
               });
             });
@@ -150,7 +151,7 @@ class Functions {
           ShareLocationDatabase.instance.deleteAll();
           NotificationController.cancelNotifications();
           //  ForegroundNotif.onStop();
-          Authentication().clearPassword();
+          // Authentication().clearPassword();
           Get.offAndToNamed(Routes.login);
         });
       });
@@ -165,8 +166,7 @@ class Functions {
       } else {
         var user = jsonDecode(userData);
 
-        String subApi =
-            "${ApiKeys.gApiSubFolderGetBalance}?user_id=${user["user_id"]}";
+        String subApi = "${ApiKeys.getUserBalance}${user["user_id"]}";
 
         HttpRequest(api: subApi).get().then((returnBalance) async {
           if (returnBalance == "No Internet") {
@@ -270,26 +270,30 @@ class Functions {
   //     }
   //   });
   // }
+
   static Future<void> searchPlaces(
       BuildContext context, String query, Function callback) async {
     try {
-      final places = gmp.GoogleMapsPlaces(apiKey: Variables.mapApiKey
-          // apiKey: 'AIzaSyCaDHmbTEr-TVnJY8dG0ZnzsoBH3Mzh4cE'
-          );
+      final places = gmp.GoogleMapsPlaces(apiKey: Variables.mapApiKey);
       gmp.PlacesSearchResponse response = await places.searchByText(query);
 
       if (response.isOkay) {
         if (response.results.isNotEmpty) {
-          callback([
-            response.results[0].geometry!.location.lat,
-            response.results[0].geometry!.location.lng,
-          ]);
+          var location = response.results[0].geometry?.location;
+
+          if (location == null) {
+            throw Exception("Invalid location data received");
+          }
+
+          callback([location.lat, location.lng]);
+          return;
         } else {
           callback([]);
           CustomDialog()
               .errorDialog(context, "luvpark", "No parking areas found.", () {
             Get.back();
           });
+          return;
         }
       } else {
         callback([]);
@@ -297,10 +301,10 @@ class Functions {
             context, "Error", "Failed to retrieve data. Please try again.", () {
           Get.back();
         });
+        return;
       }
     } catch (e) {
       callback([]);
-
       CustomDialog().errorDialog(context, "Error", "$e", () {
         Get.back();
       });
@@ -481,7 +485,7 @@ class Functions {
                   context, "luvpark", Variables.popUpMessageOutsideArea, () {});
               return;
             } else {
-              const HttpRequest(api: ApiKeys.gApiLuvParkGetComputeDistance)
+              HttpRequest(api: ApiKeys.getComputeDistance)
                   .get()
                   .then((returnData) async {
                 if (returnData == "No Internet") {
@@ -605,7 +609,7 @@ class Functions {
     return fData;
   }
 
-//sort json data by key
+  //sort json data by key
   static List<dynamic> sortJsonList(List<dynamic> jsonList, String key,
       {bool ascending = true}) {
     jsonList.sort((a, b) {
@@ -616,8 +620,7 @@ class Functions {
   }
 
   static Future<void> getAccountStatus(mobile, Function cb) async {
-    String apiParam =
-        "${ApiKeys.gApiSubFolderGetLoginAttemptRecord}?mobile_no=$mobile";
+    String apiParam = "${ApiKeys.getUserAccStatus}?mobile_no=$mobile";
 
     HttpRequest(api: apiParam).get().then((objData) {
       if (objData == "No Internet") {
@@ -677,10 +680,9 @@ class Functions {
   }
 
   static Future<dynamic> getVhBrands() async {
-    String apiParam = ApiKeys.gApiLuvParkGetVehicleBrand;
+    String apiParam = ApiKeys.getVehicleBrands;
 
     final response = await HttpRequest(api: apiParam).get();
-
     if (response == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
         Get.back();
@@ -720,71 +722,9 @@ class Functions {
     }
   }
 
-  //Get AppVersion from database
-  static Future<dynamic> getAppVersion() async {
-    String apiParam = ApiKeys.gApiAppVersion;
-
-    final response = await HttpRequest(api: apiParam).get();
-
-    if (response == "No Internet") {
-      CustomDialog().internetErrorDialog(Get.context!, () {
-        Get.back();
-      });
-      return {"response": response, "data": []};
-    }
-    if (response == null) {
-      CustomDialog().serverErrorDialog(Get.context!, () {
-        Get.back();
-      });
-      return {"response": response, "data": []};
-    }
-    if (response["items"].isEmpty) {
-      CustomDialog().infoDialog(
-          "lvupark", "No data found for app version. Please contact support.",
-          () {
-        Get.back();
-      });
-      return {"response": "No data", "data": []};
-    } else {
-      return {"response": "Success", "data": response["items"][0]};
-    }
-  }
-
-  static Future<dynamic> getObtainOtp(number) async {
-    Map<String, dynamic> param = {"mobile_no": number};
-    print("param $param");
-    final response =
-        await HttpRequest(api: ApiKeys.gApiObtainOTP, parameters: param)
-            .postBody();
-    print("response getObtainOtp $response");
-    Get.back();
-    if (response == "No Internet") {
-      CustomDialog().internetErrorDialog(Get.context!, () {
-        Get.back();
-      });
-      return {"response": response};
-    }
-    if (response == null) {
-      CustomDialog().serverErrorDialog(Get.context!, () {
-        Get.back();
-      });
-      return {"response": response};
-    }
-    if (response["success"] == "N") {
-      CustomDialog().infoDialog(
-          "lvupark", "No data found for app version. Please contact support.",
-          () {
-        Get.back();
-      });
-      return {"response": "No data"};
-    } else {
-      return {"response": "Success"};
-    }
-  }
-
   static Future<dynamic> generateQr() async {
     int userId = await Authentication().getUserId();
-    String apiParam = ApiKeys.gApiSubFolderPutChangeQR;
+    String apiParam = ApiKeys.generatePayKey;
     dynamic param = {"luvpay_id": userId};
 
     final response = await HttpRequest(api: apiParam, parameters: param).put();
@@ -836,5 +776,128 @@ class Functions {
       keyBytes = keyBytes.sublist(0, length);
     }
     return Uint8List.fromList(keyBytes);
+  }
+
+  //Logout users
+  static Future<void> logoutUser(String sessionId, Function cb) async {
+    CustomDialog().loadingDialog(Get.context!);
+
+    if (sessionId.isEmpty) {
+      cb({"is_true": true, "data": 0});
+      Get.back();
+      return;
+    }
+
+    DateTime timeNow = await Functions.getTimeNow();
+    String formattedDt = DateFormat('yyyy-MM-dd HH:mm:ss').format(timeNow);
+
+    Map<String, dynamic> putLogoutParam = {
+      "dt_out": formattedDt,
+      "session_id": sessionId
+    };
+
+    final response =
+        await HttpRequest(api: ApiKeys.putLogout, parameters: putLogoutParam)
+            .putBody();
+    print("logout respo $response");
+    Get.back();
+    if (response == "No Internet") {
+      cb({"is_true": false, "data": 0});
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    if (response == null) {
+      cb({"is_true": false, "data": 0});
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    if (response["success"] == "Y") {
+      print("ataya diri");
+      cb({"is_true": true, "data": response["user_id"]});
+
+      Authentication().enableTimer(false);
+      return;
+    } else {
+      cb({"is_true": false, "data": 0});
+      CustomDialog().errorDialog(Get.context!, "Error", response["msg"], () {
+        Get.back();
+      });
+      return;
+    }
+  }
+
+  //Logout users
+  static Future<void> logoutUserSession(String sessionId, Function cb) async {
+    DateTime timeNow = await Functions.getTimeNow();
+    String formattedDt = DateFormat('yyyy-MM-dd HH:mm:ss').format(timeNow);
+
+    Map<String, dynamic> putLogoutParam = {
+      "dt_out": formattedDt,
+      "session_id": sessionId
+    };
+
+    final response =
+        await HttpRequest(api: ApiKeys.putLogout, parameters: putLogoutParam)
+            .putBody();
+
+    if (response == "No Internet") {
+      cb({"is_true": false, "data": 0});
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    if (response == null) {
+      cb({"is_true": false, "data": 0});
+      CustomDialog().serverErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+    if (response["success"] == "Y") {
+      print("ataya diri");
+      cb({"is_true": true, "data": response["user_id"]});
+
+      Authentication().enableTimer(false);
+      return;
+    } else {
+      cb({"is_true": false, "data": 0});
+      CustomDialog().errorDialog(Get.context!, "Error", response["msg"], () {
+        Get.back();
+      });
+      return;
+    }
+  }
+
+  // Future<String> getUniqueDeviceId() async {
+  //   var deviceInfo = DeviceInfoPlugin();
+  //   String deviceId = "";
+
+  //   if (Platform.isAndroid) {
+  //     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+  //     deviceId = androidInfo.id; // Hardware-based unique ID
+  //   } else if (Platform.isIOS) {
+  //     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+  //     deviceId = iosInfo.identifierForVendor ?? "Unknown"; // Unique per device
+  //   }
+
+  //   return deviceId;
+  // }
+
+  Future<String> getUniqueDeviceId() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? storedDeviceId = prefs.getString('device_id');
+
+    if (storedDeviceId == null) {
+      var uuid = Uuid();
+      storedDeviceId = uuid.v4();
+      await prefs.setString('device_id', storedDeviceId);
+    }
+
+    return storedDeviceId;
   }
 }

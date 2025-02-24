@@ -15,6 +15,7 @@ import '../custom_widgets/custom_button.dart';
 import '../custom_widgets/custom_text.dart';
 import '../custom_widgets/custom_textfield.dart';
 import '../custom_widgets/vertical_height.dart';
+import '../functions/functions.dart';
 import '../routes/routes.dart';
 import '../security/app_security.dart';
 import 'controller.dart';
@@ -139,11 +140,7 @@ class BiometricLoginScreen extends StatelessWidget {
               const CustomTitle(
                 text: "Welcome to luvpark",
                 color: Colors.black,
-                maxlines: 1,
-                fontSize: 25,
-                fontWeight: FontWeight.w700,
-                textAlign: TextAlign.center,
-                letterSpacing: -.1,
+                fontSize: 18,
               ),
               const SizedBox(height: 20),
               CustomParagraph(
@@ -199,20 +196,18 @@ class BiometricLoginScreen extends StatelessWidget {
                     Container(width: 30),
                     GestureDetector(
                       onTap: () async {
-                        String? mpass =
-                            await Authentication().getPasswordBiometric();
-                        final mmobile = await Authentication().getUserData2();
+                        String devKey = await Functions().getUniqueDeviceId();
 
-                        bool isGG = await AppSecurity.authenticateBio();
+                        Map<String, dynamic> data =
+                            await Authentication().getEncryptedKeys();
+                        data["device_key"] = devKey.toString();
 
-                        if (isGG) {
+                        bool isEnabledBio = await AppSecurity.authenticateBio();
+
+                        if (isEnabledBio) {
                           CustomDialog().loadingDialog(context);
-                          Map<String, dynamic> postParam = {
-                            "mobile_no": "${mmobile["mobile_no"]}",
-                            "pwd": mpass,
-                          };
 
-                          controller.postLogin(context, postParam, (data) {
+                          controller.postLogin(context, data, (data) {
                             Get.back();
 
                             if (data[0]["items"].isNotEmpty) {
@@ -278,25 +273,20 @@ class DefaultLoginScreen extends StatelessWidget {
           child: ScrollConfiguration(
             behavior: const ScrollBehavior().copyWith(overscroll: false),
             child: SingleChildScrollView(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+              padding: EdgeInsets.symmetric(horizontal: 15),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
                   const Image(
                     image: AssetImage("assets/images/onboardluvpark.png"),
                     width: 120,
                     fit: BoxFit.contain,
                   ),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
                   const CustomTitle(
                     text: "Welcome to luvpark",
-                    color: Colors.black,
-                    maxlines: 1,
                     fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    textAlign: TextAlign.center,
-                    letterSpacing: -.1,
                   ),
                   const SizedBox(height: 10),
                   CustomParagraph(
@@ -318,7 +308,6 @@ class DefaultLoginScreen extends StatelessWidget {
                     inputFormatters: [Variables.maskFormatter],
                     keyboardType: TextInputType.number,
                   ),
-                  const VerticalHeight(height: 10),
                   CustomParagraph(
                     text: "Password",
                     fontSize: 13,
@@ -366,79 +355,46 @@ class DefaultLoginScreen extends StatelessWidget {
                   Column(
                     children: [
                       CustomButton(
-                        loading: controller.isLoading.value,
                         text: "Login",
-                        onPressed: controller.isLoading.value
-                            ? () {
-                                controller
-                                    .toggleLoading(!controller.isLoading.value);
-                              }
-                            : () async {
-                                controller.counter++;
-                                FocusScope.of(context)
-                                    .requestFocus(FocusNode());
-                                if (controller.isLoading.value) return;
-                                controller
-                                    .toggleLoading(!controller.isLoading.value);
+                        onPressed: () async {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          CustomDialog().loadingDialog(context);
 
-                                if (controller.mobileNumber.text.isEmpty) {
-                                  controller.toggleLoading(
-                                      !controller.isLoading.value);
-                                  CustomDialog().snackbarDialog(
-                                      context,
-                                      "Mobile number is empty",
-                                      Colors.red,
-                                      () {});
-                                  return;
-                                } else if (controller
-                                        .mobileNumber.text.length !=
-                                    12) {
-                                  controller.toggleLoading(
-                                      !controller.isLoading.value);
-                                  CustomDialog().snackbarDialog(
-                                      context,
-                                      "Incorrect mobile number",
-                                      Colors.red,
-                                      () {});
-                                  return;
-                                }
-                                if (controller.password.text.isEmpty) {
-                                  controller.toggleLoading(
-                                      !controller.isLoading.value);
-                                  CustomDialog().snackbarDialog(context,
-                                      "Password is empty", Colors.red, () {});
-                                  return;
-                                }
+                          if (controller.mobileNumber.text.isEmpty) {
+                            Get.back();
+                            CustomDialog().snackbarDialog(context,
+                                "Mobile number is empty", Colors.red, () {});
+                            return;
+                          } else if (controller.mobileNumber.text.length !=
+                              12) {
+                            Get.back();
+                            CustomDialog().snackbarDialog(context,
+                                "Incorrect mobile number", Colors.red, () {});
+                            return;
+                          }
+                          if (controller.password.text.isEmpty) {
+                            Get.back();
+                            CustomDialog().snackbarDialog(context,
+                                "Password is empty", Colors.red, () {});
+                            return;
+                          }
 
-                                bool isNewUsr = await controller
-                                    .userAuth(controller.mobileNumber.text);
-                                Map<String, dynamic> postParam = {
-                                  "mobile_no":
-                                      "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
-                                  "pwd": controller.password.text,
-                                };
-                                controller.postLogin(context, postParam,
-                                    (data) {
-                                  controller.toggleLoading(
-                                      !controller.isLoading.value);
-                                  if (data[0]["items"].isNotEmpty) {
-                                    if (isNewUsr) {
-                                      Get.toNamed(
-                                        Routes.otpField,
-                                        arguments: {
-                                          "mobile_no":
-                                              "63${controller.mobileNumber.text.replaceAll(" ", "")}",
-                                          "callback": () {
-                                            Get.offAndToNamed(Routes.map);
-                                          }
-                                        },
-                                      );
-                                    } else {
-                                      Get.offAndToNamed(Routes.map);
-                                    }
-                                  }
-                                });
-                              },
+                          String devKey = await Functions().getUniqueDeviceId();
+
+                          Map<String, dynamic> postParam = {
+                            "mobile_no":
+                                "63${controller.mobileNumber.text.toString().replaceAll(" ", "")}",
+                            "pwd": controller.password.text,
+                            "device_key": devKey.toString(),
+                          };
+                          controller.postLogin(context, postParam, (data) {
+                            Get.back();
+
+                            if (data[0]["items"].isNotEmpty) {
+                              Get.offAndToNamed(Routes.map);
+                            }
+                          });
+                        },
                       ),
                       const SizedBox(height: 20),
                       CustomButton(
@@ -629,12 +585,16 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
                                 () {});
                             return;
                           }
-                          final mmobile = await Authentication().getUserData2();
+                          final userData =
+                              await Authentication().getUserData2();
 
                           CustomDialog().loadingDialog(context);
+                          String devKey = await Functions().getUniqueDeviceId();
+
                           Map<String, dynamic> postParam = {
-                            "mobile_no": "${mmobile["mobile_no"]}",
+                            "mobile_no": userData["mobile_no"],
                             "pwd": myPassword.text,
+                            "device_key": devKey.toString(),
                           };
 
                           controller.postLogin(context, postParam, (data) {

@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
@@ -16,6 +15,7 @@ import 'package:luvpark/custom_widgets/vertical_height.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:pinput/pinput.dart';
 
+import '../custom_widgets/custom_textfield.dart';
 import 'controller.dart';
 
 class OtpFieldScreen extends GetView<OtpFieldScreenController> {
@@ -43,7 +43,7 @@ class OtpFieldScreen extends GetView<OtpFieldScreenController> {
                       : controller.inputPin.value.length != 6
                           ? AppColor.borderColor
                           : Colors.red,
-              width: 2),
+              width: 1),
           borderRadius: BorderRadius.circular(5),
           color: Colors.white,
         ),
@@ -53,13 +53,16 @@ class OtpFieldScreen extends GetView<OtpFieldScreenController> {
     return PopScope(
       canPop: false,
       child: Scaffold(
-          backgroundColor: Colors.white,
-          appBar: const CustomAppbar(
+          backgroundColor: AppColor.bodyColor,
+          appBar: AppBar(
             elevation: 0,
-            bgColor: Colors.white,
-            textColor: Colors.black,
-            titleColor: Colors.black,
-            statusBarBrightness: Brightness.dark,
+            toolbarHeight: 0,
+            backgroundColor: AppColor.primaryColor,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: AppColor.primaryColor,
+              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.light,
+            ),
           ),
           body: Obx(
             () => controller.isLoading.value
@@ -78,6 +81,12 @@ class OtpFieldScreen extends GetView<OtpFieldScreenController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
+                                  Container(height: 20),
+                                  CustomButtonClose(onTap: () {
+                                    FocusNode().unfocus();
+                                    Get.back();
+                                  }),
+                                  Container(height: 20),
                                   Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
@@ -177,7 +186,7 @@ class OtpFieldScreen extends GetView<OtpFieldScreenController> {
                                                 border: Border.all(
                                                     color:
                                                         AppColor.primaryColor,
-                                                    width: 2),
+                                                    width: 1),
                                               ),
                                         ),
                                       ),

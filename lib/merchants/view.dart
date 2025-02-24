@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
-import 'package:luvpark/wallet_bills/controller.dart';
+import 'package:luvpark/merchants/controller.dart';
 
 import '../custom_widgets/custom_text.dart';
 import '../custom_widgets/no_data_found.dart';
@@ -117,7 +117,7 @@ class MerchantBiller extends GetView<MerchantBillerController> {
                                       const EdgeInsets.fromLTRB(15, 10, 15, 0),
                                   child: Container(
                                     decoration: BoxDecoration(
-                                        color: Colors.grey.shade100,
+                                        color: Colors.white,
                                         borderRadius: BorderRadius.circular(7),
                                         boxShadow: [
                                           BoxShadow(

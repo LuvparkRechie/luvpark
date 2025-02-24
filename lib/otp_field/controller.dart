@@ -12,6 +12,10 @@ class OtpFieldScreenController extends GetxController {
   OtpFieldScreenController();
   final callback = Get.arguments["callback"];
   String parameters = Get.arguments["mobile_no"];
+  String isNewAcct = Get.arguments["new_acct"] == null ? "" : "Y";
+  bool isForgetVfdPass =
+      Get.arguments["is_forget_vfd_pass"] == null ? false : true;
+
   RxBool isAgree = false.obs;
   RxBool isLoading = false.obs;
   RxString? password;
@@ -54,12 +58,10 @@ class OtpFieldScreenController extends GetxController {
     inputPin.value = "";
     CustomDialog().loadingDialog(Get.context!);
     var otpData = {"mobile_no": parameters.toString()};
-    print("otp param $otpData");
 
-    HttpRequest(api: ApiKeys.gApiPostGenerateOTP, parameters: otpData)
+    HttpRequest(api: ApiKeys.postGenerateOtp, parameters: otpData)
         .postBody()
         .then((returnData) async {
-      print("otp returnData $returnData");
       if (returnData == "No Internet") {
         inputPin.value = "";
         isLoadingPage.value = false;
@@ -122,7 +124,6 @@ class OtpFieldScreenController extends GetxController {
   }
 
   Future<void> startTimers() async {
-    print("start timer");
     const oneSecond = Duration(seconds: 1);
     timer = Timer.periodic(oneSecond, (timer) {
       if (minutes.value == 0 && seconds.value == 0) {
@@ -155,50 +156,56 @@ class OtpFieldScreenController extends GetxController {
       });
       return;
     }
+    if (isForgetVfdPass) {
+      callback(int.parse(pinController.text));
+      return;
+    } else {
+      CustomDialog().loadingDialog(Get.context!);
+      var otpData = {
+        "mobile_no": parameters.toString(),
+        "otp": int.parse(pinController.text),
+        "new_acct": isNewAcct
+      };
 
-    CustomDialog().loadingDialog(Get.context!);
-    var otpData = {
-      "mobile_no": parameters.toString(),
-      "otp": int.parse(pinController.text)
-    };
-
-    HttpRequest(api: ApiKeys.gApiPutVerifyOTP, parameters: otpData)
-        .putBoy()
-        .then((returnData) async {
-      if (returnData == "No Internet") {
-        Get.back();
-
-        CustomDialog().errorDialog(Get.context!, "Error",
-            'Please check your internet connection and try again.', () {
+      HttpRequest(api: ApiKeys.putVerifyOtp, parameters: otpData)
+          .putBody()
+          .then((returnData) async {
+        if (returnData == "No Internet") {
           Get.back();
-        });
 
-        return;
-      }
-      if (returnData == null) {
-        Get.back();
-        CustomDialog().errorDialog(Get.context!, "Error",
-            "Error while connecting to server, Please try again.", () {
-          Get.back();
-        });
+          CustomDialog().errorDialog(Get.context!, "Error",
+              'Please check your internet connection and try again.', () {
+            Get.back();
+          });
 
-        return;
-      }
-      if (returnData["success"] == 'Y') {
-        Get.back();
-        Get.back();
-        callback();
-        return;
-      } else {
-        Get.back();
-        CustomDialog().errorDialog(Get.context!, "Error",
-            "Your OTP code is incorrect.\nPlease try again.", () {
-          pinController.text = "";
+          return;
+        }
+        if (returnData == null) {
           Get.back();
-        });
-        return;
-      }
-    });
+          CustomDialog().errorDialog(Get.context!, "Error",
+              "Error while connecting to server, Please try again.", () {
+            Get.back();
+          });
+
+          return;
+        }
+        if (returnData["success"] == 'Y') {
+          Get.back();
+          Get.back();
+
+          callback(int.parse(pinController.text));
+          return;
+        } else {
+          Get.back();
+          CustomDialog().errorDialog(Get.context!, "Error", returnData["msg"],
+              () {
+            pinController.text = "";
+            Get.back();
+          });
+          return;
+        }
+      });
+    }
   }
 
   @override

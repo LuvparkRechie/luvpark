@@ -50,9 +50,7 @@ class _PayBillState extends State<PayBill> {
 
   Future<void> getBalance() async {
     final item = await Authentication().getUserId();
-
-    String subApi = "${ApiKeys.gApiSubFolderGetBalance}?user_id=$item";
-
+    String subApi = "${ApiKeys.getUserBalance}$item";
     HttpRequest(api: subApi).get().then((returnBalance) async {
       if (returnBalance == "No Internet") {
         setState(() {
@@ -326,9 +324,6 @@ class _PayBillState extends State<PayBill> {
                         if (MediaQuery.of(context).viewInsets.bottom == 0)
                           CustomButton(
                             text: args["source"] == "fav" ? "Save" : "Pay",
-                            // onPressed: () {
-                            // print("source:${args["source"]}");
-                            // },
                             onPressed: _submitForm,
                           ),
                       ],

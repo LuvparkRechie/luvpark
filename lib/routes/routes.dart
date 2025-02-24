@@ -20,16 +20,13 @@ class Routes {
   static const bookingNotice = "/booking_notice";
   static const bookingReceipt = "/booking_receipt";
   static const customdrawer = "/customdrawer";
-  static const walletrecharge = "/wallet_recharge";
   static const walletrechargeload = "/wallet_recharge_load";
   static const mapFilter = "/map_filter";
   static const faqpage = "/faqpage";
   static const aboutus = "/aboutus";
   static const profile = "/profile";
   static const security = "/security";
-  static const changepassword = "/changepassword";
   static const forgotPass = "/forgot_password";
-  static const forgotPassOtp = "/forgot_password_otp";
   static const forgotPassSuccess = "/forgot_password_success";
   static const forgotVerifiedAcct = "/forgot_vefified_acct";
   static const createNewPass = "/create_password";
@@ -38,7 +35,6 @@ class Routes {
   static const addVehicle = "/add_vehicle";
   static const myaccount = "/myaccount";
   static const updProfile = "/update_profile";
-  static const otpUpdProfile = "/otp_update_profile";
   static const message = "/message";
   static const helpfeedback = "/help_feedback";
   static const lockScreen = "/lock_screen";

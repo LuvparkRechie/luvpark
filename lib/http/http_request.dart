@@ -24,7 +24,7 @@ class HttpRequest {
           Uri.parse(Uri.decodeFull(Uri.https(ApiKeys.gApiURL, api).toString())),
           headers: {"Content-Type": 'application/json; charset=utf-8'},
         ).timeout(
-          Duration(seconds: 10),
+          Duration(seconds: 20),
         );
         if (response.statusCode == 200) {
           return jsonDecode(
@@ -96,7 +96,7 @@ class HttpRequest {
     }
   }
 
-  Future<dynamic> putBoy() async {
+  Future<dynamic> putBody() async {
     List appSecurity = await AppSecurity.checkDeviceSecurity();
     bool isAppSecured = appSecurity[0]["is_secured"];
     if (!isAppSecured) {
