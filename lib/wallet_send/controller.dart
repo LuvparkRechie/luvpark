@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_native_contact_picker_plus/flutter_native_contact_picker_plus.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/functions/functions.dart';
@@ -33,7 +34,8 @@ class WalletSendController extends GetxController {
   RxString userName = "".obs;
   RxString userImage = "".obs;
   List<SimCard> simCard = <SimCard>[];
-
+  final FlutterContactPickerPlus contactPicker = FlutterContactPickerPlus();
+  Rx<Contact?> contact = Rx<Contact?>(null);
   RxInt denoInd = 0.obs;
 
   RxInt indexbtn = 0.obs;
@@ -53,6 +55,7 @@ class WalletSendController extends GetxController {
   void onInit() {
     super.onInit();
     _checkCameraPermission();
+    checkAndRequestPermissions();
     refreshUserData();
     showBottomSheet();
     padData.value = dataList;
@@ -64,6 +67,49 @@ class WalletSendController extends GetxController {
       formKeySend.currentState!.reset();
     }
     super.onClose();
+  }
+
+  Future<void> checkAndRequestPermissions() async {
+    var status = await Permission.contacts.status;
+    if (status.isGranted) {
+      print("Permission Granted");
+    } else if (status.isDenied) {
+      var result = await Permission.contacts.request();
+      if (result.isGranted) {
+        print("Permission Granted after request");
+      } else if (result.isPermanentlyDenied) {
+        _showPermissionDeniedDialog();
+      }
+    } else if (status.isPermanentlyDenied) {
+      _showPermissionDeniedDialog();
+    }
+  }
+
+  void _showPermissionDeniedDialog() {
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Permission Denied'),
+          content: const Text('Please enable contacts permission in settings.'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+            TextButton(
+              onPressed: () {
+                openAppSettings();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Settings'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _checkCameraPermission() async {
@@ -117,6 +163,7 @@ class WalletSendController extends GetxController {
             );
           } else {
             getRecipient(formattedNumber);
+            Get.back();
           }
         },
       ));

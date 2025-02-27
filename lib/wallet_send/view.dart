@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
+import 'package:flutter_native_contact_picker_plus/flutter_native_contact_picker_plus.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -13,6 +14,7 @@ import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/wallet_send/index.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../auth/authentication.dart';
 import '../custom_widgets/app_color.dart';
@@ -26,13 +28,23 @@ class WalletSend extends GetView<WalletSendController> {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        elevation: 0,
-        toolbarHeight: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
-          statusBarBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Transfer Token"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: ScrollConfiguration(
@@ -53,67 +65,46 @@ class WalletSend extends GetView<WalletSendController> {
                   : Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(height: 20),
-                        CustomButtonClose(onTap: () {
-                          FocusNode().unfocus();
-                          CustomDialog().loadingDialog(context);
-                          Future.delayed(Duration(milliseconds: 200), () {
-                            Get.back();
-                            Get.back();
-                          });
-                        }),
-                        Container(height: 20),
-                        CustomTitle(
-                          text: "Transfer Token",
-                          fontWeight: FontWeight.w700,
-                          fontSize: 20,
+                        SizedBox(
+                          height: 15,
                         ),
-                        Container(height: 5),
-                        Row(
-                          children: [
-                            CustomParagraph(text: "Account balance:"),
-                            Container(
-                              width: 5,
-                            ),
-                            Expanded(
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: controller.isLoading.value
-                                    ? Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          SizedBox(
-                                            width: 16,
-                                            height: 16,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 10,
-                                          ),
-                                        ],
-                                      )
-                                    : CustomParagraph(
-                                        text: !controller.isNetConn.value
-                                            ? "No internet"
-                                            : controller.userData.isEmpty
-                                                ? ""
-                                                : toCurrencyString(controller
-                                                    .userData[0]["amount_bal"]
-                                                    .toString()),
-                                        color: AppColor.primaryColor,
-                                        fontWeight: FontWeight.w500,
-                                        textAlign: TextAlign.right,
+                        CustomParagraph(text: "Account Balance"),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: controller.isLoading.value
+                              ? Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        color: Colors.white,
                                       ),
-                              ),
-                            ),
-                          ],
+                                    ),
+                                    SizedBox(
+                                      width: 10,
+                                    ),
+                                  ],
+                                )
+                              : CustomParagraph(
+                                  text: !controller.isNetConn.value
+                                      ? "No internet"
+                                      : controller.userData.isEmpty
+                                          ? ""
+                                          : toCurrencyString(controller
+                                              .userData[0]["amount_bal"]
+                                              .toString()),
+                                  color: AppColor.primaryColor,
+                                  fontWeight: FontWeight.w600,
+                                  textAlign: TextAlign.right,
+                                  fontSize: 30,
+                                ),
                         ),
                         SizedBox(
-                          height: 30,
+                          height: 10,
                         ),
+                        Divider(),
                         AnimatedCrossFade(
                           firstChild: const SizedBox.shrink(),
                           secondChild: secondChild(),
@@ -428,6 +419,31 @@ class _UsersBottomsheetState extends State<UsersBottomsheet> {
     super.initState();
   }
 
+  Future<void> selectSingleContact() async {
+    var status = await Permission.contacts.status;
+    if (status.isGranted) {
+      Contact? selectedContact = await ct.contactPicker.selectContact();
+      if (selectedContact != null) {
+        ct.contact.value = selectedContact;
+        print("Selected contact: ${ct.contact.value.toString()}");
+        if (ct.contact.value != null) {
+          String contactString = ct.contact.value.toString();
+          String mobileNumber =
+              contactString.replaceAll(RegExp(r'^.*\[\s*|\s*\].*$'), '');
+          mobileNumber = mobileNumber.replaceAll(" ", "");
+          if (mobileNumber.startsWith('0')) {
+            mobileNumber = mobileNumber.substring(1);
+          }
+          mobileNo.text = mobileNumber;
+        }
+
+        Get.back();
+      }
+    } else {
+      ct.checkAndRequestPermissions();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return PopScope(
@@ -481,10 +497,91 @@ class _UsersBottomsheetState extends State<UsersBottomsheet> {
 
                   return null;
                 },
-                suffixIcon: Icons.qr_code,
+                suffixIcon: Icons.add_box_outlined,
                 onIconTap: () async {
-                  FocusManager.instance.primaryFocus!.unfocus();
-                  ct.requestCameraPermission();
+                  Get.dialog(
+                    barrierColor: Colors.black54,
+                    Center(
+                      child: Material(
+                        type: MaterialType.transparency,
+                        child: Container(
+                          height: 150,
+                          padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(text: "Select Method"),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              InkWell(
+                                  onTap: () {
+                                    FocusManager.instance.primaryFocus!
+                                        .unfocus();
+                                    ct.requestCameraPermission();
+                                  },
+                                  child: Container(
+                                      width: 230,
+                                      padding: EdgeInsets.all(5),
+                                      decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: AppColor.primaryColor,
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Icon(
+                                              color: AppColor.primaryColor,
+                                              Icons.qr_code),
+                                          SizedBox(
+                                            width: 5,
+                                          ),
+                                          CustomTitle(
+                                              color: AppColor.primaryColor,
+                                              text: "Scan QR Code"),
+                                        ],
+                                      ))),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              InkWell(
+                                  onTap: () {
+                                    selectSingleContact();
+                                  },
+                                  child: Container(
+                                    width: 230,
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: AppColor.primaryColor,
+                                      ),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                            color: AppColor.primaryColor,
+                                            Icons.contact_page_outlined),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        CustomTitle(
+                                            color: AppColor.primaryColor,
+                                            text: "Select from Contacts"),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
                 },
               ),
               Container(height: 30),
