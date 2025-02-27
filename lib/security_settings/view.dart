@@ -3,14 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
-import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:luvpark/security_settings/index.dart';
-
-import '../custom_widgets/alert_dialog.dart';
-import '../login/change_pass_new_proc/change_pass_new.dart';
 
 class Security extends GetView<SecuritySettingsController> {
   const Security({super.key});
@@ -21,13 +16,23 @@ class Security extends GetView<SecuritySettingsController> {
     return Scaffold(
         backgroundColor: AppColor.bodyColor,
         appBar: AppBar(
-          toolbarHeight: 0,
-          elevation: 0,
+          elevation: 1,
           backgroundColor: AppColor.primaryColor,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: AppColor.primaryColor,
             statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
+          ),
+          title: Text("Security Settings"),
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(
+              Iconsax.arrow_left,
+              color: Colors.white,
+            ),
           ),
         ),
         body: Obx(
@@ -51,21 +56,6 @@ class Security extends GetView<SecuritySettingsController> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Container(height: 10),
-                          CustomButtonClose(onTap: () {
-                            FocusScope.of(context).requestFocus(FocusNode());
-                            CustomDialog().confirmationDialog(
-                                context,
-                                "Close Page",
-                                "Are you sure you want to close this page?",
-                                "No",
-                                "Yes", () {
-                              Get.back();
-                            }, () {
-                              Get.back();
-                              Get.back();
-                            });
-                          }),
-                          Container(height: 20),
                           Container(
                             padding: const EdgeInsets.all(24.0),
                             decoration: BoxDecoration(
@@ -79,22 +69,6 @@ class Security extends GetView<SecuritySettingsController> {
                                 size: 55,
                               ),
                             ),
-                          ),
-                          Container(
-                            height: 10,
-                          ),
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              CustomTitle(
-                                text: "Security Settings",
-                                fontSize: 16,
-                                fontStyle: FontStyle.normal,
-                                fontWeight: FontWeight.w700,
-                                letterSpacing: -0.408,
-                                color: Color(0xFF1C1C1E),
-                              ),
-                            ],
                           ),
                           Container(height: 30),
                           Expanded(
@@ -118,13 +92,7 @@ class Security extends GetView<SecuritySettingsController> {
                                   trailing: const Icon(
                                       Icons.chevron_right_sharp,
                                       color: Color(0xFF1C1C1E)),
-                                  onTap: () async {
-                                    final data =
-                                        await Authentication().getUserData2();
-                                    Get.to(ChangePassNewProtocol(
-                                        userId: data["user_id"].toString(),
-                                        mobileNo: data["mobile_no"]));
-                                  },
+                                  onTap: controller.verifyMobile,
                                 ),
                                 Visibility(
                                   visible:

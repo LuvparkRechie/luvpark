@@ -54,12 +54,16 @@ class Billers extends StatelessWidget {
                           SizedBox(height: 10),
                           InkWell(
                             onTap: () {
-                              Get.to(
-                                Allbillers(),
-                                arguments: {
-                                  'source': 'pay',
-                                },
-                              );
+                              controller.getBillers((isSuccess) {
+                                if (isSuccess) {
+                                  Get.to(
+                                    Allbillers(),
+                                    arguments: {
+                                      'source': 'pay',
+                                    },
+                                  );
+                                }
+                              });
                             },
                             child: Container(
                               padding: EdgeInsets.all(20),
@@ -117,12 +121,16 @@ class Billers extends StatelessWidget {
                             ),
                             child: InkWell(
                               onTap: () {
-                                Get.to(
-                                  Allbillers(),
-                                  arguments: {
-                                    'source': 'fav',
-                                  },
-                                );
+                                controller.getBillers((isSuccess) {
+                                  if (isSuccess) {
+                                    Get.to(
+                                      Allbillers(),
+                                      arguments: {
+                                        'source': 'fav',
+                                      },
+                                    );
+                                  }
+                                });
                               },
                               child: Row(
                                 children: [

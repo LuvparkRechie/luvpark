@@ -211,7 +211,7 @@ class BiometricLoginScreen extends StatelessWidget {
                             Get.back();
 
                             if (data[0]["items"].isNotEmpty) {
-                              Get.offAndToNamed(Routes.map);
+                              Get.offAllNamed(Routes.map);
                             }
                           });
                         }
@@ -391,7 +391,7 @@ class DefaultLoginScreen extends StatelessWidget {
                             Get.back();
 
                             if (data[0]["items"].isNotEmpty) {
-                              Get.offAndToNamed(Routes.map);
+                              Get.offAllNamed(Routes.map);
                             }
                           });
                         },
@@ -601,7 +601,7 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
                             Get.back();
 
                             if (data[0]["items"].isNotEmpty) {
-                              Get.offAndToNamed(Routes.map);
+                              Get.offAllNamed(Routes.map);
                             }
                           });
                         }),

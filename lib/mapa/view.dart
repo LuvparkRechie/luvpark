@@ -408,26 +408,34 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
 
                         controller.addressText.value = controller
                                 .suggestions[index]
+                                .toString()
                                 .split("=structured=")[1]
                                 .contains(",")
                             ? controller.suggestions[index]
+                                .toString()
                                 .split("=structured=")[1]
                                 .split(",")[0]
                             : controller.suggestions[index]
+                                .toString()
                                 .split("=structured=")[1];
 
-                        await Functions.searchPlaces(context,
-                            controller.suggestions[index].split("=Rechie=")[0],
-                            (searchedPlace) {
+                        await Functions.searchPlaces(
+                            context,
+                            controller.suggestions[index]
+                                .toString()
+                                .split("=Rechie=")[0], (searchedPlace) {
                           Get.back();
                           if (searchedPlace.isEmpty) {
                             return;
                           } else {
                             controller.searchCoordinates =
                                 LatLng(searchedPlace[0], searchedPlace[1]);
+
                             controller.ddRadius.value =
                                 '${controller.userProfile["default_search_radius"]}';
+
                             controller.isSearched.value = true;
+
                             controller.bridgeLocation(
                                 LatLng(searchedPlace[0], searchedPlace[1]));
                             return;

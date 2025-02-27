@@ -147,7 +147,7 @@ class WalletSend extends GetView<WalletSendController> {
                                     : const TextInputType.numberWithOptions(
                                         signed: true, decimal: false),
                                 onChange: (text) {
-                                  controller.pads(int.parse(text.toString()));
+                                  controller.pads(text);
                                 },
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {

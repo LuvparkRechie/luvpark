@@ -7,7 +7,6 @@ import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/my_account/utils/index.dart';
 import 'package:luvpark/my_account/utils/success/update_success.dart';
-import 'package:luvpark/routes/routes.dart';
 
 import '../../http/api_keys.dart';
 import '../../http/http_request.dart';
@@ -472,6 +471,7 @@ class UpdateProfileController extends GetxController {
 
   void onSubmit() async {
     final data = await Authentication().getUserData2();
+    CustomDialog().loadingDialog(Get.context!);
     Map<String, dynamic> submitParam = {
       "mobile_no": data["mobile_no"].toString(),
       "last_name": lastName.text,
@@ -496,42 +496,32 @@ class UpdateProfileController extends GetxController {
       "seca3": answer3.text,
       "image_base64": "",
     };
-    Get.toNamed(
-      Routes.otpField,
-      arguments: {
-        "mobile_no": data["mobile_no"],
-        "callback": (otpData) {
-          CustomDialog().loadingDialog(Get.context!);
 
-          HttpRequest(api: ApiKeys.putUpdateUserProf, parameters: submitParam)
-              .putBody()
-              .then((res) async {
+    HttpRequest(api: ApiKeys.putUpdateUserProf, parameters: submitParam)
+        .putBody()
+        .then((res) async {
+      Get.back();
+      if (res == "No Internet") {
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      }
+      if (res == null) {
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+      } else {
+        if (res["success"] == "Y") {
+          Get.to(const UpdateInfoSuccess());
+        } else {
+          CustomDialog().errorDialog(Get.context!, "luvpark", res["msg"], () {
             Get.back();
-            if (res == "No Internet") {
-              CustomDialog().internetErrorDialog(Get.context!, () {
-                Get.back();
-              });
-            }
-            if (res == null) {
-              CustomDialog().serverErrorDialog(Get.context!, () {
-                Get.back();
-              });
-            } else {
-              if (res["success"] == "Y") {
-                Get.to(const UpdateInfoSuccess());
-              } else {
-                CustomDialog().errorDialog(Get.context!, "luvpark", res["msg"],
-                    () {
-                  Get.back();
-                });
-
-                return;
-              }
-            }
           });
+
+          return;
         }
-      },
-    );
+      }
+    });
   }
 
   void showBottomSheet(

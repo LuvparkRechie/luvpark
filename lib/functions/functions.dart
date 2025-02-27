@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -197,10 +198,6 @@ class Functions {
         });
       }
     });
-    // final prefs = await SharedPreferences.getInstance();
-    // var myData = prefs.getString(
-    //   'userData',
-    // );
   }
 
   static Future<void> getLocation(BuildContext context, Function cb) async {
@@ -308,6 +305,7 @@ class Functions {
       CustomDialog().errorDialog(context, "Error", "$e", () {
         Get.back();
       });
+      return;
     }
   }
 
@@ -799,7 +797,6 @@ class Functions {
     final response =
         await HttpRequest(api: ApiKeys.putLogout, parameters: putLogoutParam)
             .putBody();
-    print("logout respo $response");
     Get.back();
     if (response == "No Internet") {
       cb({"is_true": false, "data": 0});
@@ -816,7 +813,6 @@ class Functions {
       return;
     }
     if (response["success"] == "Y") {
-      print("ataya diri");
       cb({"is_true": true, "data": response["user_id"]});
 
       Authentication().enableTimer(false);
@@ -859,7 +855,6 @@ class Functions {
       return;
     }
     if (response["success"] == "Y") {
-      print("ataya diri");
       cb({"is_true": true, "data": response["user_id"]});
 
       Authentication().enableTimer(false);
@@ -873,21 +868,6 @@ class Functions {
     }
   }
 
-  // Future<String> getUniqueDeviceId() async {
-  //   var deviceInfo = DeviceInfoPlugin();
-  //   String deviceId = "";
-
-  //   if (Platform.isAndroid) {
-  //     AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-  //     deviceId = androidInfo.id; // Hardware-based unique ID
-  //   } else if (Platform.isIOS) {
-  //     IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-  //     deviceId = iosInfo.identifierForVendor ?? "Unknown"; // Unique per device
-  //   }
-
-  //   return deviceId;
-  // }
-
   Future<String> getUniqueDeviceId() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String? storedDeviceId = prefs.getString('device_id');
@@ -899,5 +879,127 @@ class Functions {
     }
 
     return storedDeviceId;
+  }
+
+  Future<void> requestOtp(Map<String, String> param, Function cb) async {
+    CustomDialog().loadingDialog(Get.context!);
+    print("reqquest param $param");
+
+    HttpRequest(api: ApiKeys.postGenerateOtp, parameters: param)
+        .postBody()
+        .then((returnData) async {
+      print("requestOtp return $returnData");
+      Get.back();
+      if (returnData == "No Internet") {
+        cb(returnData);
+        CustomDialog().errorDialog(Get.context!, "Error",
+            "Please check your internet connection and try again.", () {
+          Get.back();
+        });
+
+        return;
+      }
+      if (returnData == null) {
+        cb(returnData);
+        CustomDialog().errorDialog(Get.context!, "Error",
+            "Error while connecting to server, Please try again.", () {
+          Get.back();
+        });
+
+        return;
+      }
+
+      if (returnData["success"] == 'Y') {
+        cb(returnData);
+        return;
+      } else {
+        if (returnData["status"] == "PENDING") {
+          cb(returnData);
+        }
+
+        CustomDialog().errorDialog(Get.context!, "LuvPark", returnData["msg"],
+            () {
+          Get.back();
+        });
+        return;
+      }
+    });
+  }
+  //check user status
+
+  Future<void> verifyMobile(String mobileNo, Function cb) async {
+    CustomDialog().loadingDialog(Get.context!);
+    HttpRequest(api: "${ApiKeys.getAcctStatus}?mobile_no=$mobileNo")
+        .get()
+        .then((objData) {
+      Get.back();
+      if (objData == "No Internet") {
+        cb({"success": false, "data": {}});
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+
+        return;
+      }
+      if (objData == null) {
+        cb({"success": false, "data": {}});
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      } else {
+        if (objData["success"] == "Y") {
+          cb({"success": true, "data": objData});
+        } else {
+          cb({"success": true, "data": {}});
+          CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
+              () {
+            Get.back();
+          });
+          return;
+        }
+      }
+    });
+  }
+
+  void getSecQdata(mobile, Function cb) {
+    CustomDialog().loadingDialog(Get.context!);
+    Random random = Random();
+    int myRan = random.nextInt(3) + 1;
+
+    String subApi = "${ApiKeys.getSecQue}?mobile_no=$mobile&secq_no=$myRan";
+
+    HttpRequest(api: subApi).get().then((returnData) {
+      Get.back();
+      if (returnData == "No Internet") {
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+
+        return;
+      }
+      if (returnData == null) {
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      } else {
+        if (returnData["items"].isNotEmpty) {
+          List seqData = returnData["items"];
+          seqData = seqData.map((e) {
+            e["secq_no"] = myRan;
+            return e;
+          }).toList();
+
+          cb(seqData);
+        } else {
+          CustomDialog().errorDialog(Get.context!, "luvpark",
+              "Make sure that you've entered the correct phone number.", () {
+            Get.back();
+          });
+          return;
+        }
+      }
+    });
   }
 }

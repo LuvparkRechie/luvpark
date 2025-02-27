@@ -678,6 +678,8 @@ class BookingController extends GetxController
 
   //Reservation Submit
   void submitReservation(params, bool allowChkin) async {
+    print("area data ${parameters["areaData"]}");
+
     DateTime now = await Functions.getTimeNow();
     CustomDialog().loadingDialog(Get.context!);
     List bookingParams = [params];
@@ -736,6 +738,8 @@ class BookingController extends GetxController
       "succeeding_rate": params["succeeding_rate"],
       "disc_rate": 0,
     };
+
+    print("dynamicBookParam $dynamicBookParam");
 
     Get.back();
     DateTime eet = now.add(Duration(minutes: areaEtaTime));

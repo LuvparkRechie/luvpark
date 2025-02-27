@@ -158,7 +158,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
           style:
               paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
           onChanged: (value) {
-            widget.onChange!(value);
+            if (widget.onChange != null) {
+              widget.onChange!(value);
+            }
           },
           onTap: () {
             if (widget.onTap != null) {
@@ -296,7 +298,9 @@ class _CustomMobileNumberState extends State<CustomMobileNumber> {
         style: paragraphStyle(color: Colors.black, fontWeight: FontWeight.w500),
         onTap: widget.isEnabled ? widget.onTap : null,
         onChanged: (value) {
-          widget.onChange!(value);
+          if (widget.onChange != null) {
+            widget.onChange!(value);
+          }
         },
         validator: widget.validator ??
             (value) {

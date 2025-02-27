@@ -169,6 +169,7 @@ class DashboardMapController extends GetxController
       }
     });
     WidgetsBinding.instance.addObserver(this);
+    onDrawerOpen();
     _checkLocationService();
     getBgTmrStatus();
     fetchData();
@@ -304,6 +305,7 @@ class DashboardMapController extends GetxController
     markerData = [];
     markers.clear();
     filteredMarkers.clear();
+
     getNearest(coordinates);
   }
 

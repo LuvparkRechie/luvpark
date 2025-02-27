@@ -8,6 +8,7 @@ import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/login/controller.dart';
 
 import '../auth/authentication.dart';
+import '../change_password/change_pass_ver.dart';
 import '../functions/functions.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
@@ -28,6 +29,7 @@ class SecuritySettingsController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isToggle = false.obs;
   bool isAuth = false;
+  int? randomNumber;
   @override
   void onInit() {
     super.onInit();
@@ -193,6 +195,27 @@ class SecuritySettingsController extends GetxController {
           });
         },
       ));
+    });
+  }
+
+  void verifyMobile() async {
+    final data = await Authentication().getUserData2();
+    Functions().verifyMobile(data["mobile_no"], (objData) {
+      if (objData["success"]) {
+        if (objData["data"]["is_verified"] == "Y") {
+          Functions().getSecQdata(data["mobile_no"], (cbData) {
+            print("mobile_no ${data["mobile_no"]}");
+            if (cbData != null) {
+              Get.to(
+                ChangePasswordVerified(),
+                arguments: {"mobile_no": data["mobile_no"], "data": cbData},
+              );
+            }
+          });
+        } else {
+          Get.toNamed(Routes.createNewPass, arguments: data["mobile_no"]);
+        }
+      }
     });
   }
 }

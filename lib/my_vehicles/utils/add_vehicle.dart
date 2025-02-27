@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/my_vehicles/controller.dart';
@@ -20,13 +21,23 @@ class AddVehicles extends GetView<MyVehiclesController> {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Vehicle Registration"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: SafeArea(
@@ -43,18 +54,10 @@ class AddVehicles extends GetView<MyVehiclesController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(height: 20),
-                        CustomButtonClose(onTap: () {
-                          Get.back();
-                        }),
-                        Container(height: 20),
-                        CustomTitle(
-                          text: "Vehicle Registration",
-                          fontSize: 20,
-                        ),
-                        Container(height: 10),
                         CustomParagraph(
                           text:
-                              "Register your vehicle to access seamless parking.",
+                              "Register your vehicle to enable seamless bookings and a smooth experience.",
+                          fontSize: 14,
                         ),
                         Container(height: 20),
                         CustomParagraph(

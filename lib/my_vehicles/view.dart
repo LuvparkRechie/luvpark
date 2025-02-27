@@ -3,10 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
-import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
@@ -26,13 +26,23 @@ class MyVehicles extends GetView<MyVehiclesController> {
     return Scaffold(
       backgroundColor: Color(0xFFfaf7f7),
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("My Vehicles"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Obx(
@@ -49,15 +59,6 @@ class MyVehicles extends GetView<MyVehiclesController> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(height: 20),
-                        CustomButtonClose(onTap: () {
-                          Get.back();
-                        }),
-                        Container(height: 20),
-                        CustomTitle(
-                          text: "My Vehicles",
-                          fontSize: 20,
-                        ),
-                        Container(height: 10),
                         CustomParagraph(
                           text:
                               "Manage your vehicles for a seamless parking experience.",
@@ -329,13 +330,23 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Subscription List"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       backgroundColor: AppColor.bodyColor,
@@ -346,15 +357,6 @@ class _DetailPageState extends State<DetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(height: 20),
-            CustomButtonClose(onTap: () {
-              Get.back();
-            }),
-            Container(height: 20),
-            CustomTitle(
-              text: "Subscription List",
-              fontSize: 20,
-            ),
-            Container(height: 10),
             CustomParagraph(
               text: "Stay updated on your parking subscriptions and renewals.",
             ),

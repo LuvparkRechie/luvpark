@@ -56,30 +56,34 @@ class BillersController extends GetxController {
   Future<void> loadFavoritesAndBillers() async {
     isLoading.value = true;
     await getFavorites();
-    await getBillers();
   }
 
-  Future<void> getBillers() async {
+  Future<void> getBillers(Function cb) async {
     String subApi = "${ApiKeys.getBillers}";
+    CustomDialog().loadingDialog(Get.context!);
     HttpRequest(api: subApi).get().then((response) async {
+      Get.back();
       if (response == "No Internet") {
-        isLoading.value = false;
-        isNetConn.value = false;
+        cb(false);
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
         return;
       }
       if (response == null) {
-        isLoading.value = false;
-        isNetConn.value = true;
+        cb(false);
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
         return;
       }
       if (response["items"].isNotEmpty) {
+        cb(true);
         billers.assignAll(response["items"]);
         filteredBillers.assignAll(billers);
+
+        return;
       }
-      isNetConn.value = true;
     });
   }
 

@@ -98,6 +98,8 @@ class ForgotVerifiedAcctController extends GetxController {
       "seca": answer.text
     };
 
+    print("forgotParam $forgotParam");
+
     HttpRequest(api: ApiKeys.getSecQue, parameters: forgotParam)
         .postBody()
         .then((returnData) {

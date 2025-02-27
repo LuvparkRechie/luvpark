@@ -39,7 +39,6 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
 
   @override
   void initState() {
-    print("change pass");
     super.initState();
   }
 
@@ -135,7 +134,7 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
                       Get.offAllNamed(Routes.login);
                       return;
                     }
-                    print("userLogin $userLogin");
+
                     List userData = [userLogin];
                     userData = userData.map((e) {
                       e["is_login"] = "N";
@@ -163,79 +162,6 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
         }
       },
     );
-
-    // Get.toNamed(
-    //   Routes.otpField,
-    //   arguments: {
-    //     "mobile_no": widget.mobileNo,
-    //     "callback": (otp) {
-    //       // ignore: use_build_context_synchronously
-    //       CustomDialog().loadingDialog(Get.context!);
-
-    //       var changePassParam = {
-    //         "old_pwd": oldPassword.text,
-    //         "new_pwd": newPassword.text,
-    //         "user_id": widget.userId,
-    //       };
-
-    //       HttpRequest(
-    //         api: ApiKeys.changePass,
-    //         parameters: changePassParam,
-    //       ).put().then((returnPut) {
-    //         if (returnPut == "No Internet") {
-    //           Get.back();
-    //           CustomDialog().errorDialog(Get.context!, "luvpark",
-    //               "Please check your internet connection and try again.", () {
-    //             Get.back();
-    //           });
-    //           return;
-    //         }
-
-    //         if (returnPut == null) {
-    //           Get.back();
-    //           CustomDialog().errorDialog(Get.context!, "luvpark",
-    //               "Error while connecting to server, please try again.", () {
-    //             Get.back();
-    //           });
-    //           return;
-    //         }
-
-    //         if (returnPut["success"] == "Y") {
-    //           Get.back();
-    //           CustomDialog().successDialog(Get.context!, "Success",
-    //               "Successfully changed password!", "Okay", () async {
-    //             Get.back();
-    //             CustomDialog().loadingDialog(Get.context!);
-    //             await Future.delayed(const Duration(seconds: 1));
-    //             final userLogin = await Authentication().getUserLogin();
-    //             if (userLogin == null) {
-    //               Get.back();
-    //               Get.offAllNamed(Routes.login);
-    //               return;
-    //             }
-    //             print("userLogin $userLogin");
-    //             List userData = [userLogin];
-    //             userData = userData.map((e) {
-    //               e["is_login"] = "N";
-    //               return e;
-    //             }).toList();
-
-    //             await Authentication().setLogin(jsonEncode(userData[0]));
-    //             await Authentication().setBiometricStatus(false);
-    //             Get.back();
-    //             Get.offAllNamed(Routes.login);
-    //           });
-    //         } else {
-    //           Get.back();
-    //           CustomDialog()
-    //               .errorDialog(Get.context!, "luvpark", returnPut["msg"], () {
-    //             Get.back();
-    //           });
-    //         }
-    //       });
-    //     }
-    //   },
-    // );
   }
 
   @override

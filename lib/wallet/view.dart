@@ -14,7 +14,7 @@ import 'package:shimmer/shimmer.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
-import 'utils/transaction_history/index.dart';
+import '../wallet_ui/wallet_ui.dart';
 
 class WalletScreen extends GetView<WalletController> {
   const WalletScreen({super.key});
@@ -259,7 +259,8 @@ class WalletScreen extends GetView<WalletController> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Get.to(TransactionHistory());
+                              // Get.to(TransactionHistory());
+                              Get.to(WalletUI());
                             },
                             child: CustomParagraph(
                               text: "See all",

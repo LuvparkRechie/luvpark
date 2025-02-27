@@ -33,28 +33,27 @@ class ForgotPasswordController extends GetxController {
   }
 
   Future<void> verifyMobile() async {
-    isLoading.value = true;
+    CustomDialog().loadingDialog(Get.context!);
     HttpRequest(
             api:
                 "${ApiKeys.getAcctStatus}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
         .get()
         .then((objData) {
+      Get.back();
       if (objData == "No Internet") {
-        isLoading.value = false;
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
         });
         return;
       }
       if (objData == null) {
-        isLoading.value = false;
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
         return;
       } else {
         if (objData["success"] == "Y") {
-          isLoading.value = false;
+          print("is verired ${objData["is_verified"]}");
           if (objData["is_verified"] == "Y") {
             Get.toNamed(Routes.forgotVerifiedAcct,
                 arguments:

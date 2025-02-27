@@ -53,7 +53,7 @@ class LoginScreenController extends GetxController {
     HttpRequest(api: ApiKeys.postLogin, parameters: param)
         .postBody()
         .then((returnPost) async {
-      print("return post $returnPost");
+      print("returnPost login $returnPost");
       if (returnPost == "No Internet") {
         CustomDialog().internetErrorDialog(context, () {
           Get.back();
@@ -90,6 +90,7 @@ class LoginScreenController extends GetxController {
             Get.back();
             Get.toNamed(Routes.otpField, arguments: {
               "mobile_no": param["mobile_no"],
+              "new_acct": 'Y',
               "callback": (otp) async {
                 FocusManager.instance.primaryFocus?.unfocus();
                 CustomDialog().successDialog(
@@ -138,12 +139,12 @@ class LoginScreenController extends GetxController {
                     "Register this phone", () {
                   Get.back();
                 }, () {
-                  // dapat e return ang user_id logoutUser
+                  Get.back();
+
                   Functions.logoutUser(
                       uData == null
                           ? returnPost["session_id"].toString()
                           : uData["session_id"].toString(), (isSuccess) async {
-                    print("atatata $isSuccess");
                     if (isSuccess["is_true"]) {
                       Get.to(
                           DeviceRegScreen(
@@ -153,14 +154,12 @@ class LoginScreenController extends GetxController {
                           arguments: {
                             "data": returnPost,
                           });
-
                       return;
                     }
                   });
                 });
                 return;
               } else {
-                //if already logged in another device
                 CustomDialog().infoDialog(
                     "Account Secure", returnPost["msg"].toString(), () {
                   Get.back();
@@ -400,7 +399,7 @@ class LoginScreenController extends GetxController {
           NotificationDatabase.instance.deleteAll();
           AwesomeNotifications().cancelAllSchedules();
           AwesomeNotifications().cancelAll();
-          Get.offAndToNamed(Routes.login);
+          Get.offAllNamed(Routes.login);
         }
       });
     });

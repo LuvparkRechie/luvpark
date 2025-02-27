@@ -180,9 +180,10 @@ class WalletSendController extends GetxController {
     });
   }
 
-  Future<void> pads(int value) async {
-    tokenAmount.text = value.toString();
-    indexbtn.value = value;
+  Future<void> pads(String value) async {
+    int textValue = int.parse(value.toString());
+    tokenAmount.text = textValue.toString();
+    indexbtn.value = textValue;
     padData.value = dataList.map((obj) {
       obj["is_active"] = (obj["value"] == value);
       return obj;
