@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -20,6 +22,7 @@ class ParkingController extends GetxController
   PageController pageController = PageController();
   RxInt currentPage = 0.obs;
   RxList resData = [].obs;
+  RxString qrKey = "".obs;
   RxBool hasNet = false.obs;
   RxDouble tabHeight = 0.0.obs;
   bool isAllowToSync = true;
@@ -94,7 +97,7 @@ class ParkingController extends GetxController
     String api =
         "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}?luvpay_id=$id";
     final returnData = await HttpRequest(api: api).get();
-
+    print("returnData $returnData");
     tabLoading.value = false;
     if (returnData == "No Internet") {
       isLoading.value = false;
@@ -128,9 +131,11 @@ class ParkingController extends GetxController
 
   // BTN details
   Future<void> getParkingDetails(dynamic data) async {
+    print("dataa $data");
     CustomDialog().loadingDialog(Get.context!);
     int userId = await Authentication().getUserId();
 
+    await getEncryptQr(data["ticket_id"]);
     var dateInRelated = "";
     var dateOutRelated = "";
     dateInRelated = data["dt_in"];
@@ -160,7 +165,7 @@ class ParkingController extends GetxController
       'plateNo': data["vehicle_plate_no"],
       'hours': data["no_hours"].toString(),
       'amount': data["amount"].toString(),
-      'refno': data["ticket_ref_no"].toString(),
+      // 'refno': data["ticket_ref_no"].toString(),
       'lat': double.parse(data["latitude"].toString()),
       'long': double.parse(data["longitude"].toString()),
       'canReserved': true,
@@ -178,75 +183,37 @@ class ParkingController extends GetxController
               int.parse(data["cancel_minutes"].toString()),
       'cancel_minute':
           data["status"].toString() == "U" ? "" : data["cancel_minutes"],
-      'qr_code': data["ticket_ref_no"].toString(),
+      // 'qr_code': data["ticket_ref_no"].toString(),
+      'qr_code': qrKey.value,
       'onRefresh': () {
         onRefresh();
       }
     };
     Get.back();
     Get.toNamed(Routes.bookingReceipt, arguments: args);
-    // String api = "${ApiKeys.gApiGetParkingQR}?ticket_id=${data["ticket_id"]}";
+  }
 
-    // final response = await HttpRequest(api: api).get();
-    // Get.back();
+  Future<void> getEncryptQr(int ticketId) async {
+    String api = "${ApiKeys.getResQr}$ticketId";
+    final response = await HttpRequest(api: api).get().then((response) async {
+      if (response == "No Internet") {
+        isLoading.value = false;
+        hasNet.value = false;
+        return;
+      }
+      if (response == null) {
+        isLoading.value = false;
+        hasNet.value = true;
+        return;
+      } else {
+        hasNet.value = true;
+        isLoading.value = false;
+        qrKey.value = response["items"][0]["qr_code"];
 
-    // if (response == "No Internet") {
-    //   CustomDialog().internetErrorDialog(Get.context!, () {
-    //     Get.back();
-    //   });
-    //   return;
-    // }
-
-    // if (response == null) {
-    //   CustomDialog().serverErrorDialog(Get.context!, () {
-    //     Get.back();
-    //   });
-    //   return;
-    // }
-    // if (response["items"].isEmpty) {
-    //   CustomDialog().infoDialog("No data", "No data found. Please try again.",
-    //       () {
-    //     Get.back();
-    //   });
-    //   return;
-    // } else {
-    //   dynamic args = {
-    //     'ticketId': data["ticket_id"],
-    //     'spaceName': data["park_area_name"],
-    //     'parkArea': data["park_area_name"],
-    //     'startDate': data["dt_in"],
-    //     'endDate': data["dt_out"],
-    //     'closing_date': data["end_time"],
-    //     'startTime': dateInRelated.toString().split(" ")[1].toString(),
-    //     'endTime': dateOutRelated.toString().split(" ")[1].toString(),
-    //     'plateNo': data["vehicle_plate_no"],
-    //     'hours': data["no_hours"].toString(),
-    //     'amount': data["amount"].toString(),
-    //     'refno': data["ticket_ref_no"].toString().toString(),
-    //     'lat': double.parse(data["latitude"].toString()),
-    //     'long': double.parse(data["longitude"].toString()),
-    //     'canReserved': true,
-    //     'isReserved': false,
-    //     'isShowRate': false,
-    //     'reservationId': data["reservation_id"],
-    //     'address': data["address"],
-    //     'isAutoExtend': data["is_auto_extend"],
-    //     'isBooking': false,
-    //     'paramsCalc': parameters,
-    //     'status': data["status"].toString() == "C" ? "R" : "A",
-    //     'can_cancel': data["status"].toString() == "U"
-    //         ? false
-    //         : int.parse(now.difference(resDate).inMinutes.toString()) <=
-    //             int.parse(data["cancel_minutes"].toString()),
-    //     'cancel_minute':
-    //         data["status"].toString() == "U" ? "" : data["cancel_minutes"],
-    //     'qr_code': response["items"][0]["qr_code"],
-    //     'onRefresh': () {
-    //       onRefresh();
-    //     }
-    //   };
-    //   Get.toNamed(Routes.bookingReceipt, arguments: args);
-    // }
+        print("getEncryptQr response: $response");
+        print("QR Key: ${qrKey.value}");
+      }
+    });
   }
 
   Future<List> calculateCancelTime(objData) async {

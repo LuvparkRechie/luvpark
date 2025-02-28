@@ -30,6 +30,8 @@ class ApiKeys {
       dotenv.env['GET_TRANS_LOGS']!.replaceAll('{LUV_API}', luvApi);
   static final String getParkingRes = dotenv.env['GET_PARKING_RES']!
       .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
+  static final String getResQr =
+      dotenv.env['GET_RES_QR']!.replaceAll('{PARK_SPACE_API}', parkSpaceApi);
   static final String getActiveParking = dotenv.env['GET_ACTIVE_PARKING']!
       .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
   static final String getNearbyParkingLoc = dotenv
