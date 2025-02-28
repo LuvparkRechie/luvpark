@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -26,11 +27,26 @@ class Billers extends StatelessWidget {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       backgroundColor: AppColor.bodyColor,
-      appBar: CustomAppbar(
-          title: "Billers",
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Billers"),
+        centerTitle: true,
+        leading: GestureDetector(
           onTap: () {
             Get.back();
-          }),
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
+      ),
       body: Obx(
         () => !controller.isNetConn.value
             ? NoInternetConnected(

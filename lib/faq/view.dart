@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
@@ -15,44 +16,53 @@ class FaqPage extends GetView<FaqPageController> {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController searchFaqController = TextEditingController();
     return Obx(() => Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor:
-              controller.isLoadingPage.value ? null : AppColor.primaryColor,
+          appBar: AppBar(
+            elevation: 1,
+            backgroundColor: AppColor.primaryColor,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: AppColor.primaryColor,
+              statusBarBrightness: Brightness.dark,
+              statusBarIconBrightness: Brightness.light,
+            ),
+            title: Text("FAQ's"),
+            centerTitle: true,
+            leading: GestureDetector(
+              onTap: () {
+                Get.back();
+              },
+              child: Icon(
+                Iconsax.arrow_left,
+                color: Colors.white,
+              ),
+            ),
+          ),
           body: controller.isLoadingPage.value
               ? const PageLoader()
               : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(
-                      height: 200,
-                      decoration: const BoxDecoration(
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: AssetImage("assets/images/faq_frame.png"),
-                        ),
-                      ),
+                    SizedBox(height: 15),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15),
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CustomAppbar(
-                            elevation: 0,
-                            bgColor: Colors.transparent,
-                            textColor: Colors.white,
-                            titleColor: Colors.white,
-                            title: "FAQ's",
-                          ),
-                          Container(height: 20),
+                          faqs(searchFaqController),
+                          SizedBox(height: 15),
                           CustomTitle(
-                            text: "How can we help you?",
-                            color: Colors.white,
-                            fontSize: 20,
+                            text: "How can\nwe help you?",
+                            fontSize: 30,
+                            maxlines: 2,
                           ),
                         ],
                       ),
                     ),
+                    SizedBox(height: 10),
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                            color: Colors.white,
                             borderRadius: BorderRadius.vertical(
                                 top: Radius.circular(10))),
                         child: !controller.isNetConn.value
@@ -67,87 +77,102 @@ class FaqPage extends GetView<FaqPageController> {
                                     child: StretchingOverscrollIndicator(
                                       axisDirection: AxisDirection.down,
                                       child: ListView.separated(
-                                        itemCount: controller.faqsData.length,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 10, horizontal: 15),
-                                        separatorBuilder: (context, index) =>
-                                            Divider(
-                                          color: Colors.grey[800],
-                                          height: 1,
-                                        ),
-                                        itemBuilder: (context, index) {
-                                          var faq = controller.faqsData[index];
+                                          itemCount:
+                                              controller.filteredFaqs.length,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 15),
+                                          separatorBuilder: (context, index) =>
+                                              Divider(
+                                                color: Colors.grey[800],
+                                                height: 1,
+                                              ),
+                                          itemBuilder: (context, index) {
+                                            var faq =
+                                                controller.filteredFaqs[index];
 
-                                          return ExpansionTile(
-                                            title: CustomParagraph(
-                                              text: faq['faq_text'] ??
-                                                  'No text available',
-                                              color: Colors.black,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                            trailing: Icon(
-                                              controller.expandedIndexes
-                                                      .contains(index)
-                                                  ? Iconsax.minus
-                                                  : Iconsax.add,
-                                              color: AppColor.primaryColor,
-                                            ),
-                                            onExpansionChanged:
-                                                (onExpand) async {
-                                              controller.onExpand(
-                                                  onExpand, index, faq);
-                                            },
-                                            children: [
-                                              if (controller.expandedIndexes
-                                                  .contains(index))
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.fromLTRB(
-                                                          15, 0, 15, 15),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      if (faq['answers'] ==
-                                                              null ||
-                                                          (faq['answers']
-                                                                  as List)
-                                                              .isEmpty)
-                                                        const CustomParagraph(
-                                                          text:
-                                                              'No answers available',
-                                                          color: Colors.black54,
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        )
-                                                      else
-                                                        ...((faq['answers']
-                                                                as List)
-                                                            .asMap()
-                                                            .entries
-                                                            .map((entry) {
-                                                          int index = entry.key;
-                                                          var answer =
-                                                              entry.value;
-                                                          return CustomParagraph(
+                                            return ExpansionTile(
+                                              title: CustomParagraph(
+                                                text: faq['faq_text'] ??
+                                                    'No text available',
+                                                color: Colors.black,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                              trailing: Icon(
+                                                controller.expandedIndexes
+                                                        .contains(index)
+                                                    ? Iconsax.minus
+                                                    : Iconsax.add,
+                                                color: AppColor.primaryColor,
+                                              ),
+                                              onExpansionChanged:
+                                                  (onExpand) async {
+                                                controller.onExpand(
+                                                    onExpand, index, faq);
+                                              },
+                                              children: [
+                                                if (controller.expandedIndexes
+                                                    .contains(index))
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .fromLTRB(
+                                                        15, 0, 15, 15),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        if (faq['answers'] ==
+                                                                null ||
+                                                            (faq['answers']
+                                                                    as List)
+                                                                .isEmpty)
+                                                          const CustomParagraph(
                                                             text:
-                                                                '${index + 1}. ${answer['faq_ans_text'] ?? 'No answer available'}',
-                                                            color: Colors.black,
+                                                                'No answers available',
+                                                            color:
+                                                                Colors.black54,
                                                             fontSize: 14,
                                                             fontWeight:
                                                                 FontWeight.w400,
-                                                          );
-                                                        }).toList()),
-                                                    ],
+                                                          )
+                                                        else
+                                                          ...((faq['answers']
+                                                                  as List)
+                                                              .asMap()
+                                                              .entries
+                                                              .map((entry) {
+                                                            int index =
+                                                                entry.key;
+                                                            var answer =
+                                                                entry.value;
+                                                            return CustomParagraph(
+                                                              text:
+                                                                  '${index + 1}. ${answer['faq_ans_text'] ?? 'No answer available'}',
+                                                              color:
+                                                                  Colors.black,
+                                                              fontSize: 14,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                            );
+                                                          }).toList()),
+                                                        SizedBox(height: 10),
+                                                        Text(
+                                                          'Updated on: ${faq['updated_on'] != null ? DateFormat('MMMM d, y').format(DateTime.parse(faq['updated_on'])) : 'N/A'}',
+                                                          style: TextStyle(
+                                                            color: Colors.grey,
+                                                            fontSize: 12,
+                                                            fontStyle: FontStyle
+                                                                .italic,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
-                                                ),
-                                            ],
-                                          );
-                                        },
-                                      ),
+                                              ],
+                                            );
+                                          }),
                                     ),
                                   ),
                       ),
@@ -155,6 +180,77 @@ class FaqPage extends GetView<FaqPageController> {
                   ],
                 ),
         ));
+  }
+
+  TextField faqs(TextEditingController searchFaqController) {
+    return TextField(
+      autofocus: false,
+      style: paragraphStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.w500,
+      ),
+      maxLines: 1,
+      textAlign: TextAlign.left,
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(vertical: 10),
+        hintText: "Ask a question...",
+        filled: true,
+        fillColor: Colors.white,
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(54),
+          borderSide: BorderSide(color: AppColor.primaryColor),
+        ),
+        border: const OutlineInputBorder(),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(54),
+          borderSide: BorderSide(width: 1, color: Color(0xFFCECECE)),
+        ),
+        prefixIcon: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(width: 15),
+            Icon(LucideIcons.search),
+            Container(width: 10),
+          ],
+        ),
+        suffixIcon: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Visibility(
+              visible: searchFaqController.text.isNotEmpty,
+              child: InkWell(
+                onTap: () {
+                  searchFaqController.clear();
+                  controller.filteredFaq('');
+                },
+                child: Container(
+                  padding: EdgeInsets.all(7),
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle, color: Colors.grey.shade300),
+                  child: Icon(
+                    LucideIcons.x,
+                    color: AppColor.headerColor,
+                    size: 18,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+        hintStyle: paragraphStyle(
+          color: Color(0xFF646263),
+          fontWeight: FontWeight.w600,
+          fontSize: 14,
+        ),
+        labelStyle: paragraphStyle(
+          fontWeight: FontWeight.w500,
+          color: AppColor.hintColor,
+        ),
+      ),
+      onChanged: (value) {
+        controller.filteredFaq(value);
+      },
+    );
   }
 }
 

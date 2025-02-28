@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
@@ -20,13 +21,23 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Help & Feedback"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Padding(
@@ -41,13 +52,8 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(height: 20),
-                CustomButtonClose(onTap: Get.back),
-                Container(height: 20),
                 Column(
                   children: [
-                    Container(
-                      height: 20,
-                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -120,7 +126,7 @@ class HelpandFeedback extends GetView<HelpandFeedbackController> {
                           if (response == "Success") {
                             Get.to(const WebviewPage(
                               urlDirect: "https://luvpark.ph/about-us/",
-                              label: "Terms of Use",
+                              label: "About Us",
                               isBuyToken: false,
                             ));
                           } else {

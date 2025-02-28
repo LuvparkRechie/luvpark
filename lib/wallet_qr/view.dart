@@ -3,12 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import '../custom_widgets/app_color.dart';
-import '../custom_widgets/custom_textfield.dart';
 import '../wallet_qr/controller.dart';
 
 class QrWallet extends GetView<QrWalletController> {
@@ -19,25 +19,30 @@ class QrWallet extends GetView<QrWalletController> {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        elevation: 0,
-        toolbarHeight: 0,
-        backgroundColor: AppColor.mainColor,
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
-          statusBarBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("QR Code"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(height: 10),
-            Padding(
-              padding: const EdgeInsets.only(left: 15.0, top: 10),
-              child: CustomButtonClose(onTap: Get.back),
-            ),
-            Container(height: 20),
+            Container(height: 15),
             for (int i = 0; i < controller.optionData.length; i++)
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

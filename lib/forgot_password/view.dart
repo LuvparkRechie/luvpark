@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
@@ -18,14 +19,23 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        leading: null,
-        elevation: 0,
-        toolbarHeight: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Forgot Password"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Padding(
@@ -41,15 +51,6 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(height: 20),
-                    CustomButtonClose(onTap: () {
-                      Get.back();
-                    }),
-                    Container(height: 20),
-                    CustomTitle(
-                      text: "Forgot Password",
-                      fontSize: 20,
-                    ),
-                    Container(height: 10),
                     CustomParagraph(
                       text:
                           "Enter your phone number below to receive password reset instructions.",

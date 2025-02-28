@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
@@ -137,9 +138,8 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
-      appBar: CustomAppbar(
-        title: "Transaction History",
-        action: [
+      appBar: AppBar(
+        actions: [
           IconButton(
             splashColor: Colors.transparent,
             highlightColor: Colors.transparent,
@@ -147,11 +147,30 @@ class _TransactionHistoryState extends State<TransactionHistory> {
               selectDateRange(context);
             },
             icon: SvgPicture.asset(
+              color: Colors.white,
               "assets/images/wallet_filter.svg",
               height: 14,
             ),
           )
         ],
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Transaction History"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: isLoadingPage
           ? PageLoader()

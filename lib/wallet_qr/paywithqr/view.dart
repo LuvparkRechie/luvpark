@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -17,14 +18,23 @@ class paywithQR extends GetView<paywithQRController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: null,
-        elevation: 0,
-        toolbarHeight: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Scan to Pay"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       backgroundColor: AppColor.bodyColor,
@@ -34,28 +44,16 @@ class paywithQR extends GetView<paywithQRController> {
             : Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 15),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(height: 20),
-                    CustomButtonClose(onTap: () {
-                      Get.back();
-                    }),
-                    Container(height: 20),
-                    Center(
-                      child: CustomTitle(
-                        text: "Scan to Pay",
-                        fontSize: 20,
-                      ),
+                    SizedBox(
+                      height: 30,
                     ),
-                    Container(height: 10),
-                    Center(
-                      child: CustomParagraph(
-                        text:
-                            "Align the QR code within the frame to proceed with payment.",
-                        textAlign: TextAlign.center,
-                      ),
+                    CustomParagraph(
+                      text:
+                          "Align the QR code within the frame to proceed with payment.",
+                      textAlign: TextAlign.center,
                     ),
-                    Container(height: 20),
                     Container(
                       margin: const EdgeInsets.all(40),
                       padding: const EdgeInsets.all(20),
@@ -78,16 +76,16 @@ class paywithQR extends GetView<paywithQRController> {
                         ),
                       ),
                     ),
-                    Center(
-                      child: TextButton.icon(
-                          onPressed: controller.generateQr,
-                          icon: Icon(
-                            Icons.refresh,
-                            color: AppColor.primaryColor,
-                          ),
-                          label: CustomParagraph(text: "Generate QR")),
+                    TextButton.icon(
+                        onPressed: controller.generateQr,
+                        icon: Icon(
+                          Icons.refresh,
+                          color: AppColor.primaryColor,
+                        ),
+                        label: CustomParagraph(text: "Generate QR")),
+                    SizedBox(
+                      height: 30,
                     ),
-                    Container(height: 50),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -121,7 +119,10 @@ class paywithQR extends GetView<paywithQRController> {
                           ),
                         ),
                       ],
-                    )
+                    ),
+                    SizedBox(
+                      height: 30,
+                    ),
                   ],
                 ),
               ),

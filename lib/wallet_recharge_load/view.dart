@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -23,13 +24,23 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
     return Scaffold(
         backgroundColor: AppColor.bodyColor,
         appBar: AppBar(
-          elevation: 0,
-          toolbarHeight: 0,
-          backgroundColor: AppColor.mainColor,
+          elevation: 1,
+          backgroundColor: AppColor.primaryColor,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: AppColor.primaryColor,
-            statusBarBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
+          ),
+          title: Text("Buy Load"),
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(
+              Iconsax.arrow_left,
+              color: Colors.white,
+            ),
           ),
         ),
         body: Obx(
@@ -42,22 +53,6 @@ class WalletRechargeLoadScreen extends GetView<WalletRechargeLoadController> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Container(height: 10),
-                    CustomButtonClose(onTap: () async {
-                      FocusManager.instance.primaryFocus!.unfocus();
-                      await Future.delayed(Duration(milliseconds: 200));
-                      Get.back();
-                    }),
-                    Container(height: 20),
-                    Text(
-                      "Buy Load",
-                      style: GoogleFonts.openSans(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w700,
-                        color: AppColor.headerColor,
-                      ),
-                    ),
-                    Container(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 
@@ -22,11 +23,25 @@ class AddFavoritesWidget extends GetView<BillersController> {
     final args = Get.arguments;
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
-      appBar: CustomAppbar(
-        onTap: () {
-          Get.back();
-        },
-        title: "Favorite Biller",
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Favorite Biller"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: SafeArea(
         child: Form(

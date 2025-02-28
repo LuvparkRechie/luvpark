@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/page_loader.dart';
@@ -116,12 +117,28 @@ class _PayBillState extends State<PayBill> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppbar(
-        title: args["source"] == "fav" ? "Add to Favorites" : "Pay Biller",
-        onTap: () {
-          Get.back();
-          controller.clearFields();
-        },
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text(
+          args["source"] == "fav" ? "Add to Favorites" : "Pay Biller",
+        ),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+            controller.clearFields();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: isLoading
           ? PageLoader()

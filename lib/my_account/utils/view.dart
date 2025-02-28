@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
@@ -43,13 +44,40 @@ class UpdateProfile extends GetView<UpdateProfileController> {
               child: Scaffold(
                 backgroundColor: AppColor.bodyColor,
                 appBar: AppBar(
-                  toolbarHeight: 0,
-                  elevation: 0,
+                  elevation: 1,
                   backgroundColor: AppColor.primaryColor,
                   systemOverlayStyle: SystemUiOverlayStyle(
                     statusBarColor: AppColor.primaryColor,
                     statusBarBrightness: Brightness.dark,
                     statusBarIconBrightness: Brightness.light,
+                  ),
+                  title: Text(
+                    controller.currentIndex.value == 0
+                        ? "Personal Information"
+                        : controller.currentIndex.value == 1
+                            ? "Address"
+                            : "Security Question",
+                  ),
+                  centerTitle: true,
+                  leading: GestureDetector(
+                    onTap: () {
+                      FocusScope.of(context).requestFocus(FocusNode());
+                      CustomDialog().confirmationDialog(
+                          context,
+                          "Close Page",
+                          "Are you sure you want to close this page?",
+                          "No",
+                          "Yes", () {
+                        Get.back();
+                      }, () {
+                        Get.back();
+                        Get.back();
+                      });
+                    },
+                    child: Icon(
+                      Iconsax.arrow_left,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
                 body: Container(
@@ -60,21 +88,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(height: 10),
-                        CustomButtonClose(onTap: () {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          CustomDialog().confirmationDialog(
-                              context,
-                              "Close Page",
-                              "Are you sure you want to close this page?",
-                              "No",
-                              "Yes", () {
-                            Get.back();
-                          }, () {
-                            Get.back();
-                            Get.back();
-                          });
-                        }),
                         Container(height: 20),
                         Row(
                           children: [
@@ -116,19 +129,6 @@ class UpdateProfile extends GetView<UpdateProfileController> {
                           ],
                         ),
                         Container(height: 20),
-                        Text(
-                          controller.currentIndex.value == 0
-                              ? "Personal Information"
-                              : controller.currentIndex.value == 1
-                                  ? "Address"
-                                  : "Security Question",
-                          style: GoogleFonts.openSans(
-                            fontSize: 25,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.headerColor,
-                          ),
-                        ),
-                        Container(height: 10),
                         AnimatedSwitcher(
                           duration: Duration(milliseconds: 200),
                           child: Builder(

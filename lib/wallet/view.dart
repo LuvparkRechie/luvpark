@@ -1,8 +1,10 @@
 // ignore_for_file: prefer_const_constructorss, prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
@@ -15,6 +17,7 @@ import 'package:shimmer/shimmer.dart';
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
 import '../wallet_ui/wallet_ui.dart';
+import 'utils/transaction_history/index.dart';
 
 class WalletScreen extends GetView<WalletController> {
   const WalletScreen({super.key});
@@ -22,13 +25,25 @@ class WalletScreen extends GetView<WalletController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
-      appBar: CustomAppbar(
-        elevation: 0,
-        title: "My Wallet",
-        hasBtnColor: true,
-        onTap: () {
-          Get.back();
-        },
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Wallet"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
       body: Obx(
         () => SafeArea(
@@ -259,8 +274,8 @@ class WalletScreen extends GetView<WalletController> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              // Get.to(TransactionHistory());
-                              Get.to(WalletUI());
+                              Get.to(TransactionHistory());
+                              // Get.to(WalletUI());
                             },
                             child: CustomParagraph(
                               text: "See all",

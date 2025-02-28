@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_appbar.dart';
@@ -18,11 +20,26 @@ class MerchantBiller extends GetView<MerchantBillerController> {
     return Obx(
       () => Scaffold(
         backgroundColor: AppColor.bodyColor,
-        appBar: CustomAppbar(
-            title: "Merchants",
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: AppColor.primaryColor,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          title: Text("Merchants"),
+          centerTitle: true,
+          leading: GestureDetector(
             onTap: () {
               Get.back();
-            }),
+            },
+            child: Icon(
+              Iconsax.arrow_left,
+              color: Colors.white,
+            ),
+          ),
+        ),
         body: controller.isLoadingPage.value
             ? const PageLoader()
             : !controller.isNetConn.value

@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/billers/utils/add_favorites.dart';
 import 'package:luvpark/billers/utils/templ.dart';
@@ -28,13 +29,27 @@ class Allbillers extends GetView<BillersController> {
     final dataArgs = Get.arguments;
 
     return Scaffold(
-        appBar: CustomAppbar(
-          onTap: () {
-            Get.back();
-            controller.filterBillers('');
-            searchController.clear();
-          },
-          title: "Biller List",
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: AppColor.primaryColor,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          title: Text("Biller List"),
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Get.back();
+              controller.filterBillers('');
+              searchController.clear();
+            },
+            child: Icon(
+              Iconsax.arrow_left,
+              color: Colors.white,
+            ),
+          ),
         ),
         body: Obx(
           () => Container(

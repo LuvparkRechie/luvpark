@@ -10,7 +10,8 @@ class FaqPageController extends GetxController {
   RxBool isNetConn = true.obs;
   RxBool isExpanded = false.obs;
   RxSet<int> expandedIndexes = <int>{}.obs;
-
+  RxList filteredFaqs = [].obs;
+  RxList faqs = [].obs;
   @override
   void onInit() {
     super.onInit();
@@ -31,7 +32,6 @@ class FaqPageController extends GetxController {
     if (returnData == "No Internet") {
       isNetConn.value = false;
       isLoadingPage.value = false;
-
       return;
     }
     if (returnData == null) {
@@ -42,8 +42,13 @@ class FaqPageController extends GetxController {
       });
       return;
     }
+
     faqsData.value = List<Map<String, dynamic>>.from(returnData["items"]);
+
+    filteredFaqs.assignAll(faqsData);
+
     isLoadingPage.value = false;
+    print("returnData ${returnData["items"]}");
   }
 
   Future<void> getFaqAnswers(String id, int index) async {
@@ -91,5 +96,15 @@ class FaqPageController extends GetxController {
     }
 
     update();
+  }
+
+  void filteredFaq(String query) {
+    if (query.isEmpty) {
+      filteredFaqs.assignAll(faqsData);
+    } else {
+      filteredFaqs.assignAll(faqsData.where((faq) {
+        return faq['faq_text'].toLowerCase().contains(query.toLowerCase());
+      }).toList());
+    }
   }
 }
