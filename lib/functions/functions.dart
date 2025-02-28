@@ -917,8 +917,8 @@ class Functions {
           cb(returnData);
         }
 
-        CustomDialog().errorDialog(Get.context!, "LuvPark", returnData["msg"],
-            () {
+        CustomDialog().errorDialog(
+            Get.context!, "Security Warning", returnData["msg"], () {
           Get.back();
         });
         return;

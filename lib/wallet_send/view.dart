@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
-import 'package:flutter_native_contact_picker_plus/flutter_native_contact_picker_plus.dart';
+import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
@@ -19,254 +19,255 @@ import 'package:permission_handler/permission_handler.dart';
 import '../auth/authentication.dart';
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
+import '../routes/routes.dart';
 
 class WalletSend extends GetView<WalletSendController> {
   const WalletSend({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.bodyColor,
-      appBar: AppBar(
-        elevation: 1,
-        backgroundColor: AppColor.primaryColor,
-        systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: AppColor.primaryColor,
-          statusBarBrightness: Brightness.dark,
-          statusBarIconBrightness: Brightness.light,
-        ),
-        title: Text("Transfer Token"),
-        centerTitle: true,
-        leading: GestureDetector(
-          onTap: () {
-            Get.back();
-          },
-          child: Icon(
-            Iconsax.arrow_left,
-            color: Colors.white,
+    return Obx(
+      () => Scaffold(
+          backgroundColor: AppColor.bodyColor,
+          appBar: AppBar(
+            elevation: 1,
+            backgroundColor: AppColor.primaryColor,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: AppColor.primaryColor,
+              statusBarBrightness: Brightness.dark,
+              statusBarIconBrightness: Brightness.light,
+            ),
+            title: Text(controller.isPage2.value
+                ? "Confirm password"
+                : "Transfer Token"),
+            centerTitle: true,
+            leading: GestureDetector(
+              onTap: () {
+                if (controller.isPage2.value) {
+                  controller.onPageSnap();
+                } else {
+                  Get.back();
+                }
+              },
+              child: Icon(
+                Iconsax.arrow_left,
+                color: Colors.white,
+              ),
+            ),
           ),
-        ),
-      ),
-      body: ScrollConfiguration(
-        behavior: ScrollBehavior().copyWith(overscroll: false),
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
-            child: Obx(
-              () => controller.isLoading.value
-                  ? Container(
-                      height: MediaQuery.of(context).size.height * 0.8,
-                      child: Center(
-                        child: CircularProgressIndicator(
-                          color: AppColor.primaryColor,
-                        ),
-                      ),
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(
-                          height: 15,
-                        ),
-                        CustomParagraph(text: "Account Balance"),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: controller.isLoading.value
-                              ? Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    SizedBox(
-                                      width: 16,
-                                      height: 16,
-                                      child: CircularProgressIndicator(
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 10,
-                                    ),
-                                  ],
-                                )
-                              : CustomParagraph(
-                                  text: !controller.isNetConn.value
-                                      ? "No internet"
-                                      : controller.userData.isEmpty
-                                          ? ""
-                                          : toCurrencyString(controller
-                                              .userData[0]["amount_bal"]
-                                              .toString()),
-                                  color: AppColor.primaryColor,
-                                  fontWeight: FontWeight.w600,
-                                  textAlign: TextAlign.right,
-                                  fontSize: 30,
+          body: AnimatedCrossFade(
+            firstChild: page1(),
+            firstCurve: Curves.easeInOut, // Smooth ease-in-out for fade
+            secondCurve: Curves.easeInOut, // Smooth ease-in-out for fade
+            secondChild: ConfirmPassword(),
+            crossFadeState: !controller.isPage2.value
+                ? CrossFadeState.showFirst
+                : CrossFadeState.showSecond,
+            duration: Duration(milliseconds: 200),
+          )),
+    );
+  }
+
+  Widget page1() {
+    return ScrollConfiguration(
+      behavior: ScrollBehavior().copyWith(overscroll: false),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+          child: controller.isLoading.value
+              ? Container(
+                  height: MediaQuery.of(Get.context!).size.height * 0.8,
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor.primaryColor,
+                    ),
+                  ),
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 15,
+                    ),
+                    CustomParagraph(text: "Account Balance"),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: controller.isLoading.value
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                SizedBox(
+                                  width: 16,
+                                  height: 16,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
                                 ),
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Divider(),
-                        AnimatedCrossFade(
-                          firstChild: const SizedBox.shrink(),
-                          secondChild: secondChild(),
-                          crossFadeState: controller.recipientData.isEmpty
-                              ? CrossFadeState.showFirst
-                              : CrossFadeState.showSecond,
-                          duration: Duration(milliseconds: 200),
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Form(
-                          key: controller.formKeySend,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                                SizedBox(
+                                  width: 10,
+                                ),
+                              ],
+                            )
+                          : CustomParagraph(
+                              text: !controller.isNetConn.value
+                                  ? "No internet"
+                                  : controller.userData.isEmpty
+                                      ? ""
+                                      : toCurrencyString(controller.userData[0]
+                                              ["amount_bal"]
+                                          .toString()),
+                              color: AppColor.primaryColor,
+                              fontWeight: FontWeight.w600,
+                              textAlign: TextAlign.right,
+                              fontSize: 30,
+                            ),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Divider(),
+                    AnimatedCrossFade(
+                      firstChild: const SizedBox.shrink(),
+                      secondChild: secondChild(),
+                      crossFadeState: controller.recipientData.isEmpty
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: 200),
+                    ),
+                    SizedBox(
+                      height: 20,
+                    ),
+                    Form(
+                      key: controller.formKeySend,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomParagraph(
+                            text: "Amount",
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black,
+                          ),
+                          CustomTextField(
+                            hintText: "Enter amount",
+                            controller: controller.tokenAmount,
+                            inputFormatters: [
+                              AutoDecimalInputFormatter(),
+                            ],
+                            keyboardType: Platform.isAndroid
+                                ? TextInputType.number
+                                : const TextInputType.numberWithOptions(
+                                    signed: true, decimal: false),
+                            onChange: (text) {
+                              controller.pads(text);
+                            },
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "Amount is required";
+                              }
+
+                              double parsedValue;
+                              try {
+                                parsedValue = double.parse(value);
+                              } catch (e) {
+                                return "Invalid amount";
+                              }
+
+                              double availableBalance;
+                              try {
+                                availableBalance = double.parse(
+                                    controller.userData.isEmpty
+                                        ? "0.0"
+                                        : controller.userData[0]["amount_bal"]
+                                            .toString());
+                              } catch (e) {
+                                return "Error retrieving balance";
+                              }
+                              if (parsedValue < 10) {
+                                return "Amount must not be less than 10";
+                              }
+                              if (parsedValue > availableBalance) {
+                                return "You don't have enough balance to proceed";
+                              }
+
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 10),
+                          Row(
                             children: [
                               CustomParagraph(
-                                text: "Amount",
+                                text: "Description",
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
                                 color: Colors.black,
                               ),
-                              CustomTextField(
-                                hintText: "Enter amount",
-                                controller: controller.tokenAmount,
-                                inputFormatters: [
-                                  AutoDecimalInputFormatter(),
-                                ],
-                                keyboardType: Platform.isAndroid
-                                    ? TextInputType.number
-                                    : const TextInputType.numberWithOptions(
-                                        signed: true, decimal: false),
-                                onChange: (text) {
-                                  controller.pads(text);
-                                },
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return "Amount is required";
-                                  }
-
-                                  double parsedValue;
-                                  try {
-                                    parsedValue = double.parse(value);
-                                  } catch (e) {
-                                    return "Invalid amount";
-                                  }
-
-                                  double availableBalance;
-                                  try {
-                                    availableBalance = double.parse(controller
-                                            .userData.isEmpty
-                                        ? "0.0"
-                                        : controller.userData[0]["amount_bal"]
-                                            .toString());
-                                  } catch (e) {
-                                    return "Error retrieving balance";
-                                  }
-                                  if (parsedValue < 10) {
-                                    return "Amount must not be less than 10";
-                                  }
-                                  if (parsedValue > availableBalance) {
-                                    return "You don't have enough balance to proceed";
-                                  }
-
-                                  return null;
-                                },
+                              Container(width: 5),
+                              CustomParagraph(
+                                text: "(Optional)",
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
                               ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  CustomParagraph(
-                                    text: "Description",
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                    color: Colors.black,
-                                  ),
-                                  Container(width: 5),
-                                  CustomParagraph(
-                                    text: "(Optional)",
-                                    fontSize: 13,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ],
-                              ),
-                              CustomTextField(
-                                inputFormatters: [
-                                  LengthLimitingTextInputFormatter(
-                                    30,
-                                  ),
-                                ],
-                                maxLength: 30,
-                                controller: controller.message,
-                                maxLines: 5,
-                                minLines: 3,
-                              ),
-                              SizedBox(
-                                height: 30,
-                              ),
-                              if (MediaQuery.of(Get.context!)
-                                      .viewInsets
-                                      .bottom ==
-                                  0) //hide button
-                                CustomButton(
-                                  text: "Continue",
-                                  btnColor: AppColor.primaryColor,
-                                  onPressed: () async {
-                                    if (controller.formKeySend.currentState!
-                                        .validate()) {
-                                      final item =
-                                          await Authentication().getUserLogin();
-
-                                      if (item["mobile_no"].toString() ==
-                                          controller.recipientData[0]
-                                                  ["mobile_no"]
-                                              .toString()) {
-                                        CustomDialog().snackbarDialog(
-                                            Get.context!,
-                                            "Please use another number.",
-                                            Colors.red,
-                                            () {});
-                                        return;
-                                      }
-                                      if (double.parse(
-                                              controller.userData.isEmpty
-                                                  ? "0.0"
-                                                  : controller.userData[0]
-                                                          ["amount_bal"]
-                                                      .toString()) <
-                                          double.parse(controller
-                                              .tokenAmount.text
-                                              .toString()
-                                              .removeAllWhitespace)) {
-                                        CustomDialog().snackbarDialog(
-                                          Get.context!,
-                                          "Insufficient balance.",
-                                          Colors.red,
-                                          () {},
-                                        );
-                                        return;
-                                      }
-
-                                      CustomDialog().confirmationDialog(
-                                          Get.context!,
-                                          "Confirmation",
-                                          "Are you sure you want to proceed?",
-                                          "Back",
-                                          "Yes", () {
-                                        Get.back();
-                                      }, () {
-                                        Get.back();
-                                        controller.getVerifiedAcc();
-                                      });
-                                    }
-                                  },
-                                )
                             ],
                           ),
-                        ),
-                      ],
+                          CustomTextField(
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(
+                                30,
+                              ),
+                            ],
+                            maxLength: 30,
+                            controller: controller.message,
+                            maxLines: 5,
+                            minLines: 3,
+                          ),
+                          SizedBox(
+                            height: 30,
+                          ),
+                          CustomButton(
+                            text: "Continue",
+                            btnColor: AppColor.primaryColor,
+                            onPressed: () async {
+                              if (controller.formKeySend.currentState!
+                                  .validate()) {
+                                final item =
+                                    await Authentication().getUserLogin();
+
+                                if (item["mobile_no"].toString() ==
+                                    controller.recipientData[0]["mobile_no"]
+                                        .toString()) {
+                                  CustomDialog().snackbarDialog(
+                                      Get.context!,
+                                      "Please use another number.",
+                                      Colors.red,
+                                      () {});
+                                  return;
+                                }
+                                if (double.parse(controller.userData.isEmpty
+                                        ? "0.0"
+                                        : controller.userData[0]["amount_bal"]
+                                            .toString()) <
+                                    double.parse(controller.tokenAmount.text
+                                        .toString()
+                                        .removeAllWhitespace)) {
+                                  CustomDialog().snackbarDialog(
+                                    Get.context!,
+                                    "Insufficient balance.",
+                                    Colors.red,
+                                    () {},
+                                  );
+                                  return;
+                                }
+
+                                controller.getVerifiedAcc();
+                              }
+                            },
+                          )
+                        ],
+                      ),
                     ),
-            ),
-          ),
+                  ],
+                ),
         ),
       ),
     );
@@ -288,7 +289,7 @@ class WalletSend extends GetView<WalletSendController> {
                 height: 10,
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 20),
                 width: double.infinity,
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(7),
@@ -298,34 +299,25 @@ class WalletSend extends GetView<WalletSendController> {
                   children: [
                     Row(
                       children: [
-                        Container(
-                          width: 60,
-                          height: 60,
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius:
-                                BorderRadius.circular(30), // Make it circular
-                          ),
-                          child: ClipRRect(
-                            clipBehavior: Clip.none,
-                            borderRadius: BorderRadius.circular(
-                                30), // Clip image to circle
-                            child: controller.userImage.value.isNotEmpty
-                                ? Image.memory(
-                                    base64Decode(
-                                        controller.userImage.value.toString()),
-                                    fit: BoxFit
-                                        .cover, // Ensures image covers the container
-                                    width: 60,
-                                    height: 60,
-                                  )
-                                : Icon(
-                                    Icons
-                                        .person, // Placeholder when no image is available
-                                    size: 30,
-                                    color: Colors.grey,
+                        CircleAvatar(
+                          backgroundColor: controller.userImage.value.isEmpty
+                              ? Colors.white
+                              : null,
+                          backgroundImage: controller.userImage.value.isNotEmpty
+                              ? MemoryImage(
+                                  base64Decode(
+                                    controller.userImage.value.toString(),
                                   ),
-                          ),
+                                )
+                              : null,
+                          child: controller.userImage.value.isEmpty
+                              ? Icon(
+                                  Icons
+                                      .person, // Placeholder when no image is available
+                                  size: 30,
+                                  color: Colors.grey,
+                                )
+                              : null,
                         ),
                         Container(width: 10),
                         Expanded(
@@ -621,7 +613,88 @@ class AutoDecimalInputFormatter extends TextInputFormatter {
   }
 }
 
-String _capitalize(String text) {
-  if (text.isEmpty) return text;
-  return text[0].toUpperCase() + text.substring(1).toLowerCase();
+class ConfirmPassword extends StatefulWidget {
+  const ConfirmPassword({super.key});
+
+  @override
+  State<ConfirmPassword> createState() => _ConfirmPasswordState();
+}
+
+class _ConfirmPasswordState extends State<ConfirmPassword> {
+  final GlobalKey<FormState> confirmFormKey = GlobalKey<FormState>();
+  @override
+  void initState() {
+    controller.myPass = TextEditingController();
+    super.initState();
+  }
+
+  final controller = Get.put(WalletSendController());
+  @override
+  Widget build(BuildContext context) {
+    return Form(
+      key: confirmFormKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(height: 20),
+            CustomParagraph(
+              text: "Confirm password to proceed.",
+            ),
+            Container(height: 20),
+            CustomParagraph(
+              text: "Input password",
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+            CustomTextField(
+              hintText: "Enter your password",
+              controller: controller.myPass,
+              validator: (d) {
+                if (d == null || d.isEmpty) {
+                  return "Password is required";
+                }
+                return null;
+              },
+            ),
+            Container(height: 30),
+            CustomButton(
+                text: "Continue",
+                onPressed: () async {
+                  final uData = await Authentication().getUserData2();
+
+                  if (confirmFormKey.currentState!.validate()) {
+                    Map<String, String> requestParam = {
+                      "mobile_no": uData["mobile_no".toString()].toString(),
+                      "pwd": controller.myPass.text
+                    };
+                    Functions().requestOtp(requestParam, (objData) {
+                      Map<String, String> putParam = {
+                        "mobile_no": uData["mobile_no"].toString(),
+                        "otp": objData["otp"].toString(),
+                        "req_type": "SR"
+                      };
+                      Get.toNamed(
+                        Routes.otpField,
+                        arguments: {
+                          "mobile_no": uData["mobile_no".toString()].toString(),
+                          "req_otp_param": requestParam,
+                          "verify_param": putParam,
+                          "callback": (otp) async {
+                            print("return field $otp");
+                            if (otp != null) {
+                              controller.shareToken();
+                            }
+                          },
+                        },
+                      );
+                    });
+                  }
+                })
+          ],
+        ),
+      ),
+    );
+  }
 }

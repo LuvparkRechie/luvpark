@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_native_contact_picker_plus/flutter_native_contact_picker_plus.dart';
+import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
-import 'package:luvpark/routes/routes.dart';
 import 'package:mobile_number/mobile_number.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -23,9 +22,11 @@ class WalletSendController extends GetxController {
   final GlobalKey<FormState> formKeySend = GlobalKey<FormState>();
   final TextEditingController tokenAmount = TextEditingController();
   final TextEditingController message = TextEditingController();
+  TextEditingController myPass = TextEditingController();
   final GlobalKey contentKey = GlobalKey();
   RxBool isLpAccount = false.obs;
   RxBool isLoading = true.obs;
+  RxBool isPage2 = false.obs;
   PermissionStatus cameraStatus = PermissionStatus.denied;
   RxBool isNetConn = true.obs;
   RxList userData = [].obs;
@@ -34,7 +35,7 @@ class WalletSendController extends GetxController {
   RxString userName = "".obs;
   RxString userImage = "".obs;
   List<SimCard> simCard = <SimCard>[];
-  final FlutterContactPickerPlus contactPicker = FlutterContactPickerPlus();
+  final FlutterContactPicker contactPicker = FlutterContactPicker();
   Rx<Contact?> contact = Rx<Contact?>(null);
   RxInt denoInd = 0.obs;
 
@@ -187,7 +188,6 @@ class WalletSendController extends GetxController {
     HttpRequest(
       api: params,
     ).get().then((returnData) async {
-      final item = await Authentication().getUserLogin();
       if (returnData == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -206,15 +206,8 @@ class WalletSendController extends GetxController {
 
       if (returnData["items"][0]["is_valid"] == "Y") {
         Get.back();
-        Get.toNamed(
-          Routes.otpField,
-          arguments: {
-            "mobile_no": item["mobile_no"].toString(),
-            "callback": (otp) {
-              shareToken();
-            }
-          },
-        );
+        isPage2.value = true;
+
         return;
       } else {
         Get.back();
@@ -266,14 +259,17 @@ class WalletSendController extends GetxController {
 
 //Share token
   Future<void> shareToken() async {
+    final userData = await Authentication().getUserData2();
     int userId = await Authentication().getUserId();
 
     CustomDialog().loadingDialog(Get.context!);
     Map<String, dynamic> parameters = {
       "user_id": userId.toString(),
       "to_mobile_no": recipientData[0]["mobile_no"],
-      "amount": tokenAmount.text.toString().replaceAll(",", ""),
+      "amount": tokenAmount.text,
       "to_msg": message.text,
+      "session_id": userData["session_id"].toString(),
+      "pwd": myPass.text,
     };
 
     HttpRequest(api: ApiKeys.postShareToken, parameters: parameters)
@@ -306,9 +302,13 @@ class WalletSendController extends GetxController {
             CustomDialog().successDialog(
                 Get.context!, "Success", "Transaction complete", "Okay", () {
               Get.back();
-              Get.back();
+              onPageSnap();
               refreshUserData();
+              Future.delayed(Duration(milliseconds: 500), () {
+                Get.back();
+              });
             });
+            return;
           } else {
             Get.back();
             CustomDialog().errorDialog(
@@ -319,6 +319,7 @@ class WalletSendController extends GetxController {
                 Get.back();
               },
             );
+            return;
           }
         }
       },
@@ -392,5 +393,9 @@ class WalletSendController extends GetxController {
         Get.back();
       }
     });
+  }
+
+  void onPageSnap() {
+    isPage2.value = !isPage2.value;
   }
 }

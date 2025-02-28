@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -17,7 +18,6 @@ import 'package:pinput/pinput.dart';
 
 import '../auth/authentication.dart';
 import '../custom_widgets/alert_dialog.dart';
-import '../custom_widgets/custom_textfield.dart';
 import '../http/api_keys.dart';
 import '../http/http_request.dart';
 import 'controller.dart';
@@ -33,6 +33,7 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
   final controller = Get.put(OtpFieldScreenController());
   String parameters = Get.arguments["mobile_no"];
   final putVerifyParam = Get.arguments["verify_param"];
+  final resendOtpParam = Get.arguments["req_otp_param"];
   TextEditingController pinController = TextEditingController();
   Duration countdownDuration = const Duration(minutes: 2);
 
@@ -274,13 +275,23 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
       child: Scaffold(
         backgroundColor: AppColor.bodyColor,
         appBar: AppBar(
-          elevation: 0,
-          toolbarHeight: 0,
+          elevation: 1,
           backgroundColor: AppColor.primaryColor,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: AppColor.primaryColor,
-            statusBarBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
+          ),
+          title: Text("OTP Verification"),
+          centerTitle: true,
+          leading: GestureDetector(
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(
+              Iconsax.arrow_left,
+              color: Colors.white,
+            ),
           ),
         ),
         body: isLoading
@@ -299,11 +310,6 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Container(height: 20),
-                              CustomButtonClose(onTap: () {
-                                FocusNode().unfocus();
-                                Get.back();
-                              }),
-                              Container(height: 20),
                               Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -314,12 +320,6 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
                                       fit: BoxFit.contain,
                                       width: 200,
                                       height: 200,
-                                    ),
-                                  ),
-                                  const Center(
-                                    child: CustomTitle(
-                                      text: "OTP verification",
-                                      fontSize: 24,
                                     ),
                                   ),
                                   Center(

@@ -10,6 +10,8 @@ import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
 
+import '../../../functions/functions.dart';
+
 class ForgotVerifiedAcctController extends GetxController {
   ForgotVerifiedAcctController();
   String mobileNoParam = Get.arguments;
@@ -88,107 +90,87 @@ class ForgotVerifiedAcctController extends GetxController {
     });
   }
 
-  Future<void> onVerify() async {
-    FocusManager.instance.primaryFocus!.unfocus();
-    isBtnLoading.value = true;
-    var forgotParam = {
-      "secq_no": randomNumber,
-      "mobile_no": mobileNoParam,
-      "secq_id": questionData[0]["secq_id"],
-      "seca": answer.text
+  void secRequestOtp() async {
+    Map<String, String> reqParam = {
+      "mobile_no": mobileNoParam.toString(),
+      "secq_no": randomNumber.toString(),
+      "secq_id": questionData[0]["secq_id"].toString(),
+      "seca": answer.text,
+      "new_pwd": newPass.text,
     };
 
-    print("forgotParam $forgotParam");
+    Functions().requestOtp(reqParam, (obj) {
+      if (obj["success"] == "Y") {
+        Map<String, String> putParam = {
+          "mobile_no": mobileNoParam.toString(),
+          "otp": obj["otp"].toString(),
+          "new_pwd": newPass.text,
+        };
 
-    HttpRequest(api: ApiKeys.getSecQue, parameters: forgotParam)
-        .postBody()
-        .then((returnData) {
-      isBtnLoading.value = false;
-      isVerifiedAns.value = false;
-      if (returnData == "No Internet") {
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (returnData == null) {
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      } else {
-        if (returnData["success"] == 'Y') {
-          isVerifiedAns.value = true;
-        } else {
-          CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
-              () {
-            Get.back();
-          });
-        }
-      }
-    });
-  }
-
-  Future<void> onSubmit() async {
-    FocusManager.instance.primaryFocus!.unfocus();
-    Get.toNamed(
-      Routes.otpField,
-      arguments: {
-        "mobile_no": mobileNoParam,
-        "is_forget_vfd_pass": true,
-        "callback": (otp) {
-          CustomDialog().loadingDialog(Get.context!);
-
-          Map<String, dynamic> postParam = {
+        Get.toNamed(
+          Routes.otpField,
+          arguments: {
             "mobile_no": mobileNoParam,
-            "otp": otp.toString(),
-            "new_pwd": newPass.text,
-          };
-          HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
-              .putBody()
-              .then(
-            (retvalue) {
-              Get.back();
-              if (retvalue == "No Internet") {
-                CustomDialog().errorDialog(Get.context!, "Error",
-                    "Please check your internet connection and try again.", () {
-                  Get.back();
-                });
-                return;
-              }
-              if (retvalue == null) {
-                CustomDialog().errorDialog(Get.context!, "Error",
-                    "Error while connecting to server, Please try again.", () {
-                  Get.back();
-                });
-              } else {
-                if (retvalue["success"] == "Y") {
-                  Map<String, dynamic> data = {
-                    "mobile_no": mobileNoParam,
-                    "pwd": newPass.text,
-                  };
-                  final plainText = jsonEncode(data);
+            "req_otp_param": reqParam,
+            "verify_param": putParam,
+            "callback": (otp) async {
+              if (otp != null) {
+                CustomDialog().loadingDialog(Get.context!);
 
-                  Authentication().encryptData(plainText);
-                  Get.offAndToNamed(Routes.forgotPassSuccess);
-                  return;
-                } else {
-                  CustomDialog().errorDialog(
-                    Get.context!,
-                    "Error",
-                    retvalue["msg"],
-                    () {
-                      Get.back();
-                      Get.back();
-                    },
-                  );
-                }
+                Map<String, dynamic> postParam = {
+                  "mobile_no": mobileNoParam.toString(),
+                  "otp": otp.toString(),
+                  "new_pwd": newPass.text,
+                };
+
+                HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
+                    .putBody()
+                    .then(
+                  (retvalue) {
+                    Get.back();
+                    if (retvalue == "No Internet") {
+                      CustomDialog().errorDialog(Get.context!, "Error",
+                          "Please check your internet connection and try again.",
+                          () {
+                        Get.back();
+                      });
+                      return;
+                    }
+                    if (retvalue == null) {
+                      CustomDialog().errorDialog(Get.context!, "Error",
+                          "Error while connecting to server, Please try again.",
+                          () {
+                        Get.back();
+                      });
+                    } else {
+                      if (retvalue["success"] == "Y") {
+                        Map<String, dynamic> data = {
+                          "mobile_no": mobileNoParam,
+                          "pwd": newPass.text,
+                        };
+                        final plainText = jsonEncode(data);
+
+                        Authentication().encryptData(plainText);
+                        Get.toNamed(Routes.forgotPassSuccess);
+                      } else {
+                        CustomDialog().errorDialog(
+                          Get.context!,
+                          "Error",
+                          retvalue["msg"],
+                          () {
+                            Get.back();
+                          },
+                        );
+                      }
+                    }
+                  },
+                );
               }
             },
-          );
-        }
-      },
-    );
+          },
+        );
+      }
+    });
   }
 
   @override

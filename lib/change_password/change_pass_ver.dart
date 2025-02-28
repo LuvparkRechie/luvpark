@@ -62,6 +62,7 @@ class _ChangePasswordVerifiedState extends State<ChangePasswordVerified> {
           Routes.otpField,
           arguments: {
             "mobile_no": paramMobile,
+            "req_otp_param": reqParam,
             "verify_param": putParam,
             "callback": (otp) async {
               if (otp != null) {

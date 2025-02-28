@@ -86,21 +86,8 @@ class RegistrationController extends GetxController
             final plainText = jsonEncode(parameters);
             Authentication().encryptData(plainText);
 
-            Get.toNamed(Routes.otpField, arguments: {
-              "mobile_no": "63${mobileNumber.text.replaceAll(" ", "")}",
-              "new_acct": 'Y',
-              "callback": (otp) async {
-                FocusManager.instance.primaryFocus?.unfocus();
-                CustomDialog().successDialog(
-                    Get.context!,
-                    "Success",
-                    "Your account has been successfully registered.",
-                    "Okay", () {
-                  Get.back();
-                  Get.offAllNamed(Routes.login);
-                });
-              }
-            });
+            requestOtp();
+
             return;
           } else {
             CustomDialog()
@@ -119,6 +106,45 @@ class RegistrationController extends GetxController
         Get.back();
       });
     }
+  }
+
+  Future<void> requestOtp() async {
+    String mobileNo = "63${mobileNumber.text.replaceAll(" ", "")}";
+    Map<String, String> reqParam = {
+      "mobile_no": mobileNo.toString(),
+      "new_pwd": password.text,
+    };
+    Functions().requestOtp(reqParam, (obj) {
+      print(" obj $obj");
+      if (obj["success"] == "Y") {
+        Map<String, String> putParam = {
+          "mobile_no": mobileNo.toString(),
+          "req_type": "NA",
+          "otp": obj["otp"].toString()
+        };
+
+        Get.toNamed(
+          Routes.otpField,
+          arguments: {
+            "mobile_no": mobileNo.toString(),
+            "req_otp_param": reqParam,
+            "verify_param": putParam,
+            "callback": (otp) {
+              if (otp != null) {
+                Map<String, dynamic> data = {
+                  "mobile_no": mobileNo,
+                  "pwd": password.text,
+                };
+                final plainText = jsonEncode(data);
+
+                Authentication().encryptData(plainText);
+                Get.toNamed(Routes.forgotPassSuccess);
+              }
+            }
+          },
+        );
+      }
+    });
   }
 
   void visibilityChanged(bool visible) {

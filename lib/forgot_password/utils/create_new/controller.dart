@@ -83,6 +83,7 @@ class CreateNewPassController extends GetxController {
           Routes.otpField,
           arguments: {
             "mobile_no": mobileNoParam,
+            "req_otp_param": reqParam,
             "is_forget_vfd_pass": true,
             "callback": (otp) {
               if (otp != null) {

@@ -42,10 +42,12 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
           "otp": obj["otp"].toString(),
           "req_type": "SR"
         };
+
         Get.toNamed(
           Routes.otpField,
           arguments: {
             "mobile_no": widget.mobileNo,
+            "req_otp_param": reqParam,
             "verify_param": putParam,
             "callback": (otp) async {
               if (otp != null) {
@@ -58,57 +60,6 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
         );
       }
     });
-    // Get.toNamed(Routes.otpField, arguments: {
-    //   "mobile_no": widget.mobileNo,
-    //   "callback": (otp) async {
-    //     FocusManager.instance.primaryFocus?.unfocus();
-
-    //     CustomDialog().loadingDialog(Get.context!);
-
-    //     final devKey = await Functions().getUniqueDeviceId();
-    //     Map<String, dynamic> postParamRegDev = {
-    //       "user_id": userId,
-    //       "device_key": devKey
-    //     };
-
-    //     final response = await HttpRequest(
-    //             api: ApiKeys.postRegDevice, parameters: postParamRegDev)
-    //         .postBody();
-
-    //     Get.back();
-    //     if (response == "No Internet") {
-    //       CustomDialog().internetErrorDialog(Get.context!, () {
-    //         Get.back();
-    //       });
-    //       return;
-    //     }
-    //     if (response == null) {
-    //       CustomDialog().errorDialog(Get.context!, "Error",
-    //           "Error while connecting to server, Please try again.", () {
-    //         Get.back();
-    //       });
-    //       return;
-    //     }
-    //     if (response["success"] == 'Y') {
-    //       if (args["cb"] == null) {
-    //         CustomDialog().successDialog(
-    //             Get.context!,
-    //             "Success",
-    //             "Device Registered Successfully.\nPlease login to continue",
-    //             "Okay", () {
-    //           Get.offAndToNamed(Routes.login);
-    //         });
-    //       } else {
-    //         args["cb"]();
-    //       }
-    //     } else {
-    //       CustomDialog().errorDialog(Get.context!, "Error", response["msg"],
-    //           () {
-    //         Get.back();
-    //       });
-    //     }
-    //   }
-    // });
   }
 
   Future<void> registerDevice() async {

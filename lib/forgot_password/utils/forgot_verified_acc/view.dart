@@ -80,163 +80,154 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                   ),
 
                                   //IF succcess
-                                  if (controller.isVerifiedAns.value)
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomParagraph(
-                                          text: "New Password",
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.black,
-                                        ),
-                                        CustomTextField(
-                                          title: "Password",
-                                          hintText: "Enter your new password",
-                                          controller: controller.newPass,
-                                          isObscure:
-                                              !controller.isShowNewPass.value,
-                                          suffixIcon:
-                                              !controller.isShowNewPass.value
-                                                  ? Icons.visibility_off
-                                                  : Icons.visibility,
-                                          onChange: (value) {
-                                            controller.onPasswordChanged(value);
-                                          },
-                                          onIconTap: () {
-                                            controller.onToggleNewPass(
-                                                !controller
-                                                    .isShowNewPass.value);
-                                          },
-                                          validator: (txtValue) {
-                                            if (txtValue == null ||
-                                                txtValue.isEmpty) {
-                                              return "Field is required";
-                                            }
-                                            return null;
-                                          },
-                                        ),
-                                        Container(
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: ShapeDecoration(
-                                            shape: RoundedRectangleBorder(
-                                              side: BorderSide(
-                                                width: 1,
-                                                color: Colors.black.withOpacity(
-                                                    0.05999999865889549),
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(16),
+
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomParagraph(
+                                        text: "New Password",
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.black,
+                                      ),
+                                      CustomTextField(
+                                        title: "Password",
+                                        hintText: "Enter your new password",
+                                        controller: controller.newPass,
+                                        isObscure:
+                                            !controller.isShowNewPass.value,
+                                        suffixIcon:
+                                            !controller.isShowNewPass.value
+                                                ? Icons.visibility_off
+                                                : Icons.visibility,
+                                        onChange: (value) {
+                                          controller.onPasswordChanged(value);
+                                        },
+                                        onIconTap: () {
+                                          controller.onToggleNewPass(
+                                              !controller.isShowNewPass.value);
+                                        },
+                                        validator: (txtValue) {
+                                          if (txtValue == null ||
+                                              txtValue.isEmpty) {
+                                            return "Field is required";
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: ShapeDecoration(
+                                          shape: RoundedRectangleBorder(
+                                            side: BorderSide(
+                                              width: 1,
+                                              color: Colors.black.withOpacity(
+                                                  0.05999999865889549),
                                             ),
+                                            borderRadius:
+                                                BorderRadius.circular(16),
                                           ),
-                                          child: Padding(
-                                            padding: const EdgeInsets.fromLTRB(
-                                                12, 15, 11, 18),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const CustomTitle(
-                                                  text: "Password Strength",
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold,
-                                                  letterSpacing: -.1,
-                                                  wordspacing: 2,
-                                                ),
-                                                Container(
-                                                  height: 15,
-                                                ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              12, 15, 11, 18),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              const CustomTitle(
+                                                text: "Password Strength",
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: -.1,
+                                                wordspacing: 2,
+                                              ),
+                                              Container(
+                                                height: 15,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  PasswordStrengthIndicator(
+                                                    strength: 1,
+                                                    currentStrength: controller
+                                                        .passStrength.value,
+                                                  ),
+                                                  Container(
+                                                    width: 5,
+                                                  ),
+                                                  PasswordStrengthIndicator(
+                                                    strength: 2,
+                                                    currentStrength: controller
+                                                        .passStrength.value,
+                                                  ),
+                                                  Container(
+                                                    width: 5,
+                                                  ),
+                                                  PasswordStrengthIndicator(
+                                                    strength: 3,
+                                                    currentStrength: controller
+                                                        .passStrength.value,
+                                                  ),
+                                                  Container(
+                                                    width: 5,
+                                                  ),
+                                                  PasswordStrengthIndicator(
+                                                    strength: 4,
+                                                    currentStrength: controller
+                                                        .passStrength.value,
+                                                  ),
+                                                ],
+                                              ),
+                                              Container(
+                                                height: 15,
+                                              ),
+                                              if (Variables
+                                                      .getPasswordStrengthText(
+                                                          controller
+                                                              .passStrength
+                                                              .value)
+                                                  .isNotEmpty)
                                                 Row(
                                                   children: [
-                                                    PasswordStrengthIndicator(
-                                                      strength: 1,
-                                                      currentStrength:
-                                                          controller
-                                                              .passStrength
-                                                              .value,
+                                                    Icon(
+                                                      Icons.shield_moon,
+                                                      color: Variables
+                                                          .getColorForPasswordStrength(
+                                                              controller
+                                                                  .passStrength
+                                                                  .value),
+                                                      size: 18,
                                                     ),
                                                     Container(
-                                                      width: 5,
+                                                      width: 6,
                                                     ),
-                                                    PasswordStrengthIndicator(
-                                                      strength: 2,
-                                                      currentStrength:
-                                                          controller
-                                                              .passStrength
-                                                              .value,
-                                                    ),
-                                                    Container(
-                                                      width: 5,
-                                                    ),
-                                                    PasswordStrengthIndicator(
-                                                      strength: 3,
-                                                      currentStrength:
-                                                          controller
-                                                              .passStrength
-                                                              .value,
-                                                    ),
-                                                    Container(
-                                                      width: 5,
-                                                    ),
-                                                    PasswordStrengthIndicator(
-                                                      strength: 4,
-                                                      currentStrength:
-                                                          controller
-                                                              .passStrength
-                                                              .value,
+                                                    CustomParagraph(
+                                                      text: Variables
+                                                          .getPasswordStrengthText(
+                                                              controller
+                                                                  .passStrength
+                                                                  .value),
+                                                      color: Variables
+                                                          .getColorForPasswordStrength(
+                                                              controller
+                                                                  .passStrength
+                                                                  .value),
                                                     ),
                                                   ],
                                                 ),
-                                                Container(
-                                                  height: 15,
-                                                ),
-                                                if (Variables
-                                                        .getPasswordStrengthText(
-                                                            controller
-                                                                .passStrength
-                                                                .value)
-                                                    .isNotEmpty)
-                                                  Row(
-                                                    children: [
-                                                      Icon(
-                                                        Icons.shield_moon,
-                                                        color: Variables
-                                                            .getColorForPasswordStrength(
-                                                                controller
-                                                                    .passStrength
-                                                                    .value),
-                                                        size: 18,
-                                                      ),
-                                                      Container(
-                                                        width: 6,
-                                                      ),
-                                                      CustomParagraph(
-                                                        text: Variables
-                                                            .getPasswordStrengthText(
-                                                                controller
-                                                                    .passStrength
-                                                                    .value),
-                                                        color: Variables
-                                                            .getColorForPasswordStrength(
-                                                                controller
-                                                                    .passStrength
-                                                                    .value),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                Container(
-                                                  height: 10,
-                                                ),
-                                                const CustomParagraph(
-                                                  text:
-                                                      "The password should have a minimum of 8 characters, including at least one uppercase letter and a number.",
-                                                ),
-                                              ],
-                                            ),
+                                              Container(
+                                                height: 10,
+                                              ),
+                                              const CustomParagraph(
+                                                text:
+                                                    "The password should have a minimum of 8 characters, including at least one uppercase letter and a number.",
+                                              ),
+                                            ],
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
+                                  ),
 
                                   const VerticalHeight(height: 30),
                                   CustomButton(
@@ -250,15 +241,7 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                         if (controller.formKeyForgotVerifiedAcc
                                             .currentState!
                                             .validate()) {
-                                          if (controller.isVerifiedAns.value) {
-                                            if (controller.passStrength.value ==
-                                                4) {
-                                              controller.onSubmit();
-                                              return;
-                                            }
-                                          } else {
-                                            controller.onVerify();
-                                          }
+                                          controller.secRequestOtp();
                                         }
                                       })
                                 ],

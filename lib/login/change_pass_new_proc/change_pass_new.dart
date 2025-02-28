@@ -13,6 +13,7 @@ import '../../custom_widgets/custom_textfield.dart';
 import '../../custom_widgets/password_indicator.dart';
 import '../../custom_widgets/variables.dart';
 import '../../custom_widgets/vertical_height.dart';
+import '../../functions/functions.dart';
 import '../../http/api_keys.dart';
 import '../../http/http_request.dart';
 import '../../routes/routes.dart';
@@ -86,82 +87,102 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
       return;
     }
 
-    Get.toNamed(
-      Routes.otpField,
-      arguments: {
-        "mobile_no": widget.mobileNo,
-        "is_forget_vfd_pass": true,
-        "callback": (otp) {
-          Get.back();
+    Map<String, String> reqParam = {
+      "mobile_no": widget.mobileNo.toString(),
+      "req_type": "SR",
+    };
+    Functions().requestOtp(reqParam, (obj) {
+      if (obj["success"] == "Y") {
+        Map<String, String> putParam = {
+          "mobile_no": widget.mobileNo.toString(),
+          "otp": obj["otp"].toString(),
+          "req_type": "SR"
+        };
 
-          CustomDialog().loadingDialog(Get.context!);
-
-          Map<String, dynamic> postParam = {
+        Get.toNamed(
+          Routes.otpField,
+          arguments: {
             "mobile_no": widget.mobileNo,
-            "otp": otp.toString(),
-            "new_pwd": newPassword.text,
-          };
+            "req_otp_param": reqParam,
+            "verify_param": putParam,
+            "is_forget_vfd_pass": true,
+            "callback": (otp) async {
+              if (otp != null) {
+                CustomDialog().loadingDialog(Get.context!);
 
-          HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
-              .putBody()
-              .then(
-            (retvalue) async {
-              Get.back();
-              if (retvalue == "No Internet") {
-                CustomDialog().errorDialog(Get.context!, "Error",
-                    "Please check your internet connection and try again.", () {
-                  Get.back();
-                });
-                return;
-              }
-              if (retvalue == null) {
-                CustomDialog().errorDialog(Get.context!, "Error",
-                    "Error while connecting to server, Please try again.", () {
-                  Get.back();
-                });
-              } else {
-                if (retvalue["success"] == "Y") {
-                  Get.back();
-                  CustomDialog().successDialog(
-                      Get.context!, "Success", retvalue["msg"], "Okay",
-                      () async {
+                Map<String, dynamic> postParam = {
+                  "mobile_no": widget.mobileNo,
+                  "otp": otp.toString(),
+                  "new_pwd": newPassword.text,
+                };
+
+                HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
+                    .putBody()
+                    .then(
+                  (retvalue) async {
                     Get.back();
-                    CustomDialog().loadingDialog(Get.context!);
-                    await Future.delayed(const Duration(seconds: 1));
-                    final userLogin = await Authentication().getUserLogin();
-                    if (userLogin == null) {
-                      Get.back();
-                      Get.offAllNamed(Routes.login);
+                    if (retvalue == "No Internet") {
+                      CustomDialog().errorDialog(Get.context!, "Error",
+                          "Please check your internet connection and try again.",
+                          () {
+                        Get.back();
+                      });
                       return;
                     }
+                    if (retvalue == null) {
+                      CustomDialog().errorDialog(Get.context!, "Error",
+                          "Error while connecting to server, Please try again.",
+                          () {
+                        Get.back();
+                      });
+                    } else {
+                      if (retvalue["success"] == "Y") {
+                        Get.back();
+                        CustomDialog().successDialog(
+                            Get.context!, "Success", retvalue["msg"], "Okay",
+                            () async {
+                          Get.back();
+                          CustomDialog().loadingDialog(Get.context!);
+                          await Future.delayed(const Duration(seconds: 1));
+                          final userLogin =
+                              await Authentication().getUserLogin();
+                          if (userLogin == null) {
+                            Get.back();
+                            Get.offAllNamed(Routes.login);
+                            return;
+                          }
 
-                    List userData = [userLogin];
-                    userData = userData.map((e) {
-                      e["is_login"] = "N";
-                      return e;
-                    }).toList();
+                          List userData = [userLogin];
+                          userData = userData.map((e) {
+                            e["is_login"] = "N";
+                            return e;
+                          }).toList();
 
-                    await Authentication().setLogin(jsonEncode(userData[0]));
-                    await Authentication().setBiometricStatus(false);
-                    Get.back();
-                    Get.offAllNamed(Routes.login);
-                  });
-                } else {
-                  CustomDialog().errorDialog(
-                    Get.context!,
-                    "Error",
-                    retvalue["msg"],
-                    () {
-                      Get.back();
-                    },
-                  );
-                }
+                          await Authentication()
+                              .setLogin(jsonEncode(userData[0]));
+                          await Authentication().setBiometricStatus(false);
+                          Get.back();
+                          Get.offAllNamed(Routes.login);
+                        });
+                      } else {
+                        CustomDialog().errorDialog(
+                          Get.context!,
+                          "Error",
+                          retvalue["msg"],
+                          () {
+                            Get.back();
+                          },
+                        );
+                      }
+                    }
+                  },
+                );
               }
             },
-          );
-        }
-      },
-    );
+          },
+        );
+      }
+    });
   }
 
   @override

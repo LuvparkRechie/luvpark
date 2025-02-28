@@ -121,6 +121,13 @@ class Variables {
     return result;
   }
 
+  // static String replaceNonNumbers(String input) {
+  //   String inpValue = input;
+  //   if(input.contains("."))
+
+  //   return input.replaceAll(RegExp(r'[^0-9]'), '');
+  // }
+
   static ByteBuffer concatBuffers(Uint8List buffer1, Uint8List buffer2) {
     final tmp = Uint8List(buffer1.length + buffer2.length);
     tmp.setAll(0, buffer1);
