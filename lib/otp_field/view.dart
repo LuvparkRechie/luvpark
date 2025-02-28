@@ -211,7 +211,6 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
       HttpRequest(api: ApiKeys.putVerifyOtp, parameters: putVerifyParam)
           .putBody()
           .then((returnData) async {
-        print("returnData $returnData");
         if (returnData == "No Internet") {
           Get.back();
 

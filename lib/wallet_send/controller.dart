@@ -73,11 +73,9 @@ class WalletSendController extends GetxController {
   Future<void> checkAndRequestPermissions() async {
     var status = await Permission.contacts.status;
     if (status.isGranted) {
-      print("Permission Granted");
     } else if (status.isDenied) {
       var result = await Permission.contacts.request();
       if (result.isGranted) {
-        print("Permission Granted after request");
       } else if (result.isPermanentlyDenied) {
         _showPermissionDeniedDialog();
       }

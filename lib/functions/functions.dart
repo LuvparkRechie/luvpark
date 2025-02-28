@@ -883,12 +883,10 @@ class Functions {
 
   Future<void> requestOtp(Map<String, String> param, Function cb) async {
     CustomDialog().loadingDialog(Get.context!);
-    print("reqquest param $param");
 
     HttpRequest(api: ApiKeys.postGenerateOtp, parameters: param)
         .postBody()
         .then((returnData) async {
-      print("requestOtp return $returnData");
       Get.back();
       if (returnData == "No Internet") {
         cb(returnData);
@@ -995,6 +993,43 @@ class Functions {
         } else {
           CustomDialog().errorDialog(Get.context!, "luvpark",
               "Make sure that you've entered the correct phone number.", () {
+            Get.back();
+          });
+          return;
+        }
+      }
+    });
+  }
+
+  void verifyAccount(String mobileNo, Function cb) async {
+    CustomDialog().loadingDialog(Get.context!);
+    var params = "${ApiKeys.verifyUserAccount}?mobile_no=$mobileNo";
+
+    HttpRequest(
+      api: params,
+    ).get().then((objData) async {
+      Get.back();
+      if (objData == "No Internet") {
+        cb({"success": false, "data": {}});
+        CustomDialog().internetErrorDialog(Get.context!, () {
+          Get.back();
+        });
+
+        return;
+      }
+      if (objData == null) {
+        cb({"success": false, "data": {}});
+        CustomDialog().serverErrorDialog(Get.context!, () {
+          Get.back();
+        });
+        return;
+      } else {
+        if (objData["items"][0]["msg"] == "Success") {
+          cb({"success": true, "data": objData["items"]});
+        } else {
+          cb({"success": false, "data": {}});
+          CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
+              () {
             Get.back();
           });
           return;

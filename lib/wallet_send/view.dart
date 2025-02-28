@@ -417,7 +417,7 @@ class _UsersBottomsheetState extends State<UsersBottomsheet> {
       Contact? selectedContact = await ct.contactPicker.selectContact();
       if (selectedContact != null) {
         ct.contact.value = selectedContact;
-        print("Selected contact: ${ct.contact.value.toString()}");
+
         if (ct.contact.value != null) {
           String contactString = ct.contact.value.toString();
           String mobileNumber =
@@ -622,10 +622,16 @@ class ConfirmPassword extends StatefulWidget {
 
 class _ConfirmPasswordState extends State<ConfirmPassword> {
   final GlobalKey<FormState> confirmFormKey = GlobalKey<FormState>();
+  bool isShowPass = false;
   @override
   void initState() {
     controller.myPass = TextEditingController();
     super.initState();
+  }
+
+  void visibilityChanged(bool visible) {
+    isShowPass = visible;
+    setState(() {});
   }
 
   final controller = Get.put(WalletSendController());
@@ -651,6 +657,11 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
             CustomTextField(
               hintText: "Enter your password",
               controller: controller.myPass,
+              isObscure: isShowPass,
+              suffixIcon: !isShowPass ? Icons.visibility_off : Icons.visibility,
+              onIconTap: () {
+                visibilityChanged(!isShowPass);
+              },
               validator: (d) {
                 if (d == null || d.isEmpty) {
                   return "Password is required";
@@ -682,7 +693,6 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                           "req_otp_param": requestParam,
                           "verify_param": putParam,
                           "callback": (otp) async {
-                            print("return field $otp");
                             if (otp != null) {
                               controller.shareToken();
                             }

@@ -53,7 +53,6 @@ class LoginScreenController extends GetxController {
     HttpRequest(api: ApiKeys.postLogin, parameters: param)
         .postBody()
         .then((returnPost) async {
-      print("returnPost login $returnPost");
       if (returnPost == "No Internet") {
         CustomDialog().internetErrorDialog(context, () {
           Get.back();
@@ -88,18 +87,44 @@ class LoginScreenController extends GetxController {
             Get.back();
           }, () {
             Get.back();
-            Get.toNamed(Routes.otpField, arguments: {
-              "mobile_no": param["mobile_no"],
-              "new_acct": 'Y',
-              "callback": (otp) async {
-                FocusManager.instance.primaryFocus?.unfocus();
-                CustomDialog().successDialog(
-                  Get.context!,
-                  "Congratulations!",
-                  "Your account has been activated.\nContinue to log in",
-                  "Okay",
-                  () {
-                    Get.offAllNamed(Routes.login);
+            String mobileNo = param["mobile_no"].toString();
+            Map<String, String> reqParam = {
+              "mobile_no": mobileNo,
+              "new_pwd": password.text,
+            };
+            Functions().requestOtp(reqParam, (obj) {
+              if (obj["success"] == "Y") {
+                Map<String, String> putParam = {
+                  "mobile_no": mobileNo.toString(),
+                  "req_type": "NA",
+                  "otp": obj["otp"].toString()
+                };
+
+                Get.toNamed(
+                  Routes.otpField,
+                  arguments: {
+                    "mobile_no": mobileNo.toString(),
+                    "req_otp_param": reqParam,
+                    "verify_param": putParam,
+                    "callback": (otp) {
+                      if (otp != null) {
+                        Map<String, dynamic> data = {
+                          "mobile_no": mobileNo,
+                          "pwd": password.text,
+                        };
+                        final plainText = jsonEncode(data);
+
+                        Authentication().encryptData(plainText);
+                        CustomDialog().successDialog(
+                            context,
+                            "Activate Account",
+                            "Your account has been successfully activated! 🎉 You can now enjoy full access to all features.",
+                            "Okay", () {
+                          Get.back();
+                          Get.back();
+                        });
+                      }
+                    }
                   },
                 );
               }
@@ -107,7 +132,7 @@ class LoginScreenController extends GetxController {
           });
           return;
         }
-        //lock account
+
         if (returnPost["login_attempt"] != null &&
             returnPost["login_attempt"] >= 5) {
           List mapData = [returnPost];
@@ -140,16 +165,13 @@ class LoginScreenController extends GetxController {
                   Get.back();
                 }, () {
                   Get.back();
-
-                  Functions.logoutUser(
-                      uData == null
-                          ? returnPost["session_id"].toString()
-                          : uData["session_id"].toString(), (isSuccess) async {
-                    if (isSuccess["is_true"]) {
+                  Functions().verifyAccount(param["mobile_no"], (data) {
+                    if (data["success"]) {
                       Get.to(
                           DeviceRegScreen(
                             mobileNo: param["mobile_no"].toString(),
-                            userId: isSuccess["data"].toString(),
+                            userId: data["data"][0]["user_id"].toString(),
+                            sessionId: returnPost["session_id"].toString(),
                           ),
                           arguments: {
                             "data": returnPost,
@@ -237,14 +259,9 @@ class LoginScreenController extends GetxController {
           CustomDialog().confirmationDialog(
               context,
               "Password Expired",
-              "For security reasons, your password has expired. Please update your password to continue.",
-              "Update",
-              "Later", () {
-            Get.back();
-            Get.toNamed(Routes.createNewPass,
-                arguments:
-                    "63${mobileNumber.text.toString().replaceAll(" ", "")}");
-          }, () {
+              "For security reasons, your password has expired. Update your password to continue.",
+              "Waive",
+              "Update", () {
             Get.back();
             extendPassword((isTrue) {
               if (isTrue) {
@@ -253,6 +270,10 @@ class LoginScreenController extends GetxController {
                 });
               }
             });
+          }, () {
+            Get.back();
+            String mobileNo = param["mobile_no"].toString();
+            Get.toNamed(Routes.createNewPass, arguments: mobileNo);
           });
           return;
         }
@@ -286,10 +307,10 @@ class LoginScreenController extends GetxController {
       return;
     }
     if (response["success"] == "Y") {
-      cb(true);
       CustomDialog()
           .successDialog(Get.context!, "Success", response["msg"], "Okay", () {
         Get.back();
+        cb(true);
       });
       return;
     } else {

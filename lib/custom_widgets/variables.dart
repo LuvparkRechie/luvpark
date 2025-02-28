@@ -737,9 +737,12 @@ class Variables {
   static snackbarDynamicDialog(String msg, {context}) {
     ScaffoldMessenger.of(context == null ? Get.context! : context).showSnackBar(
       SnackBar(
-        margin: EdgeInsets.symmetric(
-          horizontal: 20.0,
-          vertical: MediaQuery.of(Get.context!).size.width * 0.27,
+        margin: EdgeInsets.only(
+          // horizontal: 20.0,
+          // vertical: MediaQuery.of(Get.context!).size.width * 0.27,
+          bottom: 20, // 20px from the bottom
+          left: 20, // Optional left padding
+          right: 20, // Optional right padding
         ),
         elevation: 5.0,
         behavior: SnackBarBehavior.floating,

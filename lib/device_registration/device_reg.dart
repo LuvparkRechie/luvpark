@@ -5,6 +5,7 @@ import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
 
+import '../auth/authentication.dart';
 import '../custom_widgets/alert_dialog.dart';
 import '../custom_widgets/app_color.dart';
 import '../functions/functions.dart';
@@ -15,7 +16,9 @@ import '../routes/routes.dart';
 class DeviceRegScreen extends StatefulWidget {
   final String mobileNo;
   final String? userId;
-  const DeviceRegScreen({super.key, required this.mobileNo, this.userId});
+  final String? sessionId;
+  const DeviceRegScreen(
+      {super.key, required this.mobileNo, this.userId, this.sessionId});
 
   @override
   State<DeviceRegScreen> createState() => _DeviceRegScreenState();
@@ -50,8 +53,16 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
             "req_otp_param": reqParam,
             "verify_param": putParam,
             "callback": (otp) async {
+              final uData = await Authentication().getUserData2();
               if (otp != null) {
-                registerDevice();
+                Functions.logoutUser(
+                    uData == null
+                        ? widget.sessionId.toString()
+                        : uData["session_id"].toString(), (isSuccess) async {
+                  if (isSuccess["is_true"]) {
+                    registerDevice();
+                  }
+                });
               } else {
                 isVerifiedOtp = false;
               }
@@ -63,8 +74,9 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
   }
 
   Future<void> registerDevice() async {
-    final userId =
-        widget.userId == null ? args["data"]["user_id"] : widget.userId;
+    final userId = widget.userId == null
+        ? args["data"]["user_id"]
+        : widget.userId.toString();
 
     isVerifiedOtp = true;
     FocusManager.instance.primaryFocus?.unfocus();
@@ -72,19 +84,17 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
     CustomDialog().loadingDialog(Get.context!);
 
     final devKey = await Functions().getUniqueDeviceId();
-    Map<String, dynamic> postParamRegDev = {
-      "user_id": userId,
-      "device_key": devKey
+    Map<String, String> postParamRegDev = {
+      "user_id": userId.toString(),
+      "device_key": devKey.toString()
     };
-
-    print("register device $postParamRegDev");
 
     final response = await HttpRequest(
             api: ApiKeys.postRegDevice, parameters: postParamRegDev)
         .postBody();
 
-    print("register response $response");
     Get.back();
+
     if (response == "No Internet") {
       CustomDialog().internetErrorDialog(Get.context!, () {
         Get.back();

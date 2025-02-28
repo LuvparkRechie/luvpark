@@ -54,7 +54,6 @@ void sessionTimeOut(context) async {
 }
 
 void _onUserActivity() async {
-  return;
   bool? tmrStat = await Authentication().getTimerStatus();
   if (!tmrStat!) {
     Variables.inactiveTmr?.cancel();

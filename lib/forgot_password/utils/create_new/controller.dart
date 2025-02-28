@@ -76,8 +76,8 @@ class CreateNewPassController extends GetxController {
       "mobile_no": mobileNoParam.toString(),
       "new_pwd": newPass.text,
     };
+
     Functions().requestOtp(reqParam, (obj) {
-      print(" obj $obj");
       if (obj["success"] == "Y") {
         Get.toNamed(
           Routes.otpField,
@@ -95,7 +95,6 @@ class CreateNewPassController extends GetxController {
                   "otp": otp.toString(),
                   "new_pwd": newPass.text,
                 };
-                print("postParam $postParam");
 
                 HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
                     .putBody()

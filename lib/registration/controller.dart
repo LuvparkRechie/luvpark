@@ -115,7 +115,6 @@ class RegistrationController extends GetxController
       "new_pwd": password.text,
     };
     Functions().requestOtp(reqParam, (obj) {
-      print(" obj $obj");
       if (obj["success"] == "Y") {
         Map<String, String> putParam = {
           "mobile_no": mobileNo.toString(),

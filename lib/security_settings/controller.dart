@@ -204,7 +204,6 @@ class SecuritySettingsController extends GetxController {
       if (objData["success"]) {
         if (objData["data"]["is_verified"] == "Y") {
           Functions().getSecQdata(data["mobile_no"], (cbData) {
-            print("mobile_no ${data["mobile_no"]}");
             if (cbData != null) {
               Get.to(
                 ChangePasswordVerified(),

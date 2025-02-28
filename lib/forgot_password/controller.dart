@@ -36,7 +36,6 @@ class ForgotPasswordController extends GetxController {
       if (objData["success"]) {
         if (objData["data"]["is_verified"] == "Y") {
           Functions().getSecQdata(mobileNo, (cbData) {
-            print("mobile_no $mobileNo");
             if (cbData != null) {
               Get.toNamed(Routes.forgotVerifiedAcct, arguments: mobileNo);
             }
@@ -46,45 +45,6 @@ class ForgotPasswordController extends GetxController {
         }
       }
     });
-    // CustomDialog().loadingDialog(Get.context!);
-    // HttpRequest(
-    //         api:
-    //             "${ApiKeys.getAcctStatus}?mobile_no=63${mobileNumber.text.toString().replaceAll(" ", "")}")
-    //     .get()
-    //     .then((objData) {
-    //   Get.back();
-    //   if (objData == "No Internet") {
-    //     CustomDialog().internetErrorDialog(Get.context!, () {
-    //       Get.back();
-    //     });
-    //     return;
-    //   }
-    //   if (objData == null) {
-    //     CustomDialog().serverErrorDialog(Get.context!, () {
-    //       Get.back();
-    //     });
-    //     return;
-    //   } else {
-    //     if (objData["success"] == "Y") {
-    //       print("is verired ${objData["is_verified"]}");
-    //       if (objData["is_verified"] == "Y") {
-    //         Get.toNamed(Routes.forgotVerifiedAcct,
-    //             arguments:
-    //                 "63${mobileNumber.text.toString().replaceAll(" ", "")}");
-    //       } else {
-    //         Get.toNamed(Routes.createNewPass,
-    //             arguments:
-    //                 "63${mobileNumber.text.toString().replaceAll(" ", "")}");
-    //       }
-    //     } else {
-    //       isLoading.value = false;
-    //       CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
-    //           () {
-    //         Get.back();
-    //       });
-    //     }
-    //   }
-    // });
   }
 
   @override
