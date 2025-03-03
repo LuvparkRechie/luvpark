@@ -13,7 +13,7 @@ import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/custom_widgets/vertical_height.dart';
 import 'package:luvpark/registration/controller.dart';
 import 'package:luvpark/routes/routes.dart';
-
+import 'package:iconsax/iconsax.dart';
 import '../custom_widgets/app_color.dart';
 
 class RegistrationPage extends GetView<RegistrationController> {
@@ -26,15 +26,15 @@ class RegistrationPage extends GetView<RegistrationController> {
       child: Scaffold(
           backgroundColor: AppColor.bodyColor,
           appBar: AppBar(
-            leading: null,
-            elevation: 0,
-            toolbarHeight: 0,
+            elevation: 1,
             backgroundColor: AppColor.primaryColor,
             systemOverlayStyle: SystemUiOverlayStyle(
               statusBarColor: AppColor.primaryColor,
               statusBarBrightness: Brightness.dark,
               statusBarIconBrightness: Brightness.light,
             ),
+            title: Text("Create Account"),
+            centerTitle: true,
           ),
           body: Container(
             color: AppColor.primaryColor,
@@ -57,11 +57,6 @@ class RegistrationPage extends GetView<RegistrationController> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               const SizedBox(height: 20),
-                              CustomTitle(
-                                text: "Create Account",
-                                fontSize: 20,
-                              ),
-                              Container(height: 10),
                               const CustomParagraph(
                                 textAlign: TextAlign.start,
                                 text:
