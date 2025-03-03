@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/wallet/controller.dart';
@@ -16,7 +15,6 @@ import 'package:shimmer/shimmer.dart';
 
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
-import '../wallet_ui/wallet_ui.dart';
 import 'utils/transaction_history/index.dart';
 
 class WalletScreen extends GetView<WalletController> {

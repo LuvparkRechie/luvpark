@@ -793,10 +793,11 @@ class Functions {
       "dt_out": formattedDt,
       "session_id": sessionId
     };
-
+    print("putLogoutParam $putLogoutParam");
     final response =
         await HttpRequest(api: ApiKeys.putLogout, parameters: putLogoutParam)
             .putBody();
+    print("response $response");
     Get.back();
     if (response == "No Internet") {
       cb({"is_true": false, "data": 0});

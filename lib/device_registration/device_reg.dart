@@ -30,6 +30,7 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
 
   @override
   void initState() {
+    print("widget.sessionId ${widget.sessionId}");
     super.initState();
   }
 
@@ -55,6 +56,10 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
             "callback": (otp) async {
               final uData = await Authentication().getUserData2();
               if (otp != null) {
+                if (widget.sessionId == null) {
+                  registerDevice();
+                  return;
+                }
                 Functions.logoutUser(
                     uData == null
                         ? widget.sessionId.toString()

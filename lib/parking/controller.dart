@@ -165,7 +165,7 @@ class ParkingController extends GetxController
       'plateNo': data["vehicle_plate_no"],
       'hours': data["no_hours"].toString(),
       'amount': data["amount"].toString(),
-      // 'refno': data["ticket_ref_no"].toString(),
+      'refno': data["ticket_ref_no"].toString(),
       'lat': double.parse(data["latitude"].toString()),
       'long': double.parse(data["longitude"].toString()),
       'canReserved': true,

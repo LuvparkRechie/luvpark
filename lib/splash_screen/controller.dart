@@ -107,7 +107,7 @@ class SplashController extends GetxController
           });
         } else {
           Timer(const Duration(seconds: 3), () {
-            Get.offAndToNamed(Routes.onboarding);
+            Get.offAllNamed(Routes.login);
           });
         }
       } else {

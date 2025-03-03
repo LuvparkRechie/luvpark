@@ -25,7 +25,7 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
         ),
-        title: Text("Change Password"),
+        title: Text("Create Password"),
         centerTitle: true,
         leading: GestureDetector(
           onTap: () {
@@ -53,11 +53,6 @@ class CreateNewPassword extends GetView<CreateNewPassController> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(height: 20),
-                      CustomTitle(
-                        text: "Create a new password",
-                        fontSize: 20,
-                      ),
-                      Container(height: 10),
                       CustomParagraph(
                         text:
                             "Your new password must be different from previous used passwords.",

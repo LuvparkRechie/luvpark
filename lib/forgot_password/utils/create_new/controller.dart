@@ -71,13 +71,12 @@ class CreateNewPassController extends GetxController {
   }
 
   Future<void> requestOtp() async {
-    DateTime timeNow = await Functions.getTimeNow();
     Map<String, String> reqParam = {
       "mobile_no": mobileNoParam.toString(),
       "new_pwd": newPass.text,
     };
 
-    Functions().requestOtp(reqParam, (obj) {
+    Functions().requestOtp(reqParam, (obj) async {
       if (obj["success"] == "Y") {
         Get.toNamed(
           Routes.otpField,
@@ -143,6 +142,7 @@ class CreateNewPassController extends GetxController {
           },
         );
       } else {
+        DateTime timeNow = await Functions.getTimeNow();
         DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
             .parse(obj["otp_exp_dt"].toString());
 

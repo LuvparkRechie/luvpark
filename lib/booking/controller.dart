@@ -738,6 +738,7 @@ class BookingController extends GetxController
     };
 
     Get.back();
+
     DateTime eet = now.add(Duration(minutes: areaEtaTime));
     DateTime ddEet = eet.subtract(Duration(minutes: 4));
     var ddd = Variables.timeFormatter("${eet.hour}:${eet.minute}");

@@ -122,7 +122,7 @@ class RegistrationController extends GetxController
           "otp": obj["otp"].toString()
         };
 
-        Get.toNamed(
+        Get.offNamed(
           Routes.otpField,
           arguments: {
             "mobile_no": mobileNo.toString(),
@@ -137,7 +137,7 @@ class RegistrationController extends GetxController
                 final plainText = jsonEncode(data);
 
                 Authentication().encryptData(plainText);
-                Get.toNamed(Routes.forgotPassSuccess);
+                Get.offAllNamed(Routes.forgotPassSuccess);
               }
             }
           },

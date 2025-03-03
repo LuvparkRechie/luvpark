@@ -13,7 +13,7 @@ import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/custom_widgets/vertical_height.dart';
 import 'package:luvpark/registration/controller.dart';
 import 'package:luvpark/routes/routes.dart';
-import 'package:iconsax/iconsax.dart';
+
 import '../custom_widgets/app_color.dart';
 
 class RegistrationPage extends GetView<RegistrationController> {
@@ -228,63 +228,61 @@ class RegistrationPage extends GetView<RegistrationController> {
                                 ),
                               ),
                               const SizedBox(height: 30.0),
-                              if (MediaQuery.of(context).viewInsets.bottom == 0)
-                                CustomElevatedButton(
-                                  text: "Create Account",
-                                  btnwidth: double.infinity,
-                                  btnColor: AppColor.primaryColor,
-                                  textColor: Colors.white,
-                                  onPressed: () {
-                                    FocusScope.of(Get.context!)
-                                        .requestFocus(FocusNode());
-                                    if (controller.formKeyRegister.currentState!
-                                        .validate()) {
-                                      if (Variables.getPasswordStrengthText(
-                                              controller.passStrength.value) !=
-                                          "Strong Password") {
-                                        CustomDialog().infoDialog(
-                                            "Invalid Password",
-                                            "For enhanced security, please create a stronger password.",
-                                            () {
-                                          Get.back();
-                                        });
-                                        return;
-                                      }
-                                      controller.onSubmit();
+                              CustomElevatedButton(
+                                text: "Create Account",
+                                btnwidth: double.infinity,
+                                btnColor: AppColor.primaryColor,
+                                textColor: Colors.white,
+                                onPressed: () {
+                                  FocusScope.of(Get.context!)
+                                      .requestFocus(FocusNode());
+                                  if (controller.formKeyRegister.currentState!
+                                      .validate()) {
+                                    if (Variables.getPasswordStrengthText(
+                                            controller.passStrength.value) !=
+                                        "Strong Password") {
+                                      CustomDialog().infoDialog(
+                                          "Invalid Password",
+                                          "For enhanced security, please create a stronger password.",
+                                          () {
+                                        Get.back();
+                                      });
+                                      return;
                                     }
-                                  },
-                                ),
+                                    controller.onSubmit();
+                                  }
+                                },
+                              ),
                               Container(
                                 height: 30,
                               ),
-                              if (MediaQuery.of(context).viewInsets.bottom == 0)
-                                Center(
-                                  child: Text.rich(
-                                    TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: "Already a luvpark user? ",
-                                          style: paragraphStyle(
-                                              color: Colors.black,
-                                              fontWeight: FontWeight.w500),
+                              Center(
+                                child: Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: "Already a luvpark user? ",
+                                        style: paragraphStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      TextSpan(
+                                        text: 'Login',
+                                        style: paragraphStyle(
+                                          color: AppColor.primaryColor,
+                                          fontWeight: FontWeight.w700,
                                         ),
-                                        TextSpan(
-                                          text: 'Login',
-                                          style: paragraphStyle(
-                                            color: AppColor.primaryColor,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          recognizer: TapGestureRecognizer()
-                                            ..onTap = () async {
-                                              Get.offAllNamed(Routes.login);
-                                            },
-                                        ),
-                                      ],
-                                    ),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
+                                        recognizer: TapGestureRecognizer()
+                                          ..onTap = () async {
+                                            Get.offAllNamed(Routes.login);
+                                          },
+                                      ),
+                                    ],
                                   ),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                 ),
+                              ),
                               Container(
                                 height: 30,
                               ),

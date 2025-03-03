@@ -75,17 +75,16 @@ class ForgotPassword extends GetView<ForgotPasswordController> {
                       },
                     ),
                     const VerticalHeight(height: 30),
-                    if (MediaQuery.of(context).viewInsets.bottom == 0)
-                      CustomButton(
-                        text: "Submit",
-                        onPressed: () async {
-                          FocusScope.of(context).requestFocus(FocusNode());
-                          if (controller.formKeyForgotPass.currentState!
-                              .validate()) {
-                            controller.verifyMobile();
-                          }
-                        },
-                      ),
+                    CustomButton(
+                      text: "Submit",
+                      onPressed: () async {
+                        FocusScope.of(context).requestFocus(FocusNode());
+                        if (controller.formKeyForgotPass.currentState!
+                            .validate()) {
+                          controller.verifyMobile();
+                        }
+                      },
+                    ),
                   ],
                 ),
               ),

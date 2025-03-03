@@ -62,9 +62,7 @@ class OnboardingController extends GetxController {
 
         break;
       case 2:
-        Get.offAndToNamed(
-          Routes.login,
-        );
+        Get.offAllNamed(Routes.login);
         break;
     }
   }
