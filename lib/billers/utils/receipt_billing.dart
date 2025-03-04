@@ -34,6 +34,7 @@ class _TicketUIState extends State<TicketUI> {
   Map<String, String> param2 = Get.arguments["receipt_data"];
   String billId = Get.arguments["biller_id"];
   String accountNo = Get.arguments["account_no"];
+  String nickName = Get.arguments["nick_name"];
   String dateNow = "Loading...";
   List<Widget> receiptBody = [];
 
@@ -121,6 +122,7 @@ class _TicketUIState extends State<TicketUI> {
                       bordercolor: AppColor.bodyColor,
                       text: "Back to Billers",
                       onPressed: () {
+                        Get.back();
                         Get.back();
                         Get.back();
                       }),
@@ -267,7 +269,9 @@ class _TicketUIState extends State<TicketUI> {
                   bordercolor: AppColor.bodyColor,
                   text: "Add to Favorites",
                   onPressed: () {
-                    controller.addFavorites(param2, billId, accountNo);
+                    controller.addFavorites(
+                        param2, billId, accountNo, nickName);
+                    print("nickNamenickName $nickName");
                   })),
         ),
         Visibility(

@@ -18,7 +18,7 @@ class AddFavoritesWidget extends GetView<BillersController> {
 
   @override
   Widget build(BuildContext context) {
-    final accountName = TextEditingController();
+    final nickName = TextEditingController();
     final accountNo = TextEditingController();
     final args = Get.arguments;
     return Scaffold(
@@ -78,8 +78,19 @@ class AddFavoritesWidget extends GetView<BillersController> {
                   hintText: "Enter Account Number",
                   inputFormatters: <TextInputFormatter>[
                     LengthLimitingTextInputFormatter(15),
-                    FilteringTextInputFormatter.digitsOnly,
-                    FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$')),
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      final String newText =
+                          newValue.text.replaceAll(RegExp(r'[^0-9-]'), '');
+                      if (newText != oldValue.text) {
+                        return TextEditingValue(
+                          text: newText,
+                          selection:
+                              TextSelection.collapsed(offset: newText.length),
+                        );
+                      }
+
+                      return oldValue;
+                    }),
                   ],
                   keyboardType: Platform.isAndroid
                       ? TextInputType.numberWithOptions(decimal: true)
@@ -98,14 +109,14 @@ class AddFavoritesWidget extends GetView<BillersController> {
                 ),
                 SizedBox(height: 10),
                 CustomParagraph(
-                  text: "Account Name",
+                  text: "Nickname",
                   fontSize: 13,
                   fontWeight: FontWeight.w500,
                   color: Colors.black,
                 ),
                 CustomTextField(
-                  controller: accountName,
-                  hintText: "Enter Account Name",
+                  controller: nickName,
+                  hintText: "Enter Nickname",
                   inputFormatters: [
                     LengthLimitingTextInputFormatter(30),
                     FilteringTextInputFormatter.allow(RegExp(r'[A-Za-z\s]'))
@@ -114,13 +125,13 @@ class AddFavoritesWidget extends GetView<BillersController> {
                   keyboardType: TextInputType.name,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "Account Name is required";
+                      return "Nickname is required";
                     }
                     if ((value.startsWith(' ') ||
                         value.endsWith(' ') ||
                         value.endsWith('-') ||
                         value.endsWith('.'))) {
-                      return "Account Name cannot start or end with a space";
+                      return "Nickname cannot start or end with a space";
                     }
 
                     return null;
@@ -135,8 +146,8 @@ class AddFavoritesWidget extends GetView<BillersController> {
                     FocusManager.instance.primaryFocus?.unfocus();
                     await Future.delayed(Duration(milliseconds: 300));
                     if (formKey.currentState!.validate()) {
-                      controller.addFavorites(
-                          args, args["biller_id"], accountNo.text);
+                      controller.addFavorites(args, args["biller_id"],
+                          accountNo.text, nickName.text);
                     }
                   },
                 ),

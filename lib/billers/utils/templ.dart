@@ -31,6 +31,7 @@ class Templ extends StatefulWidget {
 
 class _TemplState extends State<Templ> {
   Map<String, TextEditingController> controllers2 = {};
+  final TextEditingController nickName = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final controller = Get.put(BillersController());
   final args = Get.arguments;
@@ -179,6 +180,7 @@ class _TemplState extends State<Templ> {
         "Amount Paid": "$amount"
       };
       Get.to(TicketUI(), arguments: {
+        "nick_name": nickName.text,
         "receipt_data": receiptData,
         "biller_id": "${args["details"]["biller_id"]}",
         "account_no": "$accountNo"
@@ -267,25 +269,43 @@ class _TemplState extends State<Templ> {
                       color: AppColor.linkLabel,
                     ),
                     Expanded(
-                        child: ListView.builder(
-                            padding: EdgeInsets.fromLTRB(15, 20, 15, 10),
-                            itemCount: dataBiller.length,
-                            itemBuilder: (context, i) {
-                              final field = dataBiller[i];
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(15, 20, 15, 10),
+                        child: SingleChildScrollView(
+                          physics: BouncingScrollPhysics(),
+                          child: Column(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomTitle(
+                                      fontSize: 14, text: "Nickname(optional)"),
+                                  CustomTextField(
+                                    textCapitalization:
+                                        TextCapitalization.characters,
+                                    controller: nickName,
+                                    maxLength: 15,
+                                    keyboardType: TextInputType.text,
+                                    isFilled: false,
+                                    isReadOnly: false,
+                                  ),
+                                ],
+                              ),
+                              ...dataBiller.map((d) {
+                                final field = d;
+                                print("fieldfield $field");
 
-                              List<TextInputFormatter> inputFormatters = [];
-                              if (field['input_formatter'] != null &&
-                                  field['input_formatter'].isNotEmpty) {
-                                String mask = field['input_formatter'];
-                                inputFormatters = [
-                                  MaskTextInputFormatter(
-                                      mask: mask, filter: _filter)
-                                ];
-                              }
-                              if (field['type'] == 'date') {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Column(
+                                List<TextInputFormatter> inputFormatters = [];
+                                if (field['input_formatter'] != null &&
+                                    field['input_formatter'].isNotEmpty) {
+                                  String mask = field['input_formatter'];
+                                  inputFormatters = [
+                                    MaskTextInputFormatter(
+                                        mask: mask, filter: _filter)
+                                  ];
+                                }
+                                if (field['type'] == 'date') {
+                                  return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -308,12 +328,9 @@ class _TemplState extends State<Templ> {
                                         },
                                       ),
                                     ],
-                                  ),
-                                );
-                              } else if (field['type'] == 'number') {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Column(
+                                  );
+                                } else if (field['type'] == 'number') {
+                                  return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -324,8 +341,11 @@ class _TemplState extends State<Templ> {
                                         maxLength: field['maxLength'],
                                         isReadOnly:
                                             field['is_validation'] == "Y",
-                                        keyboardType: TextInputType.number,
-                                        inputFormatters: inputFormatters,
+                                        keyboardType: TextInputType.phone,
+                                        inputFormatters:
+                                            field['is_amount'] == "N"
+                                                ? inputFormatters
+                                                : [AutoDecimalInputFormatter()],
                                         isFilled: field['is_validation'] == "Y",
                                         validator: (value) {
                                           if (field['required'] &&
@@ -337,12 +357,9 @@ class _TemplState extends State<Templ> {
                                         },
                                       ),
                                     ],
-                                  ),
-                                );
-                              } else {
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10),
-                                  child: Column(
+                                  );
+                                } else {
+                                  return Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -368,10 +385,14 @@ class _TemplState extends State<Templ> {
                                         inputFormatters: inputFormatters,
                                       ),
                                     ],
-                                  ),
-                                );
-                              }
-                            })),
+                                  );
+                                }
+                              }).toList(),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                     if (MediaQuery.of(context).viewInsets.bottom == 0)
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 15),

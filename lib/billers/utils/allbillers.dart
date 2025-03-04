@@ -396,78 +396,68 @@ class _ValidateAccountState extends State<ValidateAccount> {
                         }
 
                         if (field['type'] == 'date') {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomTitle(fontSize: 14, text: field['label']),
-                                CustomTextField(
-                                  controller: controllers2[field['key']]!,
-                                  isReadOnly: true,
-                                  isFilled: false,
-                                  suffixIcon: Icons.calendar_today,
-                                  onTap: () =>
-                                      _selectDate(context, field['key']),
-                                  validator: (value) {
-                                    if (field['required'] &&
-                                        (value == null || value.isEmpty)) {
-                                      return '${field['label']} is required';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(fontSize: 14, text: field['label']),
+                              CustomTextField(
+                                controller: controllers2[field['key']]!,
+                                isReadOnly: true,
+                                isFilled: false,
+                                suffixIcon: Icons.calendar_today,
+                                onTap: () => _selectDate(context, field['key']),
+                                validator: (value) {
+                                  if (field['required'] &&
+                                      (value == null || value.isEmpty)) {
+                                    return '${field['label']} is required';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           );
                         } else if (field['type'] == 'number') {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomTitle(fontSize: 14, text: field['label']),
-                                CustomTextField(
-                                  controller: controllers2[field['key']]!,
-                                  maxLength: field['maxLength'],
-                                  keyboardType: TextInputType.number,
-                                  hintText: "Enter ${field['label']}",
-                                  inputFormatters: inputFormatters,
-                                  validator: (value) {
-                                    if (field['required'] &&
-                                        (value == null || value.isEmpty)) {
-                                      return '${field['label']} is required';
-                                    }
-                                    return null;
-                                  },
-                                ),
-                              ],
-                            ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(fontSize: 14, text: field['label']),
+                              CustomTextField(
+                                controller: controllers2[field['key']]!,
+                                maxLength: field['maxLength'],
+                                keyboardType: TextInputType.number,
+                                hintText: "Enter ${field['label']}",
+                                inputFormatters: inputFormatters,
+                                validator: (value) {
+                                  if (field['required'] &&
+                                      (value == null || value.isEmpty)) {
+                                    return '${field['label']} is required';
+                                  }
+                                  return null;
+                                },
+                              ),
+                            ],
                           );
                         } else {
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 10),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CustomTitle(fontSize: 14, text: field['label']),
-                                CustomTextField(
-                                  textCapitalization:
-                                      TextCapitalization.characters,
-                                  controller: controllers2[field['key']]!,
-                                  maxLength: field['maxLength'],
-                                  keyboardType: TextInputType.text,
-                                  validator: (value) {
-                                    if (field['required'] &&
-                                        (value == null || value.isEmpty)) {
-                                      return '${field['label']} is required';
-                                    }
-                                    return null;
-                                  },
-                                  inputFormatters: inputFormatters,
-                                ),
-                              ],
-                            ),
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CustomTitle(fontSize: 14, text: field['label']),
+                              CustomTextField(
+                                textCapitalization:
+                                    TextCapitalization.characters,
+                                controller: controllers2[field['key']]!,
+                                maxLength: field['maxLength'],
+                                keyboardType: TextInputType.text,
+                                validator: (value) {
+                                  if (field['required'] &&
+                                      (value == null || value.isEmpty)) {
+                                    return '${field['label']} is required';
+                                  }
+                                  return null;
+                                },
+                                inputFormatters: inputFormatters,
+                              ),
+                            ],
                           );
                         }
                       },

@@ -103,7 +103,7 @@ class BillersController extends GetxController {
     if (selectedSortOption.value == selectedSortOption.value) {
       isAscending.value = !isAscending.value;
     }
-    if (selectedSortOption.value == 'Account Name') {
+    if (selectedSortOption.value == 'Nickname') {
       favBillers.sort((a, b) {
         String nameA = a['account_name'] ?? '';
         String nameB = b['account_name'] ?? '';
@@ -131,7 +131,7 @@ class BillersController extends GetxController {
     update();
   }
 
-  Future<void> addFavorites(params, billId, accountNo) async {
+  Future<void> addFavorites(params, billId, accountNo, nickName) async {
     int userId = await Authentication().getUserId();
     bool isButtonEnabled = true;
     CustomDialog().confirmationDialog(Get.context!, "Add to Favorites",
@@ -146,9 +146,8 @@ class BillersController extends GetxController {
         "user_id": userId,
         "biller_id": billId,
         "account_no": accountNo,
-        "account_name": params["Biller Name"]
+        "account_name": nickName.toString()
       };
-
       HttpRequest(api: ApiKeys.postAddFavBiller, parameters: parameter)
           .postBody()
           .then((returnPost) async {
@@ -275,6 +274,7 @@ class BillersController extends GetxController {
     String userId = jsonDecode(item!)['user_id'].toString();
     String subApi = "${ApiKeys.getFavBiller}?user_id=$userId";
     HttpRequest(api: subApi).get().then((response) async {
+      print("responseresponse $response");
       if (response == "No Internet") {
         isLoading.value = false;
         isNetConn.value = false;
@@ -301,6 +301,7 @@ class BillersController extends GetxController {
     HttpRequest(api: "${ApiKeys.getBillerTemp}?biller_id=$billerId")
         .get()
         .then((response) async {
+      print("getTemplate$response");
       Get.back();
       if (response["items"].isNotEmpty) {
         List data = response["items"];
@@ -316,6 +317,7 @@ class BillersController extends GetxController {
             "required": row["is_required"] == "Y" ? true : false,
             "is_validation": row["is_validation"],
             "is_for_posting": row["is_for_posting"],
+            "is_amount": row["is_amount"],
             "input_formatter": row["input_formatter"]
           });
         }
