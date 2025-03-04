@@ -28,6 +28,19 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
     return PopScope(
       canPop: true,
       child: Scaffold(
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: AppColor.primaryColor,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          title: Text("Receipt"),
+          centerTitle: true,
+          leading: null,
+          automaticallyImplyLeading: false,
+        ),
         key: _globalKey,
         backgroundColor: AppColor.primaryColor,
         body: Padding(
@@ -35,76 +48,72 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 15.0),
-                child: TicketClipper(
-                  clipper: RoundedEdgeClipper(edge: Edge.vertical, depth: 15),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
-                    width: double.infinity,
-                    decoration: const BoxDecoration(color: AppColor.scafColor),
-                    child: Column(
-                      children: [
-                        _buildMessage(controller.parameter["amount"],
-                            "${_capitalize(controller.parameter["merchant_name"])}"),
-                        _buildDetailRow("Merchant",
-                            "${_capitalize(controller.parameter["merchant_name"] ?? "N/A")}"),
-                        _buildDetailRow(
-                          "Date of Transaction",
-                          controller.formatDate(
-                            DateTime.parse(
-                              controller.parameter["date_time"],
-                            ),
+              TicketClipper(
+                clipper: RoundedEdgeClipper(edge: Edge.vertical, depth: 15),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 15, vertical: 30),
+                  width: double.infinity,
+                  decoration: const BoxDecoration(color: AppColor.scafColor),
+                  child: Column(
+                    children: [
+                      _buildMessage(controller.parameter["amount"],
+                          "${_capitalize(controller.parameter["merchant_name"])}"),
+                      _buildDetailRow("Merchant",
+                          "${_capitalize(controller.parameter["merchant_name"] ?? "N/A")}"),
+                      _buildDetailRow(
+                        "Date of Transaction",
+                        controller.formatDate(
+                          DateTime.parse(
+                            controller.parameter["date_time"],
                           ),
                         ),
-                        _buildDetailRow("Time of Transaction",
-                            "${DateFormat('hh:mm a').format(DateTime.now())} "),
-                        _buildTotalAmount(controller.parameter["amount"]),
-                        _buildReferenceRow(
-                            controller.parameter["reference_no"]),
-                        Container(height: 30),
-                        GestureDetector(
-                          onTap: () async {
-                            String randomNumber =
-                                Random().nextInt(100000).toString();
-                            CustomDialog().loadingDialog(Get.context!);
-                            File? imgFile;
+                      ),
+                      _buildDetailRow("Time of Transaction",
+                          "${DateFormat('hh:mm a').format(DateTime.now())} "),
+                      _buildTotalAmount(controller.parameter["amount"]),
+                      _buildReferenceRow(controller.parameter["reference_no"]),
+                      Container(height: 30),
+                      GestureDetector(
+                        onTap: () async {
+                          String randomNumber =
+                              Random().nextInt(100000).toString();
+                          CustomDialog().loadingDialog(Get.context!);
+                          File? imgFile;
 
-                            String fname = "luv_merchant$randomNumber.png";
-                            final directory =
-                                (await getApplicationDocumentsDirectory()).path;
-                            Uint8List bytes = await ScreenshotController()
-                                .captureFromWidget(_downloadWidget());
-                            imgFile = File('$directory/$fname');
-                            imgFile.writeAsBytes(bytes);
+                          String fname = "luv_merchant$randomNumber.png";
+                          final directory =
+                              (await getApplicationDocumentsDirectory()).path;
+                          Uint8List bytes = await ScreenshotController()
+                              .captureFromWidget(_downloadWidget());
+                          imgFile = File('$directory/$fname');
+                          imgFile.writeAsBytes(bytes);
 
-                            Get.back();
+                          Get.back();
 
-                            // ignore: deprecated_member_use
-                            await Share.shareFiles([imgFile.path]);
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                LucideIcons.share2,
-                                size: 20,
+                          // ignore: deprecated_member_use
+                          await Share.shareFiles([imgFile.path]);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              LucideIcons.share2,
+                              size: 20,
+                              color: AppColor.primaryColor,
+                            ),
+                            Container(width: 10),
+                            Text(
+                              "Share",
+                              style: subtitleStyle(
+                                fontWeight: FontWeight.w700,
                                 color: AppColor.primaryColor,
                               ),
-                              Container(width: 10),
-                              Text(
-                                "Share",
-                                style: subtitleStyle(
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.primaryColor,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        Container(height: 10),
-                      ],
-                    ),
+                      ),
+                      Container(height: 10),
+                    ],
                   ),
                 ),
               ),

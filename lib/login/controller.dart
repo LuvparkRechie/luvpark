@@ -4,6 +4,7 @@ import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/device_registration/device_reg.dart';
@@ -53,7 +54,6 @@ class LoginScreenController extends GetxController {
     HttpRequest(api: ApiKeys.postLogin, parameters: param)
         .postBody()
         .then((returnPost) async {
-      print("postlogint $returnPost");
       if (returnPost == "No Internet") {
         CustomDialog().internetErrorDialog(context, () {
           Get.back();
@@ -93,8 +93,22 @@ class LoginScreenController extends GetxController {
               "mobile_no": mobileNo,
               "new_pwd": password.text,
             };
-            Functions().requestOtp(reqParam, (obj) {
-              if (obj["success"] == "Y") {
+            Functions().requestOtp(reqParam, (obj) async {
+              DateTime timeNow = await Functions.getTimeNow();
+              DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+                  .parse(obj["otp_exp_dt"].toString());
+              DateTime otpExpiry = DateTime(
+                  timeExp.year,
+                  timeExp.month,
+                  timeExp.day,
+                  timeExp.hour,
+                  timeExp.minute,
+                  timeExp.millisecond);
+
+              // Calculate difference
+              Duration difference = otpExpiry.difference(timeNow);
+
+              if (obj["success"] == "Y" || obj["status"] == "PENDING") {
                 Map<String, String> putParam = {
                   "mobile_no": mobileNo.toString(),
                   "req_type": "NA",
@@ -104,6 +118,7 @@ class LoginScreenController extends GetxController {
                 Get.toNamed(
                   Routes.otpField,
                   arguments: {
+                    "time_duration": difference,
                     "mobile_no": mobileNo.toString(),
                     "req_otp_param": reqParam,
                     "verify_param": putParam,

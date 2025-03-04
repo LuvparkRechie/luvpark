@@ -7,9 +7,9 @@ import 'package:flutter_svg/svg.dart';
 import 'package:gallery_saver_plus/gallery_saver.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/booking/utils/booking_receipt/controller.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_tciket_style.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
@@ -32,400 +32,463 @@ class BookingReceipt extends GetView<BookingReceiptController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        backgroundColor: AppColor.bodyColor,
-        appBar: CustomAppbar(
-          bgColor: AppColor.primaryColor,
-          title: "Parking Details",
-          textColor: Colors.white,
-          titleColor: Colors.white,
-          elevation: 0,
-          onTap: () {
-            if (controller.parameters["status"] == "B") {
-              Get.offAllNamed(Routes.map);
-              return;
-            }
-            Get.back();
-          },
-        ),
-        body: Obx(
-          () => SafeArea(
-            child: controller.isLoadScreen.value
-                ? const Center(
-                    child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: CircularProgressIndicator(),
-                    ),
-                  )
-                : Column(
-                    children: [
-                      Expanded(
-                        child: LayoutBuilder(
-                          builder: (context, constraints) {
-                            return SingleChildScrollView(
-                              child: Stack(
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    height: constraints.maxHeight,
-                                  ),
-                                  Container(
-                                    color: AppColor.primaryColor,
-                                    width: MediaQuery.of(context).size.width,
-                                    height: constraints.maxHeight * .15,
-                                  ),
-                                  Positioned(
-                                    top: 20,
-                                    left: 20,
-                                    right: 20,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                        color: Colors.white,
-                                      ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.fromLTRB(
-                                                        15, 0, 15, 0),
-                                                child: Column(
-                                                  children: [
-                                                    Stack(
-                                                      fit: StackFit.passthrough,
-                                                      children: [
-                                                        Row(
-                                                          children: [
-                                                            Expanded(
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        top:
-                                                                            20),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    CustomTitle(
-                                                                      text: controller
-                                                                              .parameters[
-                                                                          "parkArea"],
-                                                                      fontSize:
-                                                                          20,
-                                                                      maxlines:
-                                                                          1,
-                                                                      letterSpacing:
-                                                                          0,
-                                                                      color: AppColor
-                                                                          .primaryColor,
-                                                                    ),
-                                                                    CustomParagraph(
-                                                                      text: controller
-                                                                              .parameters[
-                                                                          "address"],
-                                                                      maxlines:
-                                                                          2,
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 50),
-                                                          ],
-                                                        ),
-                                                        Positioned(
-                                                          right: 0,
-                                                          top: 5,
-                                                          child: Center(
-                                                            child: IconButton(
-                                                              onPressed:
-                                                                  () async {
-                                                                CustomDialog()
-                                                                    .loadingDialog(
-                                                                        context);
-                                                                String mapUrl =
-                                                                    "";
-
-                                                                String dest =
-                                                                    "${controller.parameters["lat"]},${controller.parameters["long"]}";
-                                                                if (Platform
-                                                                    .isIOS) {
-                                                                  mapUrl =
-                                                                      'https://maps.apple.com/?daddr=$dest';
-                                                                } else {
-                                                                  mapUrl =
-                                                                      'https://www.google.com/maps/search/?api=1&query=$dest';
-                                                                }
-                                                                Future.delayed(
-                                                                    const Duration(
-                                                                        seconds:
-                                                                            2),
-                                                                    () async {
-                                                                  Get.back();
-                                                                  if (await canLaunchUrl(
-                                                                      Uri.parse(
-                                                                          mapUrl))) {
-                                                                    await launchUrl(
-                                                                        Uri.parse(
-                                                                            mapUrl),
-                                                                        mode: LaunchMode
-                                                                            .externalApplication);
-                                                                  } else {
-                                                                    throw 'Something went wrong while opening map. Pleaase report problem';
-                                                                  }
-                                                                });
-                                                              },
-                                                              icon: SvgPicture
-                                                                  .asset(
-                                                                "assets/dashboard_icon/direction_map.svg",
-                                                                width: 34,
-                                                                height: 34,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(height: 20),
-                                                    if (controller.parameters[
-                                                            "status"] ==
-                                                        "A")
-                                                      Column(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Row(
-                                                            children: [
-                                                              Expanded(
-                                                                child:
-                                                                    CustomLinkLabel(
-                                                                  text:
-                                                                      "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(controller.parameters["startTime"]))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(controller.parameters["endTime"]))}",
-                                                                  maxlines: 1,
-                                                                ),
-                                                              ),
-                                                              Container(
-                                                                  width: 5),
-                                                              Expanded(
-                                                                child: Align(
-                                                                  alignment:
-                                                                      Alignment
-                                                                          .centerRight,
-                                                                  child:
-                                                                      CustomParagraph(
-                                                                    text: controller.timeLeft.value ==
-                                                                            null
-                                                                        ? ""
-                                                                        : Variables.formatTimeLeft(controller
-                                                                            .timeLeft
-                                                                            .value!),
-                                                                    fontSize:
-                                                                        12,
-                                                                    color: const Color(
-                                                                        0xFF666666),
-                                                                    maxlines: 1,
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          ),
-                                                          Container(height: 10),
-                                                          controller.progress
-                                                                      .value >=
-                                                                  1
-                                                              ? const Text(
-                                                                  'Parking expired!',
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          20,
-                                                                      color: Colors
-                                                                          .red),
-                                                                )
-                                                              : LinearProgressIndicator(
-                                                                  value: controller
-                                                                      .progress
-                                                                      .value,
-                                                                  backgroundColor:
-                                                                      const Color(
-                                                                          0xFFCEE4F4),
-                                                                  minHeight: 5,
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              10),
-                                                                  valueColor:
-                                                                      AlwaysStoppedAnimation<
-                                                                          Color>(
-                                                                    controller.progress.value >=
-                                                                            1
-                                                                        ? Colors
-                                                                            .red
-                                                                        : AppColor
-                                                                            .primaryColor,
-                                                                  ),
-                                                                ),
-                                                        ],
-                                                      )
-                                                  ],
-                                                ),
-                                              ),
-                                              const TicketStyle(),
-                                            ],
-                                          ),
-                                          _buildDetailsSection(false),
-                                          _buildQrSection(),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
+    return PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) {
+        if (!didPop) {
+          if (controller.parameters["status"] == "B") {
+            Get.offAllNamed(Routes.map);
+            return;
+          }
+          Get.back();
+        }
+      },
+      child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            elevation: 0,
+            backgroundColor: AppColor.primaryColor,
+            toolbarHeight: 0,
+            systemOverlayStyle: SystemUiOverlayStyle(
+              statusBarColor: AppColor.primaryColor,
+              statusBarBrightness: Brightness.light,
+              statusBarIconBrightness: Brightness.light,
+            ),
+          ),
+          body: Obx(
+            () => SafeArea(
+              child: controller.isLoadScreen.value
+                  ? const Center(
+                      child: SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: CircularProgressIndicator(),
                       ),
-                      if (controller.parameters["status"] == "A")
-                        Padding(
-                          padding: const EdgeInsets.all(15),
+                    )
+                  : Column(
+                      children: [
+                        Container(
+                          color: AppColor.primaryColor,
+                          padding: EdgeInsets.symmetric(vertical: 10),
                           child: Row(
                             children: [
-                              Expanded(
-                                child: CustomButton(
-                                  text: "Find vehicle",
-                                  onPressed: () async {
-                                    CustomDialog().loadingDialog(context);
-                                    String mapUrl = "";
-
-                                    String dest =
-                                        "${controller.parameters["lat"]},${controller.parameters["long"]}";
-                                    if (Platform.isIOS) {
-                                      mapUrl =
-                                          'https://maps.apple.com/?daddr=$dest';
-                                    } else {
-                                      mapUrl =
-                                          'https://www.google.com/maps/search/?api=1&query=$dest';
-                                    }
-                                    Future.delayed(const Duration(seconds: 2),
-                                        () async {
-                                      Get.back();
-                                      if (await canLaunchUrl(
-                                          Uri.parse(mapUrl))) {
-                                        await launchUrl(Uri.parse(mapUrl),
-                                            mode:
-                                                LaunchMode.externalApplication);
-                                      } else {
-                                        throw 'Something went wrong while opening map. Pleaase report problem';
-                                      }
-                                    });
-                                  },
+                              Container(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        LucideIcons.arrowLeft,
+                                        color: Colors.white,
+                                      ),
+                                      onPressed: () {
+                                        if (controller.parameters["status"] ==
+                                            "B") {
+                                          Get.offAllNamed(Routes.map);
+                                          return;
+                                        }
+                                        Get.back();
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
-                              Visibility(
-                                visible: controller.progress.value < 1,
-                                child: const SizedBox(width: 10),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CustomTitle(
+                                      text: "My Parking",
+                                      textAlign: TextAlign.center,
+                                      color: Colors.white,
+                                    ),
+                                  ],
+                                ),
                               ),
-                              Visibility(
-                                visible: controller.progress.value < 1,
-                                child: Expanded(
-                                  child: controller
-                                              .parameters["isAutoExtend"] ==
-                                          "Y"
-                                      ? CustomButton(
-                                          text: "Cancel auto extend",
-                                          textColor: const Color(0xFFCF4B4B),
-                                          btnColor: Colors.white,
-                                          bordercolor: const Color(0xFFCF4B4B),
-                                          onPressed:
-                                              controller.cancelAutoExtend)
-                                      : CustomButton(
-                                          text: "Extend parking",
-                                          onPressed: controller.onExtend,
-                                        ),
+                              Container(
+                                width: MediaQuery.of(context).size.width / 3,
+                                child: Column(
+                                  children: [],
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      if (controller.parameters["status"] != "A")
-                        Padding(
-                          padding: const EdgeInsets.all(15),
-                          child: !controller.parameters["can_cancel"]
-                              ? CustomButton(
-                                  btnColor: controller.btnDisabled.value
-                                      ? AppColor.primaryColor.withOpacity(.5)
-                                      : null,
-                                  text: "Check in",
-                                  onPressed: controller.btnDisabled.value
-                                      ? () {}
-                                      : controller.checkIn,
-                                )
-                              : Row(
+                        Expanded(
+                          child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return SingleChildScrollView(
+                                child: Stack(
                                   children: [
-                                    Expanded(
-                                      child: CustomButton(
-                                        text: "Find vehicle",
-                                        onPressed: () async {
-                                          CustomDialog().loadingDialog(context);
-                                          String mapUrl = "";
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width,
+                                      height: constraints.maxHeight,
+                                    ),
+                                    Container(
+                                      color: AppColor.primaryColor,
+                                      width: MediaQuery.of(context).size.width,
+                                      height: constraints.maxHeight * .15,
+                                    ),
+                                    Positioned(
+                                      top: 20,
+                                      left: 20,
+                                      right: 20,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
+                                          color: Colors.white,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.fromLTRB(
+                                                          15, 0, 15, 0),
+                                                  child: Column(
+                                                    children: [
+                                                      Stack(
+                                                        fit: StackFit
+                                                            .passthrough,
+                                                        children: [
+                                                          Row(
+                                                            children: [
+                                                              Expanded(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .only(
+                                                                          top:
+                                                                              20),
+                                                                  child: Column(
+                                                                    crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                    children: [
+                                                                      CustomTitle(
+                                                                        text: controller
+                                                                            .parameters["parkArea"],
+                                                                        fontSize:
+                                                                            20,
+                                                                        maxlines:
+                                                                            1,
+                                                                        letterSpacing:
+                                                                            0,
+                                                                        color: AppColor
+                                                                            .primaryColor,
+                                                                      ),
+                                                                      CustomParagraph(
+                                                                        text: controller
+                                                                            .parameters["address"],
+                                                                        maxlines:
+                                                                            2,
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 50),
+                                                            ],
+                                                          ),
+                                                          Positioned(
+                                                            right: 0,
+                                                            top: 5,
+                                                            child: Center(
+                                                              child: IconButton(
+                                                                onPressed:
+                                                                    () async {
+                                                                  CustomDialog()
+                                                                      .loadingDialog(
+                                                                          context);
+                                                                  String
+                                                                      mapUrl =
+                                                                      "";
 
-                                          String dest =
-                                              "${controller.parameters["lat"]},${controller.parameters["long"]}";
-                                          if (Platform.isIOS) {
-                                            mapUrl =
-                                                'https://maps.apple.com/?daddr=$dest';
-                                          } else {
-                                            mapUrl =
-                                                'https://www.google.com/maps/search/?api=1&query=$dest';
-                                          }
-                                          Future.delayed(
-                                              const Duration(seconds: 2),
-                                              () async {
-                                            Get.back();
-                                            if (await canLaunchUrl(
-                                                Uri.parse(mapUrl))) {
-                                              await launchUrl(Uri.parse(mapUrl),
-                                                  mode: LaunchMode
-                                                      .externalApplication);
-                                            } else {
-                                              throw 'Something went wrong while opening map. Pleaase report problem';
-                                            }
-                                          });
-                                        },
+                                                                  String dest =
+                                                                      "${controller.parameters["lat"]},${controller.parameters["long"]}";
+                                                                  if (Platform
+                                                                      .isIOS) {
+                                                                    mapUrl =
+                                                                        'https://maps.apple.com/?daddr=$dest';
+                                                                  } else {
+                                                                    mapUrl =
+                                                                        'https://www.google.com/maps/search/?api=1&query=$dest';
+                                                                  }
+                                                                  Future.delayed(
+                                                                      const Duration(
+                                                                          seconds:
+                                                                              2),
+                                                                      () async {
+                                                                    Get.back();
+                                                                    if (await canLaunchUrl(
+                                                                        Uri.parse(
+                                                                            mapUrl))) {
+                                                                      await launchUrl(
+                                                                          Uri.parse(
+                                                                              mapUrl),
+                                                                          mode:
+                                                                              LaunchMode.externalApplication);
+                                                                    } else {
+                                                                      throw 'Something went wrong while opening map. Pleaase report problem';
+                                                                    }
+                                                                  });
+                                                                },
+                                                                icon: SvgPicture
+                                                                    .asset(
+                                                                  "assets/dashboard_icon/direction_map.svg",
+                                                                  width: 34,
+                                                                  height: 34,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      const SizedBox(
+                                                          height: 20),
+                                                      if (controller.parameters[
+                                                              "status"] ==
+                                                          "A")
+                                                        Column(
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .start,
+                                                          children: [
+                                                            Row(
+                                                              children: [
+                                                                Expanded(
+                                                                  child:
+                                                                      CustomLinkLabel(
+                                                                    text:
+                                                                        "${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(controller.parameters["startTime"]))} - ${DateFormat.jm().format(DateFormat("hh:mm:ss").parse(controller.parameters["endTime"]))}",
+                                                                    maxlines: 1,
+                                                                  ),
+                                                                ),
+                                                                Container(
+                                                                    width: 5),
+                                                                Expanded(
+                                                                  child: Align(
+                                                                    alignment:
+                                                                        Alignment
+                                                                            .centerRight,
+                                                                    child:
+                                                                        CustomParagraph(
+                                                                      text: controller.timeLeft.value ==
+                                                                              null
+                                                                          ? ""
+                                                                          : Variables.formatTimeLeft(controller
+                                                                              .timeLeft
+                                                                              .value!),
+                                                                      fontSize:
+                                                                          12,
+                                                                      color: const Color(
+                                                                          0xFF666666),
+                                                                      maxlines:
+                                                                          1,
+                                                                    ),
+                                                                  ),
+                                                                )
+                                                              ],
+                                                            ),
+                                                            Container(
+                                                                height: 10),
+                                                            controller.progress
+                                                                        .value >=
+                                                                    1
+                                                                ? const Text(
+                                                                    'Parking expired!',
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        color: Colors
+                                                                            .red),
+                                                                  )
+                                                                : LinearProgressIndicator(
+                                                                    value: controller
+                                                                        .progress
+                                                                        .value,
+                                                                    backgroundColor:
+                                                                        const Color(
+                                                                            0xFFCEE4F4),
+                                                                    minHeight:
+                                                                        5,
+                                                                    borderRadius:
+                                                                        BorderRadius.circular(
+                                                                            10),
+                                                                    valueColor:
+                                                                        AlwaysStoppedAnimation<
+                                                                            Color>(
+                                                                      controller.progress.value >= 1
+                                                                          ? Colors
+                                                                              .red
+                                                                          : AppColor
+                                                                              .primaryColor,
+                                                                    ),
+                                                                  ),
+                                                          ],
+                                                        )
+                                                    ],
+                                                  ),
+                                                ),
+                                                const TicketStyle(),
+                                              ],
+                                            ),
+                                            _buildDetailsSection(false),
+                                            _buildQrSection(),
+                                          ],
+                                        ),
                                       ),
                                     ),
-                                    Container(width: 10),
-                                    Expanded(
-                                      child: CustomButton(
-                                        btnColor: controller.btnDisabled.value
-                                            ? AppColor.primaryColor
-                                                .withOpacity(.5)
-                                            : null,
-                                        text: "Check in",
-                                        onPressed: controller.btnDisabled.value
-                                            ? () {}
-                                            : controller.checkIn,
-                                      ),
-                                    )
                                   ],
                                 ),
+                              );
+                            },
+                          ),
                         ),
-                      Container(height: 10)
-                    ],
-                  ),
-          ),
-        ));
+                        if (controller.parameters["status"] == "A")
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: CustomButton(
+                                    text: "Find vehicle",
+                                    onPressed: () async {
+                                      CustomDialog().loadingDialog(context);
+                                      String mapUrl = "";
+
+                                      String dest =
+                                          "${controller.parameters["lat"]},${controller.parameters["long"]}";
+                                      if (Platform.isIOS) {
+                                        mapUrl =
+                                            'https://maps.apple.com/?daddr=$dest';
+                                      } else {
+                                        mapUrl =
+                                            'https://www.google.com/maps/search/?api=1&query=$dest';
+                                      }
+                                      Future.delayed(const Duration(seconds: 2),
+                                          () async {
+                                        Get.back();
+                                        if (await canLaunchUrl(
+                                            Uri.parse(mapUrl))) {
+                                          await launchUrl(Uri.parse(mapUrl),
+                                              mode: LaunchMode
+                                                  .externalApplication);
+                                        } else {
+                                          throw 'Something went wrong while opening map. Pleaase report problem';
+                                        }
+                                      });
+                                    },
+                                  ),
+                                ),
+                                Visibility(
+                                  visible: controller.progress.value < 1,
+                                  child: const SizedBox(width: 10),
+                                ),
+                                Visibility(
+                                  visible: controller.progress.value < 1,
+                                  child: Expanded(
+                                    child: controller
+                                                .parameters["isAutoExtend"] ==
+                                            "Y"
+                                        ? CustomButton(
+                                            text: "Cancel auto extend",
+                                            textColor: const Color(0xFFCF4B4B),
+                                            btnColor: Colors.white,
+                                            bordercolor:
+                                                const Color(0xFFCF4B4B),
+                                            onPressed:
+                                                controller.cancelAutoExtend)
+                                        : CustomButton(
+                                            text: "Extend parking",
+                                            onPressed: controller.onExtend,
+                                          ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        if (controller.parameters["status"] != "A")
+                          Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: !controller.parameters["can_cancel"]
+                                ? CustomButton(
+                                    btnColor: controller.btnDisabled.value
+                                        ? AppColor.primaryColor.withOpacity(.5)
+                                        : null,
+                                    text: "Check in",
+                                    onPressed: controller.btnDisabled.value
+                                        ? () {}
+                                        : controller.checkIn,
+                                  )
+                                : Row(
+                                    children: [
+                                      Expanded(
+                                        child: CustomButton(
+                                          text: "Find vehicle",
+                                          onPressed: () async {
+                                            CustomDialog()
+                                                .loadingDialog(context);
+                                            String mapUrl = "";
+
+                                            String dest =
+                                                "${controller.parameters["lat"]},${controller.parameters["long"]}";
+                                            if (Platform.isIOS) {
+                                              mapUrl =
+                                                  'https://maps.apple.com/?daddr=$dest';
+                                            } else {
+                                              mapUrl =
+                                                  'https://www.google.com/maps/search/?api=1&query=$dest';
+                                            }
+                                            Future.delayed(
+                                                const Duration(seconds: 2),
+                                                () async {
+                                              Get.back();
+                                              if (await canLaunchUrl(
+                                                  Uri.parse(mapUrl))) {
+                                                await launchUrl(
+                                                    Uri.parse(mapUrl),
+                                                    mode: LaunchMode
+                                                        .externalApplication);
+                                              } else {
+                                                throw 'Something went wrong while opening map. Pleaase report problem';
+                                              }
+                                            });
+                                          },
+                                        ),
+                                      ),
+                                      Container(width: 10),
+                                      Expanded(
+                                        child: CustomButton(
+                                          btnColor: controller.btnDisabled.value
+                                              ? AppColor.primaryColor
+                                                  .withOpacity(.5)
+                                              : null,
+                                          text: "Check in",
+                                          onPressed:
+                                              controller.btnDisabled.value
+                                                  ? () {}
+                                                  : controller.checkIn,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                          ),
+                        Container(height: 10)
+                      ],
+                    ),
+            ),
+          )),
+    );
   }
 
   Widget _buildQrSection() {

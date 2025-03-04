@@ -2,18 +2,7 @@
   {
     "featureType": "poi.business",
     "stylers": [
-      {
-        "visibility": "off"
-      }
-    ]
-  },
-  {
-    "featureType": "poi.park",
-    "elementType": "labels.text",
-    "stylers": [
-      {
-        "visibility": "off"
-      }
+      { "visibility": "off" }
     ]
   },
   {
@@ -23,6 +12,16 @@
       { "visibility": "on" },
       { "color": "#606060" },
       { "weight": 0.1 }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+       
+      { "weight": 2 },
+      { "saturation": -10 },
+      { "lightness": 20 }
     ]
   },
   {

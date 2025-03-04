@@ -42,27 +42,6 @@ class ParkingScreen extends GetView<ParkingController> {
         length: 3,
         child: Scaffold(
           backgroundColor: Colors.white,
-          // appBar: CustomAppbar(
-          //   title: "My Parking",
-          //   bgColor: AppColor.primaryColor,
-          //   titleColor: Colors.white,
-          //   textColor: Colors.white,
-          //   hasBtnColor: false,
-          //   elevation: 0,
-          //   onTap: () {
-          //     switch (controller.parameter) {
-          //       case 'N':
-          //         Get.back();
-          //         break;
-          //       case 'D':
-          //         Get.back();
-          //         break;
-          //       case 'B':
-          //         Get.offAndToNamed(Routes.map);
-          //         break;
-          //     }
-          //   },
-          // ),
           appBar: AppBar(
             elevation: 0,
             backgroundColor: AppColor.primaryColor,

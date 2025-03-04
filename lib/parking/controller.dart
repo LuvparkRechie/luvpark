@@ -97,7 +97,7 @@ class ParkingController extends GetxController
     String api =
         "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}?luvpay_id=$id";
     final returnData = await HttpRequest(api: api).get();
-    print("returnData $returnData");
+
     tabLoading.value = false;
     if (returnData == "No Internet") {
       isLoading.value = false;
@@ -131,7 +131,6 @@ class ParkingController extends GetxController
 
   // BTN details
   Future<void> getParkingDetails(dynamic data) async {
-    print("dataa $data");
     CustomDialog().loadingDialog(Get.context!);
     int userId = await Authentication().getUserId();
 
@@ -209,9 +208,6 @@ class ParkingController extends GetxController
         hasNet.value = true;
         isLoading.value = false;
         qrKey.value = response["items"][0]["qr_code"];
-
-        print("getEncryptQr response: $response");
-        print("QR Key: ${qrKey.value}");
       }
     });
   }

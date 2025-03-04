@@ -3,14 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/wallet_qr/paymerchant/utils/controller.dart';
-
-import '../../../routes/routes.dart';
 
 class MerchantQRverify extends StatefulWidget {
   const MerchantQRverify({super.key});
@@ -142,19 +138,7 @@ class _MerchantQRverifyState extends State<MerchantQRverify> {
                             "Pay ${controller.parameter["amount"].toString()}",
                         onPressed: isVerified
                             ? () async {
-                                final uData =
-                                    await Authentication().getUserData2();
-                                String? mobileNo =
-                                    uData["mobile_no"].toString();
-                                Get.toNamed(
-                                  Routes.otpField,
-                                  arguments: {
-                                    "mobile_no": mobileNo,
-                                    "callback": (d) {
-                                      controller.payMerchantVerify();
-                                    }
-                                  },
-                                );
+                                controller.payMerchantVerify();
                               }
                             : () {},
                       )),

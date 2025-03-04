@@ -111,8 +111,6 @@ class AppPages {
       name: Routes.map,
       page: () => const DashboardMapScreen(),
       binding: DashboardMapBinding(),
-      transition: Transition.rightToLeftWithFade, // Smooth slide transition
-      transitionDuration: Duration(milliseconds: 400), preventDuplicates: true,
     ),
     GetPage(
       name: Routes.wallet,

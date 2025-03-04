@@ -793,11 +793,11 @@ class Functions {
       "dt_out": formattedDt,
       "session_id": sessionId
     };
-    print("putLogoutParam $putLogoutParam");
+
     final response =
         await HttpRequest(api: ApiKeys.putLogout, parameters: putLogoutParam)
             .putBody();
-    print("response $response");
+
     Get.back();
     if (response == "No Internet") {
       cb({"is_true": false, "data": 0});
@@ -885,10 +885,13 @@ class Functions {
   Future<void> requestOtp(Map<String, String> param, Function cb) async {
     CustomDialog().loadingDialog(Get.context!);
 
+    print("param $param");
+
     HttpRequest(api: ApiKeys.postGenerateOtp, parameters: param)
         .postBody()
         .then((returnData) async {
       Get.back();
+      print("returnData $returnData");
       if (returnData == "No Internet") {
         cb(returnData);
         CustomDialog().errorDialog(Get.context!, "Error",
@@ -912,13 +915,12 @@ class Functions {
         cb(returnData);
         return;
       } else {
-        if (returnData["status"] == "PENDING") {
-          cb(returnData);
-        }
-
         CustomDialog().errorDialog(
             Get.context!, "Security Warning", returnData["msg"], () {
           Get.back();
+          if (returnData["status"] == "PENDING") {
+            cb(returnData);
+          }
         });
         return;
       }

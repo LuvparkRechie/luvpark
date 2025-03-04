@@ -6,12 +6,13 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 import 'package:luvpark/functions/functions.dart';
-import 'package:luvpark/routes/routes.dart';
 
 import '../../../auth/authentication.dart';
 import '../../../custom_widgets/alert_dialog.dart';
 import '../../../http/api_keys.dart';
 import '../../../http/http_request.dart';
+import '../../../otp_field/index.dart';
+import '../../../routes/routes.dart';
 
 class CreateNewPassController extends GetxController {
   CreateNewPassController();
@@ -77,70 +78,81 @@ class CreateNewPassController extends GetxController {
     };
 
     Functions().requestOtp(reqParam, (obj) async {
-      if (obj["success"] == "Y") {
-        Get.toNamed(
-          Routes.otpField,
-          arguments: {
-            "mobile_no": mobileNoParam,
-            "req_otp_param": reqParam,
-            "is_forget_vfd_pass": true,
-            "callback": (otp) {
-              if (otp != null) {
-                Get.back();
-                CustomDialog().loadingDialog(Get.context!);
+      DateTime timeNow = await Functions.getTimeNow();
+      DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+          .parse(obj["otp_exp_dt"].toString());
+      DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
+          timeExp.hour, timeExp.minute, timeExp.millisecond);
 
-                Map<String, dynamic> postParam = {
-                  "mobile_no": mobileNoParam.toString(),
-                  "otp": otp.toString(),
-                  "new_pwd": newPass.text,
-                };
+      // Calculate difference
+      Duration difference = otpExpiry.difference(timeNow);
 
-                HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
-                    .putBody()
-                    .then(
-                  (retvalue) {
-                    Get.back();
-                    if (retvalue == "No Internet") {
-                      CustomDialog().errorDialog(Get.context!, "Error",
-                          "Please check your internet connection and try again.",
-                          () {
-                        Get.back();
-                      });
-                      return;
-                    }
-                    if (retvalue == null) {
-                      CustomDialog().errorDialog(Get.context!, "Error",
-                          "Error while connecting to server, Please try again.",
-                          () {
-                        Get.back();
-                      });
+      if (obj["success"] == "Y" || obj["status"] == "PENDING") {
+        Object params = {
+          "time_duration": difference,
+          "mobile_no": mobileNoParam,
+          "req_otp_param": reqParam,
+          "is_forget_vfd_pass": true,
+          "callback": (otp) {
+            if (otp != null) {
+              Get.back();
+              CustomDialog().loadingDialog(Get.context!);
+
+              Map<String, dynamic> postParam = {
+                "mobile_no": mobileNoParam.toString(),
+                "otp": otp.toString(),
+                "new_pwd": newPass.text,
+              };
+
+              HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
+                  .putBody()
+                  .then(
+                (retvalue) {
+                  Get.back();
+                  if (retvalue == "No Internet") {
+                    CustomDialog().errorDialog(Get.context!, "Error",
+                        "Please check your internet connection and try again.",
+                        () {
+                      Get.back();
+                    });
+                    return;
+                  }
+                  if (retvalue == null) {
+                    CustomDialog().errorDialog(Get.context!, "Error",
+                        "Error while connecting to server, Please try again.",
+                        () {
+                      Get.back();
+                    });
+                  } else {
+                    if (retvalue["success"] == "Y") {
+                      Map<String, dynamic> data = {
+                        "mobile_no": mobileNoParam,
+                        "pwd": newPass.text,
+                      };
+                      final plainText = jsonEncode(data);
+
+                      Authentication().encryptData(plainText);
+                      Get.toNamed(Routes.forgotPassSuccess);
                     } else {
-                      if (retvalue["success"] == "Y") {
-                        Map<String, dynamic> data = {
-                          "mobile_no": mobileNoParam,
-                          "pwd": newPass.text,
-                        };
-                        final plainText = jsonEncode(data);
-
-                        Authentication().encryptData(plainText);
-                        Get.toNamed(Routes.forgotPassSuccess);
-                      } else {
-                        CustomDialog().errorDialog(
-                          Get.context!,
-                          "Error",
-                          retvalue["msg"],
-                          () {
-                            Get.back();
-                          },
-                        );
-                      }
+                      CustomDialog().errorDialog(
+                        Get.context!,
+                        "Error",
+                        retvalue["msg"],
+                        () {
+                          Get.back();
+                        },
+                      );
                     }
-                  },
-                );
-              }
+                  }
+                },
+              );
             }
-          },
-        );
+          }
+        };
+
+        Get.to(OtpFieldScreen(
+          arguments: params,
+        ));
       } else {
         DateTime timeNow = await Functions.getTimeNow();
         DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")

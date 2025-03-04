@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
@@ -114,8 +115,17 @@ class RegistrationController extends GetxController
       "mobile_no": mobileNo.toString(),
       "new_pwd": password.text,
     };
-    Functions().requestOtp(reqParam, (obj) {
-      if (obj["success"] == "Y") {
+    Functions().requestOtp(reqParam, (obj) async {
+      DateTime timeNow = await Functions.getTimeNow();
+      DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+          .parse(obj["otp_exp_dt"].toString());
+      DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
+          timeExp.hour, timeExp.minute, timeExp.millisecond);
+
+      // Calculate difference
+      Duration difference = otpExpiry.difference(timeNow);
+
+      if (obj["success"] == "Y" || obj["status"] == "PENDING") {
         Map<String, String> putParam = {
           "mobile_no": mobileNo.toString(),
           "req_type": "NA",
@@ -125,6 +135,7 @@ class RegistrationController extends GetxController
         Get.offNamed(
           Routes.otpField,
           arguments: {
+            "time_duration": difference,
             "mobile_no": mobileNo.toString(),
             "req_otp_param": reqParam,
             "verify_param": putParam,

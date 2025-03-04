@@ -17,6 +17,18 @@ class ParkingAreasController extends GetxController {
   RxBool isOpenParking = false.obs;
   Timer? debounce;
 
+  @override
+  void onInit() {
+    initializeData();
+    super.onInit();
+  }
+
+  initializeData() async {
+    Future.delayed(Duration(seconds: 1), () {
+      initData(dataNearest);
+    });
+  }
+
   void onSearch(String value) {
     if (debounce?.isActive ?? false) debounce?.cancel();
     List subData = dataNearest;
@@ -140,12 +152,6 @@ class ParkingAreasController extends GetxController {
 
   void clearSearch() {
     initData(dataNearest);
-  }
-
-  @override
-  void onInit() {
-    initData(dataNearest);
-    super.onInit();
   }
 
   String getIconAssetForPwdDetails(

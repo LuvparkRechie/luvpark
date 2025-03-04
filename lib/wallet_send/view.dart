@@ -7,6 +7,7 @@ import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
@@ -680,25 +681,44 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                       "mobile_no": uData["mobile_no".toString()].toString(),
                       "pwd": controller.myPass.text
                     };
-                    Functions().requestOtp(requestParam, (objData) {
-                      Map<String, String> putParam = {
-                        "mobile_no": uData["mobile_no"].toString(),
-                        "otp": objData["otp"].toString(),
-                        "req_type": "SR"
-                      };
-                      Get.toNamed(
-                        Routes.otpField,
-                        arguments: {
-                          "mobile_no": uData["mobile_no".toString()].toString(),
-                          "req_otp_param": requestParam,
-                          "verify_param": putParam,
-                          "callback": (otp) async {
-                            if (otp != null) {
-                              controller.shareToken();
-                            }
+                    Functions().requestOtp(requestParam, (objData) async {
+                      DateTime timeNow = await Functions.getTimeNow();
+                      DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+                          .parse(objData["otp_exp_dt"].toString());
+                      DateTime otpExpiry = DateTime(
+                          timeExp.year,
+                          timeExp.month,
+                          timeExp.day,
+                          timeExp.hour,
+                          timeExp.minute,
+                          timeExp.millisecond);
+
+                      // Calculate difference
+                      Duration difference = otpExpiry.difference(timeNow);
+
+                      if (objData["success"] == "Y" ||
+                          objData["status"] == "PENDING") {
+                        Map<String, String> putParam = {
+                          "mobile_no": uData["mobile_no"].toString(),
+                          "otp": objData["otp"].toString(),
+                          "req_type": "SR"
+                        };
+                        Get.toNamed(
+                          Routes.otpField,
+                          arguments: {
+                            "time_duration": difference,
+                            "mobile_no":
+                                uData["mobile_no".toString()].toString(),
+                            "req_otp_param": requestParam,
+                            "verify_param": putParam,
+                            "callback": (otp) async {
+                              if (otp != null) {
+                                controller.shareToken();
+                              }
+                            },
                           },
-                        },
-                      );
+                        );
+                      }
                     });
                   }
                 })

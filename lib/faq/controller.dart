@@ -48,7 +48,6 @@ class FaqPageController extends GetxController {
     filteredFaqs.assignAll(faqsData);
 
     isLoadingPage.value = false;
-    print("returnData ${returnData["items"]}");
   }
 
   Future<void> getFaqAnswers(String id, int index) async {

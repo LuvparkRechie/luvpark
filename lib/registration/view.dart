@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -35,6 +36,15 @@ class RegistrationPage extends GetView<RegistrationController> {
             ),
             title: Text("Create Account"),
             centerTitle: true,
+            leading: GestureDetector(
+              onTap: () {
+                Get.offNamed(Routes.login);
+              },
+              child: Icon(
+                Iconsax.arrow_left,
+                color: Colors.white,
+              ),
+            ),
           ),
           body: Container(
             color: AppColor.primaryColor,
@@ -274,7 +284,7 @@ class RegistrationPage extends GetView<RegistrationController> {
                                         ),
                                         recognizer: TapGestureRecognizer()
                                           ..onTap = () async {
-                                            Get.offAllNamed(Routes.login);
+                                            Get.offNamed(Routes.login);
                                           },
                                       ),
                                     ],

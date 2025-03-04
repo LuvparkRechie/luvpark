@@ -65,11 +65,10 @@ class WalletScreen extends GetView<WalletController> {
                         borderRadius: BorderRadius.all(Radius.circular(7)),
                         boxShadow: [
                           BoxShadow(
-                            color:
-                                Colors.black.withOpacity(0.1), // Light shadow
-                            blurRadius: 8, // Soft blur
-                            spreadRadius: 2, // Spread effect
-                            offset: Offset(0, 4), // Shadow positioned below
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                            offset: Offset(0, 4),
                           ),
                         ],
                       ),

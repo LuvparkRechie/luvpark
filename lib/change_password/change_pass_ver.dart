@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../auth/authentication.dart';
 import '../custom_widgets/alert_dialog.dart';
@@ -51,16 +52,27 @@ class _ChangePasswordVerifiedState extends State<ChangePasswordVerified> {
       "old_pwd": oldPass.text
     };
 
-    Functions().requestOtp(reqParam, (obj) {
-      if (obj["success"] == "Y") {
+    Functions().requestOtp(reqParam, (obj) async {
+      DateTime timeNow = await Functions.getTimeNow();
+      DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+          .parse(obj["otp_exp_dt"].toString());
+      DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
+          timeExp.hour, timeExp.minute, timeExp.millisecond);
+
+      // Calculate difference
+      Duration difference = otpExpiry.difference(timeNow);
+
+      if (obj["success"] == "Y" || obj["status"] == "PENDING") {
         Map<String, String> putParam = {
           "mobile_no": paramMobile.toString(),
           "otp": obj["otp"].toString(),
           "req_type": "UP"
         };
+
         Get.toNamed(
           Routes.otpField,
           arguments: {
+            "time_duration": difference,
             "mobile_no": paramMobile,
             "req_otp_param": reqParam,
             "verify_param": putParam,

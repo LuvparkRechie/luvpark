@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/parking_areas/controller.dart';
@@ -19,18 +19,28 @@ class ParkingAreas extends GetView<ParkingAreasController> {
   const ParkingAreas({super.key});
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor: AppColor.primaryColor, // Set status bar color
-      statusBarBrightness: Brightness.dark,
-      statusBarIconBrightness: Brightness.light,
-    ));
-    Get.put(ParkingAreasController());
-    final ParkingAreasController ct = Get.put(ParkingAreasController());
-
     return Scaffold(
-      appBar: const CustomAppbar(
-        title: "Parking Areas",
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Parking Areas"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
+      backgroundColor: AppColor.bodyColor,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -95,7 +105,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                         ),
                       ),
                       onChanged: (value) {
-                        ct.onSearch(value);
+                        controller.onSearch(value);
                       },
                     ),
                   ),
@@ -126,7 +136,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                           child: CircularProgressIndicator(),
                         ),
                       )
-                    : ct.searchedZone.isEmpty
+                    : controller.searchedZone.isEmpty
                         ? NoDataFound(
                             text: "There are no parking areas to display.",
                           )
@@ -140,7 +150,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                 separatorBuilder: (context, index) {
                                   return const SizedBox(height: 10);
                                 },
-                                itemCount: ct.searchedZone.length,
+                                itemCount: controller.searchedZone.length,
                                 itemBuilder: (context, index) {
                                   return ShowUpAnimation(
                                     delay: 5 * index,
@@ -149,17 +159,20 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                         CustomDialog()
                                             .loadingDialog(Get.context!);
 
-                                        controller.markerData = ct.searchedZone;
+                                        controller.markerData =
+                                            controller.searchedZone;
 
                                         List ltlng = await Functions
                                             .getCurrentPosition();
                                         LatLng coordinates = LatLng(
                                             ltlng[0]["lat"], ltlng[0]["long"]);
                                         LatLng dest = LatLng(
-                                            double.parse(ct.searchedZone[index]
+                                            double.parse(controller
+                                                .searchedZone[index]
                                                     ["pa_latitude"]
                                                 .toString()),
-                                            double.parse(ct.searchedZone[index]
+                                            double.parse(controller
+                                                .searchedZone[index]
                                                     ["pa_longitude"]
                                                 .toString()));
                                         final estimatedData =
@@ -212,7 +225,8 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                             .start,
                                                     children: [
                                                       CustomTitle(
-                                                        text: ct.searchedZone[
+                                                        text: controller
+                                                                    .searchedZone[
                                                                 index]
                                                             ["park_area_name"],
                                                         fontSize: 16,
@@ -222,7 +236,8 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                       ),
                                                       Container(height: 5),
                                                       CustomParagraph(
-                                                        text: ct.searchedZone[
+                                                        text: controller
+                                                                .searchedZone[
                                                             index]["address"],
                                                         maxlines: 2,
                                                         overflow: TextOverflow
@@ -237,25 +252,27 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                   builder:
                                                       ((context, constraints) {
                                                     final String isPwd =
-                                                        ct.searchedZone[index]
+                                                        controller.searchedZone[
+                                                                    index]
                                                                 ["is_pwd"] ??
                                                             "N";
-                                                    final String vehicleTypes = ct
-                                                            .searchedZone[index]
-                                                        ["vehicle_types_list"];
+                                                    final String vehicleTypes =
+                                                        controller.searchedZone[
+                                                                index][
+                                                            "vehicle_types_list"];
                                                     String iconAsset;
 
                                                     if (isPwd == "Y") {
                                                       iconAsset = controller
                                                           .getIconAssetForPwdDetails(
-                                                              ct.searchedZone[
+                                                              controller.searchedZone[
                                                                       index][
                                                                   "parking_type_code"],
                                                               vehicleTypes);
                                                     } else {
                                                       iconAsset = controller
                                                           .getIconAssetForNonPwdDetails(
-                                                              ct.searchedZone[
+                                                              controller.searchedZone[
                                                                       index][
                                                                   "parking_type_code"],
                                                               vehicleTypes);
@@ -281,12 +298,12 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                !ct.searchedZone[index]
+                                                !controller.searchedZone[index]
                                                         ["is_open"]
                                                     ? CustomParagraph(
-                                                        text: ct.searchedZone[
-                                                                    index]
-                                                                ["is_open"]
+                                                        text: controller
+                                                                    .searchedZone[
+                                                                index]["is_open"]
                                                             ? "Open"
                                                             : "Close",
                                                         fontWeight:
@@ -310,7 +327,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                           ),
                                                           Container(width: 10),
                                                           CustomParagraph(
-                                                            text: ct.searchedZone[
+                                                            text: controller.searchedZone[
                                                                         index]
                                                                     ["is_open"]
                                                                 ? "Open"
@@ -320,7 +337,8 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                             maxlines: 1,
                                                             fontSize: 12,
                                                             minFontSize: 10,
-                                                            color: ct.searchedZone[
+                                                            color: controller
+                                                                            .searchedZone[
                                                                         index]
                                                                     ["is_open"]
                                                                 ? Colors.green
@@ -339,7 +357,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                         size: 20,
                                                       ),
                                                     ),
-                                                    " ${Variables.timeFormatter2(ct.searchedZone[index]["opened_time"].toString())} - ${Variables.timeFormatter2(ct.searchedZone[index]["closed_time"]).toString()}",
+                                                    " ${Variables.timeFormatter2(controller.searchedZone[index]["opened_time"].toString())} - ${Variables.timeFormatter2(controller.searchedZone[index]["closed_time"]).toString()}",
                                                   ),
                                                 ),
                                                 Container(width: 5),
@@ -359,7 +377,7 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                     Container(width: 10),
                                                     CustomParagraph(
                                                       text:
-                                                          '${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString())} ${int.parse(ct.searchedZone[index]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"}',
+                                                          '${int.parse(controller.searchedZone[index]["ps_vacant_count"].toString())} ${int.parse(controller.searchedZone[index]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"}',
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       maxlines: 1,

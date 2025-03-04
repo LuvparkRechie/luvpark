@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/custom_textfield.dart';
@@ -30,7 +31,6 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
 
   @override
   void initState() {
-    print("widget.sessionId ${widget.sessionId}");
     super.initState();
   }
 
@@ -39,8 +39,17 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
       "mobile_no": widget.mobileNo.toString(),
       "req_type": "SR",
     };
-    Functions().requestOtp(reqParam, (obj) {
-      if (obj["success"] == "Y") {
+    Functions().requestOtp(reqParam, (obj) async {
+      DateTime timeNow = await Functions.getTimeNow();
+      DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+          .parse(obj["otp_exp_dt"].toString());
+      DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
+          timeExp.hour, timeExp.minute, timeExp.millisecond);
+
+      // Calculate difference
+      Duration difference = otpExpiry.difference(timeNow);
+
+      if (obj["success"] == "Y" || obj["status"] == "PENDING") {
         Map<String, String> putParam = {
           "mobile_no": widget.mobileNo.toString(),
           "otp": obj["otp"].toString(),
@@ -50,6 +59,7 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
         Get.toNamed(
           Routes.otpField,
           arguments: {
+            "time_duration": difference,
             "mobile_no": widget.mobileNo,
             "req_otp_param": reqParam,
             "verify_param": putParam,
