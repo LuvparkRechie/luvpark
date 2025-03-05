@@ -348,6 +348,13 @@ class _TemplState extends State<Templ> {
                                                 : [AutoDecimalInputFormatter()],
                                         isFilled: field['is_validation'] == "Y",
                                         validator: (value) {
+                                          if (field['label'] ==
+                                              "Received Amount") {
+                                            if (value?.startsWith('0') ??
+                                                false) {
+                                              return "Invalid amount";
+                                            }
+                                          }
                                           if (field['required'] &&
                                               (value == null ||
                                                   value.isEmpty)) {

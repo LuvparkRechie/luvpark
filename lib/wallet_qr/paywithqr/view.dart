@@ -9,6 +9,7 @@ import 'package:luvpark/custom_widgets/custom_textfield.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
+import '../../custom_widgets/page_loader.dart';
 import 'controller.dart';
 
 class paywithQR extends GetView<paywithQRController> {
@@ -54,28 +55,33 @@ class paywithQR extends GetView<paywithQRController> {
                           "Align the QR code within the frame to proceed with payment.",
                       textAlign: TextAlign.center,
                     ),
-                    Container(
-                      margin: const EdgeInsets.all(40),
-                      padding: const EdgeInsets.all(20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: PrettyQrView(
-                        decoration: const PrettyQrDecoration(
-                          background: Colors.white,
-                          image: PrettyQrDecorationImage(
-                            image: AssetImage("assets/images/logo.png"),
+                    controller.isLoading.value
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 100),
+                            child: PageLoader(),
+                          )
+                        : Container(
+                            margin: const EdgeInsets.all(40),
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: PrettyQrView(
+                              decoration: const PrettyQrDecoration(
+                                background: Colors.white,
+                                image: PrettyQrDecorationImage(
+                                  image: AssetImage("assets/images/logo.png"),
+                                ),
+                              ),
+                              qrImage: QrImage(
+                                QrCode.fromData(
+                                  data: controller.payKey.value,
+                                  errorCorrectLevel: QrErrorCorrectLevel.H,
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
-                        qrImage: QrImage(
-                          QrCode.fromData(
-                            data: controller.payKey.value,
-                            errorCorrectLevel: QrErrorCorrectLevel.H,
-                          ),
-                        ),
-                      ),
-                    ),
                     TextButton.icon(
                         onPressed: controller.generateQr,
                         icon: Icon(

@@ -164,34 +164,23 @@ class SecuritySettingsController extends GetxController {
         isBuyToken: false,
         callback: () async {
           CustomDialog().loadingDialog(Get.context!);
-          Get.put(LoginScreenController());
 
-          final userData = await Authentication().getUserData2();
-
-          Functions.getAccountStatus(userData["mobile_no"], (obj) {
+          CustomDialog().infoDialog(
+              "Account status", "Your account might not be active.", () async {
             Get.back();
-            final items = obj[0]["items"];
+            CustomDialog().loadingDialog(Get.context!);
+            await Future.delayed(const Duration(seconds: 3));
+            final userLogin = await Authentication().getUserLogin();
+            List userData = [userLogin];
+            userData = userData.map((e) {
+              e["is_login"] = "N";
+              return e;
+            }).toList();
 
-            if (items.isEmpty || items[0]["is_active"] == "N") {
-              CustomDialog().infoDialog(
-                  "Account status", "Your account might not be active.",
-                  () async {
-                Get.back();
-                CustomDialog().loadingDialog(Get.context!);
-                await Future.delayed(const Duration(seconds: 3));
-                final userLogin = await Authentication().getUserLogin();
-                List userData = [userLogin];
-                userData = userData.map((e) {
-                  e["is_login"] = "N";
-                  return e;
-                }).toList();
+            await Authentication().setLogin(jsonEncode(userData[0]));
 
-                await Authentication().setLogin(jsonEncode(userData[0]));
-
-                Get.back();
-                Get.offAllNamed(Routes.login);
-              });
-            }
+            Get.back();
+            Get.offAllNamed(Routes.login);
           });
         },
       ));

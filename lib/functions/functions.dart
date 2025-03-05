@@ -617,57 +617,6 @@ class Functions {
     return jsonList.reversed.toList();
   }
 
-  static Future<void> getAccountStatus(mobile, Function cb) async {
-    String apiParam = "${ApiKeys.getUserAccStatus}?mobile_no=$mobile";
-
-    HttpRequest(api: apiParam).get().then((objData) {
-      if (objData == "No Internet") {
-        cb([
-          {"has_net": false, "items": []}
-        ]);
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (objData == null) {
-        cb([
-          {"has_net": true, "items": []}
-        ]);
-        CustomDialog().serverErrorDialog(Get.context!, () {
-          Get.back();
-          SystemChannels.platform.invokeMethod('SystemNavigator.pop');
-        });
-        return;
-      }
-      if (objData["items"].isEmpty) {
-        cb([
-          {"has_net": true, "items": objData["items"]}
-        ]);
-        CustomDialog().errorDialog(Get.context!, "luvpark", "Invalid account.",
-            () {
-          Get.offAllNamed(Routes.login);
-        });
-        return;
-      }
-      if (objData["items"][0]["login_attempt"] >= 3) {
-        cb([
-          {"has_net": true, "items": objData["items"]}
-        ]);
-        Future.delayed(Duration(milliseconds: 200), () {
-          Get.offAndToNamed(Routes.lockScreen, arguments: objData["items"]);
-        });
-
-        return;
-      } else {
-        cb([
-          {"has_net": true, "items": objData["items"]}
-        ]);
-        return;
-      }
-    });
-  }
-
   static Future<DateTime> getTimeNow() async {
     try {
       DateTime timeNow = await NTP.now().timeout(Duration(seconds: 2));
