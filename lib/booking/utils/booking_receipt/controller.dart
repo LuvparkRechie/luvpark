@@ -97,6 +97,7 @@ class BookingReceiptController extends GetxController
   String formatDateTime(DateTime dtIn, DateTime dtOut) {
     final DateFormat dateFormat = DateFormat('MMM d');
     final DateFormat fullDateFormat = DateFormat('MMM d, yyyy');
+    final DateFormat monthFormat = DateFormat('MMM');
 
     // Check if the dates are on the same day
     if (dtIn.toLocal().year == dtOut.toLocal().year &&
@@ -105,10 +106,16 @@ class BookingReceiptController extends GetxController
       return fullDateFormat.format(dtIn);
     } else {
       final startDate = dateFormat.format(dtIn);
-      final endDate = dateFormat.format(dtOut);
+      final endDateDay = dtOut.day;
+      final endDateMonth = monthFormat.format(dtOut);
       final endYear = fullDateFormat.format(dtOut).split(', ')[1];
 
-      return '$startDate - ${endDate.split(" ")[1]}, $endYear';
+      if (dtIn.toLocal().month == dtOut.toLocal().month &&
+          dtIn.toLocal().year == dtOut.toLocal().year) {
+        return '$startDate - ${endDateDay}, $endYear';
+      } else {
+        return '$startDate - $endDateMonth $endDateDay, $endYear';
+      }
     }
   }
 
