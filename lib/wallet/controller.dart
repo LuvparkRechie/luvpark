@@ -51,7 +51,7 @@ class WalletController extends GetxController
     final authData = await Authentication().getUserData2();
     mobileNo.value = authData["mobile_no"].toString();
     List item = [
-      {"btn_name": "Load", "icon": LucideIcons.wallet},
+      // {"btn_name": "Load", "icon": LucideIcons.wallet},
       {"btn_name": "Transfer", "icon": LucideIcons.arrowLeftRight},
       {"btn_name": "QR Code", "icon": LucideIcons.qrCode},
       {"btn_name": "Bill", "icon": LucideIcons.wallet},
@@ -252,19 +252,31 @@ class WalletController extends GetxController
 
   Future<void> onBtnTap(int index) async {
     switch (index) {
+      // case 0:
+      //   Get.toNamed(Routes.walletrechargeload);
+      //   break;
+      // case 1:
+      //   Get.toNamed(Routes.send2);
+      //   break;
+      // case 2:
+      //   Get.toNamed(Routes.qrwallet);
+      //   break;
+      // case 3:
+      //   Get.toNamed(Routes.billers);
+      //   break;
+      // case 4:
+      //   Get.toNamed(Routes.merchant);
+      //   break;
       case 0:
-        Get.toNamed(Routes.walletrechargeload);
-        break;
-      case 1:
         Get.toNamed(Routes.send2);
         break;
-      case 2:
+      case 1:
         Get.toNamed(Routes.qrwallet);
         break;
-      case 3:
+      case 2:
         Get.toNamed(Routes.billers);
         break;
-      case 4:
+      case 3:
         Get.toNamed(Routes.merchant);
         break;
     }

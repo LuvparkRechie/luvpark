@@ -137,7 +137,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.bodyColor,
+      backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [
           IconButton(
@@ -214,12 +214,17 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                                 );
                               },
                               child: Container(
+                                margin: EdgeInsets.only(bottom: 10),
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
                                   border:
-                                      Border.all(color: Colors.grey.shade300),
-                                  borderRadius: BorderRadius.circular(7),
+                                      Border.all(color: Colors.grey.shade100),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10),
+                                    topRight: Radius.circular(30),
+                                    bottomLeft: Radius.circular(30),
+                                    bottomRight: Radius.circular(10),
+                                  ),
                                 ),
                                 child: ListTile(
                                   contentPadding: EdgeInsets.zero,
