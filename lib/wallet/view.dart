@@ -139,18 +139,13 @@ class WalletScreen extends GetView<WalletController> {
                                           data: controller.logs, index: index));
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.only(bottom: 10),
                                       padding:
                                           EdgeInsets.symmetric(horizontal: 15),
                                       decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
                                         border: Border.all(
-                                            color: Colors.grey.shade100),
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(10),
-                                          topRight: Radius.circular(30),
-                                          bottomLeft: Radius.circular(30),
-                                          bottomRight: Radius.circular(10),
-                                        ),
+                                            color: Colors.grey.shade300),
+                                        borderRadius: BorderRadius.circular(7),
                                       ),
                                       child: ListTile(
                                         contentPadding: EdgeInsets.zero,
