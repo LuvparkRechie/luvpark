@@ -17,6 +17,7 @@ import '../../custom_widgets/vertical_height.dart';
 import '../../functions/functions.dart';
 import '../../http/api_keys.dart';
 import '../../http/http_request.dart';
+import '../../otp_field/index.dart';
 import '../../routes/routes.dart';
 
 class ChangePassNewProtocol extends StatefulWidget {
@@ -70,6 +71,9 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
   }
 
   Future<void> onSubmit() async {
+    CustomDialog().loadingDialog(context);
+    DateTime timeNow = await Functions.getTimeNow();
+    Get.back();
     // Close any open keyboards
     FocusManager.instance.primaryFocus!.unfocus();
 
@@ -93,7 +97,6 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
       "req_type": "SR",
     };
     Functions().requestOtp(reqParam, (obj) async {
-      DateTime timeNow = await Functions.getTimeNow();
       DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
           .parse(obj["otp_exp_dt"].toString());
       DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
@@ -108,89 +111,91 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
           "otp": obj["otp"].toString(),
           "req_type": "SR"
         };
+        Object args = {
+          "time_duration": difference,
+          "mobile_no": widget.mobileNo,
+          "req_otp_param": reqParam,
+          "verify_param": putParam,
+          "is_forget_vfd_pass": true,
+          "callback": (otp) async {
+            if (otp != null) {
+              CustomDialog().loadingDialog(Get.context!);
 
-        Get.toNamed(
-          Routes.otpField,
-          arguments: {
-            "time_duration": difference,
-            "mobile_no": widget.mobileNo,
-            "req_otp_param": reqParam,
-            "verify_param": putParam,
-            "is_forget_vfd_pass": true,
-            "callback": (otp) async {
-              if (otp != null) {
-                CustomDialog().loadingDialog(Get.context!);
+              Map<String, dynamic> postParam = {
+                "mobile_no": widget.mobileNo,
+                "otp": otp.toString(),
+                "new_pwd": newPassword.text,
+              };
 
-                Map<String, dynamic> postParam = {
-                  "mobile_no": widget.mobileNo,
-                  "otp": otp.toString(),
-                  "new_pwd": newPassword.text,
-                };
-
-                HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
-                    .putBody()
-                    .then(
-                  (retvalue) async {
-                    Get.back();
-                    if (retvalue == "No Internet") {
-                      CustomDialog().errorDialog(Get.context!, "Error",
-                          "Please check your internet connection and try again.",
-                          () {
+              HttpRequest(api: ApiKeys.putLogin, parameters: postParam)
+                  .putBody()
+                  .then(
+                (retvalue) async {
+                  Get.back();
+                  if (retvalue == "No Internet") {
+                    CustomDialog().errorDialog(Get.context!, "Error",
+                        "Please check your internet connection and try again.",
+                        () {
+                      Get.back();
+                    });
+                    return;
+                  }
+                  if (retvalue == null) {
+                    CustomDialog().errorDialog(Get.context!, "Error",
+                        "Error while connecting to server, Please try again.",
+                        () {
+                      Get.back();
+                    });
+                  } else {
+                    if (retvalue["success"] == "Y") {
+                      Get.back();
+                      CustomDialog().successDialog(
+                          Get.context!, "Success", retvalue["msg"], "Okay",
+                          () async {
                         Get.back();
-                      });
-                      return;
-                    }
-                    if (retvalue == null) {
-                      CustomDialog().errorDialog(Get.context!, "Error",
-                          "Error while connecting to server, Please try again.",
-                          () {
-                        Get.back();
-                      });
-                    } else {
-                      if (retvalue["success"] == "Y") {
-                        Get.back();
-                        CustomDialog().successDialog(
-                            Get.context!, "Success", retvalue["msg"], "Okay",
-                            () async {
-                          Get.back();
-                          CustomDialog().loadingDialog(Get.context!);
-                          await Future.delayed(const Duration(seconds: 1));
-                          final userLogin =
-                              await Authentication().getUserLogin();
-                          if (userLogin == null) {
-                            Get.back();
-                            Get.offAllNamed(Routes.login);
-                            return;
-                          }
-
-                          List userData = [userLogin];
-                          userData = userData.map((e) {
-                            e["is_login"] = "N";
-                            return e;
-                          }).toList();
-
-                          await Authentication()
-                              .setLogin(jsonEncode(userData[0]));
-                          await Authentication().setBiometricStatus(false);
+                        CustomDialog().loadingDialog(Get.context!);
+                        await Future.delayed(const Duration(seconds: 1));
+                        final userLogin = await Authentication().getUserLogin();
+                        if (userLogin == null) {
                           Get.back();
                           Get.offAllNamed(Routes.login);
-                        });
-                      } else {
-                        CustomDialog().errorDialog(
-                          Get.context!,
-                          "Error",
-                          retvalue["msg"],
-                          () {
-                            Get.back();
-                          },
-                        );
-                      }
+                          return;
+                        }
+
+                        List userData = [userLogin];
+                        userData = userData.map((e) {
+                          e["is_login"] = "N";
+                          return e;
+                        }).toList();
+
+                        await Authentication()
+                            .setLogin(jsonEncode(userData[0]));
+                        await Authentication().setBiometricStatus(false);
+                        Get.back();
+                        Get.offAllNamed(Routes.login);
+                      });
+                    } else {
+                      CustomDialog().errorDialog(
+                        Get.context!,
+                        "Error",
+                        retvalue["msg"],
+                        () {
+                          Get.back();
+                        },
+                      );
                     }
-                  },
-                );
-              }
-            },
+                  }
+                },
+              );
+            }
           },
+        };
+        Get.to(
+          OtpFieldScreen(
+            arguments: args,
+          ),
+          transition: Transition.rightToLeftWithFade,
+          duration: Duration(milliseconds: 400),
         );
       }
     });

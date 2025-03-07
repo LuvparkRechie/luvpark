@@ -15,6 +15,7 @@ import 'package:luvpark/sqlite/pa_message_table.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../functions/functions.dart';
+import '../otp_field/index.dart';
 import '../sqlite/reserve_notification_table.dart';
 import 'change_pass_new_proc/change_pass_new.dart';
 
@@ -86,7 +87,10 @@ class LoginScreenController extends GetxController {
               "No",
               "Yes", () {
             Get.back();
-          }, () {
+          }, () async {
+            Get.back();
+            CustomDialog().loadingDialog(context);
+            DateTime timeNow = await Functions.getTimeNow();
             Get.back();
             String mobileNo = param["mobile_no"].toString();
             Map<String, String> reqParam = {
@@ -94,7 +98,6 @@ class LoginScreenController extends GetxController {
               "new_pwd": password.text,
             };
             Functions().requestOtp(reqParam, (obj) async {
-              DateTime timeNow = await Functions.getTimeNow();
               DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
                   .parse(obj["otp_exp_dt"].toString());
               DateTime otpExpiry = DateTime(
@@ -115,33 +118,38 @@ class LoginScreenController extends GetxController {
                   "otp": obj["otp"].toString()
                 };
 
-                Get.toNamed(
-                  Routes.otpField,
-                  arguments: {
-                    "time_duration": difference,
-                    "mobile_no": mobileNo.toString(),
-                    "req_otp_param": reqParam,
-                    "verify_param": putParam,
-                    "callback": (otp) {
-                      if (otp != null) {
-                        Map<String, dynamic> data = {
-                          "mobile_no": mobileNo,
-                          "pwd": password.text,
-                        };
-                        final plainText = jsonEncode(data);
+                Object args = {
+                  "time_duration": difference,
+                  "mobile_no": mobileNo.toString(),
+                  "req_otp_param": reqParam,
+                  "verify_param": putParam,
+                  "callback": (otp) {
+                    if (otp != null) {
+                      Map<String, dynamic> data = {
+                        "mobile_no": mobileNo,
+                        "pwd": password.text,
+                      };
+                      final plainText = jsonEncode(data);
 
-                        Authentication().encryptData(plainText);
-                        CustomDialog().successDialog(
-                            context,
-                            "Activate Account",
-                            "Your account has been successfully activated! 🎉 You can now enjoy full access to all features.",
-                            "Okay", () {
-                          Get.back();
-                          Get.back();
-                        });
-                      }
+                      Authentication().encryptData(plainText);
+                      CustomDialog().successDialog(
+                          context,
+                          "Activate Account",
+                          "Your account has been successfully activated! 🎉 You can now enjoy full access to all features.",
+                          "Okay", () {
+                        Get.back();
+                        Get.back();
+                      });
                     }
-                  },
+                  }
+                };
+
+                Get.to(
+                  OtpFieldScreen(
+                    arguments: args,
+                  ),
+                  transition: Transition.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 400),
                 );
               }
             });
@@ -184,14 +192,18 @@ class LoginScreenController extends GetxController {
                   Functions().verifyAccount(param["mobile_no"], (data) {
                     if (data["success"]) {
                       Get.to(
-                          DeviceRegScreen(
-                            mobileNo: param["mobile_no"].toString(),
-                            userId: data["data"][0]["user_id"].toString(),
-                            sessionId: returnPost["session_id"].toString(),
-                          ),
-                          arguments: {
-                            "data": returnPost,
-                          });
+                        DeviceRegScreen(
+                          mobileNo: param["mobile_no"].toString(),
+                          userId: data["data"][0]["user_id"].toString(),
+                          sessionId: returnPost["session_id"].toString(),
+                          pwd: param["pwd"],
+                        ),
+                        arguments: {
+                          "data": returnPost,
+                        },
+                        transition: Transition.rightToLeftWithFade,
+                        duration: Duration(milliseconds: 400),
+                      );
                       return;
                     }
                   });
@@ -204,18 +216,23 @@ class LoginScreenController extends GetxController {
                 });
               }
               return;
-            }
-            CustomDialog().confirmationDialog(context, "Account Secure",
-                returnPost["msg"], "Cancel", "Register device", () {
-              Get.back();
-            }, () {
-              Get.back();
-              Get.to(
+            } else {
+              CustomDialog().confirmationDialog(context, "Account Secure",
+                  returnPost["msg"], "Cancel", "Register device", () {
+                Get.back();
+              }, () {
+                Get.back();
+                Get.to(
                   DeviceRegScreen(
                     mobileNo: param["mobile_no"].toString(),
+                    pwd: param["pwd"],
                   ),
-                  arguments: {"data": returnPost});
-            });
+                  arguments: {"data": returnPost},
+                  transition: Transition.rightToLeftWithFade,
+                  duration: Duration(milliseconds: 400),
+                );
+              });
+            }
             return;
           }
           CustomDialog().infoDialog("Security Warning", returnPost["msg"], () {
@@ -249,6 +266,7 @@ class LoginScreenController extends GetxController {
             Get.to(
               DeviceRegScreen(
                 mobileNo: param["mobile_no"].toString(),
+                pwd: param["pwd"],
               ),
               arguments: {
                 "data": returnPost,
@@ -266,6 +284,8 @@ class LoginScreenController extends GetxController {
                   });
                 }
               },
+              transition: Transition.rightToLeftWithFade,
+              duration: Duration(milliseconds: 400),
             );
           });
           return;

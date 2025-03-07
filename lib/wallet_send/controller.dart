@@ -269,7 +269,7 @@ class WalletSendController extends GetxController {
       "session_id": userData["session_id"].toString(),
       "pwd": myPass.text,
     };
-
+    print("parameters $parameters");
     HttpRequest(api: ApiKeys.postShareToken, parameters: parameters)
         .postBody()
         .then(

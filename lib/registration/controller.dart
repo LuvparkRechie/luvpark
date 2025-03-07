@@ -12,6 +12,8 @@ import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/routes/routes.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../otp_field/index.dart';
+
 class RegistrationController extends GetxController
     with GetSingleTickerProviderStateMixin {
   final isAgree = Get.arguments;
@@ -110,13 +112,15 @@ class RegistrationController extends GetxController
   }
 
   Future<void> requestOtp() async {
+    CustomDialog().loadingDialog(Get.context!);
+    DateTime timeNow = await Functions.getTimeNow();
+    Get.back();
     String mobileNo = "63${mobileNumber.text.replaceAll(" ", "")}";
     Map<String, String> reqParam = {
       "mobile_no": mobileNo.toString(),
       "new_pwd": password.text,
     };
     Functions().requestOtp(reqParam, (obj) async {
-      DateTime timeNow = await Functions.getTimeNow();
       DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
           .parse(obj["otp_exp_dt"].toString());
       DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
@@ -132,26 +136,31 @@ class RegistrationController extends GetxController
           "otp": obj["otp"].toString()
         };
 
-        Get.offNamed(
-          Routes.otpField,
-          arguments: {
-            "time_duration": difference,
-            "mobile_no": mobileNo.toString(),
-            "req_otp_param": reqParam,
-            "verify_param": putParam,
-            "callback": (otp) {
-              if (otp != null) {
-                Map<String, dynamic> data = {
-                  "mobile_no": mobileNo,
-                  "pwd": password.text,
-                };
-                final plainText = jsonEncode(data);
+        Object args = {
+          "time_duration": difference,
+          "mobile_no": mobileNo.toString(),
+          "req_otp_param": reqParam,
+          "verify_param": putParam,
+          "callback": (otp) {
+            if (otp != null) {
+              Map<String, dynamic> data = {
+                "mobile_no": mobileNo,
+                "pwd": password.text,
+              };
+              final plainText = jsonEncode(data);
 
-                Authentication().encryptData(plainText);
-                Get.offAllNamed(Routes.forgotPassSuccess);
-              }
+              Authentication().encryptData(plainText);
+              Get.offAllNamed(Routes.forgotPassSuccess);
             }
-          },
+          }
+        };
+
+        Get.to(
+          OtpFieldScreen(
+            arguments: args,
+          ),
+          transition: Transition.rightToLeftWithFade,
+          duration: Duration(milliseconds: 400),
         );
       }
     });

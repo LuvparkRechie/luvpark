@@ -30,6 +30,14 @@ class LockScreenController extends GetxController {
   }
 
   void getParamData() async {
+    await Authentication().enableTimer(false);
+    await Authentication().setLogoutStatus(true);
+    await Authentication().setBiometricStatus(false);
+    await Authentication().remove("userData");
+    await PaMessageDatabase.instance.deleteAll();
+    NotificationDatabase.instance.deleteAll();
+    AwesomeNotifications().cancelAllSchedules();
+    AwesomeNotifications().cancelAll();
     DateTime timeNow = await Functions.getTimeNow();
 
     DateTime localDate = DateTime.parse(parameter[0]["locked_expiry_on"]);

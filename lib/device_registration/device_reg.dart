@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
-import 'package:luvpark/custom_widgets/custom_textfield.dart';
+import 'package:luvpark/otp_field/index.dart';
 
 import '../auth/authentication.dart';
 import '../custom_widgets/alert_dialog.dart';
@@ -17,9 +18,14 @@ import '../routes/routes.dart';
 class DeviceRegScreen extends StatefulWidget {
   final String mobileNo;
   final String? userId;
+  final String pwd;
   final String? sessionId;
   const DeviceRegScreen(
-      {super.key, required this.mobileNo, this.userId, this.sessionId});
+      {super.key,
+      required this.mobileNo,
+      this.userId,
+      this.sessionId,
+      required this.pwd});
 
   @override
   State<DeviceRegScreen> createState() => _DeviceRegScreenState();
@@ -35,12 +41,15 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
   }
 
   void onRegisterDev() async {
+    CustomDialog().loadingDialog(context);
+    DateTime timeNow = await Functions.getTimeNow();
+    Get.back();
     Map<String, String> reqParam = {
       "mobile_no": widget.mobileNo.toString(),
-      "req_type": "SR",
+      "pwd": widget.pwd,
     };
+    // "req_type": "SR",
     Functions().requestOtp(reqParam, (obj) async {
-      DateTime timeNow = await Functions.getTimeNow();
       DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
           .parse(obj["otp_exp_dt"].toString());
       DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
@@ -55,34 +64,37 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
           "otp": obj["otp"].toString(),
           "req_type": "SR"
         };
-
-        Get.toNamed(
-          Routes.otpField,
-          arguments: {
-            "time_duration": difference,
-            "mobile_no": widget.mobileNo,
-            "req_otp_param": reqParam,
-            "verify_param": putParam,
-            "callback": (otp) async {
-              final uData = await Authentication().getUserData2();
-              if (otp != null) {
-                if (widget.sessionId == null) {
-                  registerDevice();
-                  return;
-                }
-                Functions.logoutUser(
-                    uData == null
-                        ? widget.sessionId.toString()
-                        : uData["session_id"].toString(), (isSuccess) async {
-                  if (isSuccess["is_true"]) {
-                    registerDevice();
-                  }
-                });
-              } else {
-                isVerifiedOtp = false;
+        Object args = {
+          "time_duration": difference,
+          "mobile_no": widget.mobileNo,
+          "req_otp_param": reqParam,
+          "verify_param": putParam,
+          "callback": (otp) async {
+            final uData = await Authentication().getUserData2();
+            if (otp != null) {
+              if (widget.sessionId == null) {
+                registerDevice();
+                return;
               }
-            },
+              Functions.logoutUser(
+                  uData == null
+                      ? widget.sessionId.toString()
+                      : uData["session_id"].toString(), (isSuccess) async {
+                if (isSuccess["is_true"]) {
+                  registerDevice();
+                }
+              });
+            } else {
+              isVerifiedOtp = false;
+            }
           },
+        };
+        Get.to(
+          OtpFieldScreen(
+            arguments: args,
+          ),
+          transition: Transition.rightToLeftWithFade,
+          duration: Duration(milliseconds: 400),
         );
       }
     });
@@ -145,56 +157,49 @@ class _DeviceRegScreenState extends State<DeviceRegScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
         ),
+        title: Text("Device Registration"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
+      backgroundColor: AppColor.bodyColor,
       body: SafeArea(
           child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CustomButtonClose(onTap: () {
-              Get.back();
-            }),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Image(
-                    image: AssetImage("assets/images/dev_reg.png"),
-                    fit: BoxFit.contain,
-                    width: MediaQuery.of(context).size.width / 2.5,
-                    height: MediaQuery.of(context).size.width / 2.5,
-                  ),
-                  Container(height: 50),
-                  CustomTitle(
-                    text: "Device Registration",
-                    fontSize: 20,
-                  ),
-                  Container(height: 10),
-                  CustomParagraph(
-                    text:
-                        "Register your device to get started and access your wallet securely.",
-                    textAlign: TextAlign.center,
-                  ),
-                  Container(height: 30),
-                  CustomButton(
-                      text: "Register this device",
-                      onPressed:
-                          isVerifiedOtp ? registerDevice : onRegisterDev),
-                ],
-              ),
+            Image(
+              image: AssetImage("assets/images/dev_reg.png"),
+              fit: BoxFit.contain,
+              width: MediaQuery.of(context).size.width / 2.5,
+              height: MediaQuery.of(context).size.width / 2.5,
             ),
             Container(height: 50),
+            CustomParagraph(
+              text:
+                  "Register your device to get started and access your wallet securely.",
+              textAlign: TextAlign.center,
+            ),
+            Container(height: 30),
+            CustomButton(
+                text: "Register this device",
+                onPressed: isVerifiedOtp ? registerDevice : onRegisterDev),
           ],
         ),
       )),

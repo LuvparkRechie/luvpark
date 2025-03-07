@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
@@ -20,13 +21,23 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
     return Scaffold(
       backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        leading: null,
-        elevation: 0,
-        toolbarHeight: 0,
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
-          statusBarColor: AppColor.bodyColor,
+          statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
-          statusBarIconBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Secure Your Account"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
         ),
       ),
       body: Padding(
@@ -49,17 +60,10 @@ class ForgotVerifiedAcct extends GetView<ForgotVerifiedAcctController> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Container(height: 20),
-                                  CustomButtonClose(onTap: () {
-                                    Get.back();
-                                  }),
-                                  Container(height: 20),
-                                  CustomTitle(
-                                    text: "Security Question",
-                                    fontSize: 20,
-                                  ),
-                                  Container(height: 10),
+
                                   CustomParagraph(
-                                    text: "Please provide an answer.",
+                                    text:
+                                        "Complete verification by providing security details and setting your password.",
                                   ),
                                   Container(height: 20),
 

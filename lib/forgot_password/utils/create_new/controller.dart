@@ -72,13 +72,15 @@ class CreateNewPassController extends GetxController {
   }
 
   Future<void> requestOtp() async {
+    CustomDialog().loadingDialog(Get.context!);
+    DateTime timeNow = await Functions.getTimeNow();
+    Get.back();
     Map<String, String> reqParam = {
       "mobile_no": mobileNoParam.toString(),
       "new_pwd": newPass.text,
     };
 
     Functions().requestOtp(reqParam, (obj) async {
-      DateTime timeNow = await Functions.getTimeNow();
       DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
           .parse(obj["otp_exp_dt"].toString());
       DateTime otpExpiry = DateTime(timeExp.year, timeExp.month, timeExp.day,
@@ -88,14 +90,13 @@ class CreateNewPassController extends GetxController {
       Duration difference = otpExpiry.difference(timeNow);
 
       if (obj["success"] == "Y" || obj["status"] == "PENDING") {
-        Object params = {
+        Object args = {
           "time_duration": difference,
           "mobile_no": mobileNoParam,
           "req_otp_param": reqParam,
           "is_forget_vfd_pass": true,
           "callback": (otp) {
             if (otp != null) {
-              Get.back();
               CustomDialog().loadingDialog(Get.context!);
 
               Map<String, dynamic> postParam = {
@@ -150,21 +151,13 @@ class CreateNewPassController extends GetxController {
           }
         };
 
-        Get.to(OtpFieldScreen(
-          arguments: params,
-        ));
-      } else {
-        DateTime timeNow = await Functions.getTimeNow();
-        DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
-            .parse(obj["otp_exp_dt"].toString());
-
-        // Calculate difference
-        Duration difference = timeExp.difference(timeNow);
-
-        remainingSeconds.value = difference.inSeconds;
-        totalMinutes.value = difference.inMinutes;
-
-        startTimer();
+        Get.to(
+          OtpFieldScreen(
+            arguments: args,
+          ),
+          transition: Transition.rightToLeftWithFade,
+          duration: Duration(milliseconds: 400),
+        );
       }
     });
   }

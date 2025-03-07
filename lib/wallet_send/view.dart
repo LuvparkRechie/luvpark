@@ -20,7 +20,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../auth/authentication.dart';
 import '../custom_widgets/app_color.dart';
 import '../custom_widgets/variables.dart';
-import '../routes/routes.dart';
+import '../otp_field/index.dart';
 
 class WalletSend extends GetView<WalletSendController> {
   const WalletSend({super.key});
@@ -681,8 +681,10 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                       "mobile_no": uData["mobile_no".toString()].toString(),
                       "pwd": controller.myPass.text
                     };
+                    CustomDialog().loadingDialog(Get.context!);
+                    DateTime timeNow = await Functions.getTimeNow();
+                    Get.back();
                     Functions().requestOtp(requestParam, (objData) async {
-                      DateTime timeNow = await Functions.getTimeNow();
                       DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
                           .parse(objData["otp_exp_dt"].toString());
                       DateTime otpExpiry = DateTime(
@@ -703,20 +705,26 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                           "otp": objData["otp"].toString(),
                           "req_type": "SR"
                         };
-                        Get.toNamed(
-                          Routes.otpField,
-                          arguments: {
-                            "time_duration": difference,
-                            "mobile_no":
-                                uData["mobile_no".toString()].toString(),
-                            "req_otp_param": requestParam,
-                            "verify_param": putParam,
-                            "callback": (otp) async {
-                              if (otp != null) {
-                                controller.shareToken();
-                              }
-                            },
+
+                        Object args = {
+                          "time_duration": difference,
+                          "mobile_no": uData["mobile_no".toString()].toString(),
+                          "req_otp_param": requestParam,
+                          "verify_param": putParam,
+                          "callback": (otp) async {
+                            print("return otp $otp");
+                            if (otp != null) {
+                              controller.shareToken();
+                            }
                           },
+                        };
+
+                        Get.to(
+                          OtpFieldScreen(
+                            arguments: args,
+                          ),
+                          transition: Transition.rightToLeftWithFade,
+                          duration: Duration(milliseconds: 400),
                         );
                       }
                     });

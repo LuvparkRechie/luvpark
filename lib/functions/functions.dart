@@ -869,6 +869,19 @@ class Functions {
           Get.back();
           if (returnData["status"] == "PENDING") {
             cb(returnData);
+            return;
+          }
+          if (returnData["status"] == "LOCKED") {
+            List mapData = [returnData];
+
+            mapData = mapData.map((e) {
+              e["mobile_no"] = param["mobile_no"];
+              return e;
+            }).toList();
+
+            Future.delayed(Duration(milliseconds: 200), () {
+              Get.offAllNamed(Routes.lockScreen, arguments: mapData);
+            });
           }
         });
         return;

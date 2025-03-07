@@ -14,7 +14,7 @@ class LockScreen extends GetView<LockScreenController> {
   @override
   Widget build(BuildContext context) {
     return PopScope(
-      canPop: true,
+      canPop: false,
       child: Scaffold(
         backgroundColor: AppColor.bodyColor,
         body: SafeArea(
@@ -45,8 +45,7 @@ class LockScreen extends GetView<LockScreenController> {
                           CustomParagraph(
                             textAlign: TextAlign.center,
                             text:
-                                "Your account is locked due to multiple login attempts. "
-                                "Please wait until ${controller.formattedTime.value}.",
+                                "Your account is locked.\nPlease wait until ${controller.formattedTime.value}.",
                           ),
                           Container(
                               height: MediaQuery.of(context).size.height * .15),

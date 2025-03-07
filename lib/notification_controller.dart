@@ -272,7 +272,9 @@ Future<void> getLogSession(context) async {
   final userData = await Authentication().getUserData2();
   final getUserLogin = await Authentication().getUserLogin();
 
-  if (getUserLogin == null || getUserLogin["is_login"] == "N") {
+  if (userData == null ||
+      getUserLogin == null ||
+      getUserLogin["is_login"] == "N") {
     return;
   }
 

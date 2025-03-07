@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
 
 import '../custom_widgets/alert_dialog.dart';
@@ -469,7 +469,24 @@ class _UsePasswordScreenState extends State<UsePasswordScreen> {
         );
       }
       return Scaffold(
-        appBar: CustomAppbar(),
+        appBar: AppBar(
+          elevation: 1,
+          backgroundColor: AppColor.primaryColor,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor,
+            statusBarBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+          ),
+          leading: GestureDetector(
+            onTap: () {
+              Get.back();
+            },
+            child: Icon(
+              Iconsax.arrow_left,
+              color: Colors.white,
+            ),
+          ),
+        ),
         backgroundColor: AppColor.bodyColor,
         body: bodyWidget(),
       );

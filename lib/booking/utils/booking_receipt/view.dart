@@ -420,68 +420,33 @@ class BookingReceipt extends GetView<BookingReceiptController> {
                         if (controller.parameters["status"] != "A")
                           Padding(
                             padding: const EdgeInsets.all(15),
-                            child: !controller.parameters["can_cancel"]
-                                ? CustomButton(
-                                    btnColor: controller.btnDisabled.value
-                                        ? AppColor.primaryColor.withOpacity(.5)
-                                        : null,
-                                    text: "Check in",
-                                    onPressed: controller.btnDisabled.value
-                                        ? () {}
-                                        : controller.checkIn,
-                                  )
-                                : Row(
-                                    children: [
-                                      Expanded(
-                                        child: CustomButton(
-                                          text: "Find vehicle",
-                                          onPressed: () async {
-                                            CustomDialog()
-                                                .loadingDialog(context);
-                                            String mapUrl = "";
+                            child: CustomButton(
+                              text: "Find vehicle",
+                              onPressed: () async {
+                                CustomDialog().loadingDialog(context);
+                                String mapUrl = "";
 
-                                            String dest =
-                                                "${controller.parameters["lat"]},${controller.parameters["long"]}";
-                                            if (Platform.isIOS) {
-                                              mapUrl =
-                                                  'https://maps.apple.com/?daddr=$dest';
-                                            } else {
-                                              mapUrl =
-                                                  'https://www.google.com/maps/search/?api=1&query=$dest';
-                                            }
-                                            Future.delayed(
-                                                const Duration(seconds: 2),
-                                                () async {
-                                              Get.back();
-                                              if (await canLaunchUrl(
-                                                  Uri.parse(mapUrl))) {
-                                                await launchUrl(
-                                                    Uri.parse(mapUrl),
-                                                    mode: LaunchMode
-                                                        .externalApplication);
-                                              } else {
-                                                throw 'Something went wrong while opening map. Pleaase report problem';
-                                              }
-                                            });
-                                          },
-                                        ),
-                                      ),
-                                      Container(width: 10),
-                                      Expanded(
-                                        child: CustomButton(
-                                          btnColor: controller.btnDisabled.value
-                                              ? AppColor.primaryColor
-                                                  .withOpacity(.5)
-                                              : null,
-                                          text: "Check in",
-                                          onPressed:
-                                              controller.btnDisabled.value
-                                                  ? () {}
-                                                  : controller.checkIn,
-                                        ),
-                                      )
-                                    ],
-                                  ),
+                                String dest =
+                                    "${controller.parameters["lat"]},${controller.parameters["long"]}";
+                                if (Platform.isIOS) {
+                                  mapUrl =
+                                      'https://maps.apple.com/?daddr=$dest';
+                                } else {
+                                  mapUrl =
+                                      'https://www.google.com/maps/search/?api=1&query=$dest';
+                                }
+                                Future.delayed(const Duration(seconds: 2),
+                                    () async {
+                                  Get.back();
+                                  if (await canLaunchUrl(Uri.parse(mapUrl))) {
+                                    await launchUrl(Uri.parse(mapUrl),
+                                        mode: LaunchMode.externalApplication);
+                                  } else {
+                                    throw 'Something went wrong while opening map. Pleaase report problem';
+                                  }
+                                });
+                              },
+                            ),
                           ),
                         Container(height: 10)
                       ],

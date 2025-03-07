@@ -43,12 +43,12 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
   bool isOtpValid = true;
   bool isRunning = false;
   int otpCode = 0;
-  Duration paramOtpExp =
-      Duration(seconds: 0); // Default value to prevent null errors
+  Duration paramOtpExp = Duration(seconds: 0);
 
   @override
   void initState() {
     pinController = TextEditingController();
+
     paramOtpExp =
         widget.arguments["time_duration"] ?? Duration(minutes: 3, seconds: 59);
 
@@ -75,8 +75,6 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
         });
       }
     });
-
-    print("paramOtpExp $paramOtpExp");
   }
 
   String formatDuration(Duration d) {
@@ -205,16 +203,15 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
       widget.arguments["callback"](int.parse(pinController.text));
       return;
     } else {
-      CustomDialog().loadingDialog(Get.context!);
-      // var otpData = {
-      //   "mobile_no": parameters.toString(),
-      //   "otp": int.parse(pinController.text),
-      //   "new_acct": controller.isNewAcct
-      // };
+      List paramData = [widget.arguments["verify_param"]];
+      paramData.map((e) {
+        e["otp"] = pinController.text;
+        return e;
+      }).toList();
 
-      HttpRequest(
-              api: ApiKeys.putVerifyOtp,
-              parameters: widget.arguments["verify_param"])
+      CustomDialog().loadingDialog(Get.context!);
+
+      HttpRequest(api: ApiKeys.putVerifyOtp, parameters: paramData[0])
           .putBody()
           .then((returnData) async {
         if (returnData == "No Internet") {
@@ -411,12 +408,10 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
                                 ),
                               ),
                               const VerticalHeight(height: 30),
-                              if (MediaQuery.of(context).viewInsets.bottom == 0)
-                                CustomButton(
-                                  loading: isLoading,
-                                  text: "Verify",
-                                  onPressed: verifyAccount,
-                                ),
+                              CustomButton(
+                                text: "Verify",
+                                onPressed: verifyAccount,
+                              ),
                               Container(
                                 height: 40,
                               ),
@@ -441,12 +436,12 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
                                   children: [
                                     CustomLinkLabel(
                                       text: paramOtpExp.inSeconds <= 0
-                                          ? "Resend OTP in"
-                                          : "Resend OTP",
+                                          ? "Resend OTP"
+                                          : "Resend OTP in",
                                       fontSize: 14,
                                       color: paramOtpExp.inSeconds <= 0
-                                          ? Colors.grey
-                                          : AppColor.primaryColor,
+                                          ? AppColor.primaryColor
+                                          : Colors.grey,
                                     ),
                                     if (paramOtpExp.inSeconds > 0)
                                       CustomLinkLabel(
