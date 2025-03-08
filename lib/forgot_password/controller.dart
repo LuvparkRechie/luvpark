@@ -34,6 +34,7 @@ class ForgotPasswordController extends GetxController {
     String mobileNo = "63${mobileNumber.text.toString().replaceAll(" ", "")}";
     Functions().verifyMobile(mobileNo, (objData) {
       if (objData["success"]) {
+        Get.back();
         if (objData["data"]["is_verified"] == "Y") {
           Functions().getSecQdata(mobileNo, (cbData) {
             if (cbData != null) {

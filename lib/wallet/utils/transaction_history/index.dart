@@ -8,7 +8,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
-import 'package:luvpark/custom_widgets/custom_appbar.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/custom_widgets/no_internet.dart';
@@ -137,6 +136,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
         actions: [
           IconButton(
@@ -215,10 +215,10 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                               child: Container(
                                 padding: EdgeInsets.symmetric(horizontal: 15),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
-                                  borderRadius: BorderRadius.circular(7),
+                                  border: Border(
+                                    bottom:
+                                        BorderSide(color: Colors.grey.shade100),
+                                  ),
                                 ),
                                 child: ListTile(
                                   contentPadding: EdgeInsets.zero,
@@ -253,7 +253,7 @@ class _TransactionHistoryState extends State<TransactionHistory> {
                             );
                           },
                           separatorBuilder: (context, index) => const SizedBox(
-                            height: 10,
+                            height: 1,
                           ),
                         ),
                       ),

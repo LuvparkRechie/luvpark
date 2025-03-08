@@ -8,8 +8,6 @@ import 'package:luvpark/custom_widgets/alert_dialog.dart';
 
 import '../auth/authentication.dart';
 import '../functions/functions.dart';
-import '../http/api_keys.dart';
-import '../http/http_request.dart';
 import '../routes/routes.dart';
 import '../sqlite/pa_message_table.dart';
 import '../sqlite/reserve_notification_table.dart';
@@ -69,40 +67,8 @@ class LockScreenController extends GetxController {
 
   void unlockAccount() async {
     hasNet.value = true;
-    CustomDialog().loadingDialog(Get.context!);
-    HttpRequest(
-            api: ApiKeys.unlockAccount,
-            parameters: {"mobile_no": parameter[0]["mobile_no"]})
-        .put()
-        .then((returnPost) {
-      Get.back();
-      if (returnPost == "No Internet") {
-        hasNet.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-        });
-        return;
-      }
-      if (returnPost == null) {
-        hasNet.value = false;
-        CustomDialog().internetErrorDialog(Get.context!, () {
-          Get.back();
-          unlockAccount();
-        });
-      } else {
-        hasNet.value = true;
-        if (returnPost["success"] == 'Y') {
-          Get.back();
-          Get.offAndToNamed(Routes.login);
-        } else {
-          CustomDialog().errorDialog(Get.context!, "Error", "No data found",
-              () {
-            Get.back();
-            unlockAccount();
-          });
-        }
-      }
-    });
+
+    Get.offAndToNamed(Routes.login);
   }
 
   void switchAccount() async {

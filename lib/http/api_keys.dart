@@ -56,8 +56,7 @@ class ApiKeys {
       dotenv.env['POST_THIRD_PARTY_PAYMENT']!.replaceAll('{LUV_API}', luvApi);
   static final String getUserAccStatus =
       dotenv.env['GET_USER_ACC_STATUS']!.replaceAll('{LUV_API}', luvApi);
-  static final String unlockAccount =
-      dotenv.env['UNLOCK_ACCOUNT']!.replaceAll('{LUV_API}', luvApi);
+
   static final String getBankDetails =
       dotenv.env['GET_BANK_DETAILS']!.replaceAll('{LUV_API}', luvApi);
   static final String getBankParam =

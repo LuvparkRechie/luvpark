@@ -179,7 +179,6 @@ class WalletSendController extends GetxController {
 //naa
   Future<void> getVerifiedAcc() async {
     CustomDialog().loadingDialog(Get.context!);
-
     var params =
         "${ApiKeys.verifyUserAccount}?mobile_no=${recipientData[0]["mobile_no"]}";
 
@@ -202,7 +201,7 @@ class WalletSendController extends GetxController {
         return;
       }
 
-      if (returnData["items"][0]["is_valid"] == "Y") {
+      if (returnData["is_valid"] == "Y") {
         Get.back();
         isPage2.value = true;
 

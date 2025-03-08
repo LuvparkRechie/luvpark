@@ -116,8 +116,8 @@ class AppPages {
       name: Routes.wallet,
       page: () => const WalletScreen(),
       binding: WalletBinding(),
-      transition: Transition.fade,
-      transitionDuration: Duration(milliseconds: 400),
+      transition: Transition.rightToLeftWithFade, // Smooth slide transition
+      transitionDuration: Duration(milliseconds: 400), preventDuplicates: true,
     ),
     GetPage(
       name: Routes.qrwallet,

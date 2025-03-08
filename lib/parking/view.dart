@@ -86,7 +86,7 @@ class ParkingScreen extends GetView<ParkingController> {
                                             Get.back();
                                             break;
                                           case 'B':
-                                            Get.offAndToNamed(Routes.map);
+                                            Get.offAllNamed(Routes.map);
                                             break;
                                         }
                                       },

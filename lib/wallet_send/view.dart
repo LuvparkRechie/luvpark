@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
@@ -88,45 +87,8 @@ class WalletSend extends GetView<WalletSendController> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 15,
+                      height: 20,
                     ),
-                    CustomParagraph(text: "Account Balance"),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: controller.isLoading.value
-                          ? Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                SizedBox(
-                                  width: 16,
-                                  height: 16,
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                SizedBox(
-                                  width: 10,
-                                ),
-                              ],
-                            )
-                          : CustomParagraph(
-                              text: !controller.isNetConn.value
-                                  ? "No internet"
-                                  : controller.userData.isEmpty
-                                      ? ""
-                                      : toCurrencyString(controller.userData[0]
-                                              ["amount_bal"]
-                                          .toString()),
-                              color: AppColor.primaryColor,
-                              fontWeight: FontWeight.w600,
-                              textAlign: TextAlign.right,
-                              fontSize: 30,
-                            ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Divider(),
                     AnimatedCrossFade(
                       firstChild: const SizedBox.shrink(),
                       secondChild: secondChild(),
@@ -259,7 +221,7 @@ class WalletSend extends GetView<WalletSendController> {
                                   );
                                   return;
                                 }
-
+                                print("ataya");
                                 controller.getVerifiedAcc();
                               }
                             },

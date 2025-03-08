@@ -44,7 +44,7 @@ class BookingReceipt extends GetView<BookingReceiptController> {
         }
       },
       child: Scaffold(
-          backgroundColor: Colors.white,
+          backgroundColor: AppColor.bodyColor,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: AppColor.primaryColor,
