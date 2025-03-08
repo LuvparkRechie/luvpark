@@ -136,6 +136,7 @@ class QrBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(QrWalletController());
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -173,7 +174,7 @@ class QrBottomSheet extends StatelessWidget {
                   ),
                   qrImage: QrImage(
                     QrCode.fromData(
-                      data: "dsafd",
+                      data: qrCode.substring(2),
                       errorCorrectLevel: QrErrorCorrectLevel.H,
                     ),
                   ),
