@@ -39,6 +39,10 @@ class BookingController extends GetxController
   RxBool isHideBottom = true.obs;
   RxString startTime = "".obs;
   RxString endTime = "".obs;
+  RxString parkTime = "".obs;
+  RxString closingTime = "".obs;
+  RxString out24hrs = "".obs;
+  RxBool is24hrsValue = false.obs;
   RxString paramEndTime = "".obs;
   RxBool hasInternetBal = true.obs;
   RxBool isRewardchecked = false.obs;
@@ -68,7 +72,7 @@ class BookingController extends GetxController
   RxList myVehiclesData = [].obs;
   RxList ddVehiclesData = [].obs;
   String? dropdownValue;
-
+  RxInt bookingHrs = 0.obs;
   RxList noticeData = [].obs;
   //Booking param
   RxBool isSubmitBooking = false.obs;
@@ -85,8 +89,9 @@ class BookingController extends GetxController
   RxBool isMaxLimit = false.obs;
   List dataLastBooking = [];
   RegExp regExp = RegExp(r'[^a-zA-Z0-9]');
-  //
   bool isProcessing = false;
+
+//
 
   @override
   void onInit() {
@@ -105,9 +110,9 @@ class BookingController extends GetxController
     noHours = TextEditingController();
     inpDisplay = TextEditingController();
     noHours.text = selectedNumber.value.toString();
-
     computingMaxBookingLimit();
-
+    initializeBookingDate();
+    print("parameters $parameters");
     getNotice();
   }
 
@@ -118,6 +123,7 @@ class BookingController extends GetxController
     String endDate =
         "${now.year.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${parameters["areaData"]["closed_time"].toString().trim()}";
     DateTime parsedEndDate = DateTime.parse(endDate);
+
     int diff = parsedEndDate.difference(now).inHours;
     maxHrs.value = is24Hrs
         ? maxHrs.value
@@ -490,37 +496,37 @@ class BookingController extends GetxController
             ? pTime.difference(cTime).inHours
             : 1;
 
-        CustomDialog().confirmationDialog(
-            Get.context!,
-            "Booking Time Exceeded",
-            "Booking time must not exceed operating hours. You'll be charged the ${selectedVh[0]["base_hours"]}-hour${selectedVh[0]["base_hours"] > 1 ? "s" : ""} rate,"
-                "even for shorter stays, as the parking closes at ${DateFormat('h:mm').format(cTime).toString()} PM.\nContinue parking?",
-            "No",
-            "Okay", () {
-          Get.back();
-          selectedNumber -= deductTime;
-          noHours.text = selectedNumber.value.toString();
+        // CustomDialog().confirmationDialog(
+        //     Get.context!,
+        //     "Booking Time Exceeded",
+        //     "Booking time must not exceed operating hours. You'll be charged the ${selectedVh[0]["base_hours"]}-hour${selectedVh[0]["base_hours"] > 1 ? "s" : ""} rate,"
+        //         "even for shorter stays, as the parking closes at ${DateFormat('h:mm').format(cTime).toString()} PM.\nContinue parking?",
+        //     "No",
+        //     "Okay", () {
+        //   Get.back();
+        //   selectedNumber -= deductTime;
+        //   noHours.text = selectedNumber.value.toString();
 
-          timeComputation();
-          routeToComputation();
-          isExtendchecked.value = false;
-          isMaxLimit.value = false;
-          if (selectedNumber.value == 0) {
-            Get.back();
-          }
-        }, () {
-          isMaxLimit.value = true;
-          Get.back();
-          selectedNumber -= deductTime;
-          noHours.text = selectedNumber.value.toString();
-          if (selectedNumber.value == 0) {
-            selectedNumber.value = 1;
-            numberOfhours.value = selectedNumber.value;
-            noHours.text = selectedNumber.value.toString();
-          }
-          endTime.value = DateFormat('h:mm a').format(cTime).toString();
-          paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
-        });
+        //   timeComputation();
+        //   routeToComputation();
+        //   isExtendchecked.value = false;
+        //   isMaxLimit.value = false;
+        //   if (selectedNumber.value == 0) {
+        //     Get.back();
+        //   }
+        // }, () {
+        //   isMaxLimit.value = true;
+        //   Get.back();
+        //   selectedNumber -= deductTime;
+        //   noHours.text = selectedNumber.value.toString();
+        //   if (selectedNumber.value == 0) {
+        //     selectedNumber.value = 1;
+        //     numberOfhours.value = selectedNumber.value;
+        //     noHours.text = selectedNumber.value.toString();
+        //   }
+        //   endTime.value = DateFormat('h:mm a').format(cTime).toString();
+        //   paramEndTime.value = DateFormat('HH:mm').format(cTime).toString();
+        // });
         return;
       }
       isMaxLimit.value = false;
@@ -736,9 +742,9 @@ class BookingController extends GetxController
       "succeeding_rate": params["succeeding_rate"],
       "disc_rate": 0,
     };
-
+    print("dynamicBookParam $dynamicBookParam");
     Get.back();
-
+    return;
     DateTime eet = now.add(Duration(minutes: areaEtaTime));
     DateTime ddEet = eet.subtract(Duration(minutes: 4));
     var ddd = Variables.timeFormatter("${eet.hour}:${eet.minute}");
@@ -1211,6 +1217,99 @@ class BookingController extends GetxController
       ),
       backgroundColor: Colors.white,
     );
+  }
+
+  /// New code for payment based on consumed hours ///
+
+  Future<void> initializeBookingDate() async {
+    DateTime now = await Functions.getTimeNow();
+    bool is24Hrs = parameters["areaData"]["is_24_hrs"].toString() == "Y";
+
+    if (is24Hrs) {
+      DateTime nextDay = now.add(Duration(days: 1));
+      out24hrs.value = DateFormat('E, dd MMM yyyy').format(nextDay);
+    }
+
+    String endDate =
+        "${now.year.toString().padLeft(2, '0')}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${parameters["areaData"]["closed_time"].toString().trim()}";
+    DateTime parsedEndDate = DateTime.parse(endDate);
+
+    int diff = parsedEndDate.difference(now).inHours;
+    int is24Hrsdiff = is24Hrs ? 24 : diff;
+    DateTime closingDateTime = DateFormat("HH:mm")
+        .parse(parameters["areaData"]["closed_time"].toString().trim());
+    closingTime.value = DateFormat('h:mm a').format(closingDateTime);
+
+    if (is24Hrs) {
+      bookingHrs.value = is24Hrsdiff;
+      is24hrsValue.value = true;
+      closingTime.value = DateFormat('h:mm a').format(closingDateTime);
+    } else {
+      is24hrsValue.value = false;
+      bookingHrs.value = is24Hrsdiff;
+      closingTime.value = DateFormat('h:mm a').format(closingDateTime);
+    }
+    print("bookingHrs $bookingHrs");
+  }
+
+  Future<void> submitBooking() async {
+    CustomDialog().loadingDialog(Get.context!);
+
+    int userId = await Authentication().getUserId();
+
+    final position = await Functions.getCurrentPosition();
+    LatLng current = LatLng(position[0]["lat"], position[0]["long"]);
+    LatLng destinaion = LatLng(parameters["areaData"]["pa_latitude"],
+        parameters["areaData"]["pa_longitude"]);
+    final etaData = await Functions.fetchETA(current, destinaion);
+
+    if (etaData.isEmpty) {
+      isSubmitBooking.value = false;
+      CustomDialog().errorDialog(Get.context!, "Error",
+          "We couldn't calculate the distance. Please check your connection and try again.",
+          () {
+        Get.back();
+      });
+      return;
+    }
+
+    if (etaData[0]["error"] == "No Internet") {
+      isSubmitBooking.value = false;
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+      return;
+    }
+
+    int etaTime =
+        int.parse(etaData[0]["time"].toString().split(" ")[0].toString());
+    int areaEtaTime = etaTime +
+        int.parse(
+            parameters["areaData"]["book_grace_period_in_mins"].toString());
+
+    // Map<String, dynamic> dynamicBookParam = {
+    //   "user_id": userId,
+    //   "amount": totalAmount.value,
+    //   "no_hours": bookingHrs.value.toString(),
+    //   "dt_in": params["dt_in"].toString(),
+    //   "dt_out": params["dt_out"].toString(),
+    //   "eta_in_mins": areaEtaTime,
+    //   "vehicle_type_id": params["vehicle_type_id"].toString(),
+    //   "vehicle_plate_no": params["vehicle_plate_no"],
+    //   "park_area_id": params["park_area_id"].toString(),
+    //   "points_used": double.parse(usedRewards.value.toString()),
+    //   'zv_subscription_dtl_id': selectedVh[0]["subscription_dtl_id"] == null
+    //       ? 0
+    //       : selectedVh[0]["subscription_dtl_id"],
+    //   "auto_extend": isExtendchecked.value ? "Y" : "N",
+    //   "version": 3,
+    //   'base_rate': params["base_rate"],
+    //   "base_hours": params["base_hours"],
+    //   "succeeding_rate": params["succeeding_rate"],
+    //   "disc_rate": 0,
+    // };
+
+    // print("dynamicBookParam $dynamicBookParam");
   }
 
   @override
