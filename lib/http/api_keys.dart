@@ -118,10 +118,8 @@ class ApiKeys {
       dotenv.env['BOOK_PARKING']!.replaceAll('{LUV_API}', luvApi);
   static final String postSelfChkIn = dotenv.env['POST_SELF_CHK_IN']!
       .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
-  static final String cancelParking = dotenv.env['CANCEL_PARKING']!
-      .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
-  static final String postRefundBooking =
-      dotenv.env['POST_REFUND_BOOKING']!.replaceAll('{LUV_API}', luvApi);
+  static final String putCancelBooking =
+      dotenv.env['PUT_CANCEL_BOOKING']!.replaceAll('{LUV_API}', luvApi);
   static final String postExtendParking = dotenv.env['POST_EXTEND_PARKING']!
       .replaceAll('{PARK_SPACE_API}', parkSpaceApi);
   static final String postCancelAutoExtend = dotenv

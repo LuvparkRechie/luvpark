@@ -10,33 +10,17 @@ import 'package:luvpark/routes/routes.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 class BookingDialog extends StatefulWidget {
-  final List data;
-  const BookingDialog({super.key, required this.data});
+  const BookingDialog({super.key});
 
   @override
   State<BookingDialog> createState() => _BookingDialogState();
 }
 
 class _BookingDialogState extends State<BookingDialog> {
+  final data = Get.arguments;
+
   @override
   void initState() {
-    // Future.delayed(
-    //   const Duration(milliseconds: 200),
-    //   () {
-    //     Get.dialog(PopScope(
-    //       canPop: false,
-    //       child: Dialog(
-    //         backgroundColor: Colors.transparent,
-    //         child: FadeIn(
-    //             duration: const Duration(seconds: 1),
-    //             child: RateUs(
-    //               reservationId: widget.data[0]["reservationId"],
-    //               callBack: () {},
-    //             )),
-    //       ),
-    //     ));
-    //   },
-    // );
     super.initState();
   }
 
@@ -95,7 +79,7 @@ class _BookingDialogState extends State<BookingDialog> {
                         Container(height: 30),
                         Center(
                           child: QrImageView(
-                            data: widget.data[0]["referno"],
+                            data: data[0]["referno"],
                             size: 180,
                           ),
                         ),
@@ -114,10 +98,10 @@ class _BookingDialogState extends State<BookingDialog> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              CustomTitle(text: widget.data[0]["parkArea"]),
+                              CustomTitle(text: data[0]["parkArea"]),
                               Container(height: 10),
                               CustomParagraph(
-                                text: widget.data[0]["address"],
+                                text: data[0]["address"],
                               ),
                               Container(height: 20),
                               const CustomTitle(text: "Parking Details"),
@@ -131,7 +115,7 @@ class _BookingDialogState extends State<BookingDialog> {
                                   ),
                                   CustomLinkLabel(
                                       text:
-                                          "${widget.data[0]["hours"]} ${int.parse(widget.data[0]["hours"].toString()) > 1 ? "Hours" : "Hour"}")
+                                          "${data[0]["hours"]} ${int.parse(data[0]["hours"].toString()) > 1 ? "Hours" : "Hour"}")
                                 ],
                               ),
                               Container(height: 10),
@@ -143,8 +127,7 @@ class _BookingDialogState extends State<BookingDialog> {
                                     ),
                                   ),
                                   CustomLinkLabel(
-                                      text: toCurrencyString(
-                                          widget.data[0]["amount"]))
+                                      text: toCurrencyString(data[0]["amount"]))
                                 ],
                               )
                             ],

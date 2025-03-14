@@ -834,13 +834,11 @@ class Functions {
   Future<void> requestOtp(Map<String, String> param, Function cb) async {
     CustomDialog().loadingDialog(Get.context!);
 
-    print("param $param");
-
     HttpRequest(api: ApiKeys.postGenerateOtp, parameters: param)
         .postBody()
         .then((returnData) async {
       Get.back();
-      print("returnData $returnData");
+
       if (returnData == "No Internet") {
         cb(returnData);
         CustomDialog().errorDialog(Get.context!, "Error",
@@ -989,8 +987,8 @@ class Functions {
         });
         return;
       } else {
-        if (objData["items"][0]["msg"] == "Success") {
-          cb({"success": true, "data": objData["items"]});
+        if (objData["msg"] == "Success") {
+          cb({"success": true, "data": objData});
         } else {
           cb({"success": false, "data": {}});
           CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],

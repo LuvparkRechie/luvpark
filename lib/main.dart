@@ -10,7 +10,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/variables.dart';
-import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/routes/routes.dart';
 // ignore: depend_on_referenced_packages
@@ -64,27 +63,22 @@ void _onUserActivity() async {
 
   Variables.inactiveTmr =
       Timer.periodic(const Duration(minutes: 3), (timer) async {
-    final uData = await Authentication().getUserData2();
+    //final uData = await Authentication().getUserData2();
     FocusManager.instance.primaryFocus?.unfocus(); // Safer approach
 
-    Functions.logoutUser(uData == null ? "" : uData["session_id"].toString(),
-        (isSuccess) async {
-      if (isSuccess["is_true"]) {
-        Variables.snackbarDynamicDialog("Session expired.");
-        final userLogin = await Authentication().getUserLogin();
-        List userData = [userLogin];
-        userData = userData.map((e) {
-          e["is_login"] = "N";
-          return e;
-        }).toList();
-        await Authentication().setLogin(jsonEncode(userData[0]));
-        final prefs = await SharedPreferences.getInstance();
-        prefs.remove("last_booking");
-        Authentication().setLogoutStatus(true);
-        Variables.inactiveTmr?.cancel();
-        Get.offAndToNamed(Routes.login);
-      }
-    });
+    Variables.snackbarDynamicDialog("Session expired.");
+    final userLogin = await Authentication().getUserLogin();
+    List userData = [userLogin];
+    userData = userData.map((e) {
+      e["is_login"] = "N";
+      return e;
+    }).toList();
+    await Authentication().setLogin(jsonEncode(userData[0]));
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove("last_booking");
+    Authentication().setLogoutStatus(true);
+    Variables.inactiveTmr?.cancel();
+    Get.offAndToNamed(Routes.login);
   });
 }
 

@@ -194,7 +194,7 @@ class LoginScreenController extends GetxController {
                       Get.to(
                         DeviceRegScreen(
                           mobileNo: param["mobile_no"].toString(),
-                          userId: data["data"][0]["user_id"].toString(),
+                          userId: data["data"]["user_id"].toString(),
                           sessionId: returnPost["session_id"].toString(),
                           pwd: param["pwd"],
                         ),

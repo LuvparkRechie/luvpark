@@ -321,6 +321,7 @@ class DashboardMapController extends GetxController
         handleNoInternet();
         return;
       }
+
       if (returnData == null) {
         Get.back();
         handleServerError();

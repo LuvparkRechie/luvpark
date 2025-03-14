@@ -221,7 +221,7 @@ class WalletSend extends GetView<WalletSendController> {
                                   );
                                   return;
                                 }
-                                print("ataya");
+
                                 controller.getVerifiedAcc();
                               }
                             },
@@ -674,7 +674,6 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                           "req_otp_param": requestParam,
                           "verify_param": putParam,
                           "callback": (otp) async {
-                            print("return otp $otp");
                             if (otp != null) {
                               controller.shareToken();
                             }

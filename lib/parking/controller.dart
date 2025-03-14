@@ -276,73 +276,41 @@ class ParkingController extends GetxController
     CustomDialog().confirmationDialog(Get.context!, "Cancel Booking",
         "Are you sure you want to cancel your booking? ", "No", "Yes", () {
       Get.back();
-    }, () {
+    }, () async {
       Get.back();
       CustomDialog().loadingDialog(Get.context!);
       Map<String, dynamic> param = {"reservation_id": data["reservation_id"]};
+      dynamic paramRefund = {"reservation_id": data["reservation_id"]};
 
-      HttpRequest(api: ApiKeys.cancelParking, parameters: param)
-          .postBody()
-          .then((objData) async {
-        if (objData == "No Internet") {
-          Get.back();
-          CustomDialog().internetErrorDialog(Get.context!, () {
-            Get.back();
-          });
-          return;
-        }
-        if (objData == null) {
-          Get.back();
-          CustomDialog().serverErrorDialog(Get.context!, () {
-            Get.back();
-          });
-        }
+      final response = await HttpRequest(
+              api: ApiKeys.putCancelBooking, parameters: paramRefund)
+          .putBody();
 
-        if (objData["success"] == "Y") {
-          dynamic paramRefund = {
-            "amount": objData["amount"],
-            "points_used": objData["points_used"],
-            "luvpay_id": objData["luvpay_id"],
-            "payment_code": "RAP"
-          };
-
-          final response = await HttpRequest(
-                  api: ApiKeys.postRefundBooking, parameters: paramRefund)
-              .postBody();
-
+      Get.back();
+      if (response == "No Internet") {
+        CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
-          if (response == "No Internet") {
-            CustomDialog().internetErrorDialog(Get.context!, () {
-              Get.back();
-            });
-            return;
-          }
-          if (response == null) {
-            CustomDialog().serverErrorDialog(Get.context!, () {
-              Get.back();
-            });
-          }
-          if (response["success"] == "Y") {
-            CustomDialog().successDialog(Get.context!, "Success",
-                "Successfully cancelled booking", "Okay", () {
-              Get.back();
-              onRefresh();
-            });
-          } else {
-            CustomDialog().errorDialog(Get.context!, "luvpark", response["msg"],
-                () {
-              Get.back();
-            });
-          }
-        } else {
+        });
+        return;
+      }
+      if (response == null) {
+        CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
-          CustomDialog().errorDialog(Get.context!, "luvpark", objData["msg"],
-              () {
-            Get.back();
-          });
-          return;
-        }
-      });
+        });
+      }
+      if (response["success"] == "Y") {
+        CustomDialog().successDialog(
+            Get.context!, "Success", "Successfully cancelled booking", "Okay",
+            () {
+          Get.back();
+          onRefresh();
+        });
+      } else {
+        CustomDialog().errorDialog(Get.context!, "luvpark", response["msg"],
+            () {
+          Get.back();
+        });
+      }
     });
   }
 
