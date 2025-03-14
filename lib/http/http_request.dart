@@ -170,7 +170,7 @@ class HttpRequest {
               Duration(seconds: 10),
             );
         if (response.statusCode == 200) {
-          return "Success";
+          return json.decode(response.body);
         } else {
           return null;
         }

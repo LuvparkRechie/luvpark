@@ -57,8 +57,9 @@ class MessageScreenController extends GetxController {
         "push_msg_id": messages[index]["push_msg_id"],
       };
       HttpRequest(api: ApiKeys.getPaMessage, parameters: params)
-          .put()
-          .then((updateData) async {
+          .putBody()
+          .then((updateData) async { 
+
         if (updateData == "No Internet") {
           Get.back();
           CustomDialog().internetErrorDialog(Get.context!, () {

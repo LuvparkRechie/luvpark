@@ -1,8 +1,10 @@
+
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
+import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/functions/functions.dart';
@@ -35,7 +37,7 @@ class WalletSendController extends GetxController {
   RxString userName = "".obs;
   RxString userImage = "".obs;
   List<SimCard> simCard = <SimCard>[];
-  final FlutterContactPicker contactPicker = FlutterContactPicker();
+  final FlutterNativeContactPicker contactPicker = FlutterNativeContactPicker();
   Rx<Contact?> contact = Rx<Contact?>(null);
   RxInt denoInd = 0.obs;
 
@@ -267,8 +269,7 @@ class WalletSendController extends GetxController {
       "to_msg": message.text,
       "session_id": userData["session_id"].toString(),
       "pwd": myPass.text,
-    };
-
+    }; 
     HttpRequest(api: ApiKeys.postShareToken, parameters: parameters)
         .postBody()
         .then(
@@ -328,8 +329,9 @@ class WalletSendController extends GetxController {
     CustomDialog().loadingDialog(Get.context!);
     String api =
         "${ApiKeys.getRecipient}?mobile_no=63${mobileNo.toString().replaceAll(" ", '')}";
+
     HttpRequest(api: api).get().then((objData) {
-      FocusScope.of(Get.context!).unfocus();
+      FocusScope.of(Get.context!).unfocus(); 
       if (objData == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -337,17 +339,16 @@ class WalletSendController extends GetxController {
         });
         return;
       }
+
       if (objData == null) {
         Get.back();
-
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
         return;
       }
-      if (objData["items"].length == 0) {
+      if (objData["user_id"] == 0) {
         Get.back();
-
         CustomDialog().errorDialog(
             Get.context!, "Error", "Sorry, we're unable to find your account.",
             () {
@@ -357,33 +358,23 @@ class WalletSendController extends GetxController {
       } else {
         Get.back();
 
-        List data = objData["items"];
-        recipientData.value = data;
+        recipientData.value = [objData];
+        String fname = objData["first_name"] ?? "";
+        userImage.value = objData["image_base64"] ?? "";
 
-        String fname = recipientData[0]["first_name"] == null
-            ? ""
-            : recipientData[0]["first_name"].toString();
-        userImage.value = recipientData[0]["image_base64"] == null
-            ? ""
-            : recipientData[0]["image_base64"].toString();
-
-        if (fname.toString().isNotEmpty) {
+        if (fname.isNotEmpty) {
           String transformedFullName = Variables.transformFullName(
               fname.replaceAll(RegExp(r'\..*'), ''));
-          String transformedLname = Variables.transformFullName(recipientData[0]
-                  ["last_name"]
-              .toString()
-              .replaceAll(RegExp(r'\..*'), ''));
+          String transformedLname = Variables.transformFullName(
+              objData["last_name"]
+                      ?.toString()
+                      .replaceAll(RegExp(r'\..*'), '') ??
+                  "");
 
-          String middelName = "";
-          if (recipientData[0]["middle_name"] != null) {
-            middelName = recipientData[0]["middle_name"].toString()[0];
-          } else {
-            middelName = "";
-          }
+          String middleName = objData["middle_name"]?.toString()[0] ?? "";
 
           userName.value =
-              '$transformedFullName $middelName${middelName.isNotEmpty ? "." : ""} $transformedLname';
+              '$transformedFullName $middleName${middleName.isNotEmpty ? "." : ""} $transformedLname';
         } else {
           userName.value = "Not Verified";
         }

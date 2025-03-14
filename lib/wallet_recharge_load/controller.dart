@@ -217,7 +217,7 @@ class WalletRechargeLoadController extends GetxController
 
       var dataParam = {
         "amount": amountController.text.toString().split(".")[0],
-        "user_id": userDataInfo["user_id"],
+        "user_id": userDataInfo[0]["user_id"],
         "to_mobile_no": "63${mobNum.text.replaceAll(" ", "")}",
       };
 
@@ -300,7 +300,7 @@ class WalletRechargeLoadController extends GetxController
       CustomDialog().loadingDialog(Get.context!);
       String api =
           "${ApiKeys.getRecipient}?mobile_no=63${mobile.toString().replaceAll(" ", '')}";
-      HttpRequest(api: api).get().then((objData) {
+      HttpRequest(api: api).get().then((objData) { 
         FocusScope.of(Get.context!).unfocus();
         if (objData == "No Internet") {
           isValidNumber.value = false;
@@ -327,7 +327,7 @@ class WalletRechargeLoadController extends GetxController
           });
           return;
         }
-        if (objData["items"].length == 0) {
+        if (objData["user_id"] == 0) {
           Get.back();
 
           userDataInfo = null;
@@ -349,24 +349,24 @@ class WalletRechargeLoadController extends GetxController
           } else {
             isActiveBtn.value = true;
           }
-          userDataInfo = objData["items"][0];
+          userDataInfo = [objData];
           isValidNumber.value = true;
-          String originalFullName = userDataInfo["first_name"].toString();
+          String originalFullName = userDataInfo[0]["first_name"].toString();
           String transformedFullName = Variables.transformFullName(
               originalFullName.replaceAll(RegExp(r'\..*'), ''));
-          String transformedLname = Variables.transformFullName(
-              userDataInfo["last_name"]
-                  .toString()
-                  .replaceAll(RegExp(r'\..*'), ''));
+          String transformedLname = Variables.transformFullName(userDataInfo[0]
+                  ["last_name"]
+              .toString()
+              .replaceAll(RegExp(r'\..*'), ''));
 
           String middelName = "";
-          if (userDataInfo["middle_name"] != null) {
-            middelName = userDataInfo["middle_name"].toString()[0];
+          if (userDataInfo[0]["middle_name"] != null) {
+            middelName = userDataInfo[0]["middle_name"].toString()[0];
           } else {
             middelName = "";
           }
           userName.text =
-              "$originalFullName $middelName ${userDataInfo["last_name"].toString()}";
+              "$originalFullName $middelName ${userDataInfo[0]["last_name"].toString()}";
           fullName.value =
               '$transformedFullName $middelName${middelName.isNotEmpty ? "." : ""} $transformedLname';
           if (originalFullName == 'null') {

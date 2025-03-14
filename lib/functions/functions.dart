@@ -890,7 +890,7 @@ class Functions {
 
   Future<void> verifyMobile(String mobileNo, Function cb) async {
     CustomDialog().loadingDialog(Get.context!);
-    HttpRequest(api: "${ApiKeys.getAcctStatus}?mobile_no=$mobileNo")
+        HttpRequest(api: "${ApiKeys.getAcctStatus}$mobileNo/vlevel")
         .get()
         .then((objData) {
       Get.back();

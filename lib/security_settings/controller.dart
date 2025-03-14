@@ -113,14 +113,13 @@ class SecuritySettingsController extends GetxController {
 
       mobileNo.value = mydata["mobile_no"];
 
-      Map<String, dynamic> param = {
-        "mobile_no": mydata["mobile_no"],
-      };
+      Map<String, String> param = {
+        "mobile_no": mydata["mobile_no"].toString(),
+      }; 
       var returnData =
           await HttpRequest(api: ApiKeys.postDeleteUserAcct, parameters: param)
-              .post();
-      Get.back();
-
+              .deleteData();
+      Get.back(); 
       if (returnData == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
           Get.back();
@@ -138,7 +137,7 @@ class SecuritySettingsController extends GetxController {
       if (returnData["success"] == "Y") {
         _showSuccessDialog(returnData);
       } else {
-        _showErrorDialog("Error on Deleting Account", returnData["msg"]);
+        _showErrorDialog("Delete Account", returnData["msg"]);
       }
     } catch (e) {
       Get.snackbar("Error", "Failed to delete account: $e");

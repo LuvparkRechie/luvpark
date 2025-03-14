@@ -358,7 +358,6 @@ class BillersController extends GetxController {
       "user_id": userId,
       "u_biller_id": billerId,
     };
-
     CustomDialog().confirmationDialog(Get.context!, "Delete Biller",
         "Are you sure you want to delete this biller?", "No", "Yes", () {
       Get.back();
@@ -373,7 +372,7 @@ class BillersController extends GetxController {
           CustomDialog().internetErrorDialog(Get.context!, () {
             Get.back();
           });
-        } else if (retDelete == "Success") {
+        } else if (retDelete["success"] == "Y") {
           CustomDialog().successDialog(
               Get.context!, "Success", "Successfully deleted", "Okay", () {
             Get.back();
