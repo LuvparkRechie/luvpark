@@ -205,23 +205,26 @@ class BookingPage extends GetView<BookingController> {
                 ],
               ),
             ),
-          ),
-          Visibility(visible: ct.displayRewards.value > 0, child: Divider()),
+          ), 
           Visibility(
-            visible: ct.displayRewards.value > 0,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                CustomParagraph(
-                  text: "Do you want to use rewards?",
-                  fontSize: 12,
-                ),
-                Checkbox(
-                  value: ct.isUseRewards.value,
-                  onChanged: (bool? value) {
-                    ct.onToggleRewards(value ?? false);
-                  },
-                  activeColor: AppColor.primaryColor,
+            visible:ct.postBookParam.isEmpty ? false:  ct.displayRewards.value > 0? true: false,
+            child: Column(
+              children: [Divider(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomParagraph(
+                      text: "Do you want to use rewards?",
+                      fontSize: 12,
+                    ),
+                    Checkbox(
+                      value: ct.isUseRewards.value,
+                      onChanged: (bool? value) {
+                        ct.onToggleRewards(value ?? false); 
+                      },
+                      activeColor: AppColor.primaryColor,
+                    ),
+                  ],
                 ),
               ],
             ),
