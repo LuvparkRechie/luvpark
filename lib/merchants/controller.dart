@@ -19,6 +19,7 @@ class MerchantBillerController extends GetxController
   RxList merchantParam = [].obs;
   RxList filterData = [].obs;
   RxString pkey = "".obs;
+  RxBool isLoadingMerch = false.obs;
   @override
   void onInit() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -34,13 +35,14 @@ class MerchantBillerController extends GetxController
   }
 
   Future<void> getPaymentKey(items, mkey, mname, mAddress) async {
+    isLoadingMerch.value = true;
     CustomDialog().loadingDialog(Get.context!);
     final userID = await Authentication().getUserId();
 
     HttpRequest(api: "${ApiKeys.getPaymentKey}$userID")
         .get()
         .then((paymentResponse) {
-      // Get.back();
+      Get.back();
 
       if (paymentResponse == "No Internet") {
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -52,20 +54,23 @@ class MerchantBillerController extends GetxController
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
-      } else
-        Get.back();
-      List itemData = [
-        {
-          "data": items,
-          'merchant_key': mkey,
-          'merchant_address': mAddress,
-          "merchant_name": mname,
-          "payment_key": paymentResponse["items"][0]["payment_hk"],
-        }
-      ];
+        return;
+      } else {
+        List itemData = [
+          {
+            "data": items,
+            'merchant_key': mkey,
+            'merchant_address': mAddress,
+            "merchant_name": mname,
+            "payment_key": paymentResponse["items"][0]["payment_hk"],
+          }
+        ];
 
-      merchantParam.value = itemData;
-      Get.bottomSheet(PayMerchant(data: merchantParam));
+        merchantParam.value = itemData;
+        isLoadingMerch.value = false;
+        isPayPage.value = true;
+        return;
+      }
     });
   }
 

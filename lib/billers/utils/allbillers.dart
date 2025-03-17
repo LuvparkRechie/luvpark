@@ -215,6 +215,7 @@ class Allbillers extends GetView<BillersController> {
                                   ),
                                   subtitle: CustomParagraph(
                                     fontSize: 10,
+                                    maxlines: 1,
                                     text: controller.filteredBillers[index]
                                             ["biller_address"] ??
                                         '',
