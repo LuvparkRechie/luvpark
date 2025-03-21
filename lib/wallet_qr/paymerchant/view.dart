@@ -31,6 +31,7 @@ class _PayMerchantState extends State<PayMerchant> {
   @override
   void initState() {
     super.initState();
+
     getUserBalance();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _setCursorToEnd();
@@ -97,130 +98,97 @@ class _PayMerchantState extends State<PayMerchant> {
               ? NoInternetConnected()
               : Form(
                   key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: SingleChildScrollView(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(height: 20),
+                        CustomParagraph(
+                          text:
+                              "${_capitalize(widget.data[0]["merchant_name"])}",
+                          color: AppColor.headerColor,
+                          fontWeight: FontWeight.w700,
+                          maxlines: 1,
+                        ),
+                        CustomParagraph(
+                          text: widget.data[0]["merchant_address"],
+                        ),
+                        Container(height: 20),
+                        Container(
+                          padding: EdgeInsets.all(10),
+                          width: double.infinity,
+                          decoration: ShapeDecoration(
+                            color: Colors.white,
+                            shape: RoundedRectangleBorder(
+                                side: const BorderSide(
+                                    width: 1, color: Color(0xFFE8E6E6)),
+                                borderRadius: BorderRadius.circular(7)),
+                            shadows: const [
+                              BoxShadow(
+                                color: Color(0x0C000000),
+                                blurRadius: 15,
+                                offset: Offset(0, 5),
+                                spreadRadius: 0,
+                              )
+                            ],
+                          ),
+                          child: Row(
                             children: [
-                              Container(height: 20),
-                              Row(
-                                children: [
-                                  Container(
-                                    decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColor.iconBgColor),
-                                    padding: EdgeInsets.all(10),
-                                    child: Icon(
-                                      Iconsax.bill,
-                                      color: AppColor.primaryColor,
-                                    ),
-                                  ),
-                                  Container(width: 10),
-                                  CustomTitle(
-                                    text:
-                                        "${_capitalize(widget.data[0]["merchant_name"])}",
-                                    fontSize: 18,
-                                  )
-                                ],
-                              ),
-                              Container(height: 15),
-                              CustomParagraph(
-                                text: widget.data[0]["merchant_address"],
-                              ),
-                              Container(height: 20),
-                              Container(
-                                padding: EdgeInsets.all(10),
-                                width: double.infinity,
-                                decoration: ShapeDecoration(
-                                  color: Colors.grey.shade50,
-                                  shape: RoundedRectangleBorder(
-                                      side: const BorderSide(
-                                          width: 1, color: Color(0xFFE8E6E6)),
-                                      borderRadius: BorderRadius.circular(7)),
-                                  shadows: const [
-                                    BoxShadow(
-                                      color: Color(0x0C000000),
-                                      blurRadius: 15,
-                                      offset: Offset(0, 5),
-                                      spreadRadius: 0,
-                                    )
-                                  ],
+                              Image(
+                                fit: BoxFit.contain,
+                                image: AssetImage(
+                                  "assets/images/logo.png",
                                 ),
-                                child: Row(
+                                width: 30,
+                                height: 30,
+                              ),
+                              Container(width: 10),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: AppColor.iconBgColor,
-                                      ),
-                                      padding: EdgeInsets.all(5),
-                                      child: Image(
-                                        fit: BoxFit.contain,
-                                        image: AssetImage(
-                                          "assets/images/logo.png",
-                                        ),
-                                        width: 30,
-                                        height: 30,
-                                      ),
+                                    CustomParagraph(
+                                      text: "Wallet Balance",
+                                      fontWeight: FontWeight.w500,
                                     ),
-                                    Container(width: 10),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          CustomParagraph(
-                                            text: "Wallet Balance",
-                                            color: AppColor.headerColor,
-                                            fontWeight: FontWeight.w700,
-                                          ),
-                                          Container(height: 5),
-                                          CustomParagraph(
-                                            text: "luvpark payment",
-                                            fontSize: 13,
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                    Container(height: 5),
                                     CustomParagraph(
                                       text: toCurrencyString(
                                           userData[0]["amount_bal"].toString()),
                                       color: AppColor.headerColor,
                                       fontWeight: FontWeight.w700,
-                                      maxlines: 1,
-                                    )
+                                    ),
                                   ],
                                 ),
-                              ),
-                              Container(height: 20),
-                              CustomParagraph(
-                                text: "Amount",
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
-                              ),
-                              CustomTextField(
-                                hintText: "Enter payment amount",
-                                keyboardType: TextInputType.numberWithOptions(
-                                    decimal: true),
-                                controller: amountController,
-                                inputFormatters: [
-                                  AutoDecimalInputFormatter(),
-                                ],
-                                validator: _validateAmount,
                               ),
                             ],
                           ),
                         ),
-                      ),
-                      Visibility(
-                        visible: MediaQuery.of(context).viewInsets.bottom == 0,
-                        child: CustomButton(
-                            text: "Pay Merchant",
-                            onPressed: () {
+                        Container(height: 20),
+                        CustomParagraph(
+                          text: "Amount",
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                        ),
+                        CustomTextField(
+                          hintText: "Enter payment amount",
+                          keyboardType:
+                              TextInputType.numberWithOptions(decimal: true),
+                          controller: amountController,
+                          inputFormatters: [
+                            AutoDecimalInputFormatter(),
+                          ],
+                          validator: _validateAmount,
+                        ),
+                        Container(height: 30),
+                        CustomButton(
+                            text: "Continue",
+                            onPressed: () async {
+                              FocusManager.instance.primaryFocus?.unfocus();
+
                               if (_formKey.currentState?.validate() ?? false) {
+                                await Future.delayed(
+                                    Duration(milliseconds: 200));
                                 Get.toNamed(
                                   Routes.merchantQRverify,
                                   arguments: {
@@ -233,10 +201,9 @@ class _PayMerchantState extends State<PayMerchant> {
                                   },
                                 );
                               }
-                            }),
-                      ),
-                      Container(height: 20),
-                    ],
+                            })
+                      ],
+                    ),
                   ),
                 ),
     );

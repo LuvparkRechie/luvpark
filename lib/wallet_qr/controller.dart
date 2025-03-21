@@ -17,6 +17,7 @@ import 'package:luvpark/custom_widgets/scanner.dart';
 import 'package:luvpark/http/api_keys.dart';
 import 'package:luvpark/http/http_request.dart';
 import 'package:luvpark/main.dart';
+import 'package:luvpark/wallet_qr/genarateReceive.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
@@ -412,12 +413,10 @@ class QrWalletController extends GetxController
         requestCameraPermission();
         break;
       case 2:
-        final data = await Authentication().getUserData2();
-        String mobileNo = data["mobile_no"].toString();
-
-        Get.bottomSheet(QrBottomSheet(
-          qrCode: mobileNo,
-        ));
+        Get.to(GenerateReceiveQR());
+        // Get.bottomSheet(QrBottomSheet(
+        //   qrCode: mobileNo,
+        // ));
         break;
     }
   }
