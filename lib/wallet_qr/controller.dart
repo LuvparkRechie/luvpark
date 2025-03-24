@@ -59,10 +59,10 @@ class QrWalletController extends GetxController
       "icon": Icons.qr_code_scanner_rounded
     },
     {
-      "label": "Receive money through QR",
+      "label": "Receive token through QR",
       "title": "QR Receive",
       "subtitle":
-          "Receive money quickly and securely by sharing your QR Code with other luvpark accounts.",
+          "Receive token quickly and securely by sharing your QR Code with other luvpark accounts.",
       "icon": Icons.qr_code_rounded
     },
   ];

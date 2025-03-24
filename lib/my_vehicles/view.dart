@@ -303,7 +303,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Future<void> getVhSubscriptionDetails() async {
     String plateNo = widget.data["vehicle_plate_no"];
-    String api = "${ApiKeys.getVhSubscription}?vehicle_plate_no=$plateNo";
+    String api = "${ApiKeys.getVhSubscription}$plateNo";
     final objData = await HttpRequest(
       api: api,
     ).get();

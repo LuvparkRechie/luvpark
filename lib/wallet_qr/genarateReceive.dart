@@ -59,27 +59,33 @@ class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
         TextPosition(offset: amountController.text.length));
   }
 
-  // String? _validateAmount(String? value) {
-  //   if (value == null || value.isEmpty) {
-  //     return 'Please enter an amount';
-  //   }
+  String? _validateAmount(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter an amount';
+    }
 
-  //   final amount = double.tryParse(value);
-  //   if (amount == null || amount <= 0) {
-  //     return 'Please enter a valid amount greater than zero';
-  //   }
+    final amount = double.tryParse(value);
+    if (amount == null || amount <= 0) {
+      return 'Please enter a valid amount greater than zero';
+    }
+    if (amount < 50) {
+      return 'Amount must not be less than 50';
+    }
+    if (amount > 500) {
+      return 'Amount must not be greater than 500';
+    }
 
-  //   final balance = userData[0]["amount_bal"];
-  //   final balanceAmount = balance is double
-  //       ? balance
-  //       : double.tryParse(balance.toString()) ?? 0.0;
+    final balance = userData[0]["amount_bal"];
+    final balanceAmount = balance is double
+        ? balance
+        : double.tryParse(balance.toString()) ?? 0.0;
 
-  //   if (amount > balanceAmount) {
-  //     return 'Insufficient balance';
-  //   }
+    if (amount > balanceAmount) {
+      return 'Insufficient balance';
+    }
 
-  //   return null;
-  // }
+    return null;
+  }
 
   Future<void> getUserBalance() async {
     await Functions.getUserBalance2(Get.context!, (dataBalance) async {
@@ -199,13 +205,14 @@ class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
                               color: Colors.black,
                             ),
                             CustomTextField(
+                              inputFormatters: [
+                                LengthLimitingTextInputFormatter(3)
+                              ],
                               hintText: "Enter amount",
                               keyboardType: TextInputType.numberWithOptions(
                                   decimal: true),
                               controller: amountController,
-                              inputFormatters: [
-                                AutoDecimalInputFormatter(),
-                              ],
+                              validator: _validateAmount,
                               onChange: (value) {
                                 setState(() {
                                   amount = value.toString();
@@ -244,26 +251,6 @@ class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
                         ),
                       )),
                 ),
-    );
-  }
-}
-
-class AutoDecimalInputFormatter extends TextInputFormatter {
-  @override
-  TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue, TextEditingValue newValue) {
-    if (newValue.text.isEmpty) return newValue;
-
-    // Remove non-numeric characters
-    final numericValue = newValue.text.replaceAll(RegExp(r'[^0-9]'), '');
-
-    // Format as decimal (e.g., "123" -> "1.23")
-    final value = double.tryParse(numericValue) ?? 0.0;
-    final formattedValue = (value / 100).toStringAsFixed(2);
-
-    return TextEditingValue(
-      text: formattedValue,
-      selection: TextSelection.collapsed(offset: formattedValue.length),
     );
   }
 }

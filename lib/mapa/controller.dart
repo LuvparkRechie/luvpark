@@ -310,8 +310,9 @@ class DashboardMapController extends GetxController
   }
 
   void getNearest(LatLng coordinates) async {
+    final id = await Authentication().getUserId();
     String params =
-        "${ApiKeys.getNearbyParkingLoc}?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
+        "${ApiKeys.getNearbyParkingLoc}$id/?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
 
     try {
       var returnData = await HttpRequest(api: params).get();
@@ -391,6 +392,7 @@ class DashboardMapController extends GetxController
   }
 
   void handleData(dynamic nearData) async {
+    Get.back();
     showDottedCircle(nearData);
     buildMarkers(nearData);
     netConnected.value = true;
@@ -717,8 +719,6 @@ class DashboardMapController extends GetxController
         );
         filteredMarkers.assignAll(markers);
       }
-
-      Get.back();
     }
   }
 
@@ -942,7 +942,7 @@ class DashboardMapController extends GetxController
   }
 
   Future<void> getParkingRates(parkId) async {
-    HttpRequest(api: '${ApiKeys.getParkingRates}?park_area_id=$parkId')
+    HttpRequest(api: '${ApiKeys.getParkingRates}$parkId')
         .get()
         .then((returnData) async {
       Get.back();
@@ -1391,8 +1391,9 @@ class DashboardMapController extends GetxController
     } else {
       int? userId = await Authentication().getUserId();
       String api =
-          "${ApiKeys.getSubscribedVehicle}?park_area_id=${markerData[0]["park_area_id"]}&luvpay_id=$userId";
+          "${ApiKeys.getSubscribedVehicle}$userId?park_area_id=${markerData[0]["park_area_id"]}";
       final response = await HttpRequest(api: api).get();
+      print("response $response");
       if (response == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {

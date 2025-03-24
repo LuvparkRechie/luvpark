@@ -300,7 +300,7 @@ class WalletRechargeLoadController extends GetxController
       CustomDialog().loadingDialog(Get.context!);
       String api =
           "${ApiKeys.getRecipient}?mobile_no=63${mobile.toString().replaceAll(" ", '')}";
-      HttpRequest(api: api).get().then((objData) { 
+      HttpRequest(api: api).get().then((objData) {
         FocusScope.of(Get.context!).unfocus();
         if (objData == "No Internet") {
           isValidNumber.value = false;

@@ -280,7 +280,7 @@ class MyVehiclesController extends GetxController {
 
       HttpRequest(api: ApiKeys.deleteRegVh, parameters: params)
           .deleteData()
-          .then((retDelete) { 
+          .then((retDelete) {
         Get.back();
         if (retDelete == "No Internet") {
           CustomDialog().internetErrorDialog(Get.context!, () {

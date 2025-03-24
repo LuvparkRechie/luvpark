@@ -1,10 +1,8 @@
-
 import 'dart:async';
 
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
-import 'package:flutter_native_contact_picker/model/contact.dart';
 import 'package:get/get.dart';
 import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/functions/functions.dart';
@@ -37,7 +35,7 @@ class WalletSendController extends GetxController {
   RxString userName = "".obs;
   RxString userImage = "".obs;
   List<SimCard> simCard = <SimCard>[];
-  final FlutterNativeContactPicker contactPicker = FlutterNativeContactPicker();
+  final FlutterContactPicker contactPicker = FlutterContactPicker();
   Rx<Contact?> contact = Rx<Contact?>(null);
   RxInt denoInd = 0.obs;
 
@@ -269,7 +267,7 @@ class WalletSendController extends GetxController {
       "to_msg": message.text,
       "session_id": userData["session_id"].toString(),
       "pwd": myPass.text,
-    }; 
+    };
     HttpRequest(api: ApiKeys.postShareToken, parameters: parameters)
         .postBody()
         .then(
@@ -331,7 +329,8 @@ class WalletSendController extends GetxController {
         "${ApiKeys.getRecipient}?mobile_no=63${mobileNo.toString().replaceAll(" ", '')}";
 
     HttpRequest(api: api).get().then((objData) {
-      FocusScope.of(Get.context!).unfocus(); 
+      print("objData $objData");
+      // FocusScope.of(Get.context!).unfocus();
       if (objData == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {

@@ -59,10 +59,10 @@ class ParkingController extends GetxController
     _timer = Timer.periodic(Duration(seconds: 5), (t) async {
       final id = await Authentication().getUserId();
       String api =
-          "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}?luvpay_id=$id";
+          "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}$id";
 
       final returnData = await HttpRequest(api: api).get();
-
+      print("apii2$api");
       List itemData = returnData["items"];
 
       if (itemData.isEmpty) {
@@ -95,8 +95,9 @@ class ParkingController extends GetxController
     final id = await Authentication().getUserId();
 
     String api =
-        "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}?luvpay_id=$id";
+        "${currentPage.value == 1 ? ApiKeys.getActiveParking : ApiKeys.getParkingRes}$id";
     final returnData = await HttpRequest(api: api).get();
+    print("apii1 $api");
 
     tabLoading.value = false;
     if (returnData == "No Internet") {

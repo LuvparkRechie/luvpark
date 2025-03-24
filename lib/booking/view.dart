@@ -205,11 +205,16 @@ class BookingPage extends GetView<BookingController> {
                 ],
               ),
             ),
-          ), 
+          ),
           Visibility(
-            visible:ct.postBookParam.isEmpty ? false:  ct.displayRewards.value > 0? true: false,
+            visible: ct.postBookParam.isEmpty
+                ? false
+                : ct.displayRewards.value > 0
+                    ? true
+                    : false,
             child: Column(
-              children: [Divider(),
+              children: [
+                Divider(),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -220,7 +225,7 @@ class BookingPage extends GetView<BookingController> {
                     Checkbox(
                       value: ct.isUseRewards.value,
                       onChanged: (bool? value) {
-                        ct.onToggleRewards(value ?? false); 
+                        ct.onToggleRewards(value ?? false);
                       },
                       activeColor: AppColor.primaryColor,
                     ),
