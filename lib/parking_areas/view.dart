@@ -11,6 +11,7 @@ import 'package:luvpark/custom_widgets/no_data_found.dart';
 import 'package:luvpark/parking_areas/controller.dart';
 
 import '../custom_widgets/alert_dialog.dart';
+import '../custom_widgets/custom_button.dart';
 import '../custom_widgets/showup_animation.dart';
 import '../custom_widgets/variables.dart';
 import '../functions/functions.dart';
@@ -388,6 +389,45 @@ class ParkingAreas extends GetView<ParkingAreasController> {
                                                 ),
                                               ],
                                             ),
+                                            Container(height: 10),
+                                            Divider(),
+                                            Container(height: 10),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                  child: CustomButton(
+                                                      btnColor: Colors.white,
+                                                      textColor:
+                                                          AppColor.primaryColor,
+                                                      bordercolor:
+                                                          AppColor.primaryColor,
+                                                      text: "Parking Details",
+                                                      onPressed: () {
+                                                        Get.bottomSheet(
+                                                          ParkingDetails(),
+                                                          shape:
+                                                              BeveledRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .vertical(
+                                                              top: Radius
+                                                                  .circular(7),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }),
+                                                ),
+                                                Container(width: 10),
+                                                Expanded(
+                                                  child: CustomButton(
+                                                      text: "Book now",
+                                                      onPressed: () {}),
+                                                )
+                                              ],
+                                            )
                                           ],
                                         ),
                                       ),
@@ -421,6 +461,79 @@ class ParkingAreas extends GetView<ParkingAreasController> {
           ),
         )
       ],
+    );
+  }
+}
+
+class ParkingDetails extends StatelessWidget {
+  const ParkingDetails({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(15, 15, 15, 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(7),
+        ),
+      ),
+      child: Column(
+        children: [
+          Center(
+            child: Container(
+              width: 71,
+              height: 6,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(56),
+                color: const Color(0xffd9d9d9),
+              ),
+            ),
+          ),
+          Container(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    CustomTitle(text: "Montelebano"),
+                    Container(height: 5),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Iconsax.location,
+                          color: Colors.grey.shade400,
+                          size: 18,
+                        ),
+                        Container(width: 5),
+                        Expanded(
+                          child: CustomParagraph(
+                            maxlines: 2,
+                            text:
+                                "Carlos Hilado Ave, Circumferential Rd, Bacolod, Negros Occidental",
+                            fontSize: 13,
+                          ),
+                        )
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              Container(width: 10),
+              Image(
+                width: 50,
+                height: 50,
+                image: AssetImage(
+                  "assets/dashboard_icon/street/cmp_street.png",
+                ),
+              )
+            ],
+          ),
+          Container(height: 10),
+        ],
+      ),
     );
   }
 }
