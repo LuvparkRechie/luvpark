@@ -154,6 +154,7 @@ class MerchantQRReceipt extends GetView<MerchantQRRController> {
               ),
               _custombutton("Back to wallet", () {
                 Get.back();
+                Get.back();
               }),
             ],
           ),

@@ -1,0 +1,464 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
+import 'dart:math';
+
+import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
+import 'package:gallery_saver_plus/gallery_saver.dart';
+import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:iconsax/iconsax.dart';
+import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
+import 'package:luvpark/custom_widgets/page_loader.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../auth/authentication.dart';
+import '../custom_widgets/app_color.dart';
+import '../custom_widgets/custom_button.dart';
+import '../custom_widgets/custom_text.dart';
+import '../custom_widgets/no_internet.dart';
+import '../functions/functions.dart';
+
+class GenerateReceiveQR extends StatefulWidget {
+  const GenerateReceiveQR({super.key});
+
+  @override
+  State<GenerateReceiveQR> createState() => _GenerateReceiveQRState();
+}
+
+class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
+  final args = Get.arguments;
+  List padData = [];
+  String selectedAmount = "";
+  bool isLoading = true;
+  bool hasNet = true;
+  List userData = [];
+  final _formKey = GlobalKey<FormState>();
+  Timer? _timer;
+  List dataList = [
+    {"value": 50, "is_active": false},
+    {"value": 100, "is_active": false},
+    {"value": 150, "is_active": false},
+    {"value": 200, "is_active": false},
+    {"value": 250, "is_active": false},
+    {"value": 300, "is_active": false},
+    {"value": 350, "is_active": false},
+    {"value": 400, "is_active": false},
+    {"value": 500, "is_active": false},
+  ];
+  bool isActiveBtn = false;
+  @override
+  void initState() {
+    super.initState();
+    padData = dataList;
+    getUserBalance();
+    timerPeriodic();
+  }
+
+  void saveQr() async {
+    CustomDialog().loadingDialog(Get.context!);
+    String randomNumber = await Random().nextInt(100000).toString();
+    String fname = "receive$randomNumber.png";
+    ScreenshotController()
+        .captureFromWidget(QRKo(args: args), delay: const Duration(seconds: 2))
+        .then((image) async {
+      final dir = await getApplicationDocumentsDirectory();
+      final imagePath = await File('${dir.path}/$fname').create();
+      await imagePath.writeAsBytes(image);
+      GallerySaver.saveImage(imagePath.path).then((result) {
+        CustomDialog().successDialog(Get.context!, "Success",
+            "QR code has been saved. Please check your gallery.", "Okay", () {
+          Get.back();
+          Get.back();
+        });
+      });
+    });
+  }
+
+  void shareQr() async {
+    String randomNumber = await Random().nextInt(100000).toString();
+    String fname = "share_receive$randomNumber.png";
+    CustomDialog().loadingDialog(Get.context!);
+    final directory = (await getApplicationDocumentsDirectory()).path;
+    Uint8List bytes =
+        await ScreenshotController().captureFromWidget(QRKo(args: args));
+    Uint8List pngBytes = bytes.buffer.asUint8List();
+
+    final imgFile = File('$directory/$fname');
+    imgFile.writeAsBytes(pngBytes);
+    Get.back();
+    await Share.shareFiles([imgFile.path]);
+  }
+
+  Future<void> timerPeriodic() async {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) async {
+      getUserBalance();
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  Future<void> pads(int value) async {
+    selectedAmount = value.toString();
+    padData = dataList.map((obj) {
+      obj["is_active"] = (obj["value"] == value);
+      return obj;
+    }).toList();
+
+    isActiveBtn = true;
+    setState(() {});
+  }
+
+  Widget myPads(data, int index) {
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(3.0),
+        child: InkWell(
+          onTap: () {
+            pads(data["value"]);
+          },
+          child: Container(
+            padding: const EdgeInsets.fromLTRB(22, 10, 22, 10),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(7),
+              border: Border.all(color: Colors.grey.shade200, width: 1),
+              color: data["is_active"] ? AppColor.primaryColor : Colors.white,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CustomParagraph(
+                  maxlines: 1,
+                  minFontSize: 8,
+                  text: "${data["value"]}",
+                  fontWeight: FontWeight.w700,
+                  color: data["is_active"] ? Colors.white : Colors.black,
+                ),
+                CustomParagraph(
+                  text: "Token",
+                  maxlines: 1,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: data["is_active"] ? Colors.white : null,
+                  minFontSize: 8,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> getUserBalance() async {
+    await Functions.getUserBalance2(Get.context!, (dataBalance) async {
+      if (!dataBalance[0]["has_net"]) {
+        setState(() {
+          isLoading = false;
+          hasNet = false;
+        });
+        return;
+      } else {
+        setState(() {
+          isLoading = false;
+          hasNet = true;
+          userData = dataBalance[0]["items"];
+        });
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("QR Receive"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      body: isLoading
+          ? PageLoader()
+          : !hasNet
+              ? NoInternetConnected(onTap: () {
+                  setState(() {
+                    getUserBalance();
+                  });
+                })
+              : Container(
+                  padding: EdgeInsets.all(15),
+                  child: Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                        physics: BouncingScrollPhysics(),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            QRKo(args: args),
+                            Container(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                GestureDetector(
+                                  onTap: saveQr,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        LucideIcons.download,
+                                        color: AppColor.primaryColor,
+                                      ),
+                                      Container(height: 10),
+                                      CustomParagraph(text: "Download")
+                                    ],
+                                  ),
+                                ),
+                                Container(width: 60),
+                                GestureDetector(
+                                  onTap: shareQr,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        LucideIcons.share,
+                                        color: AppColor.primaryColor,
+                                      ),
+                                      Container(height: 10),
+                                      CustomParagraph(text: "Share")
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 10),
+                            Divider(
+                              color: AppColor.primaryColor,
+                            ),
+                            SizedBox(height: 10),
+                            CustomParagraph(
+                                text: "or select an amount to receive"),
+                            SizedBox(height: 10),
+                            for (int i = 0; i < padData.length; i += 3)
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  for (int j = i;
+                                      j < i + 3 && j < padData.length;
+                                      j++)
+                                    myPads(padData[j], j)
+                                ],
+                              ),
+                            Container(height: 20),
+                            if (MediaQuery.of(context).viewInsets.bottom == 0)
+                              CustomButton(
+                                text: "Generate QR Code",
+                                onPressed: () async {
+                                  Future.delayed(Duration(milliseconds: 200));
+                                  final data =
+                                      await Authentication().getUserData2();
+
+                                  FocusManager.instance.primaryFocus?.unfocus();
+                                  if (_formKey.currentState!.validate() &&
+                                      selectedAmount.isNotEmpty) {
+                                    await Future.delayed(
+                                        Duration(milliseconds: 200));
+                                    Map<String, String> args = {
+                                      "mobile_no": data["mobile_no"].toString(),
+                                      "amount": selectedAmount,
+                                    };
+
+                                    Get.bottomSheet(
+                                      ScanGeneratedQR(
+                                        onBack: () {
+                                          getUserBalance();
+                                        },
+                                        args: jsonEncode(args),
+                                      ),
+                                    );
+                                  } else {
+                                    CustomDialog().errorDialog(
+                                        Get.context!,
+                                        "luvpark",
+                                        "Please select an amount to proceed.",
+                                        () {
+                                      Get.back();
+                                    });
+                                  }
+                                },
+                              )
+                          ],
+                        ),
+                      )),
+                ),
+    );
+  }
+}
+
+class QRKo extends StatelessWidget {
+  const QRKo({
+    super.key,
+    required this.args,
+  });
+
+  final dynamic args;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(7),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CustomParagraph(
+              text: "Align the QR code within the frame to receive token.",
+              textAlign: TextAlign.center,
+            ),
+            Container(
+              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: PrettyQrView(
+                decoration: const PrettyQrDecoration(
+                  background: Colors.white,
+                  image: PrettyQrDecorationImage(
+                    image: AssetImage("assets/images/logo.png"),
+                  ),
+                ),
+                qrImage: QrImage(
+                  QrCode.fromData(
+                    data: args["mobile"],
+                    errorCorrectLevel: QrErrorCorrectLevel.H,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ScanGeneratedQR extends StatefulWidget {
+  const ScanGeneratedQR({super.key, required this.onBack, required this.args});
+  final Function onBack;
+  final String args;
+
+  @override
+  State<ScanGeneratedQR> createState() => _ScanGeneratedQRState();
+}
+
+class _ScanGeneratedQRState extends State<ScanGeneratedQR> {
+  late Map<String, dynamic> decoded;
+  @override
+  void initState() {
+    super.initState();
+    decoded = jsonDecode(widget.args);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(7),
+        ),
+      ),
+      child: Padding(
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 5),
+        child: Column(
+          children: [
+            CustomTitle(
+              text: "Scan QR Code",
+              fontSize: 20,
+            ),
+            Container(height: 5),
+            CustomParagraph(
+              text: "Align the QR code within the frame to scan",
+              fontSize: 14,
+            ),
+            Container(height: 30),
+            Expanded(
+              child: Container(
+                width: MediaQuery.of(context).size.width / 2,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: PrettyQrView(
+                  decoration: const PrettyQrDecoration(
+                    background: Colors.white,
+                    image: PrettyQrDecorationImage(
+                      image: AssetImage("assets/images/logo.png"),
+                    ),
+                  ),
+                  qrImage: QrImage(
+                    QrCode.fromData(
+                      data: widget.args,
+                      errorCorrectLevel: QrErrorCorrectLevel.H,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            CustomParagraph(
+              text: "Amount requested",
+              fontSize: 12,
+              color: AppColor.subtitleColor,
+            ),
+            CustomTitle(
+              text: decoded["amount"].toString(),
+              fontSize: 14,
+              color: AppColor.primaryColor,
+            ),
+            Container(height: 10),
+            CustomButton(
+                text: "Close",
+                onPressed: () {
+                  widget.onBack();
+                  Get.back();
+                }),
+            Container(height: 30),
+          ],
+        ),
+      ),
+    );
+  }
+}

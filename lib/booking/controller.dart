@@ -19,6 +19,8 @@ class BookingController extends GetxController
   BookingController();
   final parameters = Get.arguments;
 
+  // RxString lastPN = "".obs;
+  // RxString lastVT = "".obs;
   RxBool isLoadingPage = true.obs;
   RxBool isInternetConn = true.obs;
   RxList myVehiclesData = [].obs;
@@ -38,6 +40,7 @@ class BookingController extends GetxController
   RxInt pageInd = 0.obs;
   Timer? _activeTmr;
   RxString stBookTime = "".obs;
+
   RxString endBookTime = "".obs;
   RxBool is24Hrs = false.obs;
   RxInt noOfHours = 0.obs;
@@ -47,11 +50,19 @@ class BookingController extends GetxController
   @override
   void onInit() {
     super.onInit();
-
     displayRewards.value =
         double.parse(parameters["userData"][0]["points_bal"].toString());
 
     getNotice();
+  }
+
+  Future<List> filterSubscription(String plNo, int vhTypeid) async {
+    List data = Variables.subsVhList.where((obj) {
+      return obj["vehicle_type_id"] == vhTypeid &&
+          obj["vehicle_plate_no"].toString().replaceAll(regExp, "") ==
+              plNo.toString().replaceAll(regExp, "");
+    }).toList();
+    return data;
   }
 
   Future<void> getNotice() async {
@@ -258,8 +269,13 @@ class BookingController extends GetxController
 
   Future<void> initializeBookingDate() async {
     DateTime now = await Functions.getTimeNow();
+    String openingTime =
+        "${now.toString().split(" ")[0].toString()} ${parameters["areaData"]["opened_time"].toString().trim()}";
     is24Hrs.value = parameters["areaData"]["is_24_hrs"].toString() == "Y";
-    stBookTime.value = now.toString();
+    bool diffopenTime = now.isBefore(DateTime.parse(openingTime));
+
+    stBookTime.value = diffopenTime ? openingTime : now.toString();
+
     if (is24Hrs.value) {
       DateTime nextDay = now.add(Duration(days: 1));
       endBookTime.value = nextDay.toString();
@@ -267,6 +283,7 @@ class BookingController extends GetxController
       endBookTime.value =
           "${now.toString().split(" ")[0].toString()} ${parameters["areaData"]["closed_time"].toString().trim()}";
     }
+
     int diff = DateTime.parse(endBookTime.value)
         .difference(DateTime.parse(stBookTime.value))
         .inHours;
@@ -280,6 +297,7 @@ class BookingController extends GetxController
             ? diff + 1
             : diff;
     if (_activeTmr?.isActive ?? false) return;
+    initializeLastBooking();
     execActiveTmr();
   }
 
@@ -454,6 +472,53 @@ class BookingController extends GetxController
         }
       });
     });
+  }
+
+  void initializeLastBooking() async {
+    List ddVh = [];
+    final lastBooking = await Authentication().getLastBooking();
+    if (lastBooking.isEmpty) {
+      Authentication().setLastBooking([]);
+
+      return;
+    }
+    var userId = await Authentication().getUserId();
+
+    ddVh = ddVehiclesData.where((e) {
+      return e["value"] == lastBooking["vehicle_type_id"];
+    }).toList();
+    vhTypeDisp.value = ddVh[0]["text"];
+
+    int selBaseHours = int.parse(ddVh[0]["base_hours"].toString());
+    int selSucceedRate = int.parse(ddVh[0]["succeeding_rate"].toString());
+    int amount = int.parse(ddVh[0]["base_rate"].toString());
+    int totalAmt = 0;
+    int subDtlId = lastBooking["zv_subscription_dtl_id"];
+    if (noOfHours.value > selBaseHours) {
+      totalAmt = amount + (noOfHours.value - selBaseHours) * selSucceedRate;
+    } else {
+      totalAmt = amount;
+    }
+
+    postBookParam = {
+      "user_id": userId,
+      "amount": totalAmt,
+      "no_hours": noOfHours.value,
+      "dt_in": stBookTime.value.split(".")[0],
+      "dt_out": endBookTime.value.split(".")[0],
+      "eta_in_mins": "",
+      "vehicle_type_id": lastBooking["vehicle_type_id"],
+      "vehicle_plate_no": lastBooking["vehicle_plate_no"],
+      "park_area_id": parameters["areaData"]["park_area_id"],
+      "points_used": "",
+      'zv_subscription_dtl_id': subDtlId,
+      "auto_extend": "N",
+      "version": 3,
+      'base_rate': ddVh[0]["base_rate"],
+      "base_hours": ddVh[0]["base_hours"],
+      "succeeding_rate": ddVh[0]["succeeding_rate"],
+      "disc_rate": 0,
+    };
   }
 
   @override

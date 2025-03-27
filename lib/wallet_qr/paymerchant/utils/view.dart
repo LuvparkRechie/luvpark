@@ -3,10 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:get/get.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:intl/intl.dart';
+import 'package:luvpark/auth/authentication.dart';
+import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_button.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
+import 'package:luvpark/functions/functions.dart';
 import 'package:luvpark/wallet_qr/paymerchant/utils/controller.dart';
+
+import '../../../custom_widgets/custom_textfield.dart';
+import '../../../otp_field/view.dart';
 
 class MerchantQRverify extends StatefulWidget {
   const MerchantQRverify({super.key});
@@ -138,7 +145,7 @@ class _MerchantQRverifyState extends State<MerchantQRverify> {
                             "Pay ${controller.parameter["amount"].toString()}",
                         onPressed: isVerified
                             ? () async {
-                                controller.payMerchantVerify();
+                                Get.to(ConfirmPasswordMerchant());
                               }
                             : () {},
                       )),
@@ -205,4 +212,151 @@ Widget _buildTotalAmount(amount) {
 String _capitalize(String text) {
   if (text.isEmpty) return text;
   return text[0].toUpperCase() + text.substring(1).toLowerCase();
+}
+
+class ConfirmPasswordMerchant extends StatefulWidget {
+  const ConfirmPasswordMerchant({super.key});
+
+  @override
+  State<ConfirmPasswordMerchant> createState() =>
+      _ConfirmPasswordMerchantState();
+}
+
+class _ConfirmPasswordMerchantState extends State<ConfirmPasswordMerchant> {
+  final GlobalKey<FormState> confirmFormKey = GlobalKey<FormState>();
+  bool isShowPass = false;
+  @override
+  void initState() {
+    controller.myPass = TextEditingController();
+    super.initState();
+  }
+
+  void visibilityChanged(bool visible) {
+    isShowPass = visible;
+    setState(() {});
+  }
+
+  final controller = Get.put(payMerchantVerifyController());
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        elevation: 1,
+        backgroundColor: AppColor.primaryColor,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: AppColor.primaryColor,
+          statusBarBrightness: Brightness.dark,
+          statusBarIconBrightness: Brightness.light,
+        ),
+        title: Text("Confirm Password"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
+      ),
+      body: Form(
+        key: confirmFormKey,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(height: 20),
+              CustomParagraph(
+                text: "Confirm password to proceed.",
+              ),
+              Container(height: 20),
+              CustomParagraph(
+                text: "Input password",
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              CustomTextField(
+                hintText: "Enter your password",
+                controller: controller.myPass,
+                isObscure: isShowPass,
+                suffixIcon:
+                    !isShowPass ? Icons.visibility_off : Icons.visibility,
+                onIconTap: () {
+                  visibilityChanged(!isShowPass);
+                },
+                validator: (d) {
+                  if (d == null || d.isEmpty) {
+                    return "Password is required";
+                  }
+                  return null;
+                },
+              ),
+              Container(height: 30),
+              CustomButton(
+                  text: "Continue",
+                  onPressed: () async {
+                    final uData = await Authentication().getUserData2();
+
+                    if (confirmFormKey.currentState!.validate()) {
+                      Map<String, String> requestParam = {
+                        "mobile_no": uData["mobile_no".toString()].toString(),
+                        "pwd": controller.myPass.text
+                      };
+                      CustomDialog().loadingDialog(Get.context!);
+                      DateTime timeNow = await Functions.getTimeNow();
+                      Get.back();
+                      Functions().requestOtp(requestParam, (objData) async {
+                        DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
+                            .parse(objData["otp_exp_dt"].toString());
+                        DateTime otpExpiry = DateTime(
+                            timeExp.year,
+                            timeExp.month,
+                            timeExp.day,
+                            timeExp.hour,
+                            timeExp.minute,
+                            timeExp.millisecond);
+
+                        // Calculate difference
+                        Duration difference = otpExpiry.difference(timeNow);
+
+                        if (objData["success"] == "Y" ||
+                            objData["status"] == "PENDING") {
+                          Map<String, String> putParam = {
+                            "mobile_no": uData["mobile_no"].toString(),
+                            "otp": objData["otp"].toString(),
+                            "req_type": "SR"
+                          };
+
+                          Object args = {
+                            "time_duration": difference,
+                            "mobile_no":
+                                uData["mobile_no".toString()].toString(),
+                            "req_otp_param": requestParam,
+                            "verify_param": putParam,
+                            "callback": (otp) async {
+                              if (otp != null) {
+                                controller.payMerchantVerify();
+                              }
+                            },
+                          };
+
+                          Get.to(
+                            OtpFieldScreen(
+                              arguments: args,
+                            ),
+                            transition: Transition.rightToLeftWithFade,
+                            duration: Duration(milliseconds: 400),
+                          );
+                        }
+                      });
+                    }
+                  })
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }

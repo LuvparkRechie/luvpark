@@ -34,6 +34,8 @@ import '../sqlite/pa_message_table.dart';
 class DashboardMapController extends GetxController
     with GetTickerProviderStateMixin, WidgetsBindingObserver {
   // Dependencies
+  RxBool hasShownLastBookingModal = false.obs;
+
   final GlobalKey<ScaffoldState> dashboardScaffoldKey =
       GlobalKey<ScaffoldState>();
 
@@ -44,7 +46,7 @@ class DashboardMapController extends GetxController
   late AnimationController animationController;
 
   bool isFilter = false;
-
+  RegExp regExp = RegExp(r'[^a-zA-Z0-9]');
   GoogleMapController? gMapController;
   CameraPosition? initialCameraPosition;
   RxList<Marker> markers = <Marker>[].obs;
@@ -85,6 +87,7 @@ class DashboardMapController extends GetxController
   RxBool isSearched = false.obs;
   //Last Booking variables
   RxBool hasLastBooking = false.obs;
+  RxList lastBookData = [].obs;
   RxString plateNo = "".obs;
   RxString brandName = "".obs;
 //panel gg
@@ -140,7 +143,8 @@ class DashboardMapController extends GetxController
   final FocusNode focusNode = FocusNode();
 
   RxBool isClkBook = false.obs;
-
+  RxString lastPlateNumber = "".obs;
+  RxString lastVehicleType = "".obs;
   @override
   void onInit() {
     ddRadius.value = "10000";
@@ -175,6 +179,11 @@ class DashboardMapController extends GetxController
     fetchData();
     super.onInit();
   }
+  // void initializeMap() async {
+  //   await _checkLocationService();
+  //   await fetchData();
+  //   await getLastBooking();
+  // }
 
   @override
   void onClose() {
@@ -195,6 +204,20 @@ class DashboardMapController extends GetxController
 
   Future<void> _checkLocationService() async {
     getDefaultLocation();
+  }
+
+  Future<void> showModalLastBook() async {
+    CustomDialog().confirmationDialog(
+        Get.context!,
+        "Last Booking",
+        "Do you want to book again using\nPlate Number: ${lastPlateNumber.value}?",
+        "Back",
+        "Book Now", () {
+      Get.back();
+    }, () {
+      Get.back();
+      proceedLastBooking();
+    });
   }
 
   Future<void> onSearchChanged() async {
@@ -313,7 +336,6 @@ class DashboardMapController extends GetxController
     final id = await Authentication().getUserId();
     String params =
         "${ApiKeys.getNearbyParkingLoc}$id/?is_allow_overnight=$isAllowOverNight&parking_type_code=$pTypeCode&current_latitude=${currentCoord.latitude}&current_longitude=${currentCoord.longitude}&search_latitude=${searchCoordinates.latitude}&search_longitude=${searchCoordinates.longitude}&radius=${ddRadius.toString()}&parking_amenity_code=$amenities&vehicle_type_id=$vtypeId";
-
     try {
       var returnData = await HttpRequest(api: params).get();
 
@@ -333,10 +355,23 @@ class DashboardMapController extends GetxController
         handleNoParkingFound(returnData["items"]);
         return;
       }
-
+      getLastBooking();
       handleData(returnData["items"]);
     } catch (e) {
       handleServerError();
+    }
+  }
+
+  void getLastBooking() async {
+    hasLastBooking.value = false;
+    final data = await Authentication().getLastBooking();
+    hasLastBooking.value = data.isNotEmpty;
+    lastPlateNumber.value = data["vehicle_plate_no"];
+    lastVehicleType.value = data["vehicle_type_id"].toString();
+
+    if (hasLastBooking.value && !hasShownLastBookingModal.value) {
+      hasShownLastBookingModal.value = true;
+      showModalLastBook();
     }
   }
 
@@ -826,6 +861,7 @@ class DashboardMapController extends GetxController
       Routes.parkingAreas,
       arguments: {
         "data": dataNearest,
+        "balance": balanceData,
         "callback": (objData) async {
           lastRouteName.value = "park_areas";
           CustomDialog().loadingDialog(Get.context!);
@@ -876,22 +912,22 @@ class DashboardMapController extends GetxController
         );
         isHidePanel.value = true;
 
-        getAmenities(filteredMarkers[0].markerId.value);
+        getAmenities(filteredMarkers[0].markerId.value, () {}, markerData);
       });
     }
   }
 
-  void showTargetTutorial(BuildContext context, bool isDrawer) {
-    Future.delayed(
-      const Duration(seconds: 5),
-      () {
-        tutorialCoachMark.show(context: context);
-      },
-    );
-  }
+  // void showTargetTutorial(BuildContext context, bool isDrawer) {
+  //   Future.delayed(
+  //     const Duration(seconds: 5),
+  //     () {
+  //       tutorialCoachMark.show(context: context);
+  //     },
+  //   );
+  // }
 
   //Get amenities
-  Future<void> getAmenities(parkId) async {
+  Future<void> getAmenities(parkId, Function cb, data) async {
     final response = await HttpRequest(
             api: "${ApiKeys.getParkingAmenities}?park_area_id=$parkId")
         .get();
@@ -924,29 +960,31 @@ class DashboardMapController extends GetxController
       return element;
     }).toList();
 
-    if (markerData[0]["park_size"] != null &&
-        markerData[0]["park_orientation"].toString().toLowerCase() !=
-            "unknown") {
+    if (data[0]["park_size"] != null &&
+        data[0]["park_orientation"].toString().toLowerCase() != "unknown") {
       item.insert(0, {
         "zone_amenity_id": 0,
         "zone_id": 0,
         "parking_amenity_code": "D",
         "parking_amenity_desc":
-            "${markerData[0]["park_size"]} ${markerData[0]["park_orientation"]}",
+            "${data[0]["park_size"]} ${data[0]["park_orientation"]}",
         "icon": "dimension"
       });
     }
 
     amenData.value = item;
-    getParkingRates(parkId);
+    getParkingRates(parkId, (isSuccess) {
+      cb(isSuccess);
+    });
   }
 
-  Future<void> getParkingRates(parkId) async {
+  Future<void> getParkingRates(parkId, Function cb) async {
     HttpRequest(api: '${ApiKeys.getParkingRates}$parkId')
         .get()
         .then((returnData) async {
       Get.back();
       if (returnData == "No Internet") {
+        cb(false);
         CustomDialog().internetErrorDialog(Get.context!, () {
           filterMarkersData("", "");
           Get.back();
@@ -954,6 +992,7 @@ class DashboardMapController extends GetxController
         return;
       }
       if (returnData == null) {
+        cb(false);
         CustomDialog().serverErrorDialog(Get.context!, () {
           Get.back();
         });
@@ -964,11 +1003,14 @@ class DashboardMapController extends GetxController
         List<dynamic> item = returnData["items"];
         vehicleRates.value = item;
         goingBackToTheCornerWhenIFirstSawYou();
+        cb(true);
       } else {
+        cb(false);
         CustomDialog().errorDialog(Get.context!, "luvpark", returnData["msg"],
             () {
           Get.back();
         });
+        return;
       }
     });
   }
@@ -1071,7 +1113,7 @@ class DashboardMapController extends GetxController
     denoInd.value = 0;
     finalSttime = formatTime(markerData[0]["start_time"]);
     finalEndtime = formatTime(markerData[0]["end_time"]);
-    bool isOpenPa = await isOpenArea();
+    bool isOpenPa = await isOpenArea(markerData);
     bool openBa = await Functions.checkAvailability(finalSttime, finalEndtime);
     if (!isOpenPa) {
       isOpen.value = isOpenPa;
@@ -1254,9 +1296,10 @@ class DashboardMapController extends GetxController
     return parsedTypes;
   }
 
-  Future<bool> isOpenArea() async {
+  Future<bool> isOpenArea(data) async {
     DateTime timeNow = await Functions.getTimeNow();
-    Map<String, dynamic> jsonData = markerData[0];
+
+    Map<String, dynamic> jsonData = data[0];
     Map<String, String> jsonDatas = {};
     Iterable<String> keys = jsonData.keys;
     String today = DateFormat('EEEE').format(timeNow).toLowerCase();
@@ -1270,9 +1313,10 @@ class DashboardMapController extends GetxController
     return value.toLowerCase() == "y" ? true : false;
   }
 
-  void onClickBooking() async {
+  void onClickBooking(areaData) async {
     CustomDialog().loadingDialog(Get.context!);
-    bool isOpenPa = await isOpenArea();
+    bool isOpenPa = await isOpenArea(areaData);
+
     if (!isOpenPa) {
       Get.back();
       CustomDialog().infoDialog("Booking", "This area is currently close.", () {
@@ -1284,7 +1328,7 @@ class DashboardMapController extends GetxController
 
     DateTime now = await Functions.getTimeNow();
 
-    if (markerData.isEmpty) {
+    if (areaData.isEmpty) {
       Get.back();
       CustomDialog()
           .infoDialog("Not Available", "No data found please refresh.", () {
@@ -1292,7 +1336,7 @@ class DashboardMapController extends GetxController
       });
       return;
     }
-    if (markerData[0]["is_allow_reserve"] == "N") {
+    if (areaData[0]["is_allow_reserve"] == "N") {
       Get.back();
       CustomDialog().infoDialog("Not Open to Public Yet",
           "This area is currently unavailable. Please try again later.", () {
@@ -1302,7 +1346,7 @@ class DashboardMapController extends GetxController
       return;
     }
 
-    if (markerData[0]["is_24_hrs"] == "N") {
+    if (areaData[0]["is_24_hrs"] == "N") {
       int getDiff(String time) {
         DateTime specifiedTime = DateFormat("HH:mm").parse(time);
         DateTime todaySpecifiedTime = DateTime(now.year, now.month, now.day,
@@ -1321,8 +1365,8 @@ class DashboardMapController extends GetxController
         return diff;
       }
 
-      String ctime = markerData[0]["closed_time"].toString().trim();
-      String otime = markerData[0]["opened_time"].toString().trim();
+      String ctime = areaData[0]["closed_time"].toString().trim();
+      String otime = areaData[0]["opened_time"].toString().trim();
 
       if (diffBook(otime) > 30) {
         Get.back();
@@ -1367,7 +1411,7 @@ class DashboardMapController extends GetxController
       }
     }
 
-    if (int.parse(markerData[0]["res_vacant_count"].toString()) == 0) {
+    if (int.parse(areaData[0]["res_vacant_count"].toString()) == 0) {
       Get.back();
       CustomDialog().infoDialog("Booking not availabe",
           "There are no available parking spaces at the moment.", () {
@@ -1391,9 +1435,9 @@ class DashboardMapController extends GetxController
     } else {
       int? userId = await Authentication().getUserId();
       String api =
-          "${ApiKeys.getSubscribedVehicle}$userId?park_area_id=${markerData[0]["park_area_id"]}";
+          "${ApiKeys.getSubscribedVehicle}$userId?park_area_id=${areaData[0]["park_area_id"]}";
       final response = await HttpRequest(api: api).get();
-      print("response $response");
+
       if (response == "No Internet") {
         Get.back();
         CustomDialog().internetErrorDialog(Get.context!, () {
@@ -1418,17 +1462,18 @@ class DashboardMapController extends GetxController
       }
 
       Functions.computeDistanceResorChckIN(Get.context!,
-          LatLng(markerData[0]["pa_latitude"], markerData[0]["pa_longitude"]),
+          LatLng(areaData[0]["pa_latitude"], areaData[0]["pa_longitude"]),
           (success) {
         Get.back();
 
+        final args = {
+          "currentLocation": success["location"],
+          "areaData": areaData[0],
+          "canCheckIn": success["can_checkIn"],
+          "userData": balanceData,
+        };
         if (success["success"]) {
-          Get.toNamed(Routes.booking, arguments: {
-            "currentLocation": success["location"],
-            "areaData": markerData[0],
-            "canCheckIn": success["can_checkIn"],
-            "userData": balanceData,
-          });
+          Get.toNamed(Routes.booking, arguments: args);
         }
       });
     }
@@ -1446,5 +1491,42 @@ class DashboardMapController extends GetxController
         Get.toNamed(Routes.myVehicles);
         break;
     }
+  }
+
+  Future<void> proceedLastBooking() async {
+    CustomDialog().loadingDialog(Get.context!);
+    List lData = [];
+    final data = await Authentication().getLastBooking();
+    lData = dataNearest.where((e) {
+      return e["park_area_id"] == data["park_area_id"];
+    }).toList();
+    List ltlng = await Functions.getCurrentPosition();
+
+    LatLng coordinates = LatLng(ltlng[0]["lat"], ltlng[0]["long"]);
+    LatLng dest = LatLng(double.parse(lData[0]["pa_latitude"].toString()),
+        double.parse(lData[0]["pa_longitude"].toString()));
+    final estimatedData = await Functions.fetchETA(coordinates, dest);
+
+    if (estimatedData[0]["error"] == "No Internet") {
+      Get.back();
+      CustomDialog().internetErrorDialog(Get.context!, () {
+        Get.back();
+      });
+
+      return;
+    }
+    lData = lData.map((e) {
+      e["distance_display"] =
+          "${Variables.parseDistance(double.parse(lData[0]["current_distance"].toString()))} away";
+      e["time_arrival"] = estimatedData[0]["time"];
+      e["polyline"] = estimatedData[0]['poly_line'];
+      return e;
+    }).toList();
+
+    getAmenities(filteredMarkers[0].markerId.value, (cbData) {
+      if (cbData) {
+        onClickBooking(lData);
+      }
+    }, lData);
   }
 }

@@ -413,10 +413,10 @@ class QrWalletController extends GetxController
         requestCameraPermission();
         break;
       case 2:
-        Get.to(GenerateReceiveQR());
-        // Get.bottomSheet(QrBottomSheet(
-        //   qrCode: mobileNo,
-        // ));
+        Get.to(GenerateReceiveQR(), arguments: {
+          "mobile_no": mobNum.value,
+        });
+
         break;
     }
   }

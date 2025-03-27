@@ -61,6 +61,7 @@ class BillersController extends GetxController {
   Future<void> getBillers(Function cb) async {
     String subApi = "${ApiKeys.getBillers}";
     CustomDialog().loadingDialog(Get.context!);
+
     HttpRequest(api: subApi).get().then((response) async {
       Get.back();
       if (response == "No Internet") {
@@ -77,13 +78,9 @@ class BillersController extends GetxController {
         });
         return;
       }
-      if (response["items"].isNotEmpty) {
-        cb(true);
-        billers.assignAll(response["items"]);
-        filteredBillers.assignAll(billers);
-
-        return;
-      }
+      billers.assignAll(response["items"]);
+      filteredBillers.assignAll(billers);
+      cb(true);
     });
   }
 
@@ -274,7 +271,6 @@ class BillersController extends GetxController {
     String userId = jsonDecode(item!)['user_id'].toString();
     String subApi = "${ApiKeys.getFavBiller}?user_id=$userId";
     HttpRequest(api: subApi).get().then((response) async {
-      print("responseresponse $response");
       if (response == "No Internet") {
         isLoading.value = false;
         isNetConn.value = false;
@@ -301,7 +297,6 @@ class BillersController extends GetxController {
     HttpRequest(api: "${ApiKeys.getBillerTemp}?biller_id=$billerId")
         .get()
         .then((response) async {
-      print("getTemplate$response");
       Get.back();
       if (response["items"].isNotEmpty) {
         List data = response["items"];

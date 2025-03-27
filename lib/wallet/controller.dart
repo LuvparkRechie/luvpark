@@ -154,7 +154,6 @@ class WalletController extends GetxController
       } else {
         isLoadingCard.value = false;
         isNetConnCard.value = true;
-
         userData.value = dataBalance[0]["items"];
 
         getLogs();
@@ -168,7 +167,6 @@ class WalletController extends GetxController
 
     String subApi =
         "${ApiKeys.getTransLogs}?user_id=$userId&tran_date_from=${fromDate.text}&tran_date_to=${toDate.text}";
-
     HttpRequest(api: subApi).get().then((response) async {
       if (response == "No Internet") {
         isLoadingLogs.value = false;
@@ -223,12 +221,11 @@ class WalletController extends GetxController
     DateTime? lastDate;
 
     if (isStartDate) {
-      firstDate = firstDateLimit; // Allow selection starting from 29 days ago
-      lastDate = today; // Prevent selecting dates after today
+      firstDate = firstDateLimit;
+      lastDate = today;
     } else {
-      firstDate =
-          DateTime.parse(fromDate.text); // Start date selected by the user
-      lastDate = today; // Prevent selecting dates after today
+      firstDate = DateTime.parse(fromDate.text);
+      lastDate = today;
     }
 
     final DateTime? pickedDate = await showDatePicker(

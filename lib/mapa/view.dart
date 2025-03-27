@@ -6,9 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_exit_app/flutter_exit_app.dart';
 import 'package:flutter_multi_formatter/formatters/formatter_utils.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/auth/authentication.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_body.dart';
@@ -175,6 +178,7 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                           controller.onPanelSlide(pos);
                         },
                       ),
+
                       if (MediaQuery.of(Get.context!).viewInsets.bottom == 0)
                         Visibility(
                           visible: !controller.isHidePanel.value,
@@ -184,6 +188,37 @@ class DashboardMapScreen extends GetView<DashboardMapController> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
+                                Visibility(
+                                  visible: controller.hasLastBooking.value,
+                                  child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.2),
+                                            blurRadius: 5,
+                                            offset: Offset(0, -1),
+                                          ),
+                                        ],
+                                      ),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: Colors.white),
+                                        child: IconButton(
+                                            onPressed: () {
+                                              controller.showModalLastBook();
+                                            },
+                                            icon: Icon(
+                                              Symbols.book_ribbon,
+                                              weight: 700,
+                                              color: Colors.black87,
+                                              size: 25,
+                                            )),
+                                      )),
+                                ),
+                                const SizedBox(width: 10),
                                 Container(
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
@@ -1164,7 +1199,8 @@ class _DraggableDetailsSheetState extends State<DraggableDetailsSheet> {
                               //  borderRadius: 25,
                               text: "Book now",
                               onPressed: () async {
-                                controller.onClickBooking();
+                                controller
+                                    .onClickBooking(controller.markerData);
                               },
                             ),
                           ),
