@@ -44,8 +44,7 @@ class LockScreen extends GetView<LockScreenController> {
                           Container(height: 10),
                           CustomParagraph(
                             textAlign: TextAlign.center,
-                            text:
-                                "Your account is locked.\nPlease wait until ${controller.formattedTime.value}.",
+                            text: controller.formattedTime.value,
                           ),
                           Container(
                               height: MediaQuery.of(context).size.height * .15),

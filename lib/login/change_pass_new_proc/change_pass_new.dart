@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:iconsax/iconsax.dart';
 import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 
@@ -94,8 +95,9 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
 
     Map<String, String> reqParam = {
       "mobile_no": widget.mobileNo.toString(),
-      "req_type": "SR",
+      "new_pwd": newPassword.text,
     };
+
     Functions().requestOtp(reqParam, (obj) async {
       DateTime timeExp = DateFormat("yyyy-MM-dd hh:mm:ss a")
           .parse(obj["otp_exp_dt"].toString());
@@ -204,17 +206,27 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.bodyColor,
       appBar: AppBar(
-        toolbarHeight: 0,
-        elevation: 0,
+        elevation: 1,
         backgroundColor: AppColor.primaryColor,
         systemOverlayStyle: SystemUiOverlayStyle(
           statusBarColor: AppColor.primaryColor,
           statusBarBrightness: Brightness.dark,
           statusBarIconBrightness: Brightness.light,
         ),
+        title: Text("Reset Password"),
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () {
+            Get.back();
+          },
+          child: Icon(
+            Iconsax.arrow_left,
+            color: Colors.white,
+          ),
+        ),
       ),
+      backgroundColor: AppColor.bodyColor,
       body: Padding(
         padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
         child: Form(
@@ -226,15 +238,6 @@ class _ChangePassNewProtocolState extends State<ChangePassNewProtocol> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(height: 20),
-                  CustomButtonClose(onTap: () {
-                    Get.back();
-                  }),
-                  Container(height: 20),
-                  CustomTitle(
-                    text: "Change Password",
-                    fontSize: 20,
-                  ),
-                  Container(height: 10),
                   CustomParagraph(
                     text:
                         "Your new password must be different from previous used passwords.",

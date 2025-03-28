@@ -363,9 +363,6 @@ class _OtpFieldScreenState extends State<OtpFieldScreen> {
                                     length: 6,
                                     controller: pinController,
                                     defaultPinTheme: getDefaultPinTheme(),
-                                    androidSmsAutofillMethod:
-                                        AndroidSmsAutofillMethod
-                                            .smsUserConsentApi,
                                     hapticFeedbackType:
                                         HapticFeedbackType.lightImpact,
                                     onCompleted: (pin) {

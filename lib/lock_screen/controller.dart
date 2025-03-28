@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:awesome_notifications/awesome_notifications.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:luvpark/custom_widgets/alert_dialog.dart';
 
 import '../auth/authentication.dart';
@@ -45,7 +44,7 @@ class LockScreenController extends GetxController {
     DateTime parsedLocDate = DateTime(localDate.year, localDate.month,
         localDate.day, localDate.hour, localDate.minute);
 
-    formattedTime.value = DateFormat('hh:mm a').format(parsedLocDate);
+    formattedTime.value = parameter[0]["msg"].toString();
 
     if (parsedDateNow.isBefore(parsedLocDate)) {
       timeout(parsedLocDate);
