@@ -371,6 +371,7 @@ class DashboardMapController extends GetxController
 
     if (hasLastBooking.value && !hasShownLastBookingModal.value) {
       hasShownLastBookingModal.value = true;
+      Future.delayed(Duration(seconds: 1));
       showModalLastBook();
     }
   }

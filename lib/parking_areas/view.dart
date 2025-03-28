@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lucide_icons/lucide_icons.dart';
+import 'package:luvpark/billers/tabContainer.dart';
 import 'package:luvpark/custom_widgets/app_color.dart';
 import 'package:luvpark/custom_widgets/custom_text.dart';
 import 'package:luvpark/custom_widgets/no_data_found.dart';
@@ -546,6 +547,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
   @override
   void initState() {
     super.initState();
+    print("dataParam ${widget.dataParam}");
     getVhRatesData(widget.dataParam["vehicleTypes"][0]["vh_types"]);
   }
 
@@ -637,7 +639,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: const EdgeInsets.all(5),
                 decoration: const ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -653,11 +655,13 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                         child: CustomParagraph(
                       text: "Base Rate",
                       maxlines: 1,
+                      fontSize: 12,
                     )),
                     CustomParagraph(
                       text: "${data[0]["base_rate"]}",
                       color: Colors.black,
                       textAlign: TextAlign.right,
+                      fontSize: 12,
                     )
                   ],
                 ),
@@ -666,7 +670,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
             Container(width: 10),
             Expanded(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: const EdgeInsets.all(5),
                 decoration: const ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -682,11 +686,13 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                         child: CustomParagraph(
                       text: "Base Hours",
                       maxlines: 1,
+                      fontSize: 12,
                     )),
                     CustomParagraph(
                       text: "${data[0]["base_hours"]}",
                       color: Colors.black,
                       textAlign: TextAlign.right,
+                      fontSize: 12,
                     )
                   ],
                 ),
@@ -699,7 +705,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
           children: [
             Expanded(
               child: Container(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                padding: const EdgeInsets.all(5),
                 decoration: const ShapeDecoration(
                   color: Colors.white,
                   shape: RoundedRectangleBorder(
@@ -715,12 +721,14 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                         child: CustomParagraph(
                       text: "Succeeding Rate",
                       maxlines: 2,
+                      fontSize: 12,
                     )),
                     Container(width: 5),
                     CustomParagraph(
                       text: "${data[0]["succeeding_rate"]}",
                       color: Colors.black,
                       textAlign: TextAlign.right,
+                      fontSize: 12,
                     )
                   ],
                 ),
@@ -845,31 +853,66 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                         ),
                       ],
                     ),
-                    Container(height: 10),
+                    Divider(
+                      color: AppColor.subtitleColor,
+                    ),
                     Row(
                       children: [
-                        Expanded(
-                          child: _openTime(
-                            Container(
-                              child: Icon(
-                                LucideIcons.clock2,
-                                color: Colors.blue,
-                                weight: 1500,
-                                size: 20,
-                              ),
-                            ),
-                            " ${Variables.timeFormatter2(widget.dataParam["markerData"][0]["opened_time"].toString())} - ${Variables.timeFormatter2(widget.dataParam["markerData"][0]["closed_time"]).toString()}",
-                          ),
+                        Icon(
+                          Symbols.route_rounded,
+                          color: Colors.blue,
+                          size: 18,
                         ),
-                        Container(width: 10),
+                        Container(width: 5),
+                        CustomParagraph(
+                          text: widget.dataParam["markerData"][0]
+                              ["time_arrival"],
+                          fontWeight: FontWeight.w500,
+                          maxlines: 1,
+                          fontSize: 10,
+                          minFontSize: 10,
+                        ),
+                        CustomParagraph(
+                          text:
+                              " (${widget.dataParam["markerData"][0]["distance_display"]})",
+                          fontWeight: FontWeight.w500,
+                          maxlines: 1,
+                          fontSize: 10,
+                          minFontSize: 10,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              LucideIcons.clock2,
+                              color: Colors.blue,
+                              size: 18,
+                            ),
+                            CustomParagraph(
+                              text:
+                                  " ${Variables.timeFormatter2(widget.dataParam["markerData"][0]["opened_time"].toString())} - ${Variables.timeFormatter2(widget.dataParam["markerData"][0]["closed_time"]).toString()}",
+                              fontWeight: FontWeight.w500,
+                              maxlines: 1,
+                              fontSize: 10,
+                              minFontSize: 10,
+                            )
+                          ],
+                        ),
+                        SizedBox(width: 20),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             Container(
                               child: Icon(
                                 LucideIcons.parkingCircle,
                                 color: Colors.blue,
                                 weight: 1500,
-                                size: 20,
+                                size: 18,
                               ),
                             ),
                             Container(width: 5),
@@ -878,24 +921,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                                   '${int.parse(widget.dataParam["markerData"][0]["ps_vacant_count"].toString())} ${int.parse(widget.dataParam["markerData"][0]["ps_vacant_count"].toString()) > 1 ? "slots" : "slot"} left',
                               fontWeight: FontWeight.w500,
                               maxlines: 1,
-                              fontSize: 12,
-                              minFontSize: 10,
-                            ),
-                          ],
-                        ),
-                        Container(width: 10),
-                        Row(
-                          children: [
-                            Icon(
-                              Symbols.distance,
-                              color: Colors.blue,
-                            ),
-                            CustomParagraph(
-                              text: widget.dataParam["markerData"][0]
-                                  ["distance_display"],
-                              fontWeight: FontWeight.w500,
-                              maxlines: 1,
-                              fontSize: 12,
+                              fontSize: 10,
                               minFontSize: 10,
                             ),
                           ],
@@ -903,47 +929,53 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                       ],
                     ),
                     SizedBox(height: 10),
-                    Divider(
-                      color: AppColor.primaryColor,
-                    ),
-                    SizedBox(height: 10),
-                    CustomParagraph(
-                      text: "Available vehicle slots",
-                      maxlines: 1,
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    Container(height: 10),
                     _vehicles(),
+                    Container(height: 10),
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey.shade300, width: .5),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomParagraph(
+                            text: "Parking Amenities",
+                            maxlines: 1,
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          Container(height: 10),
+                          _amenities(),
+                        ],
+                      ),
+                    ),
                     Container(height: 20),
-                    Divider(
-                      color: AppColor.primaryColor,
+                    Container(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 5, vertical: 10),
+                      decoration: BoxDecoration(
+                          border: Border.all(
+                              color: Colors.grey.shade300, width: .5),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomParagraph(
+                            text: "Parking Rates",
+                            maxlines: 1,
+                            fontSize: 13,
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w600,
+                          ),
+                          Container(height: 15),
+                          _parkRates(),
+                        ],
+                      ),
                     ),
-                    Container(height: 10),
-                    CustomParagraph(
-                      text: "Parking Amenities",
-                      maxlines: 1,
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    Container(height: 10),
-                    _amenities(),
-                    Container(height: 20),
-                    Divider(
-                      color: AppColor.primaryColor,
-                    ),
-                    Container(height: 10),
-                    CustomParagraph(
-                      text: "Parking Rates",
-                      maxlines: 1,
-                      fontSize: 13,
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    Container(height: 15),
-                    _parkRates(),
                     Container(height: 20),
                   ],
                 ),
@@ -964,7 +996,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
             text: text,
             fontWeight: FontWeight.w500,
             maxlines: 1,
-            fontSize: 12,
+            fontSize: 10,
             minFontSize: 10,
           ),
         )
@@ -976,44 +1008,40 @@ class _ParkingDetailsState extends State<ParkingDetails> {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: LayoutBuilder(builder: (context, constraints) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             for (int j = 0;
                 j < widget.dataParam["vehicleTypes"].length;
                 j++) ...[
               Padding(
-                padding: const EdgeInsets.only(right: 10),
-                child: Container(
-                  padding: const EdgeInsets.fromLTRB(10, 10, 50, 10),
-                  decoration: const ShapeDecoration(
-                    color: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      side: BorderSide(width: 1.3, color: Color(0xFFE8E8E8)),
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(7),
-                      ),
+                padding: const EdgeInsets.only(right: 10, bottom: 5),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      weight: 10,
+                      Iconsax.tick_circle1,
+                      size: 10,
+                      color: AppColor.primaryColor,
                     ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomParagraph(
-                        text: '${widget.dataParam["vehicleTypes"][j]['name']}',
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                      Container(height: 5),
-                      CustomParagraph(
-                        text:
-                            '${widget.dataParam["vehicleTypes"][j]['count']} slots',
-                        color: AppColor.headerColor,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                    ],
-                  ),
+                    SizedBox(width: 5),
+                    CustomParagraph(
+                      text: '${widget.dataParam["vehicleTypes"][j]['name']}',
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                    SizedBox(width: 5),
+                    CustomParagraph(
+                      text:
+                          '(${widget.dataParam["vehicleTypes"][j]['count']} slots)',
+                      fontStyle: FontStyle.italic,
+                      color: AppColor.subtitleColor,
+                      fontSize: 10,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -1080,7 +1108,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 8.0),
                         child: Container(
-                          padding: EdgeInsets.all(10),
+                          padding: EdgeInsets.all(5),
                           decoration: ShapeDecoration(
                             color: denoInd == i
                                 ? const Color(0xFFEDF7FF)
@@ -1149,7 +1177,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
 
   Widget _buildColumn(String text, String icon) {
     return SizedBox(
-      width: MediaQuery.of(Get.context!).size.width / 2.2,
+      width: MediaQuery.of(Get.context!).size.width / 2.5,
       child: Padding(
         padding: const EdgeInsets.all(5),
         child: Row(
@@ -1170,7 +1198,7 @@ class _ParkingDetailsState extends State<ParkingDetails> {
                     : text.trim().toUpperCase(),
                 textAlign: TextAlign.left,
                 maxlines: 2,
-                fontSize: 12,
+                fontSize: 10,
                 minFontSize: 6,
                 overflow: TextOverflow.ellipsis,
               ),
