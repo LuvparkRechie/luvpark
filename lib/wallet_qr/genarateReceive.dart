@@ -26,6 +26,7 @@ import '../custom_widgets/custom_text.dart';
 import '../custom_widgets/custom_textfield.dart';
 import '../custom_widgets/no_internet.dart';
 import '../functions/functions.dart';
+import 'controller.dart';
 
 class GenerateReceiveQR extends StatefulWidget {
   const GenerateReceiveQR({super.key});
@@ -193,6 +194,7 @@ class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(QrWalletController());
     return Scaffold(
       appBar: AppBar(
         elevation: 1,
@@ -259,25 +261,21 @@ class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      Image(
-                                        fit: BoxFit.fitWidth,
-                                        image: AssetImage(
-                                          "assets/images/logo.png",
-                                        ),
-                                        height: 35,
-                                      ),
-                                      SizedBox(width: 10),
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          CustomParagraph(
-                                            text: args["mobile_no"]
-                                                .toString()
-                                                .replaceRange(3, 8, '•••••'),
+                                          CustomTitle(
+                                            text: "Wallet Balance",
                                             color: Colors.white,
-                                            letterSpacing: 0.5,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            letterSpacing: .5,
                                           ),
                                           CustomParagraph(
                                             text: toCurrencyString(userData[0]
@@ -287,10 +285,63 @@ class _GenerateReceiveQRState extends State<GenerateReceiveQR> {
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
                                           ),
+                                          SizedBox(height: 20),
                                         ],
+                                      ),
+                                      Image(
+                                        fit: BoxFit.fitWidth,
+                                        image: AssetImage(
+                                          "assets/images/logo.png",
+                                        ),
+                                        height: 35,
                                       ),
                                     ],
                                   ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CustomTitle(
+                                            text: "Number",
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            letterSpacing: .5,
+                                          ),
+                                          CustomParagraph(
+                                            text:
+                                                "+${args["mobile_no"].toString().replaceRange(3, 8, '*****')}",
+                                            color: Colors.white,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          CustomTitle(
+                                            text: "Name",
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            letterSpacing: .5,
+                                          ),
+                                          CustomParagraph(
+                                            text: controller.fullName.value,
+                                            color: Colors.white,
+                                            letterSpacing: 0.5,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  )
                                 ],
                               ),
                             ),
